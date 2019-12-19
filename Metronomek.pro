@@ -1,4 +1,9 @@
-QT += quick
+# This file is part of Metronomek
+# Copyright (C) 2019 by Tomasz Bojczuk (seelook@gmail.com)
+# on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
+
+
+QT += multimedia core quick quickcontrols2
 
 CONFIG += c++11
 
@@ -21,8 +26,6 @@ RESOURCES += qml.qrc
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
 
-# Additional import path used to resolve QML modules just for Qt Quick Designer
-QML_DESIGNER_IMPORT_PATH =
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
