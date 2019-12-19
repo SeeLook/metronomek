@@ -13,7 +13,7 @@ Window {
   title: qsTr("Metronomek")
 
   Image {
-    source: "qrc:/Images/bg.png"
+    source: "qrc:/bg.png"
     height: parent.height; width: height * (sourceSize.width / sourceSize.height)
   }
 }

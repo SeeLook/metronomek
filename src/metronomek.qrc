@@ -2,6 +2,6 @@
   <qresource prefix="/">
     <file>main.qml</file>
 
-    <file>Images/bg.png</file>
+    <file alias="bg.png">../Images/bg.png</file>
   </qresource>
 </RCC>
