@@ -3,16 +3,16 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
-import QtQuick 2.14
-import QtQuick.Window 2.14
-import QtQuick.Shapes 1.14
+import QtQuick 2.12
+import QtQuick.Window 2.12
+import QtQuick.Shapes 1.12
 
 import Metronomek 1.0
 
 Window {
   visible: true
   height: 480; width: 314
-  title: qsTr("MetronomeK")
+  title: qsTr("MetronomeK") + " v0.1"
 
   TmetroItem {
     id: metro
