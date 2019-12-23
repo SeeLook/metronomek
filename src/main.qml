@@ -5,14 +5,19 @@
 
 import QtQuick 2.12
 import QtQuick.Window 2.12
+import QtQuick.Controls 2.12
 import QtQuick.Shapes 1.12
 
 import Metronomek 1.0
 
 Window {
   visible: true
-  height: 480; width: 314
+  width: GLOB.geometry.width
+  height: GLOB.geometry.height
+  x: GLOB.geometry.x ? GLOB.geometry.x : undefined
+  y: GLOB.geometry.y ? GLOB.geometry.y : undefined
   title: qsTr("MetronomeK") + " v0.1"
+  color: "#D1D1D1"
 
   TmetroItem {
     id: metro
@@ -34,7 +39,7 @@ Window {
 
         Shape {
           width: parent.width * 4; height: parent.height / 5
-          y: parent.height * 0.1
+          y: parent.height * (0.05 + ((GLOB.tempo - 40) / 200) * 0.6)
           anchors.horizontalCenter: parent.horizontalCenter
           ShapePath {
             strokeWidth: pendulum.width / 2
@@ -49,15 +54,63 @@ Window {
           }
         }
       }
+
+      Tumbler {
+        id: tumb
+        width: parent.width * 0.2; height: width 
+        x: parent.width * 0.7 - width; y: parent.height * 0.83 - height
+//         background: Rectangle { color: "white"; radius: width / 10 }
+        model: 201
+        wrap: false; visibleItemCount: 3
+        currentIndex: GLOB.tempo - 40
+//         onCurrentIndexChanged: GLOB.tempo = currentIndex + 40
+        delegate:  Label {
+          text: modelData + 40
+          opacity: 1.0 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
+          horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
+          height: tumb.height / 3
+          font { pixelSize: height * 0.9; bold: true }
+          
+        }
+      }
+
+      Slider {
+        id: slider
+        x: parent.width * 0.05; y: parent.height * 0.9 - height
+        width: parent.width * 0.7
+        from: 40; to: 240
+        value: GLOB.tempo
+        onMoved: GLOB.tempo = value
+      }
     }
   }
 
+  Connections {
+    target: GLOB
+    onTempoChanged: {
+      anim.running = false
+      anim.running = true
+    }
+  }
+
+  property int aDur: (60000 / GLOB.tempo) / 2
   SequentialAnimation {
+    id: anim
     running: true
     loops: Animation.Infinite
-    NumberAnimation { target: pendulum; property: "rotation"; to: 35; duration: 250 }
-    NumberAnimation { target: pendulum; property: "rotation"; to: 0; duration: 250 }
-    NumberAnimation { target: pendulum; property: "rotation"; to: -35; duration: 250 }
-    NumberAnimation { target: pendulum; property: "rotation"; to: 0; duration: 250 }
+    NumberAnimation { target: pendulum; property: "rotation"; to: 35; duration: aDur }
+    NumberAnimation { target: pendulum; property: "rotation"; to: 0; duration: aDur }
+    NumberAnimation { target: pendulum; property: "rotation"; to: -35; duration: aDur }
+    NumberAnimation { target: pendulum; property: "rotation"; to: 0; duration: aDur }
+  }
+
+  Component.onCompleted: {
+    var t = GLOB.tempo
+    GLOB.tempo = t -1
+    GLOB.tempo = t
+  }
+
+  onClosing: {
+    GLOB.geometry = Qt.rect(x ,y, width, height)
   }
 }

@@ -3,5 +3,6 @@
     <file>main.qml</file>
 
     <file alias="bg.png">../Images/bg.png</file>
+    <file alias="metronomek.png">../Images/metronomek.png</file>
   </qresource>
 </RCC>

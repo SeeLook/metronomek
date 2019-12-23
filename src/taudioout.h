@@ -36,6 +36,8 @@ public:
 
   void setAudioOutParams();
 
+  void setTempo(int t);
+
       /**
        * Immediately stops playing.
        */
@@ -44,7 +46,6 @@ public:
 //   TaudioParams* audioParams() { return m_audioParams; }
 
 protected:
-  int crossCount() { return m_crossCount; } /**< counts samples of crossing buffer */
   void createOutputDevice();
 
   void loadAudioData();
@@ -69,9 +70,6 @@ private:
   static QString      m_devName;
   static TaudioOUT   *m_instance;
   int                 m_bufferFrames, m_sampleRate;
-  bool                m_doCrossFade;
-  float               m_cross; /**< current volume factor of fading effect */
-  int                 m_crossCount;
   bool                m_callBackIsBussy;
   QAudioOutput       *m_audioOUT;
   TaudioBuffer       *m_buffer;

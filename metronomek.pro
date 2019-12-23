@@ -24,10 +24,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         src/main.cpp \
+        src/tglob.cpp \
         src/tmetroitem.cpp \
         src/taudioout.cpp \
 
 HEADERS += \
+        src/tglob.h \
         src/tmetroitem.h \
         src/taudiobuffer.h \
         src/taudioout.h \
@@ -58,8 +60,4 @@ DISTFILES += \
   android/gradlew.bat \
   android/res/values/libs.xml
 
-contains(ANDROID_TARGET_ARCH,x86) {
-  ANDROID_PACKAGE_SOURCE_DIR = \
-    $$PWD/android
-}
-# ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

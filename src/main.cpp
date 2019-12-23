@@ -2,14 +2,17 @@
  * Copyright (C) 2019 by Tomasz Bojczuk (seelook@gmail.com)          *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
+#include "tglob.h"
 #include "tmetroitem.h"
 #include "taudioout.h"
 
 #include <QtGui/qguiapplication.h>
+#include <QtGui/qicon.h>
 #include <QtQml/qqmlapplicationengine.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qelapsedtimer.h>
 #include <QtCore/qdebug.h>
+#include <QtQml/qqmlcontext.h>
 
 
 int main(int argc, char *argv[])
@@ -19,36 +22,39 @@ int main(int argc, char *argv[])
   QElapsedTimer startElapsed;
   startElapsed.start();
 
-  QGuiApplication app(argc, argv);
+  auto app = new QGuiApplication(argc, argv);
+  app->setWindowIcon(QIcon(QStringLiteral(":/metronomek.png")));
 
   auto sound = new TaudioOUT();
+  auto glob = new Tglob();
 
-  QQmlApplicationEngine engine;
+  auto engine = new QQmlApplicationEngine();
   const QUrl url(QStringLiteral("qrc:/main.qml"));
-  QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
-                    &app, [url](QObject *obj, const QUrl &objUrl) {
+  QObject::connect(engine, &QQmlApplicationEngine::objectCreated,
+                    app, [url](QObject *obj, const QUrl &objUrl) {
       if (!obj && url == objUrl)
           QCoreApplication::exit(-1);
   }, Qt::QueuedConnection);
 
-  qmlRegisterType<TmetroItem>("Metronomek", 1, 0, "TmetroItem");
-  engine.load(url);
+  QObject::connect(glob, &Tglob::tempoChanged, app, [=]{ sound->setTempo(glob->tempo()); });
 
-// #if defined (Q_OS_ANDROID)
-  qDebug() << "METRONOMEK LAUNCH TIME" << startElapsed.nsecsElapsed() / 1000000.0 << " [ms]";
-// #else
-//   QTextStream o(stdout);
-//   o << "\033[01;35m METRONOMEK launch time: " << startElapsed.nsecsElapsed() / 1000000.0 << " [ms]\033[01;00m\n";
-// #endif
+  engine->rootContext()->setContextProperty(QStringLiteral("GLOB"), glob);
+  qmlRegisterType<TmetroItem>("Metronomek", 1, 0, "TmetroItem");
+  engine->load(url);
+
+  qDebug() << "==== METRONOMEK LAUNCH TIME" << startElapsed.nsecsElapsed() / 1000000.0 << "[ms] ====";
 
   QTimer::singleShot(500, [=]{
     sound->init();
     sound->play();
   });
 
-  int execCode = app.exec();
+  int execCode = app->exec();
 
+  delete engine;
   delete sound;
+  delete glob;
+  delete app;
 
   return execCode;
 }

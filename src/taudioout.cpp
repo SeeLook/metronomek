@@ -34,11 +34,8 @@ TaudioOUT*             TaudioOUT::m_instance = nullptr;
 TaudioOUT::TaudioOUT(QObject *parent) :
   QObject(parent),
   ratioOfRate(1),
-  m_bufferFrames(256),
+  m_bufferFrames(2048),
   m_sampleRate(48000),
-  m_doCrossFade(false),
-  m_cross(0.0f),
-  m_crossCount(0),
   m_callBackIsBussy(false),
   m_audioOUT(nullptr)
 {
@@ -77,6 +74,12 @@ void TaudioOUT::init() {
 void TaudioOUT::setAudioOutParams() {
 //   if (m_audioParams->OUTdevName != m_devName)
     createOutputDevice();
+}
+
+
+void TaudioOUT::setTempo(int t) {
+  m_samplPerBeat = (48000 * 60) / t;
+  qDebug() << "[TaudioOUT] samples per beat" << m_samplPerBeat;
 }
 
 
