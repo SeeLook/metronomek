@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
   auto glob = new Tglob();
 
   auto engine = new QQmlApplicationEngine();
-  const QUrl url(QStringLiteral("qrc:/main.qml"));
+  const QUrl url(QStringLiteral("qrc:/MainWindow.qml"));
   QObject::connect(engine, &QQmlApplicationEngine::objectCreated, app, [url](QObject *obj, const QUrl &objUrl) {
       if (!obj && url == objUrl)
           QCoreApplication::exit(-1);

@@ -2,14 +2,14 @@
 # Copyright (C) 2019 by Tomasz Bojczuk (seelook@gmail.com)
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
 
-TARGET = Metronomek
+android: TARGET = Metronomek 
+else: TARGET = metronomek
+
 TEMPLATE = app
 
 QT += multimedia widgets quick quickcontrols2
 
 CONFIG += c++11
-# CONFIG += mobility warn_off
-# MOBILITY =
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
