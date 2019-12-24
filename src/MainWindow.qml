@@ -21,6 +21,8 @@ Window {
 
   SystemPalette { id: activPal;  colorGroup: SystemPalette.Active }
 
+  property bool leanEnough: false // pendulum is leaned out enough to start playing
+
   TmetroItem {
 //     id: metro
     anchors.fill: parent
@@ -41,7 +43,7 @@ Window {
 
       Rectangle {
         id: pendulum
-        color: stopArea.containsPress || pendArea.containsPress ? activPal.highlight : "black"
+        color: leanEnough ? "green" : (stopArea.containsPress ? "red" : (pendArea.dragged ? activPal.highlight : "black"))
         width: parent.width / 20; y: parent.height * 0.125 - width / 2
         x: parent.width * 0.3969; height: parent.height * 0.4572
         radius: width / 2
@@ -49,34 +51,43 @@ Window {
 
         MouseArea {
           id: pendArea
+          property bool dragged: false
           enabled: !SOUND.playing
           anchors.fill: parent
-          cursorShape: pressed ? Qt.DragMoveCursor : Qt.ArrowCursor
+          cursorShape: dragged ? Qt.DragMoveCursor : Qt.ArrowCursor
           onPositionChanged: {
+            dragged = true
             var dev = mouse.x - width / 2
-            if (Math.abs(dev) < height * 0.268) // 15 deg
-              pendulum.rotation = (Math.atan(dev / height) * 180) / Math.PI
-            else
-              SOUND.playing = true
+            pendulum.rotation = (Math.atan(dev / height) * 180) / Math.PI
+            leanEnough = Math.abs(dev) > height * 0.268 // 15 deg
           }
-          onReleased: pendulum.rotation = 0
+          onReleased: {
+            leanEnough = false
+            dragged = false
+            if (Math.abs(mouse.x - width / 2) > height * 0.268)
+              SOUND.playing = true
+            else
+              pendulum.rotation = 0
+          }
         }
 
         Shape {
           id: countW // counterweight
-          width: parent.width * 4; height: parent.height / 5
+          width: parent.width * 3; height: parent.height / 5
           y: parent.height * (0.05 + ((GLOB.tempo - 40) / 200) * 0.6)
           anchors.horizontalCenter: parent.horizontalCenter
           ShapePath {
-            strokeWidth: pendulum.width / 2
+            strokeWidth: pendulum.width / 3
             strokeColor: countArea.containsPress ? activPal.highlight : "black"
-            fillColor: "gray"
+            fillColor: "gold"
             capStyle: ShapePath.RoundCap; joinStyle: ShapePath.RoundJoin
-            startX: pendulum.width; startY: 0
+            startX: 0; startY: 0
             PathLine { x: pendulum.width * 3; y: 0 }
-            PathLine { x: pendulum.width * 4; y: pendulum.height / 5 }
+            PathLine { x: pendulum.width * 3; y: pendulum.height / 5 }
+            PathLine { x: pendulum.width * 2.5; y: pendulum.height / 4.2 }
+            PathLine { x: pendulum.width * 0.5; y: pendulum.height / 4.2 }
             PathLine { x: 0; y: pendulum.height / 5 }
-            PathLine { x: pendulum.width; y: 0 }
+            PathLine { x: 0; y: 0 }
           }
           MouseArea {
             id: countArea
@@ -138,11 +149,7 @@ Window {
     NumberAnimation { target: pendulum; property: "rotation"; to: 0; duration: aDur }
   }
 
-  Component.onCompleted: {
-    var t = GLOB.tempo
-    GLOB.tempo = t -1
-    GLOB.tempo = t
-  }
+//   Component.onCompleted: {}
 
   onClosing: {
     GLOB.geometry = Qt.rect(x ,y, width, height)
