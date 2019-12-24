@@ -32,13 +32,35 @@ Window {
       height: Math.min(parent.height, parent.width * 1.529564315352697)
       width: height * (sourceSize.width / sourceSize.height)
 
+      MouseArea {
+        id: stopArea
+        enabled: SOUND.playing
+        width: parent.width; height: parent.height * 0.5
+        onPressAndHold: SOUND.playing = false
+      }
+
       Rectangle {
         id: pendulum
-        color: "black"
+        color: stopArea.containsPress || pendArea.containsPress ? activPal.highlight : "black"
         width: parent.width / 20; y: parent.height * 0.125 - width / 2
         x: parent.width * 0.3969; height: parent.height * 0.4572
         radius: width / 2
         transformOrigin: Item.Bottom
+
+        MouseArea {
+          id: pendArea
+          enabled: !SOUND.playing
+          anchors.fill: parent
+          cursorShape: pressed ? Qt.DragMoveCursor : Qt.ArrowCursor
+          onPositionChanged: {
+            var dev = mouse.x - width / 2
+            if (Math.abs(dev) < height * 0.268) // 15 deg
+              pendulum.rotation = (Math.atan(dev / height) * 180) / Math.PI
+            else
+              SOUND.playing = true
+          }
+          onReleased: pendulum.rotation = 0
+        }
 
         Shape {
           id: countW // counterweight
@@ -58,6 +80,7 @@ Window {
           }
           MouseArea {
             id: countArea
+            enabled: !SOUND.playing
             anchors.fill: parent
             drag.target: countW
             drag.axis: Drag.YAxis
@@ -77,18 +100,19 @@ Window {
         value: GLOB.tempo
         onValueModified: GLOB.tempo = value
       }
+    }
+  }
 
-      RoundButton {
-        x: parent.width * 0.25 - width; y: parent.height * 0.5 + height
-        width: parent.width * 0.15; height: width
-        onClicked: SOUND.playing = !SOUND.playing
-        Rectangle {
-          width: parent.width * 0.6; height: width
-          anchors.centerIn: parent
-          radius: SOUND.playing ? 0 : width / 2
-          color: SOUND.playing ? "red" : "green"
-        }
-      }
+  RoundButton {
+    anchors { right: parent.right; top: parent.top; margins: parent.width / 50 }
+    width: metro.width * 0.2; height: width / 2
+    radius: width / 6
+    onClicked: SOUND.playing = !SOUND.playing
+    Rectangle {
+      width: parent.height * 0.6; height: width
+      anchors.centerIn: parent
+      radius: SOUND.playing ? 0 : width / 2
+      color: SOUND.playing ? "red" : "green"
     }
   }
 
