@@ -8,6 +8,7 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qrect.h>
+#include <QtGui/qcolor.h>
 
 
 class QSettings;
@@ -30,8 +31,11 @@ public:
 
   QRect geometry() const { return m_geometry; }
   void setGeometry(const QRect& g) { m_geometry = g; }
+
   int tempo() const { return m_tempo; }
   void setTempo(int t);
+
+  Q_INVOKABLE QColor alpha(const QColor& c, int a);
 
 signals:
   void dummySignal();

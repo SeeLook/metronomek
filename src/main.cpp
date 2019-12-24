@@ -30,8 +30,7 @@ int main(int argc, char *argv[])
 
   auto engine = new QQmlApplicationEngine();
   const QUrl url(QStringLiteral("qrc:/main.qml"));
-  QObject::connect(engine, &QQmlApplicationEngine::objectCreated,
-                    app, [url](QObject *obj, const QUrl &objUrl) {
+  QObject::connect(engine, &QQmlApplicationEngine::objectCreated, app, [url](QObject *obj, const QUrl &objUrl) {
       if (!obj && url == objUrl)
           QCoreApplication::exit(-1);
   }, Qt::QueuedConnection);
@@ -39,15 +38,13 @@ int main(int argc, char *argv[])
   QObject::connect(glob, &Tglob::tempoChanged, app, [=]{ sound->setTempo(glob->tempo()); });
 
   engine->rootContext()->setContextProperty(QStringLiteral("GLOB"), glob);
+  engine->rootContext()->setContextProperty(QStringLiteral("SOUND"), sound);
   qmlRegisterType<TmetroItem>("Metronomek", 1, 0, "TmetroItem");
   engine->load(url);
 
   qDebug() << "==== METRONOMEK LAUNCH TIME" << startElapsed.nsecsElapsed() / 1000000.0 << "[ms] ====";
 
-  QTimer::singleShot(500, [=]{
-    sound->init();
-    sound->play();
-  });
+  QTimer::singleShot(500, [=]{ sound->init(); });
 
   int execCode = app->exec();
 

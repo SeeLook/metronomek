@@ -47,3 +47,7 @@ void Tglob::setTempo(int t) {
   }
 }
 
+
+QColor Tglob::alpha(const QColor& c, int a) {
+  return QColor(c.red(), c.green(), c.blue(), a);
+}

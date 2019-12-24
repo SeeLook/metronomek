@@ -22,6 +22,8 @@ class TaudioOUT : public QObject
 {
   Q_OBJECT
 
+  Q_PROPERTY(bool playing READ playing WRITE setPlaying NOTIFY playingChanged)
+
 public:
   TaudioOUT(QObject* parent = nullptr);
   ~TaudioOUT() override;
@@ -32,18 +34,15 @@ public:
 
   void init();
 
-  bool play();
+  Q_INVOKABLE void startTicking();
+  Q_INVOKABLE void stopTicking();
 
   void setAudioOutParams();
 
   void setTempo(int t);
 
-      /**
-       * Immediately stops playing.
-       */
-  void stop();
-
-//   TaudioParams* audioParams() { return m_audioParams; }
+  bool playing() const { return m_playing; }
+  void setPlaying(bool pl);
 
 protected:
   void createOutputDevice();
@@ -54,6 +53,7 @@ protected:
 
 signals:
   void finishSignal();
+  void playingChanged();
 
 protected:
   int                             ratioOfRate; // ratio of current sample rate to 44100
@@ -78,6 +78,7 @@ private:
   int                 m_beatSamples = 0;
   int                 m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
   int                 m_currSample = 0;
+  bool                m_playing = false;
 };
 
 #endif // TAUDIOOUT_H

@@ -51,7 +51,7 @@ TaudioOUT::TaudioOUT(QObject *parent) :
 
 TaudioOUT::~TaudioOUT()
 {
-  stop();
+  stopTicking();
   m_devName = QStringLiteral("anything");
   m_instance = 0;
   if (m_audioOUT) {
@@ -79,7 +79,16 @@ void TaudioOUT::setAudioOutParams() {
 
 void TaudioOUT::setTempo(int t) {
   m_samplPerBeat = (48000 * 60) / t;
-  qDebug() << "[TaudioOUT] samples per beat" << m_samplPerBeat;
+}
+
+
+void TaudioOUT::setPlaying(bool pl) {
+  if (m_playing != pl) {
+    if (pl)
+      startTicking();
+    else
+      stopTicking();
+  }
 }
 
 
@@ -143,10 +152,8 @@ void TaudioOUT::loadAudioData() {
 }
 
 
-bool TaudioOUT::play() {
-  startPlayingSlot();
-  
-  return true;
+void TaudioOUT::startTicking() {
+  startPlayingSlot();  
 }
 
 
@@ -178,6 +185,8 @@ void TaudioOUT::stateChangedSlot(QAudio::State state) {
 //   qDebug() << state;
   if (state == QAudio::IdleState)
     playingFinishedSlot();
+  m_playing = state == QAudio::ActiveState;
+  emit playingChanged();
 }
 
 
@@ -186,7 +195,7 @@ void TaudioOUT::playingFinishedSlot() {
 }
 
 
-void TaudioOUT::stop() {
+void TaudioOUT::stopTicking() {
   playingFinishedSlot();
 }
 
