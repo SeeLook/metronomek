@@ -16,8 +16,8 @@ Window {
   height: GLOB.geometry.height
   x: GLOB.geometry.x ? GLOB.geometry.x : undefined
   y: GLOB.geometry.y ? GLOB.geometry.y : undefined
-  title: qsTr("MetronomeK") + " v0.1"
-  color: Qt.tint(activPal.base, GLOB.alpha(SOUND.playing ? "red" : "green", 10))
+  title: qsTr("MetronomeK") + " v0.2"
+  color: activPal.base
 
   SystemPalette { id: activPal;  colorGroup: SystemPalette.Active }
 
@@ -38,12 +38,12 @@ Window {
         id: stopArea
         enabled: SOUND.playing
         width: parent.width; height: parent.height * 0.5
-        onPressAndHold: SOUND.playing = false
+        onPressAndHold: stopMetronome()
       }
 
       Rectangle {
         id: pendulum
-        color: leanEnough ? "green" : (stopArea.containsPress ? "red" : (pendArea.dragged ? activPal.highlight : "black"))
+        color: leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? activPal.highlight : "black"))
         width: parent.width / 20; y: parent.height * 0.125 - width / 2
         x: parent.width * 0.3969; height: parent.height * 0.4572
         radius: width / 2
@@ -53,7 +53,7 @@ Window {
           id: pendArea
           property bool dragged: false
           enabled: !SOUND.playing
-          anchors.fill: parent
+          width: parent.width * 3; height: parent.height; x: -parent.width
           cursorShape: dragged ? Qt.DragMoveCursor : Qt.ArrowCursor
           onPositionChanged: {
             dragged = true
@@ -65,9 +65,9 @@ Window {
             leanEnough = false
             dragged = false
             if (Math.abs(mouse.x - width / 2) > height * 0.268)
-              SOUND.playing = true
+              startMetronome()
             else
-              pendulum.rotation = 0
+              stopMetronome()
           }
         }
 
@@ -79,7 +79,7 @@ Window {
           ShapePath {
             strokeWidth: pendulum.width / 3
             strokeColor: countArea.containsPress ? activPal.highlight : "black"
-            fillColor: "gold"
+            fillColor: "gray"
             capStyle: ShapePath.RoundCap; joinStyle: ShapePath.RoundJoin
             startX: 0; startY: 0
             PathLine { x: pendulum.width * 3; y: 0 }
@@ -102,6 +102,12 @@ Window {
         }
       }
 
+      Rectangle {
+        color: "black"
+        width: parent.width * 0.2; height: parent.width / 28
+        x: parent.width * 0.3; y: parent.height * 0.555
+      }
+
       SpinBox {
         id: sb
         height: parent.height * 0.07; width: height * 3
@@ -118,7 +124,12 @@ Window {
     anchors { right: parent.right; top: parent.top; margins: parent.width / 50 }
     width: metro.width * 0.2; height: width / 2
     radius: width / 6
-    onClicked: SOUND.playing = !SOUND.playing
+    onClicked: {
+      if (SOUND.playing)
+        stopMetronome()
+      else
+        startMetronome()
+    }
     Rectangle {
       width: parent.height * 0.6; height: width
       anchors.centerIn: parent
@@ -127,26 +138,67 @@ Window {
     }
   }
 
-  Connections {
-    target: GLOB
-    onTempoChanged: {
-      if (anim.running) {
-        anim.running = false
-        anim.running = true
-      }
-    }
+  function startMetronome() {
+    timer.toLeft = pendulum.rotation <= 0
+    initAnim.to = timer.toLeft ? -35 : 35
+    initAnim.duration = (30000 / GLOB.tempo) * ((35 - Math.abs(pendulum.rotation)) / 35)
+    pendAnim.stop()
+    initAnim.start()
   }
 
-  property int aDur: (60000 / GLOB.tempo) / 2
-  SequentialAnimation {
-    id: anim
+  function stopMetronome() {
+    SOUND.playing = false;
+    finishAnim.to = 0
+    finishAnim.duration = (30000 / GLOB.tempo) * ((35 - Math.abs(pendulum.rotation)) / 35)
+    pendAnim.stop()
+    finishAnim.start()
+  }
+
+  NumberAnimation {
+    id: pendAnim
+    target: pendulum; property: "rotation"
+    duration: 60000 / GLOB.tempo
+  }
+
+  NumberAnimation {
+    id: initAnim
+    target: pendulum; property: "rotation"
+    onStopped: SOUND.playing = true
+  }
+
+  NumberAnimation {
+    id: finishAnim
+    target: pendulum; property: "rotation"
+    to: 0
+  }
+
+  Timer {
+    id: timer
     running: SOUND.playing
-    loops: Animation.Infinite
-    alwaysRunToEnd: true
-    NumberAnimation { target: pendulum; property: "rotation"; to: 35; duration: aDur }
-    NumberAnimation { target: pendulum; property: "rotation"; to: 0; duration: aDur }
-    NumberAnimation { target: pendulum; property: "rotation"; to: -35; duration: aDur }
-    NumberAnimation { target: pendulum; property: "rotation"; to: 0; duration: aDur }
+    repeat: true; triggeredOnStart: true
+    interval: 60000 / GLOB.tempo
+    property real elap: 0
+    property real lag: 0
+    property bool toLeft: true
+    onRunningChanged: {
+      if (running) {
+        elap = 0; lag = 0
+      }
+    }
+    onTriggered: {
+      pendAnim.stop()
+      pendAnim.to = toLeft ? 35 : -35
+      pendAnim.start()
+      var currTime = new Date().getTime()
+      if (elap > 0) {
+        elap = currTime - elap
+        lag += elap - interval
+      }
+      elap = currTime
+      interval = Math.max((60000 / GLOB.tempo) - lag, 1)
+      lag = 0
+      toLeft = !toLeft
+    }
   }
 
 //   Component.onCompleted: {}
