@@ -1,8 +1,15 @@
 <RCC>
   <qresource prefix="/">
     <file>MainWindow.qml</file>
+    <file>MainMenuButton.qml</file>
+    <file>MainDrawer.qml</file>
+    <file>Logo.qml</file>
+    <file>DrawerButton.qml</file>
 
     <file alias="bg.png">../Images/bg.png</file>
     <file alias="metronomek.png">../Images/metronomek.png</file>
+
+    <file>qtquickcontrols2.conf</file>
+    <file>+android/qtquickcontrols2.conf</file>
   </qresource>
 </RCC>

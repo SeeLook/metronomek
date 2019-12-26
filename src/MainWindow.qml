@@ -11,11 +11,13 @@ import QtQuick.Shapes 1.12
 import Metronomek 1.0
 
 Window {
+  id: mainWindow
+
   visible: true
   width: GLOB.geometry.width
   height: GLOB.geometry.height
-  x: GLOB.geometry.x ? GLOB.geometry.x : undefined
-  y: GLOB.geometry.y ? GLOB.geometry.y : undefined
+  x: GLOB.geometry.x
+  y: GLOB.geometry.y
   title: qsTr("MetronomeK") + " v0.2"
   color: activPal.base
 
@@ -102,7 +104,7 @@ Window {
         }
       }
 
-      Rectangle {
+      Rectangle { // cover for lover pendulum end
         color: "black"
         width: parent.width * 0.2; height: parent.width / 28
         x: parent.width * 0.3; y: parent.height * 0.555
@@ -117,26 +119,28 @@ Window {
         value: GLOB.tempo
         onValueModified: GLOB.tempo = value
       }
+
+      RoundButton {
+        x: parent.width * 0.1; y: parent.height * 0.6
+        width: metro.width * 0.2; height: width
+        radius: width / 2
+        onClicked: {
+          if (SOUND.playing)
+            stopMetronome()
+            else
+              startMetronome()
+        }
+        Rectangle {
+          width: parent.height * 0.5; height: width
+          anchors.centerIn: parent
+          radius: SOUND.playing ? 0 : width / 2
+          color: SOUND.playing ? "red" : "green"
+        }
+      }
     }
   }
 
-  RoundButton {
-    anchors { right: parent.right; top: parent.top; margins: parent.width / 50 }
-    width: metro.width * 0.2; height: width / 2
-    radius: width / 6
-    onClicked: {
-      if (SOUND.playing)
-        stopMetronome()
-      else
-        startMetronome()
-    }
-    Rectangle {
-      width: parent.height * 0.6; height: width
-      anchors.centerIn: parent
-      radius: SOUND.playing ? 0 : width / 2
-      color: SOUND.playing ? "red" : "green"
-    }
-  }
+  MainMenuButton { x: parent.width * 0.01; y: parent.height * 0.01}
 
   function startMetronome() {
     timer.toLeft = pendulum.rotation <= 0
@@ -163,7 +167,10 @@ Window {
   NumberAnimation {
     id: initAnim
     target: pendulum; property: "rotation"
-    onStopped: SOUND.playing = true
+    onStopped: {
+      timer.interval = 2 // delay to allow the timer react on starting sound signal
+      SOUND.playing = true
+    }
   }
 
   NumberAnimation {
@@ -176,7 +183,7 @@ Window {
     id: timer
     running: SOUND.playing
     repeat: true; triggeredOnStart: true
-    interval: 60000 / GLOB.tempo
+//     interval: 60000 / GLOB.tempo
     property real elap: 0
     property real lag: 0
     property bool toLeft: true
