@@ -5,14 +5,20 @@
 #include "tglob.h"
 
 #include <QtCore/qsettings.h>
-#include <QtCore/qcoreapplication.h>
+#include <QtGui/qguiapplication.h>
+#include <QtGui/qfont.h>
 
 #include "QtCore/qdebug.h"
+
+
+Tglob* Tglob::m_instance = nullptr;
 
 
 Tglob::Tglob(QObject *parent) :
   QObject(parent)
 {
+  m_instance = this;
+
   QCoreApplication::setOrganizationName(QStringLiteral("Metronomek"));
   QCoreApplication::setOrganizationDomain(QStringLiteral("metronomek.seelook.org"));
   QCoreApplication::setApplicationName(QStringLiteral("Metronomek"));
@@ -50,4 +56,9 @@ void Tglob::setTempo(int t) {
 
 QColor Tglob::alpha(const QColor& c, int a) {
   return QColor(c.red(), c.green(), c.blue(), a);
+}
+
+
+int Tglob::fontSize() const {
+  return qApp->font().pixelSize() > 0 ? qApp->font().pixelSize() : qApp->font().pointSize();
 }

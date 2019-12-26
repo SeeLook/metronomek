@@ -5,13 +5,14 @@
 
 #include "taudioout.h"
 #include "taudiobuffer.h"
+#include "tglob.h"
 
 #include <QtGui/qguiapplication.h>
 #include <QtMultimedia/qaudiooutput.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qfile.h>
 #include <QtCore/qdatastream.h>
-#include <QtCore/qthread.h>
+#include <QtCore/qsettings.h>
 
 #include <QtCore/qdebug.h>
 
@@ -34,7 +35,7 @@ TaudioOUT*             TaudioOUT::m_instance = nullptr;
 TaudioOUT::TaudioOUT(QObject *parent) :
   QObject(parent),
   ratioOfRate(1),
-  m_bufferFrames(2048),
+  m_bufferFrames(256),
   m_sampleRate(48000),
   m_callBackIsBussy(false),
   m_audioOUT(nullptr)
@@ -46,6 +47,7 @@ TaudioOUT::TaudioOUT(QObject *parent) :
   m_instance = this;
 
   connect(this, &TaudioOUT::finishSignal, this, &TaudioOUT::playingFinishedSlot);
+  
 }
 
 
@@ -62,12 +64,20 @@ TaudioOUT::~TaudioOUT()
     delete m_beatData;
     m_beatData = nullptr;
   }
+  GLOB->settings()->setValue(QStringLiteral("beatType"), m_beatType);
 }
 
 
 void TaudioOUT::init() {
-  loadAudioData();
-  setAudioOutParams();
+  if (m_initialized) {
+      qDebug() << "[TaudioOUT] has been initialized already! Skipping.";
+      return;
+  } else {
+      connect(GLOB, &Tglob::tempoChanged, this, [=]{ setTempo(GLOB->tempo()); });
+      setTempo(GLOB->tempo());
+      setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), static_cast<int>(Beat_TypesCount) - 1));
+      setAudioOutParams();
+  }
 }
 
 
@@ -136,30 +146,16 @@ void TaudioOUT::createOutputDevice() {
 }
 
 
-void TaudioOUT::loadAudioData() {
-#if defined (Q_OS_ANDROID)
-  QFile beatFile(QStringLiteral("assets:/Sounds/beat-classic.raw48-16"));
-#else
-  QFile beatFile(qApp->applicationDirPath() + QLatin1String("/share/metronomek/") + QLatin1String("Sounds/beat-classic.raw48-16"));
-#endif
-  if (beatFile.exists()) {
-    beatFile.open(QIODevice::ReadOnly);
-    m_beatSamples = beatFile.size() / 2;
-    m_beatData = new qint16[m_beatSamples];
-    QDataStream beatStream(&beatFile);
-    beatStream.readRawData(reinterpret_cast<char*>(m_beatData), beatFile.size());
-  }
-}
-
-
 void TaudioOUT::startTicking() {
   startPlayingSlot();  
 }
 
 
 void TaudioOUT::startPlayingSlot() {
-  if (m_audioOUT->state() != QAudio::ActiveState)
+  if (m_audioOUT->state() != QAudio::ActiveState) {
+    m_currSample = 0;
     m_audioOUT->start(m_buffer);
+  }
 }
 
 
@@ -182,7 +178,6 @@ void TaudioOUT::outCallBack(char* data, qint64 maxLen, qint64& wasRead) {
 
 
 void TaudioOUT::stateChangedSlot(QAudio::State state) {
-//   qDebug() << state;
   if (state == QAudio::IdleState)
     playingFinishedSlot();
   m_playing = state == QAudio::ActiveState;
@@ -199,3 +194,55 @@ void TaudioOUT::stopTicking() {
   playingFinishedSlot();
 }
 
+
+void TaudioOUT::setBeatType(int bt) {
+  if (bt < 0 || bt > static_cast<int>(Beat_TypesCount) - 1) {
+    qDebug() << "[TaudioOUT] Wrong beat type!" << bt << "Restore to classic default.";
+    bt = 0;
+  }
+  if (bt != m_beatType) {
+    m_beatType = bt;
+#if defined (Q_OS_ANDROID)
+    QString beatFileName = QStringLiteral("assets:/Sounds/beat-");
+#else
+    QString beatFileName = qApp->applicationDirPath() + QLatin1String("/share/metronomek/Sounds/beat-");
+#endif
+    beatFileName += getBeatFileName(static_cast<EbeatType>(bt)) +  QLatin1String(".raw48-16");
+    QFile beatFile(beatFileName);
+    if (m_beatData) {
+      delete m_beatData;
+      m_beatData = nullptr;
+    }
+    if (beatFile.exists()) {
+        beatFile.open(QIODevice::ReadOnly);
+        m_beatSamples = beatFile.size() / 2;
+        m_beatData = new qint16[m_beatSamples];
+        QDataStream beatStream(&beatFile);
+        beatStream.readRawData(reinterpret_cast<char*>(m_beatData), beatFile.size());
+    } else {
+        m_beatSamples = 0;
+        qDebug() << "[TaudioOUT] beat file" << beatFileName << "doesn't exist";
+    }
+    emit beatTypeChanged();
+  }
+}
+
+
+QString TaudioOUT::getBeatFileName(TaudioOUT::EbeatType bt) {
+  static const char* const beatFileArray[static_cast<int>(Beat_TypesCount)] = {
+    "classic", "classic2", "snap", "parapet", "sticks"
+  };
+  return QString(beatFileArray[static_cast<int>(bt)]);
+}
+
+
+QString TaudioOUT::getBeatName(int bt) {
+  if (bt < 0 || bt > beatTypeCount() - 1)
+    return QString();
+  static const char* const beatNameArr[static_cast<int>(Beat_TypesCount)] = {
+    QT_TRANSLATE_NOOP("BeatType", "Metronome beat"), QT_TRANSLATE_NOOP("BeatType", "Metronome beat 2"),
+    QT_TRANSLATE_NOOP("BeatType", "Snapping fingers"), QT_TRANSLATE_NOOP("BeatType", "Beating at parapet"),
+    QT_TRANSLATE_NOOP("BeatType", "Drum sticks")
+  };
+  return QGuiApplication::translate("beatType", beatNameArr[bt]);
+}

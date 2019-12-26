@@ -23,6 +23,7 @@ class TaudioOUT : public QObject
   Q_OBJECT
 
   Q_PROPERTY(bool playing READ playing WRITE setPlaying NOTIFY playingChanged)
+  Q_PROPERTY(int beatType READ beatType WRITE setBeatType NOTIFY beatTypeChanged)
 
 public:
   TaudioOUT(QObject* parent = nullptr);
@@ -44,19 +45,28 @@ public:
   bool playing() const { return m_playing; }
   void setPlaying(bool pl);
 
+  enum EbeatType {
+    Beat_Classic, Beat_Classic2, Beat_Snap, Beat_Parapet, Beat_Sticks,
+    Beat_TypesCount
+  };
+  Q_ENUM(EbeatType)
+
+  Q_INVOKABLE int beatTypeCount() const { return static_cast<int>(Beat_TypesCount); }
+  int beatType() const { return m_beatType; }
+  void setBeatType(int bt);
+  QString getBeatFileName(EbeatType bt);
+  Q_INVOKABLE QString getBeatName(int bt);
+
 protected:
-  void createOutputDevice();
-
-  void loadAudioData();
-
-  
+  void createOutputDevice();  
 
 signals:
   void finishSignal();
   void playingChanged();
+  void beatTypeChanged();
 
 protected:
-  int                             ratioOfRate; // ratio of current sample rate to 44100
+  int                  ratioOfRate; // ratio of current sample rate to 48000
 
 private slots:
   void outCallBack(char* data, qint64 maxLen, qint64& wasRead);
@@ -69,6 +79,7 @@ private slots:
 private:
   static QString      m_devName;
   static TaudioOUT   *m_instance;
+  bool                m_initialized = false;
   int                 m_bufferFrames, m_sampleRate;
   bool                m_callBackIsBussy;
   QAudioOutput       *m_audioOUT;
@@ -79,6 +90,8 @@ private:
   int                 m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
   int                 m_currSample = 0;
   bool                m_playing = false;
+  int                 m_beatType = -1;
+  bool                m_goingToStop = false;
 };
 
 #endif // TAUDIOOUT_H

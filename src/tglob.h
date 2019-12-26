@@ -13,6 +13,8 @@
 
 class QSettings;
 
+#define GLOB (Tglob::instance())
+
 
 /**
  * 
@@ -29,6 +31,10 @@ public:
   explicit Tglob(QObject *parent = nullptr);
   ~Tglob();
 
+  static Tglob* instance() { return m_instance; }
+
+  QSettings* settings() { return m_settings; }
+
   QRect geometry() const { return m_geometry; }
   void setGeometry(const QRect& g) { m_geometry = g; }
 
@@ -36,12 +42,14 @@ public:
   void setTempo(int t);
 
   Q_INVOKABLE QColor alpha(const QColor& c, int a);
+  Q_INVOKABLE int fontSize() const;
 
 signals:
   void dummySignal();
   void tempoChanged();
 
 private:
+  static Tglob       *m_instance;
   QSettings          *m_settings;
   QRect               m_geometry;
   int                 m_tempo = 60;

@@ -35,8 +35,6 @@ int main(int argc, char *argv[])
           QCoreApplication::exit(-1);
   }, Qt::QueuedConnection);
 
-  QObject::connect(glob, &Tglob::tempoChanged, app, [=]{ sound->setTempo(glob->tempo()); });
-
   engine->rootContext()->setContextProperty(QStringLiteral("GLOB"), glob);
   engine->rootContext()->setContextProperty(QStringLiteral("SOUND"), sound);
   qmlRegisterType<TmetroItem>("Metronomek", 1, 0, "TmetroItem");
