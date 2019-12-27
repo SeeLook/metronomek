@@ -45,7 +45,7 @@ Window {
 
       Rectangle {
         id: pendulum
-        color: leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? activPal.highlight : "black"))
+        color: leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? activPal.highlight : (GLOB.stationary ? "gray" : "black")))
         width: parent.width / 20; y: parent.height * 0.125 - width / 2
         x: parent.width * 0.3969; height: parent.height * 0.4572
         radius: width / 2
@@ -100,7 +100,7 @@ Window {
           }
           MouseArea {
             id: countArea
-            enabled: !SOUND.playing
+            enabled: !SOUND.playing || GLOB.stationary
             anchors.fill: parent
             drag.target: countW
             drag.axis: Drag.YAxis
@@ -125,13 +125,13 @@ Window {
         }
         Tumbler {
           id: meterTumb
-          width: metro.width * 0.2; height: width * (GLOB.isAndroid() ? 0.9 : 1)
+          width: metro.width * 0.2; height: width * 0.9
           model: 12
           wrap: false; visibleItemCount: 3
           currentIndex: SOUND.meter - 1
           onCurrentIndexChanged: SOUND.meter = currentIndex + 1
           delegate:  Label {
-            text: modelData + 1
+            text: index > 0 ? index + 1 : "X"
             opacity: 1.0 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
             horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
             height: meterTumb.height / 3
@@ -194,7 +194,7 @@ Window {
   function startMetronome() {
     SOUND.meterCount = 0
     timer.toLeft = pendulum.rotation <= 0
-    initAnim.to = timer.toLeft ? -35 : 35
+    initAnim.to = GLOB.stationary ? 0 : (timer.toLeft ? -35 : 35)
     initAnim.duration = (30000 / SOUND.tempo) * ((35 - Math.abs(pendulum.rotation)) / 35)
     pendAnim.stop()
     initAnim.start()
@@ -231,7 +231,7 @@ Window {
 
   Timer {
     id: timer
-    running: SOUND.playing
+    running: SOUND.playing && !GLOB.stationary
     repeat: true; triggeredOnStart: true
 //     interval: 60000 / SOUND.tempo
     property real elap: 0

@@ -24,9 +24,18 @@ Column {
         MenuItem {
           text: SOUND.getBeatName(index)
           onClicked: SOUND.beatType = index
+          checkable: true
+          checked: SOUND.beatType === index
         }
       }
     }
+  }
+
+  DrawerButton {
+    text: qsTr("pendulum stationary")
+    checkable: true
+    checked: GLOB.stationary
+    onToggled: GLOB.stationary = checked
   }
 
 }

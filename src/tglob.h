@@ -27,6 +27,7 @@ class Tglob : public QObject
 
   Q_PROPERTY(QRect geometry READ geometry WRITE setGeometry NOTIFY dummySignal)
   Q_PROPERTY(bool countVisible READ countVisible WRITE setCountVisible NOTIFY countVisibleChanged)
+  Q_PROPERTY(bool stationary READ stationary WRITE setStationary NOTIFY stationaryChanged)
 
 public:
   explicit Tglob(QObject *parent = nullptr);
@@ -42,6 +43,9 @@ public:
   bool countVisible() const { return m_countVisible; }
   void setCountVisible(bool cv);
 
+  bool stationary() const { return m_stationary;}
+  void setStationary(bool stat);
+
   Q_INVOKABLE QColor alpha(const QColor& c, int a);
   Q_INVOKABLE int fontSize() const;
 
@@ -56,12 +60,14 @@ public:
 signals:
   void dummySignal();
   void countVisibleChanged();
+  void stationaryChanged();
 
 private:
   static Tglob       *m_instance;
   QSettings          *m_settings;
   QRect               m_geometry;
   bool                m_countVisible;
+  bool                m_stationary;
 };
 
 #endif // TGLOB_H

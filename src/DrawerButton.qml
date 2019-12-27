@@ -20,5 +20,18 @@ AbstractButton {
       text: dButt.text
       textFormat: Text.StyledText
     }
+
+    Loader {
+      active: dButt.checkable
+      anchors { right: parent.right; verticalCenter: parent.verticalCenter }
+      sourceComponent: Switch {
+        checkable: true
+        checked: dButt.checked
+        onToggled: {
+          dButt.toggle()
+          dButt.toggled()
+        }
+      }
+    }
   }
 }

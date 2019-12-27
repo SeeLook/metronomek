@@ -34,6 +34,7 @@ Tglob::Tglob(QObject *parent) :
     m_geometry.setSize(QSize(314, 480));
 #endif
   m_countVisible = m_settings->value(QStringLiteral("countVisible"), false).toBool();
+  m_stationary = m_settings->value(QStringLiteral("pendulumStationary"), false).toBool();
 }
 
 
@@ -43,6 +44,7 @@ Tglob::~Tglob()
   m_settings->setValue(QStringLiteral("geometry"), m_geometry);
 #endif
   m_settings->setValue(QStringLiteral("countVisible"), m_countVisible);
+  m_settings->setValue(QStringLiteral("pendulumStationary"), m_stationary);
 }
 
 
@@ -50,6 +52,14 @@ void Tglob::setCountVisible(bool cv) {
   if (cv != m_countVisible) {
     m_countVisible = cv;
     emit countVisibleChanged();
+  }
+}
+
+
+void Tglob::setStationary(bool stat) {
+  if (stat != m_stationary) {
+    m_stationary = stat;
+    emit stationaryChanged();
   }
 }
 
