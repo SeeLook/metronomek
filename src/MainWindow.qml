@@ -18,7 +18,7 @@ Window {
   height: GLOB.geometry.height
   x: GLOB.geometry.x
   y: GLOB.geometry.y
-  title: qsTr("MetronomeK") + " v0.2"
+  title: qsTr("MetronomeK") + " v0.3"
   color: activPal.base
 
   SystemPalette { id: activPal;  colorGroup: SystemPalette.Active }
@@ -76,7 +76,7 @@ Window {
         Shape {
           id: countW // counterweight
           width: parent.width * 3; height: parent.height / 5
-          y: parent.height * (0.05 + ((GLOB.tempo - 40) / 200) * 0.6)
+          y: parent.height * (0.05 + ((SOUND.tempo - 40) / 200) * 0.6)
           anchors.horizontalCenter: parent.horizontalCenter
           ShapePath {
             strokeWidth: pendulum.width / 3
@@ -106,7 +106,7 @@ Window {
             drag.axis: Drag.YAxis
             drag.minimumY: pendulum.height * 0.05; drag.maximumY: pendulum.height * 0.65
             cursorShape: drag.active ? Qt.DragMoveCursor : Qt.ArrowCursor
-            onPositionChanged: GLOB.tempo = Math.round((countW.y * 200) / (pendulum.height * 0.6) + 23)
+            onPositionChanged: SOUND.tempo = Math.round((countW.y * 200) / (pendulum.height * 0.6) + 23)
           }
         }
       }
@@ -146,8 +146,8 @@ Window {
         x: parent.width * 0.7 - width; y: parent.height * 0.88 - height
         font { bold: true; }
         from: 40; to: 240
-        value: GLOB.tempo
-        onValueModified: GLOB.tempo = value
+        value: SOUND.tempo
+        onValueModified: SOUND.tempo = value
       }
 
       Row {
@@ -195,7 +195,7 @@ Window {
     SOUND.meterCount = 0
     timer.toLeft = pendulum.rotation <= 0
     initAnim.to = timer.toLeft ? -35 : 35
-    initAnim.duration = (30000 / GLOB.tempo) * ((35 - Math.abs(pendulum.rotation)) / 35)
+    initAnim.duration = (30000 / SOUND.tempo) * ((35 - Math.abs(pendulum.rotation)) / 35)
     pendAnim.stop()
     initAnim.start()
   }
@@ -203,7 +203,7 @@ Window {
   function stopMetronome() {
     SOUND.playing = false;
     finishAnim.to = 0
-    finishAnim.duration = (30000 / GLOB.tempo) * ((35 - Math.abs(pendulum.rotation)) / 35)
+    finishAnim.duration = (30000 / SOUND.tempo) * ((35 - Math.abs(pendulum.rotation)) / 35)
     pendAnim.stop()
     finishAnim.start()
   }
@@ -211,7 +211,7 @@ Window {
   NumberAnimation {
     id: pendAnim
     target: pendulum; property: "rotation"
-    duration: 60000 / GLOB.tempo
+    duration: 60000 / SOUND.tempo
   }
 
   NumberAnimation {
@@ -233,7 +233,7 @@ Window {
     id: timer
     running: SOUND.playing
     repeat: true; triggeredOnStart: true
-//     interval: 60000 / GLOB.tempo
+//     interval: 60000 / SOUND.tempo
     property real elap: 0
     property real lag: 0
     property bool toLeft: true
@@ -252,7 +252,7 @@ Window {
         lag += elap - interval
       }
       elap = currTime
-      interval = Math.max((60000 / GLOB.tempo) - lag, 1)
+      interval = Math.max((60000 / SOUND.tempo) - lag, 1)
       lag = 0
       toLeft = !toLeft
     }

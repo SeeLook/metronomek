@@ -123,6 +123,7 @@ TaudioOUT::~TaudioOUT()
   GLOB->settings()->setValue(QStringLiteral("beatType"), m_beatType);
   GLOB->settings()->setValue(QStringLiteral("meter"), m_meter);
   GLOB->settings()->setValue(QStringLiteral("doRing"), m_doRing);
+  GLOB->settings()->setValue(QStringLiteral("tempo"), m_tempo);
 }
 
 
@@ -131,8 +132,7 @@ void TaudioOUT::init() {
       qDebug() << "[TaudioOUT] has been initialized already! Skipping.";
       return;
   } else {
-      connect(GLOB, &Tglob::tempoChanged, this, [=]{ setTempo(GLOB->tempo()); });
-      setTempo(GLOB->tempo());
+      setTempo(qBound(40, GLOB->settings()->value(QStringLiteral("tempo"), 60).toInt(), 240));
       setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), static_cast<int>(Beat_TypesCount) - 1));
       setMeter(qBound(0, GLOB->settings()->value(QStringLiteral("meter"), 4).toInt(), 12));
       setRing(GLOB->settings()->value(QStringLiteral("doRing"), false).toBool());
@@ -145,11 +145,6 @@ void TaudioOUT::init() {
 void TaudioOUT::setAudioOutParams() {
 //   if (m_audioParams->OUTdevName != m_devName)
     createOutputDevice();
-}
-
-
-void TaudioOUT::setTempo(int t) {
-  m_samplPerBeat = (48000 * 60) / t;
 }
 
 
@@ -327,6 +322,15 @@ void TaudioOUT::setRing(bool r) {
   if (r != m_doRing) {
     m_doRing = r;
     emit ringChanged();
+  }
+}
+
+
+void TaudioOUT::setTempo(int t) {
+  if (t != m_tempo) {
+    m_tempo = t;
+    m_samplPerBeat = (48000 * 60) / t;
+    emit tempoChanged();
   }
 }
 

@@ -73,6 +73,7 @@ class TaudioOUT : public QObject
   Q_PROPERTY(int meter READ meter WRITE setMeter NOTIFY meterChanged)
   Q_PROPERTY(int meterCount READ meterCount WRITE setMeterCount NOTIFY meterCountChanged)
   Q_PROPERTY(bool ring READ ring WRITE setRing NOTIFY ringChanged)
+  Q_PROPERTY(int tempo READ tempo WRITE setTempo NOTIFY tempoChanged)
 
 public:
   TaudioOUT(QObject* parent = nullptr);
@@ -88,8 +89,6 @@ public:
   Q_INVOKABLE void stopTicking();
 
   void setAudioOutParams();
-
-  void setTempo(int t);
 
   bool playing() const { return m_playing; }
   void setPlaying(bool pl);
@@ -115,6 +114,9 @@ public:
   bool ring() const { return m_doRing; }
   void setRing(bool r);
 
+  int tempo() const { return m_tempo; }
+  void setTempo(int t);
+
 protected:
   void createOutputDevice();  
 
@@ -125,6 +127,7 @@ signals:
   void meterChanged();
   void ringChanged();
   void meterCountChanged();
+  void tempoChanged();
 
 protected:
   int                  ratioOfRate; // ratio of current sample rate to 48000
@@ -166,6 +169,7 @@ private:
   int                 m_beatType = -1;
   int                 m_meter = 0;
   bool                m_doRing = false;
+  int                 m_tempo = 60;
 };
 
 #endif // TAUDIOOUT_H

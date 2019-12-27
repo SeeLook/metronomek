@@ -33,7 +33,6 @@ Tglob::Tglob(QObject *parent) :
   if (m_geometry.isNull())
     m_geometry.setSize(QSize(314, 480));
 #endif
-  m_tempo = m_settings->value(QStringLiteral("tempo"), 60).toInt();
   m_countVisible = m_settings->value(QStringLiteral("countVisible"), false).toBool();
 }
 
@@ -43,16 +42,7 @@ Tglob::~Tglob()
 #if !defined (Q_OS_ANDROID)
   m_settings->setValue(QStringLiteral("geometry"), m_geometry);
 #endif
-  m_settings->setValue(QStringLiteral("tempo"), m_tempo);
   m_settings->setValue(QStringLiteral("countVisible"), m_countVisible);
-}
-
-
-void Tglob::setTempo(int t) {
-  if (t != m_tempo) {
-    m_tempo = t;
-    emit tempoChanged();
-  }
 }
 
 

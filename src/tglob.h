@@ -17,7 +17,8 @@ class QSettings;
 
 
 /**
- * 
+ * Globally available object with common properties and helpers.
+ * It keeps @p QSettings instance accessible through @p settings()
  */
 class Tglob : public QObject
 {
@@ -25,7 +26,6 @@ class Tglob : public QObject
   Q_OBJECT
 
   Q_PROPERTY(QRect geometry READ geometry WRITE setGeometry NOTIFY dummySignal)
-  Q_PROPERTY(int tempo READ tempo WRITE setTempo NOTIFY tempoChanged)
   Q_PROPERTY(bool countVisible READ countVisible WRITE setCountVisible NOTIFY countVisibleChanged)
 
 public:
@@ -39,9 +39,6 @@ public:
   QRect geometry() const { return m_geometry; }
   void setGeometry(const QRect& g) { m_geometry = g; }
 
-  int tempo() const { return m_tempo; }
-  void setTempo(int t);
-
   bool countVisible() const { return m_countVisible; }
   void setCountVisible(bool cv);
 
@@ -50,14 +47,12 @@ public:
 
 signals:
   void dummySignal();
-  void tempoChanged();
   void countVisibleChanged();
 
 private:
   static Tglob       *m_instance;
   QSettings          *m_settings;
   QRect               m_geometry;
-  int                 m_tempo = 60;
   bool                m_countVisible;
 };
 
