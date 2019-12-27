@@ -107,7 +107,7 @@ TaudioOUT::TaudioOUT(QObject *parent) :
   m_instance = this;
 
   connect(this, &TaudioOUT::finishSignal, this, &TaudioOUT::playingFinishedSlot);
-  
+  QTimer::singleShot(500, this, [=]{ init(); });
 }
 
 

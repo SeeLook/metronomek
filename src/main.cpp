@@ -42,8 +42,6 @@ int main(int argc, char *argv[])
 
   qDebug() << "==== METRONOMEK LAUNCH TIME" << startElapsed.nsecsElapsed() / 1000000.0 << "[ms] ====";
 
-  QTimer::singleShot(500, [=]{ sound->init(); });
-
   int execCode = app->exec();
 
   delete engine;
