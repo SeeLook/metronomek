@@ -17,6 +17,51 @@
 #include <QtCore/qdebug.h>
 
 
+//#################################################################################################
+//###################                TsoundData        ############################################
+//#################################################################################################
+
+TsoundData::TsoundData(const QString& rawFileName)
+{
+  if (!rawFileName.isEmpty())
+    setFile(rawFileName);
+}
+
+
+TsoundData::~TsoundData()
+{
+  deleteData();
+}
+
+
+void TsoundData::deleteData()  {
+  if (m_data && m_size) {
+    delete m_data;
+    m_data = nullptr;
+    m_size = 0;
+  }
+}
+
+
+void TsoundData::setFile(const QString& rawFileName) {
+  QFile rawFile(rawFileName);
+  deleteData();
+  if (rawFile.exists()) {
+      rawFile.open(QIODevice::ReadOnly);
+      m_size = rawFile.size() / 2;
+      m_data = new qint16[m_size];
+      QDataStream beatStream(&rawFile);
+      beatStream.readRawData(reinterpret_cast<char*>(m_data), rawFile.size());
+  } else {
+      m_size = 0;
+      qDebug() << "[TaudioOUT] sound file" << rawFileName << "doesn't exist";
+  }
+}
+
+//#################################################################################################
+//###################                TaudioOUT         ############################################
+//#################################################################################################
+
 /*static*/
 QStringList TaudioOUT::getAudioDevicesList() {
   QStringList devNamesList;
@@ -25,6 +70,21 @@ QStringList TaudioOUT::getAudioDevicesList() {
     devNamesList << devList[i].deviceName();
   return devNamesList;
 }
+
+
+/**
+ * Dirty mixing of two given samples
+ */
+qint16 mix(qint16 sampleA, qint16 sampleB) {
+  qint32 a32 = static_cast<qint32>(sampleA), b32 = static_cast<qint32>(sampleB);
+  if (sampleA < 0 && sampleB < 0 )
+    return static_cast<qint16>((a32 + b32) - ((a32 * b32) / INT16_MIN));
+  else if (sampleA > 0 && sampleB > 0 )
+    return static_cast<qint16>((a32 + b32) - ((a32 * b32) / INT16_MAX));
+  else
+    return sampleA + sampleB;
+}
+
 
 QString                TaudioOUT::m_devName = QStringLiteral("default");
 TaudioOUT*             TaudioOUT::m_instance = nullptr;
@@ -60,11 +120,9 @@ TaudioOUT::~TaudioOUT()
     delete m_audioOUT;
     delete m_buffer;
   }
-  if (m_beatData) {
-    delete m_beatData;
-    m_beatData = nullptr;
-  }
   GLOB->settings()->setValue(QStringLiteral("beatType"), m_beatType);
+  GLOB->settings()->setValue(QStringLiteral("meter"), m_meter);
+  GLOB->settings()->setValue(QStringLiteral("doRing"), m_doRing);
 }
 
 
@@ -76,7 +134,10 @@ void TaudioOUT::init() {
       connect(GLOB, &Tglob::tempoChanged, this, [=]{ setTempo(GLOB->tempo()); });
       setTempo(GLOB->tempo());
       setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), static_cast<int>(Beat_TypesCount) - 1));
+      setMeter(qBound(0, GLOB->settings()->value(QStringLiteral("meter"), 4).toInt(), 12));
+      setRing(GLOB->settings()->value(QStringLiteral("doRing"), false).toBool());
       setAudioOutParams();
+      m_bell.setFile(getRawFilePath(QStringLiteral("bell")));
   }
 }
 
@@ -154,6 +215,7 @@ void TaudioOUT::startTicking() {
 void TaudioOUT::startPlayingSlot() {
   if (m_audioOUT->state() != QAudio::ActiveState) {
     m_currSample = 0;
+    m_meterCount = 0;
     m_audioOUT->start(m_buffer);
   }
 }
@@ -163,13 +225,29 @@ void TaudioOUT::outCallBack(char* data, qint64 maxLen, qint64& wasRead) {
   qint16 sample = 0;
   auto out = reinterpret_cast<qint16*>(data);
   for (int i = 0; i < (maxLen / 2); i++) {
-    if (m_currSample < m_beatSamples)
-      sample = m_beatData[m_currSample];
-    else
-      sample = 0;
+    sample = m_beat.sampleAt(m_currSample);
     m_currSample++;
-    if (m_currSample >= m_samplPerBeat)
+    if (m_currSample >= m_samplPerBeat) {
       m_currSample = 0;
+      m_meterCount++;
+      if (m_meterCount == m_meter) {
+        if (m_meter > 1 && m_doRing) { // ring a bell
+          m_bell.resetPos();
+          m_doBell = true;
+        }
+        m_meterCount = 0;
+      }
+      emit meterCountChanged();
+    }
+    if (m_doBell) {
+      if (sample)
+        sample = mix(sample, m_bell.readSample());
+      else
+        sample = m_bell.readSample();
+      if (m_bell.pos() >= m_bell.size()) {
+        m_doBell = false;
+      }
+    }
     for (int r = 0; r < ratioOfRate; r++)
       *out++ = sample; // left channel
   }
@@ -202,27 +280,7 @@ void TaudioOUT::setBeatType(int bt) {
   }
   if (bt != m_beatType) {
     m_beatType = bt;
-#if defined (Q_OS_ANDROID)
-    QString beatFileName = QStringLiteral("assets:/Sounds/beat-");
-#else
-    QString beatFileName = qApp->applicationDirPath() + QLatin1String("/share/metronomek/Sounds/beat-");
-#endif
-    beatFileName += getBeatFileName(static_cast<EbeatType>(bt)) +  QLatin1String(".raw48-16");
-    QFile beatFile(beatFileName);
-    if (m_beatData) {
-      delete m_beatData;
-      m_beatData = nullptr;
-    }
-    if (beatFile.exists()) {
-        beatFile.open(QIODevice::ReadOnly);
-        m_beatSamples = beatFile.size() / 2;
-        m_beatData = new qint16[m_beatSamples];
-        QDataStream beatStream(&beatFile);
-        beatStream.readRawData(reinterpret_cast<char*>(m_beatData), beatFile.size());
-    } else {
-        m_beatSamples = 0;
-        qDebug() << "[TaudioOUT] beat file" << beatFileName << "doesn't exist";
-    }
+    m_beat.setFile(getRawFilePath(QLatin1String("beat-") + getBeatFileName(static_cast<EbeatType>(bt))));
     emit beatTypeChanged();
   }
 }
@@ -245,4 +303,41 @@ QString TaudioOUT::getBeatName(int bt) {
     QT_TRANSLATE_NOOP("BeatType", "Drum sticks")
   };
   return QGuiApplication::translate("beatType", beatNameArr[bt]);
+}
+
+
+void TaudioOUT::setMeter(int m) {
+  if (m_meter != m) {
+    m_meter = m;
+    emit meterChanged();
+    setMeterCount(0);
+  }
+}
+
+
+void TaudioOUT::setMeterCount(int mc) {
+  if (m_meterCount != mc) {
+    m_meterCount = mc;
+    emit meterCountChanged();
+  }
+}
+
+
+void TaudioOUT::setRing(bool r) {
+  if (r != m_doRing) {
+    m_doRing = r;
+    emit ringChanged();
+  }
+}
+
+//#################################################################################################
+//###################                PROTECTED         ############################################
+//#################################################################################################
+QString TaudioOUT::getRawFilePath(const QString& fName) {
+#if defined (Q_OS_ANDROID)
+  QString beatFileName = QStringLiteral("assets:/Sounds/");
+#else
+  QString beatFileName = qApp->applicationDirPath() + QLatin1String("/share/metronomek/Sounds/");
+#endif
+  return beatFileName + fName +  QLatin1String(".raw48-16");
 }

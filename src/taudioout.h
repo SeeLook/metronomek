@@ -16,6 +16,52 @@ class TaudioBuffer;
 
 
 /**
+ * Buffer-like structure to keep and handle audio data
+ */
+class TsoundData {
+
+public:
+  TsoundData() {}
+  TsoundData(const QString& rawFileName);
+  ~TsoundData();
+
+  int size() const { return m_size; }
+
+      /**
+       * sample value or null if out of scope
+       */
+  qint16 sampleAt(int samPos) const { return samPos < m_size ? m_data[samPos] : 0; }
+
+      /**
+       * Returns sample at current position and moves one step forward.
+       * When position is out of scope, returns null
+       */
+  qint16 readSample() { m_pos++; return sampleAt(m_pos - 1); }
+
+  int pos() const { return m_pos; }
+
+      /**
+       * Resets position
+       */
+  void resetPos() { m_pos = 0; }
+
+  qint16* data() { return m_data; }
+
+      /**
+       * Reads audio data from raw audio file with given name
+       */
+  void setFile(const QString& rawFileName);
+
+  void deleteData();
+
+private:
+  qint16             *m_data = nullptr;
+  int                 m_pos = 0;
+  int                 m_size = 0;
+};
+
+
+/**
  * 
  */
 class TaudioOUT : public QObject
@@ -24,6 +70,9 @@ class TaudioOUT : public QObject
 
   Q_PROPERTY(bool playing READ playing WRITE setPlaying NOTIFY playingChanged)
   Q_PROPERTY(int beatType READ beatType WRITE setBeatType NOTIFY beatTypeChanged)
+  Q_PROPERTY(int meter READ meter WRITE setMeter NOTIFY meterChanged)
+  Q_PROPERTY(int meterCount READ meterCount WRITE setMeterCount NOTIFY meterCountChanged)
+  Q_PROPERTY(bool ring READ ring WRITE setRing NOTIFY ringChanged)
 
 public:
   TaudioOUT(QObject* parent = nullptr);
@@ -57,6 +106,15 @@ public:
   QString getBeatFileName(EbeatType bt);
   Q_INVOKABLE QString getBeatName(int bt);
 
+  int meter() const { return m_meter; }
+  void setMeter(int m);
+
+  int meterCount() const { return m_meterCount; }
+  void setMeterCount(int mc);
+
+  bool ring() const { return m_doRing; }
+  void setRing(bool r);
+
 protected:
   void createOutputDevice();  
 
@@ -64,9 +122,18 @@ signals:
   void finishSignal();
   void playingChanged();
   void beatTypeChanged();
+  void meterChanged();
+  void ringChanged();
+  void meterCountChanged();
 
 protected:
   int                  ratioOfRate; // ratio of current sample rate to 48000
+
+      /**
+       * Returns path of given file name depending on OS.
+       * Only bare file name is required, 'raw48-16' extension is added automatically
+       */
+  QString getRawFilePath(const QString& fName);
 
 private slots:
   void outCallBack(char* data, qint64 maxLen, qint64& wasRead);
@@ -85,13 +152,20 @@ private:
   QAudioOutput       *m_audioOUT;
   TaudioBuffer       *m_buffer;
   QAudioDeviceInfo    m_deviceInfo;
-  qint16             *m_beatData = nullptr;
-  int                 m_beatSamples = 0;
+
   int                 m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
   int                 m_currSample = 0;
+  bool                m_goingToStop = false;
+  int                 m_meterCount = 0;
+  TsoundData          m_beat;
+  TsoundData          m_bell;
+  bool                m_doBell = false;
+
+  // properties
   bool                m_playing = false;
   int                 m_beatType = -1;
-  bool                m_goingToStop = false;
+  int                 m_meter = 0;
+  bool                m_doRing = false;
 };
 
 #endif // TAUDIOOUT_H

@@ -91,6 +91,13 @@ Window {
             PathLine { x: 0; y: pendulum.height / 5 }
             PathLine { x: 0; y: 0 }
           }
+          Text {
+            visible: SOUND.meter > 1 && countChB.checked && SOUND.playing
+            text: SOUND.meterCount + 1
+            anchors.centerIn: parent
+            color: "white"
+            font { pixelSize: parent.height * 0.7; bold: true }
+          }
           MouseArea {
             id: countArea
             enabled: !SOUND.playing
@@ -110,25 +117,67 @@ Window {
         x: parent.width * 0.3; y: parent.height * 0.555
       }
 
+      Row {
+        anchors { bottom: sb.top; right: sb.right }
+        Label {
+          text: qsTr("meter")
+          anchors.verticalCenter: parent.verticalCenter
+        }
+        Tumbler {
+          id: meterTumb
+          width: metro.width * 0.2; height: width 
+          model: 12
+          wrap: false; visibleItemCount: 3
+          currentIndex: SOUND.meter - 1
+          onCurrentIndexChanged: SOUND.meter = currentIndex + 1
+          delegate:  Label {
+            text: modelData + 1
+            opacity: 1.0 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
+            horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
+            height: meterTumb.height / 3
+            font { pixelSize: height * 0.9; bold: true }
+          }
+        }
+      }
+
       SpinBox {
         id: sb
         height: parent.height * 0.07; width: height * 3
-        x: parent.width * 0.7 - width; y: parent.height * 0.83 - height
+        x: parent.width * 0.7 - width; y: parent.height * 0.88 - height
         font { bold: true; }
         from: 40; to: 240
         value: GLOB.tempo
         onValueModified: GLOB.tempo = value
       }
 
+      Row {
+        anchors { top: sb.bottom; right: sb.right }
+        spacing: GLOB.fontSize() * 2
+        CheckBox {
+          id: countChB
+          enabled: SOUND.meter > 1
+          text: qsTr("count")
+          checked: GLOB.countVisible
+          onToggled: GLOB.countVisible = checked
+        }
+        CheckBox {
+          id: bellChB
+          enabled: SOUND.meter > 1
+          text: qsTr("ring")
+          checked: SOUND.ring
+          onToggled: SOUND.ring = checked
+        }
+      }
+
       RoundButton {
         x: parent.width * 0.1; y: parent.height * 0.6
-        width: metro.width * 0.2; height: width
+        width: metro.width * 0.15; height: width
         radius: width / 2
         onClicked: {
           if (SOUND.playing)
             stopMetronome()
-            else
-              startMetronome()
+          else
+            startMetronome()
         }
         Rectangle {
           width: parent.height * 0.5; height: width
@@ -143,6 +192,7 @@ Window {
   MainMenuButton { x: parent.width * 0.01; y: parent.height * 0.01}
 
   function startMetronome() {
+    SOUND.meterCount = 0
     timer.toLeft = pendulum.rotation <= 0
     initAnim.to = timer.toLeft ? -35 : 35
     initAnim.duration = (30000 / GLOB.tempo) * ((35 - Math.abs(pendulum.rotation)) / 35)
