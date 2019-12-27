@@ -2,7 +2,7 @@
   <qresource prefix="/">
     <file>MainWindow.qml</file>
     <file>MainMenuButton.qml</file>
-    <file>MainDrawer.qml</file>
+    <file>MainDrawerContent.qml</file>
     <file>Logo.qml</file>
     <file>DrawerButton.qml</file>
 

@@ -12,7 +12,7 @@ AbstractButton {
 
   height: parent.height / 12; width: height / 3
 
-  property var drawer: null
+  property var drawerContent: null
 
   background: Rectangle {
     color: GLOB.alpha(activPal.text, 20)
@@ -32,11 +32,19 @@ AbstractButton {
     }
   }
 
-  onClicked: {
-    if (!drawer) {
-      var c = Qt.createComponent("qrc:/MainDrawer.qml")
-      drawer = c.createObject(mainWindow)
+  Drawer {
+    id: drawer
+    width: Math.min(mainWindow.width * 0.7, GLOB.fontSize() * 30); height: mainWindow.height
+    onAboutToShow: {
+      mainWindow.stopMetronome()
+      if (!drawerContent) {
+        var c = Qt.createComponent("qrc:/MainDrawerContent.qml")
+        drawerContent = c.createObject(drawer.contentItem)
+      }
     }
+  }
+
+  onClicked: {
     drawer.open()
   }
 }
