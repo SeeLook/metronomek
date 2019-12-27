@@ -51,6 +51,7 @@ sounds.files += Sounds/beat-classic2.raw48-16
 sounds.files += Sounds/beat-snap.raw48-16
 sounds.files += Sounds/beat-parapet.raw48-16
 sounds.files += Sounds/beat-sticks.raw48-16
+sounds.files += Sounds/bell.raw48-16
 sounds.depends += FORCE
 
 INSTALLS += sounds

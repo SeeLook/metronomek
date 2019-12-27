@@ -125,7 +125,7 @@ Window {
         }
         Tumbler {
           id: meterTumb
-          width: metro.width * 0.2; height: width 
+          width: metro.width * 0.2; height: width * (GLOB.isAndroid() ? 0.9 : 1)
           model: 12
           wrap: false; visibleItemCount: 3
           currentIndex: SOUND.meter - 1
@@ -143,7 +143,7 @@ Window {
       SpinBox {
         id: sb
         height: parent.height * 0.07; width: height * 3
-        x: parent.width * 0.7 - width; y: parent.height * 0.88 - height
+        x: parent.width * 0.7 - width; y: parent.height * (GLOB.isAndroid() ? 0.85 : 0.88) - height
         font { bold: true; }
         from: 40; to: 240
         value: SOUND.tempo

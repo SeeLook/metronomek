@@ -45,6 +45,14 @@ public:
   Q_INVOKABLE QColor alpha(const QColor& c, int a);
   Q_INVOKABLE int fontSize() const;
 
+  Q_INVOKABLE bool isAndroid() {
+#if defined (Q_OS_ANDROID)
+    return true;
+#else
+    return false;
+#endif
+  }
+
 signals:
   void dummySignal();
   void countVisibleChanged();
