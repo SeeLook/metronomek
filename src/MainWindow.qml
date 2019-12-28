@@ -47,7 +47,7 @@ Window {
         id: pendulum
         color: leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? activPal.highlight : (GLOB.stationary ? "gray" : "black")))
         width: parent.width / 20; y: parent.height * 0.125 - width / 2
-        x: parent.width * 0.3969; height: parent.height * 0.4572
+        x: parent.width * 0.3969; height: parent.height * 0.61
         radius: width / 2
         transformOrigin: Item.Bottom
 
@@ -61,12 +61,12 @@ Window {
             dragged = true
             var dev = mouse.x - width / 2
             pendulum.rotation = (Math.atan(dev / height) * 180) / Math.PI
-            leanEnough = Math.abs(dev) > height * 0.268 // 15 deg
+            leanEnough = Math.abs(dev) > height * 0.2
           }
           onReleased: {
             leanEnough = false
             dragged = false
-            if (Math.abs(mouse.x - width / 2) > height * 0.268)
+            if (Math.abs(mouse.x - width / 2) > height * 0.2)
               startMetronome()
             else
               stopMetronome()
@@ -75,8 +75,8 @@ Window {
 
         Shape {
           id: countW // counterweight
-          width: parent.width * 3; height: parent.height / 5
-          y: parent.height * (0.05 + ((SOUND.tempo - 40) / 200) * 0.6)
+          width: parent.width * 3; height: parent.width * 3
+          y: parent.height * (0.05 + ((SOUND.tempo - 40) / 200) * 0.65)
           anchors.horizontalCenter: parent.horizontalCenter
           ShapePath {
             strokeWidth: pendulum.width / 3
@@ -85,14 +85,14 @@ Window {
             capStyle: ShapePath.RoundCap; joinStyle: ShapePath.RoundJoin
             startX: 0; startY: 0
             PathLine { x: pendulum.width * 3; y: 0 }
-            PathLine { x: pendulum.width * 3; y: pendulum.height / 5 }
-            PathLine { x: pendulum.width * 2.5; y: pendulum.height / 4.2 }
-            PathLine { x: pendulum.width * 0.5; y: pendulum.height / 4.2 }
-            PathLine { x: 0; y: pendulum.height / 5 }
+            PathLine { x: pendulum.width * 3; y: pendulum.width * 2 }
+            PathLine { x: pendulum.width * 2.5; y: pendulum.width * 3 }
+            PathLine { x: pendulum.width * 0.5; y: pendulum.width * 3 }
+            PathLine { x: 0; y: pendulum.width * 2 }
             PathLine { x: 0; y: 0 }
           }
           Text {
-            visible: SOUND.meter > 1 && countChB.checked && SOUND.playing
+            visible: SOUND.meter > 1 && GLOB.countVisible && SOUND.playing
             text: SOUND.meterCount + 1
             anchors.centerIn: parent
             color: "white"
@@ -104,17 +104,17 @@ Window {
             anchors.fill: parent
             drag.target: countW
             drag.axis: Drag.YAxis
-            drag.minimumY: pendulum.height * 0.05; drag.maximumY: pendulum.height * 0.65
+            drag.minimumY: pendulum.height * 0.05; drag.maximumY: pendulum.height * 0.7
             cursorShape: drag.active ? Qt.DragMoveCursor : Qt.ArrowCursor
-            onPositionChanged: SOUND.tempo = Math.round((countW.y * 200) / (pendulum.height * 0.6) + 23)
+            onPositionChanged: SOUND.tempo = Math.round((countW.y * 200) / (pendulum.height * 0.65) + 25)
           }
         }
       }
 
       Rectangle { // cover for lover pendulum end
         color: "black"
-        width: parent.width * 0.2; height: parent.width / 28
-        x: parent.width * 0.3; y: parent.height * 0.555
+        width: parent.width * 0.2; height: parent.width / 24
+        x: parent.width * 0.3; y: parent.height * 0.703
       }
 
       Row {
@@ -125,7 +125,7 @@ Window {
         }
         Tumbler {
           id: meterTumb
-          width: metro.width * 0.2; height: width * 0.9
+          width: metro.width * 0.2; height: width * 0.8
           model: 12
           wrap: false; visibleItemCount: 3
           currentIndex: SOUND.meter - 1
@@ -143,34 +143,15 @@ Window {
       SpinBox {
         id: sb
         height: parent.height * 0.07; width: height * 3
-        x: parent.width * 0.7 - width; y: parent.height * (GLOB.isAndroid() ? 0.85 : 0.88) - height
+        x: parent.width * 0.7 - width; y: parent.height * 0.92 - height
         font { bold: true; }
         from: 40; to: 240
         value: SOUND.tempo
         onValueModified: SOUND.tempo = value
       }
 
-      Row {
-        anchors { top: sb.bottom; right: sb.right }
-        spacing: GLOB.fontSize() * 2
-        CheckBox {
-          id: countChB
-          enabled: SOUND.meter > 1
-          text: qsTr("count")
-          checked: GLOB.countVisible
-          onToggled: GLOB.countVisible = checked
-        }
-        CheckBox {
-          id: bellChB
-          enabled: SOUND.meter > 1
-          text: qsTr("ring")
-          checked: SOUND.ring
-          onToggled: SOUND.ring = checked
-        }
-      }
-
       RoundButton {
-        x: parent.width * 0.1; y: parent.height * 0.6
+        x: parent.width * 0.1; y: parent.height * 0.76
         width: metro.width * 0.15; height: width
         radius: width / 2
         onClicked: {
@@ -194,8 +175,8 @@ Window {
   function startMetronome() {
     SOUND.meterCount = 0
     timer.toLeft = pendulum.rotation <= 0
-    initAnim.to = GLOB.stationary ? 0 : (timer.toLeft ? -35 : 35)
-    initAnim.duration = (30000 / SOUND.tempo) * ((35 - Math.abs(pendulum.rotation)) / 35)
+    initAnim.to = GLOB.stationary ? 0 : (timer.toLeft ? -25 : 25)
+    initAnim.duration = (30000 / SOUND.tempo) * ((25 - Math.abs(pendulum.rotation)) / 25)
     pendAnim.stop()
     initAnim.start()
   }
@@ -203,7 +184,7 @@ Window {
   function stopMetronome() {
     SOUND.playing = false;
     finishAnim.to = 0
-    finishAnim.duration = (30000 / SOUND.tempo) * ((35 - Math.abs(pendulum.rotation)) / 35)
+    finishAnim.duration = (30000 / SOUND.tempo) * ((25 - Math.abs(pendulum.rotation)) / 25)
     pendAnim.stop()
     finishAnim.start()
   }
@@ -244,7 +225,7 @@ Window {
     }
     onTriggered: {
       pendAnim.stop()
-      pendAnim.to = toLeft ? 35 : -35
+      pendAnim.to = toLeft ? 25 : -25
       pendAnim.start()
       var currTime = new Date().getTime()
       if (elap > 0) {
@@ -257,8 +238,6 @@ Window {
       toLeft = !toLeft
     }
   }
-
-//   Component.onCompleted: {}
 
   onClosing: {
     GLOB.geometry = Qt.rect(x ,y, width, height)

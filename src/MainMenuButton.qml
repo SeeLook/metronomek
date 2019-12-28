@@ -22,13 +22,20 @@ AbstractButton {
     width: parent.width
     spacing: height / 6
     topPadding: spacing
-    Repeater {
-      model: 3
-      Rectangle {
-        width: menuButt.width / 3; height: width; radius: width / 2
-        anchors.horizontalCenter: parent.horizontalCenter
-        color: activPal.text
-      }
+    Rectangle {
+      width: menuButt.width / 3; height: width; radius: width / 2
+      anchors.horizontalCenter: parent.horizontalCenter
+      color: SOUND.ring ? "red" : activPal.text
+    }
+    Rectangle {
+      width: menuButt.width / 3; height: width; radius: width / 2
+      anchors.horizontalCenter: parent.horizontalCenter
+      color: GLOB.countVisible ? "yellow" : activPal.text
+    }
+    Rectangle {
+      width: menuButt.width / 3; height: width; radius: width / 2
+      anchors.horizontalCenter: parent.horizontalCenter
+      color: GLOB.stationary ? activPal.text : "lime"
     }
   }
 

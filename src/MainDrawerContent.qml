@@ -32,6 +32,20 @@ Column {
   }
 
   DrawerButton {
+    text: qsTr("count down visible")
+    checkable: true
+    checked: GLOB.countVisible
+    onToggled: GLOB.countVisible = checked
+  }
+
+  DrawerButton {
+    text: qsTr("ring at \"one\"")
+    checkable: true
+    checked: SOUND.ring
+    onToggled: SOUND.ring = checked
+  }
+
+  DrawerButton {
     text: qsTr("pendulum stationary")
     checkable: true
     checked: GLOB.stationary
