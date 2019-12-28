@@ -5,6 +5,8 @@
 #include "tglob.h"
 
 #include <QtCore/qsettings.h>
+#include <QtCore/qdatetime.h>
+#include <QtCore/qmath.h>
 #include <QtGui/qguiapplication.h>
 #include <QtGui/qfont.h>
 
@@ -35,6 +37,9 @@ Tglob::Tglob(QObject *parent) :
 #endif
   m_countVisible = m_settings->value(QStringLiteral("countVisible"), false).toBool();
   m_stationary = m_settings->value(QStringLiteral("pendulumStationary"), false).toBool();
+
+
+  qsrand(QDateTime::currentDateTimeUtc().toTime_t());
 }
 
 
@@ -66,6 +71,18 @@ void Tglob::setStationary(bool stat) {
 
 QColor Tglob::alpha(const QColor& c, int a) {
   return QColor(c.red(), c.green(), c.blue(), a);
+}
+
+
+QColor Tglob::randomColor(int alpha, int level) {
+  return QColor(qrand() % level, qrand() % level, qrand() % level, alpha);
+}
+
+
+qreal Tglob::logoLetterY(int letterNr, qreal r) {
+  qreal angle = qDegreesToRadians(100.0) / 9.0; // 9 - letters number - 1
+  qreal off = qDegreesToRadians(-50.0);
+  return r - qCos(off + letterNr * angle) * r;
 }
 
 

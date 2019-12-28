@@ -7,13 +7,63 @@ import QtQuick 2.12
 
 
 Rectangle {
-  width: parent.width; height: GLOB.fontSize() * 6
+  id: logo
+  width: parent.width; height: width * 0.25
   color: activPal.window
-  Text {
-    anchors.centerIn: parent
-    color: activPal.text
-    text: "MetronomeK"
-    font { pixelSize: GLOB.fontSize() * 2; bold: true }
+  clip: true
+
+  property real textW: 0
+
+  Row {
+    x: logo.width * 0.03
+    spacing: (logo.width * 0.9 - textW) / 9
+    Repeater {
+      model: [ "M", "e", " ", "r", "o", "n", "o", "m", "e", "K" ]
+      Text {
+        y: GLOB.logoLetterY(index, logo.height * 1.5)
+        rotation: -35 + index * (70 / 9)
+        color: GLOB.randomColor(); style: Text.Raised
+        text: modelData
+        font { pixelSize: logo.height * 0.4; bold: true }
+        Component.onCompleted: textW += width
+      }
+    }
   }
-  
+
+  Text {
+    anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter }
+    text: qsTr("The rhythmic<br>perfection")
+    color: activPal.text
+    font { pixelSize: logo.height * 0.15 }
+    horizontalAlignment: Text.AlignHCenter
+  }
+
+  Rectangle {
+    id: pendulum
+    color: activPal.text
+    width: logo.height * 0.1; height: logo.height * 3
+    radius: width / 2
+    x: logo.width / 2 - width / 2
+    transformOrigin: Item.Bottom
+    rotation: -21
+    Rectangle {
+      color: parent.color
+      height: parent.width * 2; width: parent.width * 3
+      radius: height / 2
+      anchors.horizontalCenter: parent.horizontalCenter
+      y: height / 2
+    }
+  }
+
+  SequentialAnimation {
+    running: drawer.visible
+    loops: Animation.Infinite
+    alwaysRunToEnd: true
+    PauseAnimation { duration: 2000 }
+    NumberAnimation { target: pendulum; property: "rotation"; to: -45; duration: 500 * (21 / 45) }
+    NumberAnimation { target: pendulum; property: "rotation"; to: 0; duration: 500 }
+    NumberAnimation { target: pendulum; property: "rotation"; to: 45; duration: 500 }
+    NumberAnimation { target: pendulum; property: "rotation"; to: 0; duration: 500 }
+    NumberAnimation { target: pendulum; property: "rotation"; to: -21; duration: 500 * (21 / 45) }
+  }
 }

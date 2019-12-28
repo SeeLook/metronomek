@@ -49,6 +49,18 @@ public:
   Q_INVOKABLE QColor alpha(const QColor& c, int a);
   Q_INVOKABLE int fontSize() const;
 
+      /**
+       * Returns randomized color, @p alpha is alpha level
+       * @p level (220 by default) determines maximal value of color [0 - 255].
+       * Using smaller value avoids generating dark colors
+       */
+  Q_INVOKABLE QColor randomColor(int alpha = 255, int level = 220);
+
+      /**
+       * Calculates Y position of a logo letter on upper part of a arch
+       */
+  Q_INVOKABLE qreal logoLetterY(int letterNr, qreal r);
+
   Q_INVOKABLE bool isAndroid() {
 #if defined (Q_OS_ANDROID)
     return true;
