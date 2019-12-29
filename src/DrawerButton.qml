@@ -19,6 +19,7 @@ AbstractButton {
       leftPadding: GLOB.fontSize()
       text: dButt.text
       textFormat: Text.StyledText
+      color: activPal.text
     }
 
     Loader {

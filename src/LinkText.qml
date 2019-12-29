@@ -8,7 +8,7 @@ import QtQuick 2.12
 
 Text {
   onLinkActivated: Qt.openUrlExternally(link)
-  color: activPal.text
+//   color: activPal.text
   MouseArea { // make hand cursor over link text
     anchors.fill: parent
     acceptedButtons: Qt.NoButton

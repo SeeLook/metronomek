@@ -311,7 +311,6 @@ void TaudioOUT::setRingType(int rt) {
     rt = 0;
   }
   if (rt != m_ringType) {
-    qDebug() << "[TaudioOUT] set ring to:" << (static_cast<EringType>(rt));
     m_ringType = rt;
     if (m_ringType == 0)
       m_ring.setFile(QString());
