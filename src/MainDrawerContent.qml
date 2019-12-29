@@ -11,7 +11,7 @@ Column {
   width: parent.width
   spacing: 1
 
-  Logo {}
+  Logo { anim {running: drawer.visible; loops: 1 }}
 
   DrawerButton {
     text: qsTr("beat sound") + ":<br>&nbsp;&nbsp;&nbsp;&nbsp;<b> - " + SOUND.getBeatName(SOUND.beatType) + "</b>"
@@ -50,6 +50,19 @@ Column {
     checkable: true
     checked: GLOB.stationary
     onToggled: GLOB.stationary = checked
+  }
+
+  DrawerButton {
+    property var infoPage: null
+    text: qsTr("about the app")
+    onClicked: {
+      if (!infoPage) {
+        var p = Qt.createComponent("qrc:/InfoPage.qml")
+        infoPage = p.createObject(mainWindow, { width: mainWindow.width, height: mainWindow.height })
+      }
+      infoPage.open()
+      drawer.close()
+    }
   }
 
 }

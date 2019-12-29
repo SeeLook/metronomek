@@ -12,6 +12,10 @@ Rectangle {
   color: activPal.window
   clip: true
 
+  property alias anim: anim
+  property int pauseDuration: 1000
+
+  // private
   property real textW: 0
 
   Row {
@@ -31,10 +35,18 @@ Rectangle {
   }
 
   Text {
+    anchors { top: parent.top; right: parent.right; margins: height / 3 }
+    text: GLOB.version()
+    color: activPal.text
+    font { pixelSize: logo.height * 0.2; bold: true }
+    horizontalAlignment: Text.AlignHCenter
+  }
+
+  Text {
     anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter }
     text: qsTr("The rhythmic<br>perfection")
     color: activPal.text
-    font { pixelSize: logo.height * 0.15 }
+    font { pixelSize: logo.height * 0.14 }
     horizontalAlignment: Text.AlignHCenter
   }
 
@@ -56,10 +68,11 @@ Rectangle {
   }
 
   SequentialAnimation {
-    running: drawer.visible
+    id: anim
+    running: true
     loops: Animation.Infinite
     alwaysRunToEnd: true
-    PauseAnimation { duration: 2000 }
+    PauseAnimation { duration: pauseDuration }
     NumberAnimation { target: pendulum; property: "rotation"; to: -45; duration: 500 * (21 / 45) }
     NumberAnimation { target: pendulum; property: "rotation"; to: 0; duration: 500 }
     NumberAnimation { target: pendulum; property: "rotation"; to: 45; duration: 500 }

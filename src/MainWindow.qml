@@ -18,10 +18,11 @@ Window {
   height: GLOB.geometry.height
   x: GLOB.geometry.x
   y: GLOB.geometry.y
-  title: qsTr("MetronomeK") + " v0.3"
+  title: qsTr("MetronomeK")
   color: activPal.base
 
   SystemPalette { id: activPal;  colorGroup: SystemPalette.Active }
+  FontMetrics { id: fm }
 
   property bool leanEnough: false // pendulum is leaned out enough to start playing
 
