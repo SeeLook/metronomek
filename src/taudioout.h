@@ -72,6 +72,7 @@ class TaudioOUT : public QObject
   Q_PROPERTY(int beatType READ beatType WRITE setBeatType NOTIFY beatTypeChanged)
   Q_PROPERTY(int meter READ meter WRITE setMeter NOTIFY meterChanged)
   Q_PROPERTY(int meterCount READ meterCount WRITE setMeterCount NOTIFY meterCountChanged)
+  Q_PROPERTY(int ringType READ ringType WRITE setRingType NOTIFY ringTypeChanged)
   Q_PROPERTY(bool ring READ ring WRITE setRing NOTIFY ringChanged)
   Q_PROPERTY(int tempo READ tempo WRITE setTempo NOTIFY tempoChanged)
 
@@ -105,6 +106,18 @@ public:
   QString getBeatFileName(EbeatType bt);
   Q_INVOKABLE QString getBeatName(int bt);
 
+  enum EringType {
+    Ring_None, Ring_Bell, Ring_Bell2, Ring_Bell3, Ring_Glass, Ring_Metal, Ring_Mug,
+    Ring_TypesCount
+  };
+  Q_ENUM(EringType)
+
+  Q_INVOKABLE int ringTypeCount() const { return static_cast<int>(Ring_TypesCount); }
+  int ringType() const { return m_ringType; }
+  void setRingType(int rt);
+  QString getRingFileName(EringType rt);
+  Q_INVOKABLE QString getRingName(int rt);
+
   int meter() const { return m_meter; }
   void setMeter(int m);
 
@@ -126,6 +139,7 @@ signals:
   void beatTypeChanged();
   void meterChanged();
   void ringChanged();
+  void ringTypeChanged();
   void meterCountChanged();
   void tempoChanged();
 
@@ -140,7 +154,6 @@ protected:
 
 private slots:
   void outCallBack(char* data, qint64 maxLen, qint64& wasRead);
-//   void updateSlot() { setAudioOutParams(); }
   void playingFinishedSlot();
   void stateChangedSlot(QAudio::State state);
   void startPlayingSlot();
@@ -161,7 +174,7 @@ private:
   bool                m_goingToStop = false;
   int                 m_meterCount = 0;
   TsoundData          m_beat;
-  TsoundData          m_bell;
+  TsoundData          m_ring;
   bool                m_doBell = false;
 
   // properties
@@ -170,6 +183,7 @@ private:
   int                 m_meter = 0;
   bool                m_doRing = false;
   int                 m_tempo = 60;
+  int                 m_ringType = 0;
 };
 
 #endif // TAUDIOOUT_H

@@ -44,8 +44,11 @@ void TsoundData::deleteData()  {
 
 
 void TsoundData::setFile(const QString& rawFileName) {
-  QFile rawFile(rawFileName);
   deleteData();
+  if (rawFileName.isEmpty())
+    return;
+
+  QFile rawFile(rawFileName);
   if (rawFile.exists()) {
       rawFile.open(QIODevice::ReadOnly);
       m_size = rawFile.size() / 2;
@@ -124,6 +127,7 @@ TaudioOUT::~TaudioOUT()
   GLOB->settings()->setValue(QStringLiteral("meter"), m_meter);
   GLOB->settings()->setValue(QStringLiteral("doRing"), m_doRing);
   GLOB->settings()->setValue(QStringLiteral("tempo"), m_tempo);
+  GLOB->settings()->setValue(QStringLiteral("ringType"), m_ringType);
 }
 
 
@@ -133,11 +137,11 @@ void TaudioOUT::init() {
       return;
   } else {
       setTempo(qBound(40, GLOB->settings()->value(QStringLiteral("tempo"), 60).toInt(), 240));
-      setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), static_cast<int>(Beat_TypesCount) - 1));
+      setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), beatTypeCount() - 1));
       setMeter(qBound(0, GLOB->settings()->value(QStringLiteral("meter"), 4).toInt(), 12));
+      setRingType(qBound(0, GLOB->settings()->value(QStringLiteral("ringType"), 0).toInt(), ringTypeCount() - 1));
       setRing(GLOB->settings()->value(QStringLiteral("doRing"), false).toBool());
       setAudioOutParams();
-      m_bell.setFile(getRawFilePath(QStringLiteral("bell")));
   }
 }
 
@@ -227,7 +231,7 @@ void TaudioOUT::outCallBack(char* data, qint64 maxLen, qint64& wasRead) {
       m_meterCount++;
       if (m_meterCount == m_meter) {
         if (m_meter > 1 && m_doRing) { // ring a bell
-          m_bell.resetPos();
+          m_ring.resetPos();
           m_doBell = true;
         }
         m_meterCount = 0;
@@ -236,10 +240,10 @@ void TaudioOUT::outCallBack(char* data, qint64 maxLen, qint64& wasRead) {
     }
     if (m_doBell) {
       if (sample)
-        sample = mix(sample, m_bell.readSample());
+        sample = mix(sample, m_ring.readSample());
       else
-        sample = m_bell.readSample();
-      if (m_bell.pos() >= m_bell.size()) {
+        sample = m_ring.readSample();
+      if (m_ring.pos() >= m_ring.size()) {
         m_doBell = false;
       }
     }
@@ -297,7 +301,45 @@ QString TaudioOUT::getBeatName(int bt) {
     QT_TRANSLATE_NOOP("BeatType", "Snapping fingers"), QT_TRANSLATE_NOOP("BeatType", "Beating at parapet"),
     QT_TRANSLATE_NOOP("BeatType", "Drum sticks")
   };
-  return QGuiApplication::translate("beatType", beatNameArr[bt]);
+  return QGuiApplication::translate("BeatType", beatNameArr[bt]);
+}
+
+
+void TaudioOUT::setRingType(int rt) {
+  if (rt < 0 || rt > ringTypeCount() - 1) {
+    qDebug() << "[TaudioOUT] Wrong ring type!" << rt << "Set to none.";
+    rt = 0;
+  }
+  if (rt != m_ringType) {
+    qDebug() << "[TaudioOUT] set ring to:" << (static_cast<EringType>(rt));
+    m_ringType = rt;
+    if (m_ringType == 0)
+      m_ring.setFile(QString());
+    else
+      m_ring.setFile(getRawFilePath(QLatin1String("ring-") + getRingFileName(static_cast<EringType>(rt))));
+    emit ringTypeChanged();
+  }
+}
+
+
+QString TaudioOUT::getRingFileName(TaudioOUT::EringType rt) {
+  static const char* const ringFileArray[static_cast<int>(Ring_TypesCount)] = {
+    "", "bell", "bell1", "bell2", "glass", "metal", "mug"
+  };
+  return QString(ringFileArray[static_cast<int>(rt)]);
+}
+
+
+QString TaudioOUT::getRingName(int rt) {
+  if (rt < 0 || rt > ringTypeCount() - 1)
+    return QString();
+  static const char* const ringNameArr[static_cast<int>(Ring_TypesCount)] = {
+    QT_TRANSLATE_NOOP("RingType", "None"), QT_TRANSLATE_NOOP("RingType", "Bell"),
+    QT_TRANSLATE_NOOP("RingType", "Other bell"), QT_TRANSLATE_NOOP("RingType", "Yet another bell"),
+    QT_TRANSLATE_NOOP("RingType", "Glass"), QT_TRANSLATE_NOOP("RingType", "Metal sheet"),
+    QT_TRANSLATE_NOOP("RingType", "Spoon at mug")
+  };
+  return QGuiApplication::translate("RingType", ringNameArr[rt]);
 }
 
 

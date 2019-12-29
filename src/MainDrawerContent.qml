@@ -32,6 +32,24 @@ Column {
   }
 
   DrawerButton {
+    text: qsTr("ring at \"one\"") + ":<br>&nbsp;&nbsp;&nbsp;&nbsp;<b> - " + SOUND.getRingName(SOUND.ringType) + "</b>"
+    onClicked: ringMenu.popup()
+
+    Menu {
+      id: ringMenu
+      Repeater {
+        model: SOUND.ringTypeCount()
+        MenuItem {
+          text: SOUND.getRingName(index)
+          onClicked: SOUND.ringType = index
+          checkable: true
+          checked: SOUND.ringType === index
+        }
+      }
+    }
+  }
+
+  DrawerButton {
     text: qsTr("count down visible")
     checkable: true
     checked: GLOB.countVisible
