@@ -3,6 +3,7 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tglob.h"
+#include "src/metronomek_conf.h"
 
 #include <QtCore/qsettings.h>
 #include <QtCore/qdatetime.h>
@@ -20,6 +21,8 @@ Tglob::Tglob(QObject *parent) :
   QObject(parent)
 {
   m_instance = this;
+
+  qDebug() << "Metronomek version:" << METRONOMEK_VERSION;
 
   QCoreApplication::setOrganizationName(QStringLiteral("Metronomek"));
   QCoreApplication::setOrganizationDomain(QStringLiteral("metronomek.seelook.org"));
@@ -88,4 +91,15 @@ qreal Tglob::logoLetterY(int letterNr, qreal r) {
 
 int Tglob::fontSize() const {
   return qApp->font().pixelSize() > 0 ? qApp->font().pixelSize() : qApp->font().pointSize();
+}
+
+
+QString Tglob::aboutQt() const {
+  return QGuiApplication::translate("QMessageBox", "<h3>About Qt</h3><p>This program uses Qt version %1.</p>").arg(qVersion())
+  .replace(QLatin1String("<p>"), QString()).replace(QLatin1String("</p>"), QString());
+}
+
+
+QString Tglob::version() const {
+  return QString(METRONOMEK_VERSION);
 }

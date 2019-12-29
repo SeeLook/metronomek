@@ -7,6 +7,9 @@ else: TARGET = metronomek
 
 TEMPLATE = app
 
+VERSION = 0.4
+QMAKE_SUBSTITUTES += src/metronomek_conf.h.in
+
 QT += multimedia widgets quick quickcontrols2
 
 CONFIG += c++11

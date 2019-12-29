@@ -60,7 +60,9 @@ public:
        * Calculates Y position of a logo letter on upper part of a arch
        */
   Q_INVOKABLE qreal logoLetterY(int letterNr, qreal r);
+  Q_INVOKABLE QString aboutQt() const;
 
+  Q_INVOKABLE QString version() const;
   Q_INVOKABLE bool isAndroid() {
 #if defined (Q_OS_ANDROID)
     return true;
