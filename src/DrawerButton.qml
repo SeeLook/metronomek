@@ -9,14 +9,14 @@ import QtQuick.Controls 2.12
 
 AbstractButton {
   id: dButt
-  width: parent.width; height: GLOB.fontSize() * 4
+  width: parent.width; height: fm.height * 3
 
   background: Rectangle {
     color: pressed ? activPal.highlight : activPal.window
     
     Text {
       anchors.verticalCenter: parent.verticalCenter
-      leftPadding: GLOB.fontSize()
+      leftPadding: fm.height
       text: dButt.text
       textFormat: Text.StyledText
       color: activPal.text

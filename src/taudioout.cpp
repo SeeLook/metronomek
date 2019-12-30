@@ -368,7 +368,7 @@ void TaudioOUT::setRing(bool r) {
 
 
 void TaudioOUT::setTempo(int t) {
-  if (t != m_tempo) {
+  if (t != m_tempo && t > 39 && t < 241) {
     m_tempo = t;
     m_samplPerBeat = (48000 * 60) / t;
     emit tempoChanged();

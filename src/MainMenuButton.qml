@@ -10,12 +10,12 @@ import QtQuick.Controls 2.12
 AbstractButton {
   id: menuButt
 
-  height: parent.height / 12; width: height / 3
+  height: parent.height / 12; width: height * 0.4
 
   property var drawerContent: null
 
   background: Rectangle {
-    color: GLOB.alpha(activPal.text, 20)
+    color: GLOB.alpha(activPal.text, pressed ? 120 : 20)
     radius: width / 4
   }
   contentItem: Column {
@@ -41,7 +41,7 @@ AbstractButton {
 
   Drawer {
     id: drawer
-    width: Math.min(mainWindow.width * 0.7, GLOB.fontSize() * 30); height: mainWindow.height
+    width: Math.min(mainWindow.width * 0.7, fm.height * 20); height: mainWindow.height
     onAboutToShow: {
       mainWindow.stopMetronome()
       if (!drawerContent) {

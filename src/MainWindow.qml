@@ -147,12 +147,20 @@ Window {
         }
       }
 
+      RoundButton {
+        x: metro.width * 0.06; y: sb.y + sb.height + metro.height * 0.01
+        height: metro.width * 0.15; width: height * 2.5
+        text: qsTr("Tap tempo")
+        onClicked: tapTempo()
+        focus: true
+      }
+
       Column {
-        x: parent.width * 0.66; y: parent.height * 0.45
+        x: parent.width * 0.67; y: parent.height * 0.45
         rotation: -30
 
         Label {
-          text: qsTr("meter")
+          text: qsTr("count to") + ":"
           anchors.right: parent.right
         }
         RoundButton {
@@ -241,6 +249,17 @@ Window {
       lag = 0
       toLeft = !toLeft
     }
+  }
+
+  Shortcut { id: spaceShort; sequence: " "; onActivated: tapTempo() }
+
+  property real lastTime: new Date().getTime()
+
+  function tapTempo() {
+    var currTime = new Date().getTime()
+    if (currTime - lastTime < 1500)
+      SOUND.tempo = Math.round(60000 / (currTime - lastTime))
+      lastTime = currTime
   }
 
   onClosing: {

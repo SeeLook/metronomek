@@ -15,10 +15,16 @@ Drawer {
   Column {
     width: parent.width
 
+    Label {
+      id: countText
+      text: qsTranslate("MainWindow", "count to") + ":"
+      anchors.horizontalCenter: parent.horizontalCenter
+    }
+
     Repeater {
       model: 12
       Button {
-        width: parent.width; height: mainWindow.height / 12
+        width: parent.width; height: (mainWindow.height - countText.height) / 12
         font.pixelSize: index > 0 ? height * 0.7 : height * 0.3
         flat: true
         text: index > 0 ? index + 1 : qsTr("none")
