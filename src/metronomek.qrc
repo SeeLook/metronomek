@@ -7,6 +7,7 @@
     <file>DrawerButton.qml</file>
     <file>InfoPage.qml</file>
     <file>LinkText.qml</file>
+    <file>MeterDrawer.qml</file>
 
     <file alias="bg.png">../Images/bg.png</file>
     <file alias="metronomek.png">../Images/metronomek.png</file>

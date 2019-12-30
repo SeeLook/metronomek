@@ -36,6 +36,7 @@ Window {
       source: "qrc:/bg.png"
       height: Math.min(parent.height, parent.width * 1.529564315352697)
       width: height * (sourceSize.width / sourceSize.height)
+      antialiasing: true
 
       MouseArea {
         id: stopArea
@@ -118,33 +119,10 @@ Window {
         x: parent.width * 0.3; y: parent.height * 0.703
       }
 
-      Row {
-        anchors { bottom: sb.top; right: sb.right }
-        Label {
-          text: qsTr("meter")
-          anchors.verticalCenter: parent.verticalCenter
-        }
-        Tumbler {
-          id: meterTumb
-          width: metro.width * 0.2; height: width * 0.8
-          model: 12
-          wrap: false; visibleItemCount: 3
-          currentIndex: SOUND.meter - 1
-          onCurrentIndexChanged: SOUND.meter = currentIndex + 1
-          delegate:  Label {
-            text: index > 0 ? index + 1 : "X"
-            opacity: 1.0 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
-            horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
-            height: meterTumb.height / 3
-            font { pixelSize: height * 0.9; bold: true }
-          }
-        }
-      }
-
       SpinBox {
         id: sb
-        height: parent.height * 0.07; width: height * 3
-        x: parent.width * 0.7 - width; y: parent.height * 0.92 - height
+        height: parent.height * 0.06; width: height * 3
+        x: parent.width * 0.75 - width; y: parent.height * 0.75
         font { bold: true; }
         from: 40; to: 240
         value: SOUND.tempo
@@ -152,7 +130,7 @@ Window {
       }
 
       RoundButton {
-        x: parent.width * 0.1; y: parent.height * 0.76
+        x: sb.x + (sb.width - width) / 2; y: sb.y + sb.height + metro.height * 0.01
         width: metro.width * 0.15; height: width
         radius: width / 2
         onClicked: {
@@ -166,6 +144,31 @@ Window {
           anchors.centerIn: parent
           radius: SOUND.playing ? 0 : width / 2
           color: SOUND.playing ? "red" : "green"
+        }
+      }
+
+      Column {
+        x: parent.width * 0.66; y: parent.height * 0.45
+        rotation: -30
+
+        Label {
+          text: qsTr("meter")
+          anchors.right: parent.right
+        }
+        RoundButton {
+          property var meterDrewer: null
+          flat: true
+          anchors.horizontalCenter: parent.horizontalCenter
+          width: height; height: metro.height * 0.08
+          font { pixelSize: height * 0.6; bold: true }
+          text: SOUND.meter > 1 ? SOUND.meter : "--"
+          onClicked: {
+            if (!meterDrewer) {
+              var m = Qt.createComponent("qrc:/MeterDrawer.qml")
+              meterDrewer = m.createObject(mainWindow)
+            }
+            meterDrewer.open()
+          }
         }
       }
     }
