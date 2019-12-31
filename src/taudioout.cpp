@@ -51,10 +51,10 @@ void TsoundData::setFile(const QString& rawFileName) {
   QFile rawFile(rawFileName);
   if (rawFile.exists()) {
       rawFile.open(QIODevice::ReadOnly);
-      m_size = rawFile.size() / 2;
+      m_size = static_cast<int>(rawFile.size() / 2);
       m_data = new qint16[m_size];
       QDataStream beatStream(&rawFile);
-      beatStream.readRawData(reinterpret_cast<char*>(m_data), rawFile.size());
+      beatStream.readRawData(reinterpret_cast<char*>(m_data), m_size * 2);
   } else {
       m_size = 0;
       qDebug() << "[TaudioOUT] sound file" << rawFileName << "doesn't exist";
@@ -381,6 +381,8 @@ void TaudioOUT::setTempo(int t) {
 QString TaudioOUT::getRawFilePath(const QString& fName) {
 #if defined (Q_OS_ANDROID)
   QString beatFileName = QStringLiteral("assets:/Sounds/");
+#elif defined (Q_OS_WIN)
+    QString beatFileName = qApp->applicationDirPath() + QLatin1String("/Sounds/");
 #else
   QString beatFileName = qApp->applicationDirPath() + QLatin1String("/share/metronomek/Sounds/");
 #endif
