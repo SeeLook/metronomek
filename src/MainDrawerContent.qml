@@ -9,9 +9,14 @@ import QtQuick.Controls 2.12
 
 Column {
   width: parent.width
-  spacing: 1
 
   Logo { anim {running: drawer.visible; loops: 1 }}
+
+  Rectangle {
+    anchors { horizontalCenter: parent.horizontalCenter }
+    width: parent.width - fm.height / 2; height: 1
+    color: activPal.text
+  }
 
   DrawerButton {
     text: qsTr("beat sound") + ":<br>&nbsp;&nbsp;&nbsp;&nbsp;<b> - " + SOUND.getBeatName(SOUND.beatType) + "</b>"

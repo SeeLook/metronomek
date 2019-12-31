@@ -9,11 +9,11 @@ import QtQuick.Controls 2.12
 
 AbstractButton {
   id: dButt
-  width: parent.width; height: fm.height * 3
+  width: parent.width; height: fm.height * 2.4
 
   background: Rectangle {
     color: pressed ? activPal.highlight : activPal.window
-    
+
     Text {
       anchors.verticalCenter: parent.verticalCenter
       leftPadding: fm.height
@@ -33,6 +33,11 @@ AbstractButton {
           dButt.toggled()
         }
       }
+    }
+    Rectangle {
+      anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter }
+      width: parent.width - fm.height / 2; height: 1
+      color: activPal.text
     }
   }
 }

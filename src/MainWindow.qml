@@ -42,7 +42,7 @@ Window {
         id: stopArea
         enabled: SOUND.playing
         width: parent.width; height: parent.height * 0.5
-        onPressAndHold: stopMetronome()
+        onDoubleClicked: stopMetronome()
       }
 
       Rectangle {
@@ -78,8 +78,9 @@ Window {
         Shape {
           id: countW // counterweight
           width: parent.width * 3; height: parent.width * 3
-          y: parent.height * (0.05 + ((SOUND.tempo - 40) / 200) * 0.65)
           anchors.horizontalCenter: parent.horizontalCenter
+          y: parent.height * (0.05 + ((SOUND.tempo - 40) / 200) * 0.65)
+          Behavior on y { NumberAnimation {} }
           ShapePath {
             strokeWidth: pendulum.width / 3
             strokeColor: countArea.containsPress ? activPal.highlight : "black"
@@ -140,7 +141,7 @@ Window {
             startMetronome()
         }
         Rectangle {
-          width: parent.height * 0.5; height: width
+          width: parent.height * 0.45; height: width
           anchors.centerIn: parent
           radius: SOUND.playing ? 0 : width / 2
           color: SOUND.playing ? "red" : "green"
@@ -149,40 +150,48 @@ Window {
 
       RoundButton {
         x: metro.width * 0.06; y: sb.y + sb.height + metro.height * 0.01
-        height: metro.width * 0.15; width: height * 2.5
+        height: metro.width * 0.13; width: height * 2.5
         text: qsTr("Tap tempo")
         onClicked: tapTempo()
         focus: true
-      }
-
-      Column {
-        x: parent.width * 0.67; y: parent.height * 0.45
-        rotation: -30
-
-        Label {
-          text: qsTr("count to") + ":"
-          anchors.right: parent.right
-        }
-        RoundButton {
-          property var meterDrewer: null
-          flat: true
-          anchors.horizontalCenter: parent.horizontalCenter
-          width: height; height: metro.height * 0.08
-          font { pixelSize: height * 0.6; bold: true }
-          text: SOUND.meter > 1 ? SOUND.meter : "--"
-          onClicked: {
-            if (!meterDrewer) {
-              var m = Qt.createComponent("qrc:/MeterDrawer.qml")
-              meterDrewer = m.createObject(mainWindow)
-            }
-            meterDrewer.open()
-          }
-        }
       }
     }
   }
 
   MainMenuButton { x: parent.width * 0.01; y: parent.height * 0.01}
+
+  AbstractButton {
+    id: cntButt
+    anchors { top: parent.top; right: parent.right; margins: fm.height / 3 }
+    width: height * 3; height: metro.height * 0.05
+    property var meterDrewer: null
+    visible: !meterDrewer || !meterDrewer.visible
+    background: Rectangle {
+      color: cntButt.pressed ? activPal.button : "transparent"
+      radius: height / 6
+      Row {
+        anchors.centerIn: parent
+        spacing: fm.height / 2
+        Text {
+          anchors.verticalCenter: parent.verticalCenter
+          text: qsTr("count to") + ":"
+        }
+        Text {
+          anchors.verticalCenter: parent.verticalCenter
+          text: SOUND.meter > 1 ? SOUND.meter : "--"
+          font { pixelSize: fm.height * 1.4; bold: true }
+          textFormat: Text.StyledText
+        }
+      }
+    }
+    onClicked: {
+      if (!meterDrewer) {
+        var m = Qt.createComponent("qrc:/MeterDrawer.qml")
+        meterDrewer = m.createObject(mainWindow)
+      }
+      meterDrewer.open()
+    }
+  }
 
   function startMetronome() {
     SOUND.meterCount = 0

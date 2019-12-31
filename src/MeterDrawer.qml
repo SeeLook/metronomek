@@ -10,7 +10,7 @@ import QtQuick.Controls 2.12
 Drawer {
   id: mDrawer
   edge: Qt.RightEdge
-  width: fm.height * 5; height: mainWindow.height
+  width: fm.height * 4; height: mainWindow.height
 
   Column {
     width: parent.width
@@ -25,7 +25,7 @@ Drawer {
       model: 12
       Button {
         width: parent.width; height: (mainWindow.height - countText.height) / 12
-        font.pixelSize: index > 0 ? height * 0.7 : height * 0.3
+        font.pixelSize: index > 0 ? height * 0.6 : height * 0.3
         flat: true
         text: index > 0 ? index + 1 : qsTr("none")
         checked: SOUND.meter === index + 1
@@ -37,5 +37,4 @@ Drawer {
       }
     }
   }
-  
 }
