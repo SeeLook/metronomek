@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tglob.h"
@@ -8,6 +8,7 @@
 
 #include <QtGui/qguiapplication.h>
 #include <QtGui/qicon.h>
+#include <QtGui/qpalette.h>
 #include <QtQml/qqmlapplicationengine.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qelapsedtimer.h>
@@ -24,6 +25,13 @@ int main(int argc, char *argv[])
 
   auto app = new QGuiApplication(argc, argv);
   app->setWindowIcon(QIcon(QStringLiteral(":/metronomek.png")));
+
+#if defined (Q_OS_ANDROID)
+  auto pal = qApp->palette();
+  pal.setColor(QPalette::Active, QPalette::Highlight, QColor(0, 160, 160)); // Teal color for highlight for Android
+  pal.setColor(QPalette::Active, QPalette::Shadow, QColor(144, 144, 144)); // Dark gray for shadow
+  qApp->setPalette(pal);
+#endif
 
   auto sound = new TaudioOUT();
   auto glob = new Tglob();
