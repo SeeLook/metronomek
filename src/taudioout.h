@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #ifndef TAUDIOOUT_H
@@ -95,7 +95,7 @@ public:
   void setPlaying(bool pl);
 
   enum EbeatType {
-    Beat_Classic, Beat_Classic2, Beat_Snap, Beat_Parapet, Beat_Sticks,
+    Beat_Classic, Beat_Classic2, Beat_Snap, Beat_Parapet, Beat_Sticks, Beat_Clap, Beat_Guitar,
     Beat_TypesCount
   };
   Q_ENUM(EbeatType)
@@ -107,7 +107,7 @@ public:
   Q_INVOKABLE QString getBeatName(int bt);
 
   enum EringType {
-    Ring_None, Ring_Bell, Ring_Bell2, Ring_Bell3, Ring_Glass, Ring_Metal, Ring_Mug,
+    Ring_None, Ring_Bell, Ring_Bell2, Ring_Bell3, Ring_Glass, Ring_Metal, Ring_Mug, Ring_Harmonic,
     Ring_TypesCount
   };
   Q_ENUM(EringType)

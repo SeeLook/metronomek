@@ -1,5 +1,5 @@
 # This file is part of Metronomek
-# Copyright (C) 2019 by Tomasz Bojczuk (seelook@gmail.com)
+# Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
 
 android: TARGET = Metronomek 
@@ -54,12 +54,15 @@ sounds.files += Sounds/beat-classic2.raw48-16
 sounds.files += Sounds/beat-snap.raw48-16
 sounds.files += Sounds/beat-parapet.raw48-16
 sounds.files += Sounds/beat-sticks.raw48-16
+sounds.files += Sounds/beat-clap.raw48-16
+sounds.files += Sounds/beat-guitar.raw48-16
 sounds.files += Sounds/ring-bell.raw48-16
 sounds.files += Sounds/ring-bell1.raw48-16
 sounds.files += Sounds/ring-bell2.raw48-16
 sounds.files += Sounds/ring-glass.raw48-16
 sounds.files += Sounds/ring-metal.raw48-16
 sounds.files += Sounds/ring-mug.raw48-16
+sounds.files += Sounds/ring-harmonic.raw48-16
 sounds.depends += FORCE
 
 INSTALLS += sounds
