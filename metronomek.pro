@@ -40,48 +40,37 @@ HEADERS += \
 
 RESOURCES += src/metronomek.qrc
 
-# Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
-
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
+else: unix:!android: target.path = /bin
+else: windows: target.path = /
 !isEmpty(target.path): INSTALLS += target
 
-sounds.path = /assets/Sounds
-sounds.files += Sounds/beat-classic.raw48-16
-sounds.files += Sounds/beat-classic2.raw48-16
-sounds.files += Sounds/beat-snap.raw48-16
-sounds.files += Sounds/beat-parapet.raw48-16
-sounds.files += Sounds/beat-sticks.raw48-16
-sounds.files += Sounds/beat-sticks2.raw48-16
-sounds.files += Sounds/beat-clap.raw48-16
-sounds.files += Sounds/beat-guitar.raw48-16
-sounds.files += Sounds/beat-drum1.raw48-16
-sounds.files += Sounds/beat-drum2.raw48-16
-sounds.files += Sounds/beat-drum3.raw48-16
-sounds.files += Sounds/beat-basedrum.raw48-16
-sounds.files += Sounds/beat-snaredrum.raw48-16
-sounds.files += Sounds/ring-bell.raw48-16
-sounds.files += Sounds/ring-bell1.raw48-16
-sounds.files += Sounds/ring-bell2.raw48-16
-sounds.files += Sounds/ring-glass.raw48-16
-sounds.files += Sounds/ring-metal.raw48-16
-sounds.files += Sounds/ring-mug.raw48-16
-sounds.files += Sounds/ring-harmonic.raw48-16
-sounds.files += Sounds/ring-hihat.raw48-16
-sounds.files += Sounds/ring-woodblock.raw48-16
+linux:!android {
+  sounds.path = /share/metronomek/Sounds
+  # build executable in scr dir to keep '../share/metronome/Sounds' path valid during debug
+  DESTDIR = src
+}
+android {
+  sounds.path = /assets/Sounds
+}
+windows {
+  sounds.path = /Sounds
+}
+sounds.files = $$files(Sounds/*.raw48-16, true)
 sounds.depends += FORCE
 
 INSTALLS += sounds
 
-DISTFILES += \
-  android/AndroidManifest.xml \
-  android/build.gradle \
-  android/gradle/wrapper/gradle-wrapper.jar \
-  android/gradle/wrapper/gradle-wrapper.properties \
-  android/gradlew \
-  android/gradlew.bat \
-  android/res/values/libs.xml
+android {
+  DISTFILES += \
+    android/AndroidManifest.xml \
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew \
+    android/gradlew.bat \
+    android/res/values/libs.xml
 
-ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+  ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+}
