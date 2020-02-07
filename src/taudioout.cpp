@@ -287,7 +287,8 @@ void TaudioOUT::setBeatType(int bt) {
 
 QString TaudioOUT::getBeatFileName(TaudioOUT::EbeatType bt) {
   static const char* const beatFileArray[static_cast<int>(Beat_TypesCount)] = {
-    "classic", "classic2", "snap", "parapet", "sticks", "clap", "guitar"
+    "classic", "classic2", "snap", "parapet", "sticks", "sticks2", "clap", "guitar",
+    "drum1", "drum2", "drum3", "basedrum", "snaredrum"
   };
   return QString(beatFileArray[static_cast<int>(bt)]);
 }
@@ -299,8 +300,10 @@ QString TaudioOUT::getBeatName(int bt) {
   static const char* const beatNameArr[static_cast<int>(Beat_TypesCount)] = {
     QT_TRANSLATE_NOOP("BeatType", "Metronome beat"), QT_TRANSLATE_NOOP("BeatType", "Metronome beat 2"),
     QT_TRANSLATE_NOOP("BeatType", "Snapping fingers"), QT_TRANSLATE_NOOP("BeatType", "Beating at parapet"),
-    QT_TRANSLATE_NOOP("BeatType", "Drum sticks"), QT_TRANSLATE_NOOP("BeatType", "Clapping"),
-    QT_TRANSLATE_NOOP("BeatType", "Guitar body")
+    QT_TRANSLATE_NOOP("BeatType", "Drum sticks"), QT_TRANSLATE_NOOP("BeatType", "Drum sticks 2"),
+    QT_TRANSLATE_NOOP("BeatType", "Clapping"), QT_TRANSLATE_NOOP("BeatType", "Guitar body"),
+    QT_TRANSLATE_NOOP("BeatType", "Drum 1"), QT_TRANSLATE_NOOP("BeatType", "Drum 2"), QT_TRANSLATE_NOOP("BeatType", "Drum 3"),
+    QT_TRANSLATE_NOOP("BeatType", "Base Drum"), QT_TRANSLATE_NOOP("BeatType", "Snare drum")
   };
   return QGuiApplication::translate("BeatType", beatNameArr[bt]);
 }
@@ -324,7 +327,7 @@ void TaudioOUT::setRingType(int rt) {
 
 QString TaudioOUT::getRingFileName(TaudioOUT::EringType rt) {
   static const char* const ringFileArray[static_cast<int>(Ring_TypesCount)] = {
-    "", "bell", "bell1", "bell2", "glass", "metal", "mug", "harmonic"
+    "", "bell", "bell1", "bell2", "glass", "metal", "mug", "harmonic", "hihat", "woodblock"
   };
   return QString(ringFileArray[static_cast<int>(rt)]);
 }
@@ -337,7 +340,8 @@ QString TaudioOUT::getRingName(int rt) {
     QT_TRANSLATE_NOOP("RingType", "None"), QT_TRANSLATE_NOOP("RingType", "Bell"),
     QT_TRANSLATE_NOOP("RingType", "Other bell"), QT_TRANSLATE_NOOP("RingType", "Yet another bell"),
     QT_TRANSLATE_NOOP("RingType", "Glass"), QT_TRANSLATE_NOOP("RingType", "Metal sheet"),
-    QT_TRANSLATE_NOOP("RingType", "Spoon at mug"), QT_TRANSLATE_NOOP("RingType", "Guitar harmonic")
+    QT_TRANSLATE_NOOP("RingType", "Spoon at mug"), QT_TRANSLATE_NOOP("RingType", "Guitar harmonic"),
+    QT_TRANSLATE_NOOP("RingType", "Hi hat"), QT_TRANSLATE_NOOP("RingType", "Woodblock")
   };
   return QGuiApplication::translate("RingType", ringNameArr[rt]);
 }

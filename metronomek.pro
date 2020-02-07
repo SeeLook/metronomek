@@ -2,7 +2,7 @@
 # Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
 
-android: TARGET = Metronomek 
+android: TARGET = Metronomek
 else: TARGET = metronomek
 
 TEMPLATE = app
@@ -54,8 +54,14 @@ sounds.files += Sounds/beat-classic2.raw48-16
 sounds.files += Sounds/beat-snap.raw48-16
 sounds.files += Sounds/beat-parapet.raw48-16
 sounds.files += Sounds/beat-sticks.raw48-16
+sounds.files += Sounds/beat-sticks2.raw48-16
 sounds.files += Sounds/beat-clap.raw48-16
 sounds.files += Sounds/beat-guitar.raw48-16
+sounds.files += Sounds/beat-drum1.raw48-16
+sounds.files += Sounds/beat-drum2.raw48-16
+sounds.files += Sounds/beat-drum3.raw48-16
+sounds.files += Sounds/beat-basedrum.raw48-16
+sounds.files += Sounds/beat-snaredrum.raw48-16
 sounds.files += Sounds/ring-bell.raw48-16
 sounds.files += Sounds/ring-bell1.raw48-16
 sounds.files += Sounds/ring-bell2.raw48-16
@@ -63,6 +69,8 @@ sounds.files += Sounds/ring-glass.raw48-16
 sounds.files += Sounds/ring-metal.raw48-16
 sounds.files += Sounds/ring-mug.raw48-16
 sounds.files += Sounds/ring-harmonic.raw48-16
+sounds.files += Sounds/ring-hihat.raw48-16
+sounds.files += Sounds/ring-woodblock.raw48-16
 sounds.depends += FORCE
 
 INSTALLS += sounds

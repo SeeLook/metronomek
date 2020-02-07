@@ -95,7 +95,12 @@ public:
   void setPlaying(bool pl);
 
   enum EbeatType {
-    Beat_Classic, Beat_Classic2, Beat_Snap, Beat_Parapet, Beat_Sticks, Beat_Clap, Beat_Guitar,
+    Beat_Classic, Beat_Classic2,
+    Beat_Snap, Beat_Parapet,
+    Beat_Sticks, Beat_Sticks2,
+    Beat_Clap, Beat_Guitar,
+    Beat_Drum1, Beat_Drum2, Beat_Drum3,
+    Beat_BaseDrum, Beat_SnareDrum,
     Beat_TypesCount
   };
   Q_ENUM(EbeatType)
@@ -108,6 +113,7 @@ public:
 
   enum EringType {
     Ring_None, Ring_Bell, Ring_Bell2, Ring_Bell3, Ring_Glass, Ring_Metal, Ring_Mug, Ring_Harmonic,
+    Ring_HiHat, Ring_WoodBlock,
     Ring_TypesCount
   };
   Q_ENUM(EringType)
