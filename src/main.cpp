@@ -3,7 +3,6 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tglob.h"
-#include "tmetroitem.h"
 #include "taudioout.h"
 
 #include <QtGui/qguiapplication.h>
@@ -45,7 +44,6 @@ int main(int argc, char *argv[])
 
   engine->rootContext()->setContextProperty(QStringLiteral("GLOB"), glob);
   engine->rootContext()->setContextProperty(QStringLiteral("SOUND"), sound);
-  qmlRegisterType<TmetroItem>("Metronomek", 1, 0, "TmetroItem");
   engine->load(url);
 
   qDebug() << "==== METRONOMEK LAUNCH TIME" << startElapsed.nsecsElapsed() / 1000000.0 << "[ms] ====";
