@@ -28,12 +28,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         src/main.cpp \
         src/tglob.cpp \
-        src/tmetroitem.cpp \
         src/taudioout.cpp \
 
 HEADERS += \
         src/tglob.h \
-        src/tmetroitem.h \
         src/taudiobuffer.h \
         src/taudioout.h \
 
