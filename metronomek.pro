@@ -47,9 +47,24 @@ else: windows: target.path = /
 !isEmpty(target.path): INSTALLS += target
 
 linux:!android {
-  sounds.path = /share/metronomek/Sounds
   # build executable in scr dir to keep '../share/metronome/Sounds' path valid during debug
   DESTDIR = src
+  sounds.path = /share/metronomek/Sounds
+  icon16.path = /share/icons/hicolor/16x16/apps
+  icon16.files = Images/hicolor/16x16/apps/metronomek.png
+  icon24.path = /share/icons/hicolor/24x24/apps
+  icon24.files = Images/hicolor/24x24/apps/metronomek.png
+  icon32.path = /share/icons/hicolor/32x32/apps
+  icon32.files = Images/hicolor/32x32/apps/metronomek.png
+  icon48.path = /share/icons/hicolor/48x48/apps
+  icon48.files = Images/hicolor/48x48/apps/metronomek.png
+  icon64.path = /share/icons/hicolor/64x64/apps
+  icon64.files = Images/hicolor/64x64/apps/metronomek.png
+  icon128.path = /share/icons/hicolor/128x128/apps
+  icon128.files = Images/hicolor/128x128/apps/metronomek.png
+  icon256.path = /share/icons/hicolor/256x256/apps
+  icon256.files = Images/hicolor/256x256/apps/metronomek.png
+  INSTALLS += icon16 icon24 icon32 icon48 icon64 icon128 icon256
 }
 android {
   sounds.path = /assets/Sounds
