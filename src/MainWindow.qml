@@ -8,7 +8,6 @@ import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Shapes 1.12
 
-import Metronomek 1.0
 
 Window {
   id: mainWindow
@@ -26,135 +25,130 @@ Window {
 
   property bool leanEnough: false // pendulum is leaned out enough to start playing
 
-  TmetroItem {
-//     id: metro
-    anchors.fill: parent
+  Image {
+    id: metro
+    anchors.centerIn: parent
+    source: "qrc:/bg.png"
+    height: Math.min(parent.height, parent.width * 1.529564315352697)
+    width: height * (sourceSize.width / sourceSize.height)
+    antialiasing: true
 
-    Image {
-      id: metro
-      anchors.centerIn: parent
-      source: "qrc:/bg.png"
-      height: Math.min(parent.height, parent.width * 1.529564315352697)
-      width: height * (sourceSize.width / sourceSize.height)
-      antialiasing: true
+    MouseArea {
+      id: stopArea
+      enabled: SOUND.playing
+      width: parent.width; height: parent.height * 0.5
+      onDoubleClicked: stopMetronome()
+    }
+
+    Rectangle {
+      id: pendulum
+      color: leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? activPal.highlight : (GLOB.stationary ? "gray" : "black")))
+      width: parent.width / 20; y: parent.height * 0.125 - width / 2
+      x: parent.width * 0.3969; height: parent.height * 0.6
+      radius: width / 2
+      transformOrigin: Item.Bottom
 
       MouseArea {
-        id: stopArea
-        enabled: SOUND.playing
-        width: parent.width; height: parent.height * 0.5
-        onDoubleClicked: stopMetronome()
-      }
-
-      Rectangle {
-        id: pendulum
-        color: leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? activPal.highlight : (GLOB.stationary ? "gray" : "black")))
-        width: parent.width / 20; y: parent.height * 0.125 - width / 2
-        x: parent.width * 0.3969; height: parent.height * 0.61
-        radius: width / 2
-        transformOrigin: Item.Bottom
-
-        MouseArea {
-          id: pendArea
-          property bool dragged: false
-          enabled: !SOUND.playing
-          width: parent.width * 3; height: parent.height; x: -parent.width
-          cursorShape: dragged ? Qt.DragMoveCursor : Qt.ArrowCursor
-          onPositionChanged: {
-            dragged = true
-            var dev = mouse.x - width / 2
-            pendulum.rotation = (Math.atan(dev / height) * 180) / Math.PI
-            leanEnough = Math.abs(dev) > height * 0.2
-          }
-          onReleased: {
-            leanEnough = false
-            dragged = false
-            if (Math.abs(mouse.x - width / 2) > height * 0.2)
-              startMetronome()
-            else
-              stopMetronome()
-          }
+        id: pendArea
+        property bool dragged: false
+        enabled: !SOUND.playing
+        width: parent.width * 3; height: parent.height; x: -parent.width
+        cursorShape: dragged ? Qt.DragMoveCursor : Qt.ArrowCursor
+        onPositionChanged: {
+          dragged = true
+          var dev = mouse.x - width / 2
+          pendulum.rotation = (Math.atan(dev / height) * 180) / Math.PI
+          leanEnough = Math.abs(dev) > height * 0.2
         }
-
-        Shape {
-          id: countW // counterweight
-          width: parent.width * 3; height: parent.width * 3
-          anchors.horizontalCenter: parent.horizontalCenter
-          y: parent.height * (0.05 + ((SOUND.tempo - 40) / 200) * 0.65)
-          Behavior on y { NumberAnimation {} }
-          ShapePath {
-            strokeWidth: pendulum.width / 3
-            strokeColor: countArea.containsPress ? activPal.highlight : "black"
-            fillColor: "gray"
-            capStyle: ShapePath.RoundCap; joinStyle: ShapePath.RoundJoin
-            startX: 0; startY: 0
-            PathLine { x: pendulum.width * 3; y: 0 }
-            PathLine { x: pendulum.width * 3; y: pendulum.width * 2 }
-            PathLine { x: pendulum.width * 2.5; y: pendulum.width * 3 }
-            PathLine { x: pendulum.width * 0.5; y: pendulum.width * 3 }
-            PathLine { x: 0; y: pendulum.width * 2 }
-            PathLine { x: 0; y: 0 }
-          }
-          Text {
-            visible: SOUND.meter > 1 && GLOB.countVisible && SOUND.playing
-            text: SOUND.meterCount + 1
-            anchors.centerIn: parent
-            color: "white"
-            font { pixelSize: parent.height * 0.7; bold: true }
-          }
-          MouseArea {
-            id: countArea
-            enabled: !SOUND.playing || GLOB.stationary
-            anchors.fill: parent
-            drag.target: countW
-            drag.axis: Drag.YAxis
-            drag.minimumY: pendulum.height * 0.05; drag.maximumY: pendulum.height * 0.7
-            cursorShape: drag.active ? Qt.DragMoveCursor : Qt.ArrowCursor
-            onPositionChanged: SOUND.tempo = Math.round((countW.y * 200) / (pendulum.height * 0.65) + 25)
-          }
-        }
-      }
-
-      Rectangle { // cover for lover pendulum end
-        color: "black"
-        width: parent.width * 0.2; height: parent.width / 24
-        x: parent.width * 0.3; y: parent.height * 0.703
-      }
-
-      SpinBox {
-        id: sb
-        height: parent.height * 0.06; width: height * 3
-        x: parent.width * 0.75 - width; y: parent.height * 0.75
-        font { bold: true; }
-        from: 40; to: 240
-        value: SOUND.tempo
-        onValueModified: SOUND.tempo = value
-      }
-
-      RoundButton {
-        x: sb.x + (sb.width - width) / 2; y: sb.y + sb.height + metro.height * 0.01
-        width: metro.width * 0.15; height: width
-        radius: width / 2
-        onClicked: {
-          if (SOUND.playing)
-            stopMetronome()
-          else
+        onReleased: {
+          leanEnough = false
+          dragged = false
+          if (Math.abs(mouse.x - width / 2) > height * 0.2)
             startMetronome()
-        }
-        Rectangle {
-          width: parent.height * 0.45; height: width
-          anchors.centerIn: parent
-          radius: SOUND.playing ? 0 : width / 2
-          color: SOUND.playing ? "red" : "green"
+          else
+            stopMetronome()
         }
       }
 
-      RoundButton {
-        x: metro.width * 0.06; y: sb.y + sb.height + metro.height * 0.01
-        height: metro.width * 0.13; width: height * 2.5
-        text: qsTr("Tap tempo")
-        onClicked: tapTempo()
-        focus: true
+      Shape {
+        id: countW // counterweight
+        width: parent.width * 3; height: parent.width * 3
+        anchors.horizontalCenter: parent.horizontalCenter
+        y: parent.height * (0.05 + ((SOUND.tempo - 40) / 200) * 0.65)
+        Behavior on y { NumberAnimation {} }
+        ShapePath {
+          strokeWidth: pendulum.width / 3
+          strokeColor: countArea.containsPress ? activPal.highlight : "black"
+          fillColor: "gray"
+          capStyle: ShapePath.RoundCap; joinStyle: ShapePath.RoundJoin
+          startX: 0; startY: 0
+          PathLine { x: pendulum.width * 3; y: 0 }
+          PathLine { x: pendulum.width * 3; y: pendulum.width * 2 }
+          PathLine { x: pendulum.width * 2.5; y: pendulum.width * 3 }
+          PathLine { x: pendulum.width * 0.5; y: pendulum.width * 3 }
+          PathLine { x: 0; y: pendulum.width * 2 }
+          PathLine { x: 0; y: 0 }
+        }
+        Text {
+          visible: SOUND.meter > 1 && GLOB.countVisible && SOUND.playing
+          text: SOUND.meterCount + 1
+          anchors.centerIn: parent
+          color: "white"
+          font { pixelSize: parent.height * 0.7; bold: true }
+        }
+        MouseArea {
+          id: countArea
+          enabled: !SOUND.playing || GLOB.stationary
+          anchors.fill: parent
+          drag.target: countW
+          drag.axis: Drag.YAxis
+          drag.minimumY: pendulum.height * 0.05; drag.maximumY: pendulum.height * 0.7
+          cursorShape: drag.active ? Qt.DragMoveCursor : Qt.ArrowCursor
+          onPositionChanged: SOUND.tempo = Math.round((countW.y * 200) / (pendulum.height * 0.65) + 25)
+        }
       }
+    }
+
+    Rectangle { // cover for lover pendulum end
+      color: "black"
+      width: parent.width * 0.2; height: parent.width / 24
+      x: parent.width * 0.3; y: parent.height * 0.703
+    }
+
+    SpinBox {
+      id: sb
+      height: parent.height * 0.06; width: height * 3
+      x: parent.width * 0.75 - width; y: parent.height * 0.75
+      font { bold: true; }
+      from: 40; to: 240
+      value: SOUND.tempo
+      onValueModified: SOUND.tempo = value
+    }
+
+    RoundButton {
+      x: sb.x + (sb.width - width) / 2; y: sb.y + sb.height + metro.height * 0.01
+      width: metro.width * 0.15; height: width
+      radius: width / 2
+      onClicked: {
+        if (SOUND.playing)
+          stopMetronome()
+        else
+          startMetronome()
+      }
+      Rectangle {
+        width: parent.height * 0.45; height: width
+        anchors.centerIn: parent
+        radius: SOUND.playing ? 0 : width / 2
+        color: SOUND.playing ? "red" : "green"
+      }
+    }
+
+    RoundButton {
+      x: metro.width * 0.06; y: sb.y + sb.height + metro.height * 0.01
+      height: metro.width * 0.13; width: height * 2.5
+      text: qsTr("Tap tempo")
+      onClicked: tapTempo()
+      focus: true
     }
   }
 
