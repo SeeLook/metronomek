@@ -64,7 +64,10 @@ linux:!android {
   icon128.files = Images/hicolor/128x128/apps/metronomek.png
   icon256.path = /share/icons/hicolor/256x256/apps
   icon256.files = Images/hicolor/256x256/apps/metronomek.png
-  INSTALLS += icon16 icon24 icon32 icon48 icon64 icon128 icon256
+
+  desktop.path = /share/applications
+  desktop.files = installs/metronomek.desktop
+  INSTALLS += icon16 icon24 icon32 icon48 icon64 icon128 icon256 desktop
 }
 android {
   sounds.path = /assets/Sounds
