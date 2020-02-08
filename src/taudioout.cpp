@@ -13,6 +13,7 @@
 #include <QtCore/qfile.h>
 #include <QtCore/qdatastream.h>
 #include <QtCore/qsettings.h>
+#include <QtCore/qmath.h>
 
 #include <QtCore/qdebug.h>
 
@@ -207,7 +208,7 @@ void TaudioOUT::createOutputDevice() {
 
 
 void TaudioOUT::startTicking() {
-  startPlayingSlot();  
+  startPlayingSlot();
 }
 
 
@@ -215,20 +216,36 @@ void TaudioOUT::startPlayingSlot() {
   if (m_audioOUT->state() != QAudio::ActiveState) {
     m_currSample = 0;
     m_meterCount = 0;
+    m_offsetCounter = 0.0;
+    m_missingSampleNr = 0;
     m_audioOUT->start(m_buffer);
   }
 }
 
-
+/**
+ * When @p m_offsetSample is greater than 0 - means length of single beat @p m_samplPerBeat (samples number)
+ * is not exactly as tempo so after some (plenty) ticks it will shift in real time.
+ * To avoid that @p m_missingSampleNr adds single sample length to @p m_samplPerBeat
+ * every whole integer summed with @p m_offsetSample
+ */
 void TaudioOUT::outCallBack(char* data, qint64 maxLen, qint64& wasRead) {
   qint16 sample = 0;
   auto out = reinterpret_cast<qint16*>(data);
   for (int i = 0; i < (maxLen / 2); i++) {
     sample = m_beat.sampleAt(m_currSample);
     m_currSample++;
-    if (m_currSample >= m_samplPerBeat) {
+    if (m_currSample >= m_samplPerBeat + m_missingSampleNr) {
       m_currSample = 0;
       m_meterCount++;
+      if (m_offsetSample != 0.0) {
+        m_offsetCounter += m_offsetSample;
+        if (m_offsetCounter > 1.0) {
+            m_missingSampleNr = qFloor(m_offsetCounter);
+            m_offsetCounter = m_offsetCounter - static_cast<qreal>(m_missingSampleNr);
+        } else {
+            m_missingSampleNr = 0;
+        }
+      }
       if (m_meterCount == m_meter) {
         if (m_meter > 1 && m_doRing) { // ring a bell
           m_ring.resetPos();
@@ -376,6 +393,9 @@ void TaudioOUT::setTempo(int t) {
   if (t != m_tempo && t > 39 && t < 241) {
     m_tempo = t;
     m_samplPerBeat = (48000 * 60) / t;
+    m_offsetSample = static_cast<qreal>((60 * 48000) - m_samplPerBeat * t) / static_cast<qreal>(t);
+    m_offsetCounter = 0.0;
+    m_missingSampleNr = 0;
     emit tempoChanged();
   }
 }

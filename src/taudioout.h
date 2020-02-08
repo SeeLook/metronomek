@@ -62,7 +62,7 @@ private:
 
 
 /**
- * 
+ * Class that manages selected beat samples to Qt audio output
  */
 class TaudioOUT : public QObject
 {
@@ -137,7 +137,7 @@ public:
   void setTempo(int t);
 
 protected:
-  void createOutputDevice();  
+  void createOutputDevice();
 
 signals:
   void finishSignal();
@@ -182,6 +182,9 @@ private:
   TsoundData          m_beat;
   TsoundData          m_ring;
   bool                m_doBell = false;
+  qreal               m_offsetSample = 0.0;
+  qreal               m_offsetCounter = 0.0;
+  int                 m_missingSampleNr = 0;
 
   // properties
   bool                m_playing = false;
