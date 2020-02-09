@@ -16,6 +16,32 @@ class QSettings;
 #define GLOB (Tglob::instance())
 
 
+class Ttempo {
+
+  Q_GADGET
+
+  Q_PROPERTY(QString name READ name)
+  Q_PROPERTY(int low READ low)
+  Q_PROPERTY(int hi READ hi)
+  Q_PROPERTY(int mid READ mid)
+
+public:
+  Ttempo() {}
+  Ttempo(const QString& italianName, quint8 lowVal, quint8 hiVal) :
+    m_name(italianName), m_low(lowVal), m_hi(hiVal) {}
+
+  QString name() const { return m_name; }
+  int low() const { return m_low; }
+  int hi() const { return m_hi; }
+  int mid() const { return low() + (hi() - low()) / 2; }
+
+private:
+  QString     m_name;
+  quint8      m_low = 0;
+  quint8      m_hi = 0;
+};
+
+
 /**
  * Globally available object with common properties and helpers.
  * It keeps @p QSettings instance accessible through @p settings()
@@ -45,6 +71,9 @@ public:
 
   bool stationary() const { return m_stationary;}
   void setStationary(bool stat);
+
+  Q_INVOKABLE Ttempo tempoName(int id) { return m_tempoList[id]; }
+  Q_INVOKABLE int temposCount() const { return m_tempoList.count(); }
 
   Q_INVOKABLE QColor alpha(const QColor& c, int a);
   Q_INVOKABLE int fontSize() const;
@@ -77,11 +106,15 @@ signals:
   void stationaryChanged();
 
 private:
+  void createTempoList();
+
+private:
   static Tglob       *m_instance;
   QSettings          *m_settings;
   QRect               m_geometry;
   bool                m_countVisible;
   bool                m_stationary;
+  QList<Ttempo>       m_tempoList;
 };
 
 #endif // TGLOB_H

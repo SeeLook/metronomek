@@ -75,6 +75,7 @@ class TaudioOUT : public QObject
   Q_PROPERTY(int ringType READ ringType WRITE setRingType NOTIFY ringTypeChanged)
   Q_PROPERTY(bool ring READ ring WRITE setRing NOTIFY ringChanged)
   Q_PROPERTY(int tempo READ tempo WRITE setTempo NOTIFY tempoChanged)
+  Q_PROPERTY(int nameTempoId READ nameTempoId NOTIFY nameTempoIdChanged)
 
 public:
   TaudioOUT(QObject* parent = nullptr);
@@ -136,8 +137,9 @@ public:
   int tempo() const { return m_tempo; }
   void setTempo(int t);
 
-protected:
-  void createOutputDevice();
+  int nameTempoId() const { return m_nameTempoId; }
+
+  Q_INVOKABLE QString getTempoNameById(int nameId);
 
 signals:
   void finishSignal();
@@ -148,6 +150,7 @@ signals:
   void ringTypeChanged();
   void meterCountChanged();
   void tempoChanged();
+  void nameTempoIdChanged();
 
 protected:
   int                  ratioOfRate; // ratio of current sample rate to 48000
@@ -157,6 +160,11 @@ protected:
        * Only bare file name is required, 'raw48-16' extension is added automatically
        */
   QString getRawFilePath(const QString& fName);
+
+  void createOutputDevice();
+
+  void setNameTempoId(int ntId);
+  void setNameIdByTempo(int t);
 
 private slots:
   void outCallBack(char* data, qint64 maxLen, qint64& wasRead);
@@ -193,6 +201,7 @@ private:
   bool                m_doRing = false;
   int                 m_tempo = 60;
   int                 m_ringType = 0;
+  int                 m_nameTempoId = 4;
 };
 
 #endif // TAUDIOOUT_H

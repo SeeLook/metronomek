@@ -397,8 +397,15 @@ void TaudioOUT::setTempo(int t) {
     m_offsetCounter = 0.0;
     m_missingSampleNr = 0;
     emit tempoChanged();
+    setNameIdByTempo(m_tempo);
   }
 }
+
+
+QString TaudioOUT::getTempoNameById(int nameId) {
+  return nameId < GLOB->temposCount() ? GLOB->tempoName(nameId).name() : QString();
+}
+
 
 //#################################################################################################
 //###################                PROTECTED         ############################################
@@ -412,4 +419,22 @@ QString TaudioOUT::getRawFilePath(const QString& fName) {
   QString beatFileName = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/Sounds/");
 #endif
   return beatFileName + fName +  QLatin1String(".raw48-16");
+}
+
+
+void TaudioOUT::setNameTempoId(int ntId) {
+  if (ntId != m_nameTempoId) {
+    m_nameTempoId = ntId;
+    emit nameTempoIdChanged();
+  }
+}
+
+
+void TaudioOUT::setNameIdByTempo(int t) {
+  for (int i = 0; i < GLOB->temposCount(); ++i) {
+    if (t < GLOB->tempoName(i).hi()) {
+      setNameTempoId(i);
+      return;
+    }
+  }
 }

@@ -24,6 +24,7 @@ Window {
   FontMetrics { id: fm }
 
   property bool leanEnough: false // pendulum is leaned out enough to start playing
+  property alias counterPressed: countArea.containsPress
 
   Image {
     id: metro
@@ -32,6 +33,32 @@ Window {
     height: Math.min(parent.height, parent.width * 1.529564315352697)
     width: height * (sourceSize.width / sourceSize.height)
     antialiasing: true
+
+    Rectangle {
+      id: tLabel
+      x: parent.width * 0.295; y: parent.height * 0.099
+      width: parent.width * 0.26; height: parent.height * 0.58
+      color: "#999999"
+      radius: width / 15
+      border { width: tLabel.width / 40; color: "#a0a0a0" }
+    }
+
+    Repeater {
+      model: GLOB.temposCount()
+      Text {
+        z: mainWindow.counterPressed && index === SOUND.nameTempoId ? 10 : 1
+        scale: mainWindow.counterPressed && index === SOUND.nameTempoId ? 2.5 : 1
+        x: tLabel.x + (index % 2 ? (mainWindow.counterPressed && index === SOUND.nameTempoId ? -width: tLabel.width / 30)
+        : (mainWindow.counterPressed && index === SOUND.nameTempoId ? tLabel.width: tLabel.width * 0.967 - width))
+        y: tLabel.y + (GLOB.tempoName(index).mid / 200.0) * tLabel.height * 0.9 - tLabel.height * 0.1 - height / 2
+        text: GLOB.tempoName(index).name
+        font { pixelSize: tLabel.height / (index === SOUND.nameTempoId ? 35 : 45); bold: index === SOUND.nameTempoId }
+        color: mainWindow.counterPressed && index === SOUND.nameTempoId ? "green" : "white"
+        Behavior on x { NumberAnimation {} }
+        Behavior on scale { NumberAnimation {} }
+        Behavior on color { ColorAnimation{} }
+      }
+    }
 
     MouseArea {
       id: stopArea
@@ -42,8 +69,9 @@ Window {
 
     Rectangle {
       id: pendulum
+      z: 5
       color: leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? activPal.highlight : (GLOB.stationary ? "gray" : "black")))
-      width: parent.width / 20; y: parent.height * 0.125 - width / 2
+      width: parent.width / 20; y: parent.height * 0.132 - width / 2
       x: parent.width * 0.3969; height: parent.height * 0.6
       radius: width / 2
       transformOrigin: Item.Bottom
@@ -141,6 +169,12 @@ Window {
         radius: SOUND.playing ? 0 : width / 2
         color: SOUND.playing ? "red" : "green"
       }
+    }
+
+    Text {
+      x: metro.width * 0.12; y: sb.y + (sb.height - height) / 2
+      text: SOUND.getTempoNameById(SOUND.nameTempoId)
+      font { pixelSize: metro.height / 50; bold: true }
     }
 
     RoundButton {
