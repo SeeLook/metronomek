@@ -41,6 +41,17 @@ Window {
       color: "#999999"
       radius: width / 15
       border { width: tLabel.width / 40; color: "#a0a0a0" }
+      clip: true
+      Rectangle {
+        z: 4
+        color: "#30555555"
+        width: pendulum.width; height: pendulum.height
+        x: pendulum.x - tLabel.x + pendulum.width / 2
+        y: pendulum.y - tLabel.y + pendulum.width / 2
+        radius: pendulum.radius
+        transformOrigin: Item.Bottom
+        rotation: pendulum.rotation
+      }
     }
 
     Repeater {
