@@ -81,14 +81,17 @@ public:
   TaudioOUT(QObject* parent = nullptr);
   ~TaudioOUT() override;
 
-  static QStringList getAudioDevicesList();
-  static QString outputName() { return m_devName; }
   static TaudioOUT* instance() { return m_instance; }
 
   void init();
 
+  Q_INVOKABLE static QStringList getAudioDevicesList();
+  Q_INVOKABLE static QString outputName() { return m_devName; }
+
   Q_INVOKABLE void startTicking();
   Q_INVOKABLE void stopTicking();
+
+  Q_INVOKABLE void setDeviceName(const QString& devName);
 
   void setAudioOutParams();
 

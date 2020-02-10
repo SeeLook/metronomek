@@ -81,6 +81,15 @@ Flickable {
     }
 
     DrawerButton {
+      text: qsTr("settings")
+      onClicked: {
+        var s = Qt.createComponent("qrc:/SettingsPage.qml")
+        s.createObject(mainWindow, { width: mainWindow.width, height: mainWindow.height })
+        drawer.close()
+      }
+    }
+
+    DrawerButton {
       property var infoPage: null
       text: qsTr("about the app")
       onClicked: {

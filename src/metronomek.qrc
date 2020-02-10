@@ -6,6 +6,7 @@
     <file>Logo.qml</file>
     <file>DrawerButton.qml</file>
     <file>InfoPage.qml</file>
+    <file>SettingsPage.qml</file>
     <file>LinkText.qml</file>
     <file>MeterDrawer.qml</file>
 

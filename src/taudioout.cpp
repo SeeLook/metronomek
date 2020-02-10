@@ -124,6 +124,7 @@ TaudioOUT::~TaudioOUT()
     delete m_audioOUT;
     delete m_buffer;
   }
+  GLOB->settings()->setValue(QStringLiteral("outDevice"), m_devName);
   GLOB->settings()->setValue(QStringLiteral("beatType"), m_beatType);
   GLOB->settings()->setValue(QStringLiteral("meter"), m_meter);
   GLOB->settings()->setValue(QStringLiteral("doRing"), m_doRing);
@@ -142,13 +143,21 @@ void TaudioOUT::init() {
       setMeter(qBound(0, GLOB->settings()->value(QStringLiteral("meter"), 4).toInt(), 12));
       setRingType(qBound(0, GLOB->settings()->value(QStringLiteral("ringType"), 0).toInt(), ringTypeCount() - 1));
       setRing(GLOB->settings()->value(QStringLiteral("doRing"), false).toBool());
+      m_devName = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();
       setAudioOutParams();
   }
 }
 
 
+void TaudioOUT::setDeviceName(const QString& devName) {
+  if (devName != m_devName) {
+    m_devName = devName;
+    createOutputDevice();
+  }
+}
+
+
 void TaudioOUT::setAudioOutParams() {
-//   if (m_audioParams->OUTdevName != m_devName)
     createOutputDevice();
 }
 
@@ -167,7 +176,6 @@ void TaudioOUT::createOutputDevice() {
   m_deviceInfo = QAudioDeviceInfo::defaultOutputDevice();
   auto devList = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
   for (int i = 0; i < devList.size(); ++i) { // find device with name or keep default one
-//     if (devList[i].deviceName() == m_audioParams->OUTdevName) {
     if (devList[i].deviceName() == m_devName) {
       m_deviceInfo = devList[i];
       break;
