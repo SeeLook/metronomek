@@ -21,7 +21,7 @@ Dialog {
     clip: true
     ScrollBar.vertical: ScrollBar { active: true; visible: true }
     contentWidth: parent.width; contentHeight: col.height
-    
+
     Column {
       id: col
       width: parent.width
@@ -67,6 +67,6 @@ Dialog {
 
     }
   } // Flickable
- 
+
   standardButtons: Dialog.Ok
 }
