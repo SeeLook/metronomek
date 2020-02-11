@@ -35,6 +35,12 @@ HEADERS += \
         src/taudiobuffer.h \
         src/taudioout.h \
 
+android {
+  QT += androidextras
+  SOURCES += src/android/tandroid.cpp\
+
+  HEADERS += src/android/tandroid.h\
+}
 
 RESOURCES += src/metronomek.qrc
 
