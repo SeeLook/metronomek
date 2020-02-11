@@ -12,6 +12,8 @@ import QtQuick.Shapes 1.12
 Window {
   id: mainWindow
 
+  visibility: GLOB.isAndroid() && GLOB.fullScreen() ? "FullScreen" : "AutomaticVisibility"
+
   visible: true
   width: GLOB.geometry.width
   height: GLOB.geometry.height

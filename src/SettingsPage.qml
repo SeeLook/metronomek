@@ -18,9 +18,12 @@ Dialog {
     Column {
       id: col
       width: parent.width
+      spacing: GLOB.fontSize()
+
       Row {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: GLOB.fontSize()
+        visible: outCombo.count > 1 // only when there are more devices to choose
         Label {
           id: sndLabel
           anchors.verticalCenter: parent.verticalCenter
@@ -37,19 +40,58 @@ Dialog {
           }
         }
       }
-    }
-  }
+
+      Loader {
+        id: andSettLoader
+        sourceComponent: GLOB.isAndroid() ? andSettComp : undefined
+        anchors.horizontalCenter: parent.horizontalCenter
+      }
+
+    } // Column
+  } // Flickable
 
   standardButtons: Dialog.Cancel | Dialog.Apply
 
   onApplied: {
-    SOUND.setDeviceName(outCombo.currentText)
+    if (outCombo.count > 1)
+      SOUND.setDeviceName(outCombo.currentText)
+    if (GLOB.isAndroid()) {
+      GLOB.keepScreenOn(andSettLoader.item.scrOn)
+      GLOB.setDisableRotation(andSettLoader.item.noRotation)
+      mainWindow.visibility = andSettLoader.item.fullScr ? "FullScreen" : "AutomaticVisibility"
+      GLOB.setFullScreen(andSettLoader.item.fullScr)
+    }
     close()
   }
 
   onVisibleChanged: {
     if (!visible)
       destroy()
+  }
+
+  Component {
+    id: andSettComp
+    Column {
+      property alias scrOn: screenOnChB.checked
+      property alias noRotation: disRotatChB.checked
+      property alias fullScr: fullScrChB.checked
+      spacing: GLOB.fontSize() / 2
+      CheckBox {
+        id: screenOnChB
+        text: qsTr("keep screen on")
+        checked: GLOB.isKeepScreenOn()
+      }
+      CheckBox {
+        id: disRotatChB
+        text: qsTr("disable screen rotation")
+        checked: GLOB.disableRotation()
+      }
+      CheckBox {
+        id: fullScrChB
+        text: qsTr("use full screen")
+        checked: GLOB.fullScreen()
+      }
+    }
   }
 }
 

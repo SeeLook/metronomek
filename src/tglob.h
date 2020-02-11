@@ -5,7 +5,6 @@
 #ifndef TGLOB_H
 #define TGLOB_H
 
-
 #include <QtCore/qobject.h>
 #include <QtCore/qrect.h>
 #include <QtGui/qcolor.h>
@@ -100,6 +99,15 @@ public:
 #endif
   }
 
+#if defined (Q_OS_ANDROID)
+  Q_INVOKABLE void keepScreenOn(bool on);
+  Q_INVOKABLE void setDisableRotation(bool disRot);
+  Q_INVOKABLE bool isKeepScreenOn() { return  m_keepScreenOn; }
+  Q_INVOKABLE bool disableRotation() { return  m_disableRotation; }
+  Q_INVOKABLE bool fullScreen() { return m_fullScreen; }
+  Q_INVOKABLE void setFullScreen(bool fs) { m_fullScreen = fs; }
+#endif
+
 signals:
   void dummySignal();
   void countVisibleChanged();
@@ -114,6 +122,11 @@ private:
   QRect               m_geometry;
   bool                m_countVisible;
   bool                m_stationary;
+#if defined (Q_OS_ANDROID)
+  bool                m_keepScreenOn;
+  bool                m_disableRotation;
+  bool                m_fullScreen;
+#endif
   QList<Ttempo>       m_tempoList;
 };
 

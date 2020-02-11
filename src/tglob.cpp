@@ -5,6 +5,10 @@
 #include "tglob.h"
 #include "src/metronomek_conf.h"
 
+#if defined (Q_OS_ANDROID)
+  #include "android/tandroid.h"
+#endif
+
 #include <QtCore/qsettings.h>
 #include <QtCore/qdatetime.h>
 #include <QtCore/qmath.h>
@@ -33,14 +37,19 @@ Tglob::Tglob(QObject *parent) :
   m_settings = new QSettings(this);
 #endif
 
-#if !defined (Q_OS_ANDROID)
+#if defined (Q_OS_ANDROID)
+  m_keepScreenOn = m_settings->value(QStringLiteral("keepScreenOn"), false).toBool();
+  m_disableRotation = m_settings->value(QStringLiteral("disableRotation"), true).toBool();
+  m_fullScreen = m_settings->value(QStringLiteral("fullScreen"), false).toBool();
+  Tandroid::keepScreenOn(m_keepScreenOn);
+  Tandroid::disableRotation(m_disableRotation);
+#else
   m_geometry = m_settings->value(QStringLiteral("geometry"), QRect()).toRect();
   if (m_geometry.isNull())
     m_geometry.setSize(QSize(314, 480));
 #endif
   m_countVisible = m_settings->value(QStringLiteral("countVisible"), false).toBool();
   m_stationary = m_settings->value(QStringLiteral("pendulumStationary"), false).toBool();
-
 
   qsrand(QDateTime::currentDateTimeUtc().toTime_t());
 
@@ -51,7 +60,11 @@ Tglob::Tglob(QObject *parent) :
 
 Tglob::~Tglob()
 {
-#if !defined (Q_OS_ANDROID)
+#if defined (Q_OS_ANDROID)
+  m_settings->setValue(QStringLiteral("keepScreenOn"), m_keepScreenOn);
+  m_settings->setValue(QStringLiteral("disableRotation"), m_disableRotation);
+  m_settings->setValue(QStringLiteral("fullScreen"), m_fullScreen);
+#else
   m_settings->setValue(QStringLiteral("geometry"), m_geometry);
 #endif
   m_settings->setValue(QStringLiteral("countVisible"), m_countVisible);
@@ -106,6 +119,26 @@ QString Tglob::aboutQt() const {
 QString Tglob::version() const {
   return QString(METRONOMEK_VERSION);
 }
+
+
+#if defined (Q_OS_ANDROID)
+
+void Tglob::setDisableRotation(bool disRot) {
+  if (disRot != m_disableRotation) {
+    Tandroid::disableRotation(disRot);
+    m_disableRotation = disRot;
+  }
+}
+
+
+void Tglob::keepScreenOn(bool on) {
+  if (on != m_keepScreenOn) {
+    Tandroid::keepScreenOn(on);
+    m_keepScreenOn = on;
+  }
+}
+
+#endif
 
 
 /**
