@@ -54,6 +54,8 @@ linux:!android {
   # build executable in scr dir to keep '../share/metronome/Sounds' path valid during debug
   DESTDIR = src
   sounds.path = /share/metronomek/Sounds
+  translations.path = /share/metronomek/translations
+
   icon16.path = /share/icons/hicolor/16x16/apps
   icon16.files = Images/hicolor/16x16/apps/metronomek.png
   icon24.path = /share/icons/hicolor/24x24/apps
@@ -75,14 +77,20 @@ linux:!android {
 }
 android {
   sounds.path = /assets/Sounds
+  translations.path = /assets/translations
 }
 windows {
   sounds.path = /Sounds
+  translations.path = /translations
 }
+
 sounds.files = $$files(Sounds/*.raw48-16, true)
 sounds.depends += FORCE
 
-INSTALLS += sounds
+translations.files = $$files(translations/*.qm, true)
+translations.depends += FORCE
+
+INSTALLS += sounds translations
 
 android {
   DISTFILES += \
