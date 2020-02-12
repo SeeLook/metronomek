@@ -13,6 +13,7 @@
 #include <QtCore/qelapsedtimer.h>
 #include <QtCore/qdebug.h>
 #include <QtQml/qqmlcontext.h>
+#include <QtCore/qtranslator.h>
 
 
 int main(int argc, char *argv[])
@@ -31,6 +32,22 @@ int main(int argc, char *argv[])
   pal.setColor(QPalette::Active, QPalette::Shadow, QColor(144, 144, 144)); // Dark gray for shadow
   qApp->setPalette(pal);
 #endif
+
+#if defined (Q_OS_ANDROID)
+  QLocale loc(QLocale::system());
+  QString p = QStringLiteral("assets:/translations/");
+#elif defined (Q_OS_WIN)
+  QLocale loc(QLocale::system().uiLanguages().first());
+  QString p = qApp->applicationDirPath() + QLatin1String("/translations/");
+#else
+  QLocale loc(qgetenv("LANG"));
+  QString p = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/translations/");
+#endif
+  QLocale::setDefault(loc);
+
+  QTranslator mTranslator;
+  if (mTranslator.load(loc, QStringLiteral("metronomek_"), QString(), p))
+    app->installTranslator(&mTranslator);
 
   auto sound = new TaudioOUT();
   auto glob = new Tglob();
