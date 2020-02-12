@@ -60,13 +60,16 @@ Window {
       model: GLOB.temposCount()
       Text {
         z: mainWindow.counterPressed && index === SOUND.nameTempoId ? 10 : 1
-        scale: mainWindow.counterPressed && index === SOUND.nameTempoId ? 2.5 : 1
-        x: tLabel.x + (index % 2 ? (mainWindow.counterPressed && index === SOUND.nameTempoId ? -width: tLabel.width / 30)
-        : (mainWindow.counterPressed && index === SOUND.nameTempoId ? tLabel.width: tLabel.width * 0.967 - width))
-        y: tLabel.y + (GLOB.tempoName(index).mid / 200.0) * tLabel.height * 0.9 - tLabel.height * 0.1 - height / 2
+        scale: mainWindow.counterPressed && index === SOUND.nameTempoId ? 3.5 : 1
+        x: Math.max(0, tLabel.x + (index % 2 ? (mainWindow.counterPressed && index === SOUND.nameTempoId ? -width: tLabel.width / 30)
+                      : (mainWindow.counterPressed && index === SOUND.nameTempoId ? tLabel.width: tLabel.width * 0.967 - width)))
+        y: tLabel.y + (GLOB.tempoName(index).mid / 200.0) * tLabel.height * 0.85 - tLabel.height * 0.11 - height / 2
         text: GLOB.tempoName(index).name
-        font { pixelSize: tLabel.height / (index === SOUND.nameTempoId ? 35 : 45); bold: index === SOUND.nameTempoId }
-        color: mainWindow.counterPressed && index === SOUND.nameTempoId ? "green" : "white"
+        width: tLabel.width / 2 - parent.width / 80
+        font { pixelSize: tLabel.height / 35; bold: index === SOUND.nameTempoId }
+        horizontalAlignment: index % 2 ? Text.AlignLeft : Text.AlignRight
+        fontSizeMode: Text.HorizontalFit; minimumPixelSize: tLabel.height / 60
+        color: index === SOUND.nameTempoId ? (mainWindow.counterPressed ? "green" : activPal.highlight) : "white"
         Behavior on x { NumberAnimation {} }
         Behavior on scale { NumberAnimation {} }
         Behavior on color { ColorAnimation{} }
