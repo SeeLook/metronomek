@@ -28,13 +28,11 @@ Window {
   property bool leanEnough: false // pendulum is leaned out enough to start playing
   property alias counterPressed: countArea.containsPress
 
-  Image {
+  MetroImage {
     id: metro
     anchors.centerIn: parent
-    source: "qrc:/bg.png"
-    height: Math.min(parent.height, parent.width * 1.529564315352697)
-    width: height * (sourceSize.width / sourceSize.height)
-    antialiasing: true
+    height: Math.min(parent.height, parent.width * 1.536273115220484)
+    width: height * imgFactor
 
     Rectangle {
       id: tLabel
@@ -154,7 +152,8 @@ Window {
     }
 
     Rectangle { // cover for lover pendulum end
-      color: "black"
+      color: metro.shapeColor
+      z: 20 // over pendulum
       width: parent.width * 0.2; height: parent.width / 27
       x: parent.width * 0.3; y: parent.height * 0.703
     }

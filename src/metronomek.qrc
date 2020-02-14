@@ -9,8 +9,11 @@
     <file>SettingsPage.qml</file>
     <file>LinkText.qml</file>
     <file>MeterDrawer.qml</file>
+    <file>MetroImage.qml</file>
 
-    <file alias="bg.png">../Images/bg.png</file>
+    <file alias="bg-shape.png">../Images/bg-shape.png</file>
+    <file alias="bg-inner.png">../Images/bg-inner.png</file>
+    <file alias="bg-outer.png">../Images/bg-outer.png</file>
     <file alias="metronomek.png">../Images/metronomek.png</file>
 
     <file>qtquickcontrols2.conf</file>
