@@ -440,7 +440,7 @@ void TaudioOUT::setNameTempoId(int ntId) {
 
 void TaudioOUT::setNameIdByTempo(int t) {
   for (int i = 0; i < GLOB->temposCount(); ++i) {
-    if (t < GLOB->tempoName(i).hi()) {
+    if (t <= GLOB->tempoName(i).hi()) {
       setNameTempoId(i);
       return;
     }
