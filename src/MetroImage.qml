@@ -21,7 +21,7 @@ Item {
     id: innerOver
     anchors.fill: bgInner
     source: bgInner
-    color: "#7c7c7c"
+    color: activPal.mid
   }
 
   Image {
@@ -33,7 +33,7 @@ Item {
     id: outerOver
     anchors.fill: bgOuter
     source: bgOuter
-    color: "#bdbdbd"
+    color: activPal.button
   }
 
   Image {
@@ -41,13 +41,13 @@ Item {
     anchors.fill: parent
     source: "qrc:/bg-shape.png"
     visible: false
-//     mipmap: true
+    mipmap: !GLOB.isAndroid()
     // TODO it increases launch time but reduces pixel artifacts. Doesn't work with emulator
   }
   ColorOverlay {
     id: shapeOver
     anchors.fill: bgShape
     source: bgShape
-    color: "black"
+    color: activPal.text
   }
 }

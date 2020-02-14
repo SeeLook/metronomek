@@ -38,13 +38,13 @@ Window {
       id: tLabel
       x: parent.width * 0.295; y: parent.height * 0.099
       width: parent.width * 0.26; height: parent.height * 0.58
-      color: "#999999"
+      color: activPal.dark
       radius: width / 15
-      border { width: tLabel.width / 40; color: "#a0a0a0" }
+      border { width: tLabel.width / 40; color: activPal.button }
       clip: true
-      Rectangle {
+      Rectangle { // pendulum shadow
         z: 4
-        color: "#30555555"
+        color: GLOB.alpha(activPal.shadow, 55)
         width: pendulum.width; height: pendulum.height
         x: pendulum.x - tLabel.x + pendulum.width / 2
         y: pendulum.y - tLabel.y + pendulum.width / 2
@@ -67,7 +67,7 @@ Window {
         font { pixelSize: tLabel.height / 35; bold: index === SOUND.nameTempoId }
         horizontalAlignment: index % 2 ? Text.AlignLeft : Text.AlignRight
         fontSizeMode: Text.HorizontalFit; minimumPixelSize: tLabel.height / 60
-        color: index === SOUND.nameTempoId ? (mainWindow.counterPressed ? "green" : activPal.highlight) : "white"
+        color: index === SOUND.nameTempoId ? activPal.highlight : activPal.light
         Behavior on x { NumberAnimation {} }
         Behavior on scale { NumberAnimation {} }
         Behavior on color { ColorAnimation{} }
@@ -84,7 +84,9 @@ Window {
     Rectangle {
       id: pendulum
       z: 5
-      color: leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? activPal.highlight : (GLOB.stationary ? "gray" : "black")))
+      color: leanEnough ? "green" :
+                          (stopArea.containsPress && SOUND.playing ? "red" :
+                                    (pendArea.dragged ? activPal.highlight : (GLOB.stationary ? activPal.mid : activPal.text)))
       width: parent.width / 20; y: parent.height * 0.132 - width / 2
       x: parent.width * 0.3969; height: parent.height * 0.6
       radius: width / 2
@@ -120,8 +122,8 @@ Window {
         Behavior on y { NumberAnimation {} }
         ShapePath {
           strokeWidth: pendulum.width / 3
-          strokeColor: countArea.containsPress ? activPal.highlight : "black"
-          fillColor: "gray"
+          strokeColor: countArea.containsPress ? activPal.text : activPal.button
+          fillColor: activPal.dark
           capStyle: ShapePath.RoundCap; joinStyle: ShapePath.RoundJoin
           startX: 0; startY: 0
           PathLine { x: pendulum.width * 3; y: 0 }
@@ -135,7 +137,7 @@ Window {
           visible: SOUND.meter > 1 && GLOB.countVisible && SOUND.playing
           text: SOUND.meterCount + 1
           anchors.centerIn: parent
-          color: "white"
+          color: activPal.light
           font { pixelSize: parent.height * 0.7; bold: true }
         }
         MouseArea {
@@ -190,6 +192,7 @@ Window {
       x: metro.width * 0.12; y: sb.y + (sb.height - height) / 2
       text: SOUND.getTempoNameById(SOUND.nameTempoId)
       font { pixelSize: metro.height / 50; bold: true }
+      color: activPal.text
     }
 
     RoundButton {
@@ -218,12 +221,14 @@ Window {
         Text {
           anchors.verticalCenter: parent.verticalCenter
           text: qsTr("count to") + ":"
+          color: activPal.text
         }
         Text {
           anchors.verticalCenter: parent.verticalCenter
           text: SOUND.meter > 1 ? SOUND.meter : "--"
           font { pixelSize: fm.height * 1.4; bold: true }
           textFormat: Text.StyledText
+          color: activPal.text
         }
       }
     }
