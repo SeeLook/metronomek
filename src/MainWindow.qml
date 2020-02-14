@@ -155,7 +155,7 @@ Window {
 
     Rectangle { // cover for lover pendulum end
       color: "black"
-      width: parent.width * 0.2; height: parent.width / 24
+      width: parent.width * 0.2; height: parent.width / 27
       x: parent.width * 0.3; y: parent.height * 0.703
     }
 
