@@ -29,11 +29,13 @@ SOURCES += \
         src/main.cpp \
         src/tglob.cpp \
         src/taudioout.cpp \
+        src/tmetroshape.cpp \
 
 HEADERS += \
         src/tglob.h \
         src/taudiobuffer.h \
         src/taudioout.h \
+        src/tmetroshape.h \
 
 android {
   QT += androidextras

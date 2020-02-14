@@ -11,10 +11,9 @@
     <file>MeterDrawer.qml</file>
     <file>MetroImage.qml</file>
 
-    <file alias="bg-shape.png">../Images/bg-shape.png</file>
-    <file alias="bg-inner.png">../Images/bg-inner.png</file>
-    <file alias="bg-outer.png">../Images/bg-outer.png</file>
     <file alias="metronomek.png">../Images/metronomek.png</file>
+
+    <file alias="metronomek.otf">../fonts/metronomek.otf</file>
 
     <file>qtquickcontrols2.conf</file>
     <file>+android/qtquickcontrols2.conf</file>

@@ -154,7 +154,7 @@ Window {
     }
 
     Rectangle { // cover for lover pendulum end
-      color: metro.shapeColor
+      color: activPal.text
       z: 20 // over pendulum
       width: parent.width * 0.2; height: parent.width / 27
       x: parent.width * 0.3; y: parent.height * 0.703

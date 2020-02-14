@@ -5,49 +5,28 @@
 import QtQuick 2.12
 import QtGraphicalEffects 1.12
 
+import Metronomek 1.0
 
 Item {
   property real imgFactor: 0.6509259259259259
   property alias innerColor: innerOver.color
   property alias outerColor: outerOver.color
-  property alias shapeColor: shapeOver.color
 
-  Image {
-    id: bgInner
-    anchors.fill: parent
-    source: "qrc:/bg-inner.png"
-  }
-  ColorOverlay {
+  Text {
     id: innerOver
-    anchors.fill: bgInner
-    source: bgInner
+    font { family: "metronomek"; pixelSize: parent.height }
     color: activPal.mid
+    text: "\u00A1"
   }
 
-  Image {
-    id: bgOuter
-    anchors.fill: parent
-    source: "qrc:/bg-outer.png"
-  }
-  ColorOverlay {
+  Text {
     id: outerOver
-    anchors.fill: bgOuter
-    source: bgOuter
+    font { family: "metronomek"; pixelSize: parent.height }
     color: activPal.button
+    text: "\u00A2"
   }
 
-  Image {
-    id: bgShape
-    anchors.fill: parent
-    source: "qrc:/bg-shape.png"
-    visible: false
-    mipmap: !GLOB.isAndroid()
-    // TODO it increases launch time but reduces pixel artifacts. Doesn't work with emulator
-  }
-  ColorOverlay {
-    id: shapeOver
-    anchors.fill: bgShape
-    source: bgShape
-    color: activPal.text
+  TmetroShape {
+    width: parent.width; height: parent.height
   }
 }

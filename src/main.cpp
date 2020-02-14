@@ -14,6 +14,7 @@
 #include <QtCore/qdebug.h>
 #include <QtQml/qqmlcontext.h>
 #include <QtCore/qtranslator.h>
+#include <QtGui/qfontdatabase.h>
 
 
 int main(int argc, char *argv[])
@@ -50,6 +51,13 @@ int main(int argc, char *argv[])
   QTranslator mTranslator;
   if (mTranslator.load(loc, QStringLiteral("metronomek_"), QString(), p))
     app->installTranslator(&mTranslator);
+
+  QFontDatabase fd;
+  int fid = fd.addApplicationFont(QStringLiteral(":/metronomek.otf"));
+  if (fid == -1) {
+    qDebug() << "Can not load MetronomeK fonts!\n";
+    return 111;
+  }
 
   auto sound = new TaudioOUT();
   auto glob = new Tglob();

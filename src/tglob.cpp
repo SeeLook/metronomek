@@ -3,6 +3,7 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tglob.h"
+#include "tmetroshape.h"
 #include "src/metronomek_conf.h"
 
 #if defined (Q_OS_ANDROID)
@@ -14,6 +15,7 @@
 #include <QtCore/qmath.h>
 #include <QtGui/qguiapplication.h>
 #include <QtGui/qfont.h>
+#include <QtQml/qqmlengine.h>
 
 #include "QtCore/qdebug.h"
 
@@ -55,6 +57,7 @@ Tglob::Tglob(QObject *parent) :
 
   qRegisterMetaType<Ttempo>();
   createTempoList();
+  qmlRegisterType<TmetroShape>("Metronomek", 1, 0, "TmetroShape");
 }
 
 
