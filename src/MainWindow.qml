@@ -6,7 +6,6 @@
 import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
-import QtQuick.Shapes 1.12
 
 
 Window {
@@ -114,31 +113,26 @@ Window {
         }
       }
 
-      Shape {
+      Text {
         id: countW // counterweight
-        width: parent.width * 3; height: parent.width * 3
+        font { family: "metronomek"; pixelSize: parent.height * 0.24 }
+        color: countArea.containsPress ? activPal.text : activPal.button
+        text: "\u00A4"
         anchors.horizontalCenter: parent.horizontalCenter
         y: parent.height * (0.05 + ((SOUND.tempo - 40) / 200) * 0.65)
         Behavior on y { NumberAnimation {} }
-        ShapePath {
-          strokeWidth: pendulum.width / 3
-          strokeColor: countArea.containsPress ? activPal.text : activPal.button
-          fillColor: activPal.dark
-          capStyle: ShapePath.RoundCap; joinStyle: ShapePath.RoundJoin
-          startX: 0; startY: 0
-          PathLine { x: pendulum.width * 3; y: 0 }
-          PathLine { x: pendulum.width * 3; y: pendulum.width * 2 }
-          PathLine { x: pendulum.width * 2.5; y: pendulum.width * 3 }
-          PathLine { x: pendulum.width * 0.5; y: pendulum.width * 3 }
-          PathLine { x: 0; y: pendulum.width * 2 }
-          PathLine { x: 0; y: 0 }
+        Text {
+          font { family: "metronomek"; pixelSize: pendulum.height * 0.18 }
+          color: activPal.dark
+          text: "\u00A4"
+          anchors.centerIn: parent
         }
         Text {
           visible: SOUND.meter > 1 && GLOB.countVisible && SOUND.playing
           text: SOUND.meterCount + 1
           anchors.centerIn: parent
           color: activPal.light
-          font { pixelSize: parent.height * 0.7; bold: true }
+          font { pixelSize: parent.height * 0.4; bold: true }
         }
         MouseArea {
           id: countArea
