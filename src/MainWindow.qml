@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -24,6 +24,7 @@ Window {
   SystemPalette { id: activPal;  colorGroup: SystemPalette.Active }
   FontMetrics { id: fm }
 
+  property var dialogItem: null
   property bool leanEnough: false // pendulum is leaned out enough to start playing
   property alias counterPressed: countArea.containsPress
 
@@ -315,5 +316,9 @@ Window {
 
   onClosing: {
     GLOB.geometry = Qt.rect(x ,y, width, height)
+    if (GLOB.isAndroid() && dialogItem) {
+      close.accepted = false
+      dialogItem.destroy()
+    }
   }
 }
