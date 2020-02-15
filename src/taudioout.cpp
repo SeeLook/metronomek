@@ -110,8 +110,21 @@ TaudioOUT::TaudioOUT(QObject *parent) :
   }
   m_instance = this;
 
+  setTempo(qBound(40, GLOB->settings()->value(QStringLiteral("tempo"), 60).toInt(), 240));
+  setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), beatTypeCount() - 1));
+  setMeter(qBound(0, GLOB->settings()->value(QStringLiteral("meter"), 4).toInt(), 12));
+  setRingType(qBound(0, GLOB->settings()->value(QStringLiteral("ringType"), 0).toInt(), ringTypeCount() - 1));
+  setRing(GLOB->settings()->value(QStringLiteral("doRing"), false).toBool());
+
   connect(this, &TaudioOUT::finishSignal, this, &TaudioOUT::playingFinishedSlot);
+#if defined (Q_OS_LINUX) && !defined (Q_OS_ANDROID)
+  QTimer::singleShot(1000, this, [=]{ init(); });
+  // Qt Audio freezes launch under Linux
+  // animations are sluggish then
+  // so give it more time
+#else
   QTimer::singleShot(500, this, [=]{ init(); });
+#endif
 }
 
 
@@ -138,11 +151,6 @@ void TaudioOUT::init() {
       qDebug() << "[TaudioOUT] has been initialized already! Skipping.";
       return;
   } else {
-      setTempo(qBound(40, GLOB->settings()->value(QStringLiteral("tempo"), 60).toInt(), 240));
-      setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), beatTypeCount() - 1));
-      setMeter(qBound(0, GLOB->settings()->value(QStringLiteral("meter"), 4).toInt(), 12));
-      setRingType(qBound(0, GLOB->settings()->value(QStringLiteral("ringType"), 0).toInt(), ringTypeCount() - 1));
-      setRing(GLOB->settings()->value(QStringLiteral("doRing"), false).toBool());
       m_devName = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();
       setAudioOutParams();
   }
