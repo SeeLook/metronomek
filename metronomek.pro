@@ -46,10 +46,11 @@ else: windows: target.path = $${PREFIX}/
 !isEmpty(target.path): INSTALLS += target
 
 linux:!android {
-  # build executable in scr dir to keep '../share/metronome/Sounds' path valid during debug
+  # build executable in scr dir to keep '../share/metronomek/Sounds' path valid during debug
   DESTDIR = src
   sounds.path = /share/metronomek/Sounds
   translations.path = /share/metronomek/translations
+  license.path = /share/metronomek
 
   icon16.path = /share/icons/hicolor/16x16/apps
   icon16.files = Images/hicolor/16x16/apps/metronomek.png
@@ -79,6 +80,7 @@ linux:!android {
   runinplace.commands = $${PWD}/installs/make-runinplace.sh \"$$PWD\" \"$$OUT_PWD\"
 
   QMAKE_EXTRA_TARGETS += makesrc runinplace
+  INSTALLS += license
 }
 android {
   sounds.path = /assets/Sounds
@@ -87,6 +89,7 @@ android {
 windows {
   sounds.path = $${PREFIX}/Sounds
   translations.path = $${PREFIX}/translations
+  license.path = $${PREFIX}
 
   qtPrepareTool(QMAKE_WINDEPLOYQT, windeployqt)
   deploy.target = deploy
@@ -94,6 +97,7 @@ windows {
   deploy.commands = $$QMAKE_WINDEPLOYQT $${PREFIX}/metronomek.exe --release --no-translations --no-svg --qmldir $${PWD}/src
 
   QMAKE_EXTRA_TARGETS += deploy
+  INSTALLS += license
 }
 
 sounds.files = $$files(Sounds/*.raw48-16, true)
@@ -101,6 +105,8 @@ sounds.depends += FORCE
 
 translations.files = $$files(translations/*.qm, true)
 translations.depends += FORCE
+
+license.files = LICENSE
 
 INSTALLS += sounds translations
 
