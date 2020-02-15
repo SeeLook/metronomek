@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tglob.h"
@@ -55,9 +55,10 @@ Tglob::Tglob(QObject *parent) :
 
   qsrand(QDateTime::currentDateTimeUtc().toTime_t());
 
+  qmlRegisterType<TmetroShape>("Metronomek", 1, 0, "TmetroShape");
+
   qRegisterMetaType<Ttempo>();
   createTempoList();
-  qmlRegisterType<TmetroShape>("Metronomek", 1, 0, "TmetroShape");
 }
 
 
@@ -159,8 +160,8 @@ void Tglob::createTempoList() {
               << Ttempo(QStringLiteral("Animato"), 116, 125)
               << Ttempo(QStringLiteral("Allegro"), 126, 137)
               << Ttempo(QStringLiteral("Allegro assai"), 138, 143)
-              << Ttempo(QStringLiteral("Vivace"), 144, 180)
-//               << Ttempo(QStringLiteral("Allegro vivace"), 160, 180)
+              << Ttempo(QStringLiteral("Vivace"), 144, 164)
+              << Ttempo(QStringLiteral("Allegro vivace"), 165, 180)
               << Ttempo(QStringLiteral("Presto"), 181, 200)
               << Ttempo(QStringLiteral("Prestissimo"), 201, 240);
 }
