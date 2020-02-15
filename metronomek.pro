@@ -70,11 +70,15 @@ linux:!android {
   desktop.files = installs/metronomek.desktop
   INSTALLS += icon16 icon24 icon32 icon48 icon64 icon128 icon256 desktop
 
-  makesrc.depends = first
   makesrc.target = src
+  makesrc.depends = first
   makesrc.commands = $${PWD}/installs/make-src.sh \"$$VERSION\" \"$$OUT_PWD\" \"$$PWD\"
 
-  QMAKE_EXTRA_TARGETS += makesrc
+  runinplace.target = runinplace
+  runinplace.depends = first
+  runinplace.commands = $${PWD}/installs/make-runinplace.sh \"$$PWD\" \"$$OUT_PWD\"
+
+  QMAKE_EXTRA_TARGETS += makesrc runinplace
 }
 android {
   sounds.path = /assets/Sounds

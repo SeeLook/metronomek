@@ -1,12 +1,12 @@
 #! /bin/bash
+
+# Copyright (C) 2020 by Tomasz Bojczuk (seelook@gmail.com)
+# on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
+
 # Script for building MetronomeK source tar-ball package
 # It usually it is invoked by make src
 # USAGE:
 # make-src.sh version build-directory source-directory
-#
-# Author:
-#           Tomasz Bojczuk <seelook@gmail.com>
-#
 
 VERSION=$1
 BUILD_DIR=$2
