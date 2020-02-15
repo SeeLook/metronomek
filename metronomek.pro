@@ -42,7 +42,7 @@ RESOURCES += src/metronomek.qrc
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /bin
-else: windows: target.path = /
+else: windows: target.path = $${PREFIX}/
 !isEmpty(target.path): INSTALLS += target
 
 linux:!android {
@@ -85,8 +85,15 @@ android {
   translations.path = /assets/translations
 }
 windows {
-  sounds.path = /Sounds
-  translations.path = /translations
+  sounds.path = $${PREFIX}/Sounds
+  translations.path = $${PREFIX}/translations
+
+  qtPrepareTool(QMAKE_WINDEPLOYQT, windeployqt)
+  deploy.target = deploy
+  deploy.depends = first
+  deploy.commands = $$QMAKE_WINDEPLOYQT $${PREFIX}/metronomek.exe --release --no-translations --no-svg --qmldir $${PWD}/src
+
+  QMAKE_EXTRA_TARGETS += deploy
 }
 
 sounds.files = $$files(Sounds/*.raw48-16, true)
