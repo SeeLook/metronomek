@@ -87,6 +87,8 @@ android {
   translations.path = /assets/translations
 }
 windows {
+  RC_ICONS = Images/metronomek.ico
+
   sounds.path = $${PREFIX}/Sounds
   translations.path = $${PREFIX}/translations
   license.path = $${PREFIX}
