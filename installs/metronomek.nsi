@@ -16,8 +16,8 @@ SetCompressor lzma
 
 ; MUI Settings
 !define MUI_ABORTWARNING
-; !define MUI_ICON "picts\pack.ico"
-; !define MUI_UNICON "picts\pack.ico"
+!define MUI_ICON "images\pack.ico"
+!define MUI_UNICON "images\pack.ico"
 
 ; Language Selection Dialog Settings
 !define MUI_LANGDLL_REGISTRY_ROOT "${PRODUCT_UNINST_ROOT_KEY}"
@@ -26,10 +26,9 @@ SetCompressor lzma
 !define MUI_LANGDLL_ALLLANGUAGES
 
 ; Image
-; !define MUI_HEADERIMAGE
+!define MUI_HEADERIMAGE
 ; !define MUI_WELCOMEFINISHPAGE_BITMAP "picts\logo-left.bmp"
-; !define MUI_HEADERIMAGE_BITMAP "picts\logo.bmp"
-;!define MUI_HEADERIMAGE_RIGHT
+!define MUI_HEADERIMAGE_BITMAP "images\logo.bmp"
 
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
@@ -49,7 +48,6 @@ SetCompressor lzma
 ; Language files
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Polish"
-
 
 
 ; Reserve files

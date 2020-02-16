@@ -107,7 +107,11 @@ windows {
   winstuff.files += $${QMAKE_DIR}/libstdc++-6.dll
   winstuff.files += installs/metronomek.nsi # Windows installer build script
 
-  INSTALLS += winstuff license
+  images.path= $${PREFIX}/images
+  images.files += $$files(Images/*.ico, true)
+  images.files += $$files(Images/*.bmp, true)
+
+  INSTALLS += winstuff license images
 }
 
 sounds.files = $$files(Sounds/*.raw48-16, true)
