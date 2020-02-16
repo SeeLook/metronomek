@@ -94,10 +94,18 @@ windows {
   qtPrepareTool(QMAKE_WINDEPLOYQT, windeployqt)
   deploy.target = deploy
   deploy.depends = first
-  deploy.commands = $$QMAKE_WINDEPLOYQT $${PREFIX}/metronomek.exe --release --no-translations --no-svg --qmldir $${PWD}/src
-
+  deploy.commands = $${QMAKE_WINDEPLOYQT} $${PREFIX}/metronomek.exe --release --no-translations --no-svg --qmldir $${PWD}/src
   QMAKE_EXTRA_TARGETS += deploy
-  INSTALLS += license
+
+  QMAKE_DIR = $$dirname(QMAKE_WINDEPLOYQT)
+
+  winstuff.path = $${PREFIX}
+  winstuff.files += $${QMAKE_DIR}/libgcc_s_dw2-1.dll
+  winstuff.files += $${QMAKE_DIR}/libwinpthread-1.dll
+  winstuff.files += $${QMAKE_DIR}/libstdc++-6.dll
+  winstuff.files += installs/metronomek.nsi # Windows installer build script
+
+  INSTALLS += winstuff license
 }
 
 sounds.files = $$files(Sounds/*.raw48-16, true)
