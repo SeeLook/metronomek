@@ -120,7 +120,7 @@ Window {
         color: GLOB.valueColor(activPal.text, countArea.containsPress ? 20 : 70)
         text: "\u00A4"
         anchors.horizontalCenter: parent.horizontalCenter
-        y: parent.height * (0.05 + ((SOUND.tempo - 40) / 200) * 0.65)
+        y: pendulum.height * 0.65 * ((SOUND.tempo - 40) / 200)
         Behavior on y { NumberAnimation {} }
         Text { // inner counterweight
           font { family: "metronomek"; pixelSize: pendulum.height * 0.18 }
@@ -141,9 +141,9 @@ Window {
           anchors.fill: parent
           drag.target: countW
           drag.axis: Drag.YAxis
-          drag.minimumY: pendulum.height * 0.05; drag.maximumY: pendulum.height * 0.7
+          drag.minimumY: 0; drag.maximumY: pendulum.height * 0.65
           cursorShape: drag.active ? Qt.DragMoveCursor : Qt.ArrowCursor
-          onPositionChanged: SOUND.tempo = Math.round((countW.y * 200) / (pendulum.height * 0.65) + 25)
+          onPositionChanged: SOUND.tempo = Math.round((200 * countW.y) / (pendulum.height * 0.65) + 40)
         }
       }
     }
