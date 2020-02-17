@@ -34,11 +34,11 @@ Window {
     height: Math.min(parent.height, parent.width * 1.536273115220484)
     width: height * imgFactor
 
-    Rectangle {
+    Rectangle { // label of Italian tempo names
       id: tLabel
       x: parent.width * 0.295; y: parent.height * 0.099
       width: parent.width * 0.26; height: parent.height * 0.58
-      color: activPal.dark
+      color: activPal.highlight
       radius: width / 15
       border { width: tLabel.width / 40; color: activPal.button }
       clip: true
@@ -46,15 +46,15 @@ Window {
         z: 4
         color: GLOB.alpha(activPal.shadow, 55)
         width: pendulum.width; height: pendulum.height
-        x: pendulum.x - tLabel.x + pendulum.width / 2
-        y: pendulum.y - tLabel.y + pendulum.width / 2
+        x: pendulum.x - tLabel.x + pendulum.width / 3
+        y: pendulum.y - tLabel.y + pendulum.width / 3
         radius: pendulum.radius
         transformOrigin: Item.Bottom
         rotation: pendulum.rotation
       }
     }
 
-    Repeater {
+    Repeater { // Italian tempo names
       model: GLOB.temposCount()
       Text {
         z: mainWindow.counterPressed && index === SOUND.nameTempoId ? 10 : 1
@@ -67,7 +67,7 @@ Window {
         font { pixelSize: tLabel.height / 35; bold: index === SOUND.nameTempoId }
         horizontalAlignment: index % 2 ? Text.AlignLeft : Text.AlignRight
         fontSizeMode: Text.HorizontalFit; minimumPixelSize: tLabel.height / 60
-        color: index === SOUND.nameTempoId ? activPal.highlight : activPal.light
+        color: index === SOUND.nameTempoId ? GLOB.valueColor(activPal.highlight, 70) : activPal.highlightedText
         Behavior on x { NumberAnimation {} }
         Behavior on scale { NumberAnimation {} }
         Behavior on color { ColorAnimation{} }
@@ -86,7 +86,7 @@ Window {
       z: 5
       color: leanEnough ? "green" :
                           (stopArea.containsPress && SOUND.playing ? "red" :
-                                    (pendArea.dragged ? activPal.highlight : (GLOB.stationary ? activPal.mid : activPal.text)))
+                              (pendArea.dragged ? activPal.base : GLOB.valueColor(activPal.text, GLOB.stationary ? 40 : 0)))
       width: parent.width / 20; y: parent.height * 0.132 - width / 2
       x: parent.width * 0.3969; height: parent.height * 0.6
       radius: width / 2
@@ -117,14 +117,14 @@ Window {
       Text {
         id: countW // counterweight
         font { family: "metronomek"; pixelSize: parent.height * 0.24 }
-        color: countArea.containsPress ? activPal.text : activPal.button
+        color: GLOB.valueColor(activPal.text, countArea.containsPress ? 20 : 70)
         text: "\u00A4"
         anchors.horizontalCenter: parent.horizontalCenter
         y: parent.height * (0.05 + ((SOUND.tempo - 40) / 200) * 0.65)
         Behavior on y { NumberAnimation {} }
-        Text {
+        Text { // inner counterweight
           font { family: "metronomek"; pixelSize: pendulum.height * 0.18 }
-          color: activPal.dark
+          color: GLOB.valueColor(activPal.window, countArea.containsPress ? 20 : 0)
           text: "\u00A4"
           anchors.centerIn: parent
         }
@@ -132,7 +132,7 @@ Window {
           visible: SOUND.meter > 1 && GLOB.countVisible && SOUND.playing
           text: SOUND.meterCount + 1
           anchors.centerIn: parent
-          color: activPal.light
+          color: activPal.text
           font { pixelSize: parent.height * 0.4; bold: true }
         }
         MouseArea {

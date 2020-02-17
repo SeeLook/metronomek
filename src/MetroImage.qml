@@ -8,20 +8,20 @@ import Metronomek 1.0
 
 Item {
   property real imgFactor: 0.6509259259259259
-  property alias innerColor: innerOver.color
-  property alias outerColor: outerOver.color
+  property alias innerColor: innerFill.color
+  property alias outerColor: outerFill.color
 
   Text {
-    id: innerOver
+    id: innerFill
     font { family: "metronomek"; pixelSize: parent.height }
-    color: activPal.mid
+    color: GLOB.valueColor(activPal.window, 50)
     text: "\u00A1"
   }
 
   Text {
-    id: outerOver
+    id: outerFill
     font { family: "metronomek"; pixelSize: parent.height }
-    color: activPal.button
+    color: GLOB.valueColor(activPal.window, 10)
     text: "\u00A2"
   }
 

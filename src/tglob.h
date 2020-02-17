@@ -85,6 +85,12 @@ public:
   Q_INVOKABLE QColor randomColor(int alpha = 255, int level = 220);
 
       /**
+       * Changes HSV value of given @p c @p QColor by @p off parameter.
+       * If original value is less than @p 128 it increases by @p off or decreases if not
+       */
+  Q_INVOKABLE QColor valueColor(QColor c, int off = 20);
+
+      /**
        * Calculates Y position of a logo letter on upper part of a arch
        */
   Q_INVOKABLE qreal logoLetterY(int letterNr, qreal r);
