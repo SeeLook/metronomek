@@ -106,8 +106,8 @@ Section "MainGroup" SEC01
     File /r /x "*.qmlc" "QtQuick.2"
 
 
-  SetOutPath "$INSTDIR\Sounds"
-    File "Sounds\*.raw48-16"
+  SetOutPath "$INSTDIR\sounds"
+    File "sounds\*.raw48-16"
 
 ;   SetOutPath "$INSTDIR\images"
 ;     File "picts\*.ico"
@@ -152,7 +152,7 @@ Section Uninstall
   Delete "$INSTDIR\metronomek.exe"
 
   Delete "$INSTDIR\*.dll"
-  Delete "$INSTDIR\Sounds\*.*"
+  Delete "$INSTDIR\sounds\*.*"
   Delete "$INSTDIR\LICENSE"
 ;   Delete "$INSTDIR\images\*.*"
   Delete "$INSTDIR\translations\*.*"
@@ -169,7 +169,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\Metronomek\Metronomek.lnk"
 
   RMDir "$SMPROGRAMS\Metronomek"
-  RMDir "$INSTDIR\Sounds"
+  RMDir "$INSTDIR\sounds"
 ;   RMDir "$INSTDIR\images"
   RMDir "$INSTDIR\translations"
   RMDir "$INSTDIR\platforms"

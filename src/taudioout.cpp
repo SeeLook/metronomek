@@ -428,13 +428,13 @@ QString TaudioOUT::getTempoNameById(int nameId) {
 //#################################################################################################
 QString TaudioOUT::getRawFilePath(const QString& fName) {
 #if defined (Q_OS_ANDROID)
-  QString beatFileName = QStringLiteral("assets:/Sounds/");
+  QString rawFilePath = QStringLiteral("assets:/sounds/");
 #elif defined (Q_OS_WIN)
-    QString beatFileName = qApp->applicationDirPath() + QLatin1String("/Sounds/");
+    QString rawFilePath = qApp->applicationDirPath() + QLatin1String("/sounds/");
 #else
-  QString beatFileName = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/Sounds/");
+  QString rawFilePath = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/sounds/");
 #endif
-  return beatFileName + fName +  QLatin1String(".raw48-16");
+  return rawFilePath + fName +  QLatin1String(".raw48-16");
 }
 
 

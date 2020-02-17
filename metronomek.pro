@@ -46,9 +46,9 @@ else: windows: target.path = $${PREFIX}/
 !isEmpty(target.path): INSTALLS += target
 
 linux:!android {
-  # build executable in scr dir to keep '../share/metronomek/Sounds' path valid during debug
+  # build executable in scr dir to keep '../share/metronomek/sounds' path valid during debug
   DESTDIR = src
-  sounds.path = /share/metronomek/Sounds
+  sounds.path = /share/metronomek/sounds
   translations.path = /share/metronomek/translations
   license.path = /share/metronomek
 
@@ -83,13 +83,13 @@ linux:!android {
   INSTALLS += license
 }
 android {
-  sounds.path = /assets/Sounds
+  sounds.path = /assets/sounds
   translations.path = /assets/translations
 }
 windows {
   RC_ICONS = images/metronomek.ico
 
-  sounds.path = $${PREFIX}/Sounds
+  sounds.path = $${PREFIX}/sounds
   translations.path = $${PREFIX}/translations
   license.path = $${PREFIX}
 
@@ -114,7 +114,7 @@ windows {
   INSTALLS += winstuff license images
 }
 
-sounds.files = $$files(Sounds/*.raw48-16, true)
+sounds.files = $$files(sounds/*.raw48-16, true)
 sounds.depends += FORCE
 
 translations.files = $$files(translations/*.qm, true)

@@ -25,6 +25,6 @@ if [ -d $DST_DIR ]; then
 else
   mkdir -p $DST_DIR
   ln -s $SRC_DIR/translations $DST_DIR
-  ln -s $SRC_DIR/Sounds $DST_DIR
+  ln -s $SRC_DIR/sounds $DST_DIR
 fi
 
