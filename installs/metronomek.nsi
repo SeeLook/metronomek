@@ -1,4 +1,4 @@
-﻿; PRODUCT_VERSION is there
+; PRODUCT_VERSION is there
 ; !include "NSIS.definitions.nsh"
 
 ; HM NIS Edit Wizard helper defines
@@ -109,7 +109,7 @@ Section "MainGroup" SEC01
   SetOutPath "$INSTDIR\Sounds"
     File "Sounds\*.raw48-16"
 
-;   SetOutPath "$INSTDIR\Images"
+;   SetOutPath "$INSTDIR\images"
 ;     File "picts\*.ico"
 ;     File "picts\*.png"
 
@@ -154,7 +154,7 @@ Section Uninstall
   Delete "$INSTDIR\*.dll"
   Delete "$INSTDIR\Sounds\*.*"
   Delete "$INSTDIR\LICENSE"
-;   Delete "$INSTDIR\Images\*.*"
+;   Delete "$INSTDIR\images\*.*"
   Delete "$INSTDIR\translations\*.*"
   Delete "$INSTDIR\platforms\*.*"
   Delete "$INSTDIR\bearer\*.*"
@@ -170,7 +170,7 @@ Section Uninstall
 
   RMDir "$SMPROGRAMS\Metronomek"
   RMDir "$INSTDIR\Sounds"
-;   RMDir "$INSTDIR\Images"
+;   RMDir "$INSTDIR\images"
   RMDir "$INSTDIR\translations"
   RMDir "$INSTDIR\platforms"
   RMDir "$INSTDIR\bearer"

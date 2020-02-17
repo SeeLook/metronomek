@@ -11,7 +11,7 @@
     <file>MeterDrawer.qml</file>
     <file>MetroImage.qml</file>
 
-    <file alias="metronomek.png">../Images/metronomek.png</file>
+    <file alias="metronomek.png">../images/metronomek.png</file>
 
     <file alias="metronomek.otf">../fonts/metronomek.otf</file>
 

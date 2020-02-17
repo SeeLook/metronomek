@@ -20,7 +20,7 @@ echo
 cd $BUILD_DIR
 mkdir $DST_DIR
 
-cp -r $SRC_DIR/Images $DST_DIR
+cp -r $SRC_DIR/images $DST_DIR
 cp -r $SRC_DIR/Sounds $DST_DIR
 cp -r $SRC_DIR/android $DST_DIR
 cp -r $SRC_DIR/fonts $DST_DIR

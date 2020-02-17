@@ -53,19 +53,19 @@ linux:!android {
   license.path = /share/metronomek
 
   icon16.path = /share/icons/hicolor/16x16/apps
-  icon16.files = Images/hicolor/16x16/apps/metronomek.png
+  icon16.files = images/hicolor/16x16/apps/metronomek.png
   icon24.path = /share/icons/hicolor/24x24/apps
-  icon24.files = Images/hicolor/24x24/apps/metronomek.png
+  icon24.files = images/hicolor/24x24/apps/metronomek.png
   icon32.path = /share/icons/hicolor/32x32/apps
-  icon32.files = Images/hicolor/32x32/apps/metronomek.png
+  icon32.files = images/hicolor/32x32/apps/metronomek.png
   icon48.path = /share/icons/hicolor/48x48/apps
-  icon48.files = Images/hicolor/48x48/apps/metronomek.png
+  icon48.files = images/hicolor/48x48/apps/metronomek.png
   icon64.path = /share/icons/hicolor/64x64/apps
-  icon64.files = Images/hicolor/64x64/apps/metronomek.png
+  icon64.files = images/hicolor/64x64/apps/metronomek.png
   icon128.path = /share/icons/hicolor/128x128/apps
-  icon128.files = Images/hicolor/128x128/apps/metronomek.png
+  icon128.files = images/hicolor/128x128/apps/metronomek.png
   icon256.path = /share/icons/hicolor/256x256/apps
-  icon256.files = Images/hicolor/256x256/apps/metronomek.png
+  icon256.files = images/hicolor/256x256/apps/metronomek.png
 
   desktop.path = /share/applications
   desktop.files = installs/metronomek.desktop
@@ -87,7 +87,7 @@ android {
   translations.path = /assets/translations
 }
 windows {
-  RC_ICONS = Images/metronomek.ico
+  RC_ICONS = images/metronomek.ico
 
   sounds.path = $${PREFIX}/Sounds
   translations.path = $${PREFIX}/translations
@@ -108,8 +108,8 @@ windows {
   winstuff.files += installs/metronomek.nsi # Windows installer build script
 
   images.path= $${PREFIX}/images
-  images.files += $$files(Images/*.ico, true)
-  images.files += $$files(Images/*.bmp, true)
+  images.files += $$files(images/*.ico, true)
+  images.files += $$files(images/*.bmp, true)
 
   INSTALLS += winstuff license images
 }
