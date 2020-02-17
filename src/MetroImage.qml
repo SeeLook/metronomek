@@ -14,7 +14,7 @@ Item {
   Text {
     id: innerFill
     font { family: "metronomek"; pixelSize: parent.height }
-    color: GLOB.valueColor(activPal.window, 50)
+    color: GLOB.valueColor(activPal.window, 70)
     text: "\u00A1"
   }
 
