@@ -2,7 +2,7 @@
 # Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
 
-android: TARGET = Metronomek
+android: TARGET = MetronomeK
 else: TARGET = metronomek
 
 TEMPLATE = app

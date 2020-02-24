@@ -105,8 +105,8 @@ QColor Tglob::randomColor(int alpha, int level) {
 QColor Tglob::valueColor(QColor c, int off) {
   if (off) {
     int h, s, v, a;
-    c.getHsv(&h, &s, &v, &a);
-    c.setHsv(h, s, v + (v < 128 ? off : -off), a);
+    c.getHsl(&h, &s, &v, &a);
+    c.setHsl(h, s, v + (v < 128 ? off : -off), a);
   }
   return c;
 }

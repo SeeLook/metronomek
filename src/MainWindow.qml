@@ -38,13 +38,13 @@ Window {
       id: tLabel
       x: parent.width * 0.295; y: parent.height * 0.099
       width: parent.width * 0.26; height: parent.height * 0.58
-      color: activPal.highlight
+      color: GLOB.valueColor(activPal.text, 90)
       radius: width / 15
       border { width: tLabel.width / 40; color: activPal.button }
       clip: true
       Rectangle { // pendulum shadow
         z: 4
-        color: GLOB.alpha(activPal.shadow, 55)
+        color: GLOB.alpha(activPal.text, 40)
         width: pendulum.width; height: pendulum.height
         x: pendulum.x - tLabel.x + pendulum.width / 3
         y: pendulum.y - tLabel.y + pendulum.width / 3
@@ -67,7 +67,7 @@ Window {
         font { pixelSize: tLabel.height / 35; bold: index === SOUND.nameTempoId }
         horizontalAlignment: index % 2 ? Text.AlignLeft : Text.AlignRight
         fontSizeMode: Text.HorizontalFit; minimumPixelSize: tLabel.height / 60
-        color: index === SOUND.nameTempoId ? GLOB.valueColor(activPal.highlight, 70) : activPal.highlightedText
+        color: GLOB.valueColor(activPal.base, index === SOUND.nameTempoId ? 30 : 0)
         Behavior on x { NumberAnimation {} }
         Behavior on scale { NumberAnimation {} }
         Behavior on color { ColorAnimation{} }
@@ -117,23 +117,24 @@ Window {
       Text {
         id: countW // counterweight
         font { family: "metronomek"; pixelSize: parent.height * 0.24 }
-        color: GLOB.valueColor(activPal.text, countArea.containsPress ? 20 : 70)
+        color: countArea.containsPress ? GLOB.valueColor(activPal.text, 20) : activPal.highlight
         text: "\u00A4"
         anchors.horizontalCenter: parent.horizontalCenter
         y: pendulum.height * 0.65 * ((SOUND.tempo - 40) / 200)
         Behavior on y { NumberAnimation {} }
         Text { // inner counterweight
           font { family: "metronomek"; pixelSize: pendulum.height * 0.18 }
-          color: GLOB.valueColor(activPal.window, countArea.containsPress ? 20 : 0)
+          color: activPal.highlight
           text: "\u00A4"
           anchors.centerIn: parent
         }
         Text {
           visible: SOUND.meter > 1 && GLOB.countVisible && SOUND.playing
           text: SOUND.meterCount + 1
-          anchors.centerIn: parent
-          color: activPal.text
-          font { pixelSize: parent.height * 0.4; bold: true }
+          y: parent.height * 0.15
+          anchors.horizontalCenter: parent.horizontalCenter
+          color: activPal.highlightedText
+          font { pixelSize: parent.height * 0.5; bold: true }
         }
         MouseArea {
           id: countArea
