@@ -156,20 +156,27 @@ Window {
       x: parent.width * 0.3; y: parent.height * 0.703
     }
 
-    SpinBox {
+    TspinBox {
       id: sb
-      height: parent.height * 0.06; width: height * 3
-      x: parent.width * 0.75 - width; y: parent.height * 0.75
+      height: parent.height * 0.06 //; width: height * 3
+      x: parent.width * 0.73 - width; y: parent.height * 0.75
       font { bold: true; }
       from: 40; to: 240
       value: SOUND.tempo
       onValueModified: SOUND.tempo = value
     }
 
-    RoundButton {
+    AbstractButton {
+      id: butt
+      scale: pressed ? 0.8 : 1
+      Behavior on scale { NumberAnimation {} }
+      background: TipRect {
+        radius: width / 2
+        color: activPal.button
+        rised: !butt.pressed
+      }
       x: sb.x + (sb.width - width) / 2; y: sb.y + sb.height + metro.height * 0.01
-      width: metro.width * 0.15; height: width
-      radius: width / 2
+      width: metro.width * 0.13; height: width
       onClicked: {
         if (SOUND.playing)
           stopMetronome()
@@ -177,7 +184,7 @@ Window {
           startMetronome()
       }
       Rectangle {
-        width: parent.height * 0.45; height: width
+        width: parent.height * 0.55; height: width
         anchors.centerIn: parent
         radius: SOUND.playing ? 0 : width / 2
         color: SOUND.playing ? "red" : "green"
@@ -191,10 +198,25 @@ Window {
       color: activPal.text
     }
 
-    RoundButton {
+    AbstractButton {
+      id: tapButt
+      scale: pressed ? 0.8 : 1
+      Behavior on scale { NumberAnimation {} }
+      background: TipRect {
+        radius: height / 2
+        color: activPal.button
+        rised: !tapButt.pressed
+        Label {
+          font.pixelSize: tapButt.height / 3
+          text: qsTr("Tap tempo")
+          anchors.centerIn: parent
+          width: tapButt.width * 0.98
+          wrapMode: Text.WordWrap
+          horizontalAlignment: Text.AlignHCenter
+        }
+      }
       x: metro.width * 0.06; y: sb.y + sb.height + metro.height * 0.01
       height: metro.width * 0.13; width: height * 2.5
-      text: qsTr("Tap tempo")
       onClicked: tapTempo()
       focus: true
     }

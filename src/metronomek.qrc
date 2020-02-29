@@ -10,6 +10,8 @@
     <file>LinkText.qml</file>
     <file>MeterDrawer.qml</file>
     <file>MetroImage.qml</file>
+    <file>TipRect.qml</file>
+    <file>TspinBox.qml</file>
 
     <file alias="metronomek.png">../images/metronomek.png</file>
 
