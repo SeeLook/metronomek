@@ -167,14 +167,9 @@ Window {
     }
 
     AbstractButton {
-      id: butt
-      scale: pressed ? 0.8 : 1
+      scale: pressed ? 0.9 : 1
       Behavior on scale { NumberAnimation {} }
-      background: TipRect {
-        radius: width / 2
-        color: activPal.button
-        rised: !butt.pressed
-      }
+      background: TipRect { radius: width / 2 }
       x: sb.x + (sb.width - width) / 2; y: sb.y + sb.height + metro.height * 0.01
       width: metro.width * 0.13; height: width
       onClicked: {
@@ -200,17 +195,16 @@ Window {
 
     AbstractButton {
       id: tapButt
-      scale: pressed ? 0.8 : 1
+      scale: pressed ? 0.9 : 1
       Behavior on scale { NumberAnimation {} }
       background: TipRect {
         radius: height / 2
-        color: activPal.button
-        rised: !tapButt.pressed
-        Label {
+        Text {
           font.pixelSize: tapButt.height / 3
           text: qsTr("Tap tempo")
+          color: activPal.text
           anchors.centerIn: parent
-          width: tapButt.width * 0.98
+          width: tapButt.width - GLOB.fontSize()
           wrapMode: Text.WordWrap
           horizontalAlignment: Text.AlignHCenter
         }

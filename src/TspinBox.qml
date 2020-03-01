@@ -19,20 +19,27 @@ SpinBox {
     color: activPal.base
     width: sb.width - 2 * sb.height; height: sb.height
     x: sb.height
-    Label {
+    Text {
       text: sb.textFromValue(sb.value, sb.locale)
       anchors.centerIn: parent
       font { pixelSize: sb.height * 0.6; bold: true }
+      color: activPal.text
+    }
+    MouseArea {
+      anchors.fill: parent
+      onWheel: {
+        if (wheel.angleDelta.y > 0)
+          sb.value++
+        else if (wheel.angleDelta.y < 0)
+          sb.value--
+      }
     }
   }
 
-  up.indicator: TipRect {
+  up.indicator: Item {
     x: sb.mirrored ? 0 : sb.width - sb.height
     implicitHeight: sb.height; implicitWidth: sb.height
-    color: activPal.button
-    rised: !sb.up.pressed
-    radius: sb.height / 4
-    scale: sb.up.pressed ? 0.9 : 1.0
+    scale: sb.up.pressed ? 0.8 : 1
     Behavior on scale { NumberAnimation { duration: 150 }}
     Rectangle {
       x: parent.width / 4; width: parent.width / 2; height: parent.height / 15; y: parent.height * 0.48
@@ -45,13 +52,10 @@ SpinBox {
     }
   }
 
-  down.indicator: TipRect {
+  down.indicator: Item {
     x: sb.mirrored ? sb.width - sb.height : 0
     implicitHeight: sb.height; implicitWidth: sb.height
-    color: activPal.button
-    rised: !sb.down.pressed
-    radius: sb.height / 4
-    scale: sb.down.pressed ? 0.9 : 1.0
+    scale: sb.down.pressed ? 0.8 : 1
     Behavior on scale { NumberAnimation { duration: 150 }}
     Rectangle {
       x: parent.width / 4; width: parent.width / 2; height: parent.height / 15; y: parent.height * 0.48
