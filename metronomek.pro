@@ -7,13 +7,18 @@ else: TARGET = metronomek
 
 TEMPLATE = app
 
-VERSION = 0.4
+VERSION = 0.5-git
 QMAKE_SUBSTITUTES += src/metronomek_conf.h.in
 
 QT += multimedia gui quick quickcontrols2
 
 CONFIG += c++11
 
+# Actually it has to be 5.14 for Android due to newer manifest quirks
+!versionAtLeast(QT_VERSION, 5.10.0) {
+    message("Cannot use Qt $${QT_VERSION}")
+    error("Use Qt 5.10 or newer")
+}
 
 DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0

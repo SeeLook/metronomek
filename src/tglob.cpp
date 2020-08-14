@@ -11,11 +11,11 @@
 #endif
 
 #include <QtCore/qsettings.h>
-#include <QtCore/qdatetime.h>
 #include <QtCore/qmath.h>
 #include <QtGui/qguiapplication.h>
 #include <QtGui/qfont.h>
 #include <QtQml/qqmlengine.h>
+#include <QtCore/qrandom.h>
 
 #include "QtCore/qdebug.h"
 
@@ -52,8 +52,6 @@ Tglob::Tglob(QObject *parent) :
 #endif
   m_countVisible = m_settings->value(QStringLiteral("countVisible"), false).toBool();
   m_stationary = m_settings->value(QStringLiteral("pendulumStationary"), false).toBool();
-
-  qsrand(QDateTime::currentDateTimeUtc().toTime_t());
 
   qmlRegisterType<TmetroShape>("Metronomek", 1, 0, "TmetroShape");
 
@@ -98,7 +96,8 @@ QColor Tglob::alpha(const QColor& c, int a) {
 
 
 QColor Tglob::randomColor(int alpha, int level) {
-  return QColor(qrand() % level, qrand() % level, qrand() % level, alpha);
+  auto g = QRandomGenerator::global();
+  return QColor(g->bounded(level), g->bounded(level), g->bounded(level), alpha);
 }
 
 
