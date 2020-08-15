@@ -30,6 +30,7 @@ Flickable {
 
       Menu {
         id: beatMenu
+        width: parent.width* 0.9
         Repeater {
           model: SOUND.beatTypeCount()
           MenuItem {
@@ -48,6 +49,7 @@ Flickable {
 
       Menu {
         id: ringMenu
+        width: parent.width* 0.9
         Repeater {
           model: SOUND.ringTypeCount()
           MenuItem {
