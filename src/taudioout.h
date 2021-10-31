@@ -6,12 +6,12 @@
 #define TAUDIOOUT_H
 
 
-#include <QtCore/qstringlist.h>
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include <QtCore/qobject.h>
+//#include <QtMultimedia/qaudio.h>
+//#include <QtMultimedia/qaudiodeviceinfo.h>
 
 
-class QAudioOutput;
+//class QAudioOutput;
 class TaudioBuffer;
 
 
@@ -172,7 +172,7 @@ protected:
 private slots:
   void outCallBack(char* data, qint64 maxLen, qint64& wasRead);
   void playingFinishedSlot();
-  void stateChangedSlot(QAudio::State state);
+//  void stateChangedSlot(QAudio::State state);
   void startPlayingSlot();
 
 
@@ -182,9 +182,9 @@ private:
   bool                m_initialized = false;
   int                 m_bufferFrames, m_sampleRate;
   bool                m_callBackIsBussy;
-  QAudioOutput       *m_audioOUT;
+//  QAudioOutput       *m_audioOUT;
   TaudioBuffer       *m_buffer;
-  QAudioDeviceInfo    m_deviceInfo;
+//  QAudioDeviceInfo    m_deviceInfo;
 
   int                 m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
   int                 m_currSample = 0;
