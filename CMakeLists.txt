@@ -51,6 +51,8 @@ if (ANDROID)
     set_target_properties(metronomek
       PROPERTIES QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android"
     )
+else()
+    add_subdirectory(src/rtaudio)
 endif()
 
 add_subdirectory(translations)
