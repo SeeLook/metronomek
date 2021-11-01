@@ -6,7 +6,9 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-project(metronomek VERSION 0.4.9 LANGUAGES CXX)
+set(METRONOMEK_VER 0.4.9)
+
+project(metronomek VERSION ${METRONOMEK_VER} LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -21,7 +23,7 @@ find_package(Qt6 COMPONENTS Core Gui Quick REQUIRED)
 
 configure_file(${CMAKE_SOURCE_DIR}/src/metronomek_conf.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/metronomek_conf.h)
 
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(METRONOMEK_SRC
     src/main.cpp
@@ -30,6 +32,10 @@ set(METRONOMEK_SRC
     src/tmetroshape.cpp
     src/metronomek.qrc
 )
+
+if (ANDROID)
+    list(APPEND METRONOMEK_SRC src/android/tandroid.cpp)
+endif()
 
 qt_add_executable(metronomek
     MANUAL_FINALIZATION
@@ -41,13 +47,21 @@ qt_add_executable(metronomek
 # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 
 
+if (ANDROID)
+    set_target_properties(metronomek
+      PROPERTIES QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android"
+    )
+endif()
+
 add_subdirectory(translations)
 
+
 target_compile_definitions(metronomek
-  PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
+    PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
 )
+
 target_link_libraries(metronomek
-  PRIVATE Qt6::Core Qt6::Gui Qt6::Quick
+    PRIVATE Qt6::Core Qt6::Gui Qt6::Quick ${ALSA_LINK} ${PulseAudio_LINK}
 )
 
 set_target_properties(metronomek PROPERTIES
@@ -59,20 +73,19 @@ set_target_properties(metronomek PROPERTIES
 qt_import_qml_plugins(metronomek)
 qt_finalize_executable(metronomek)
 
-message(STATUS "
-  To enable launching MetronomeK without installing, call:
-  make runinplace
-  and launch it invoking: ./metronomek
-  "
-)
-
-if (UNIX)
+if (UNIX AND NOT ANDROID)
+  message(STATUS "
+    To enable launching MetronomeK without installing, call:
+    make runinplace
+    and launch it invoking: ./metronomek
+    "
+  )
   if (APPLE)
-    set(LINK_PATH "${CMAKE_BINARY_DIR}/Resources")
+      set(LINK_PATH "${CMAKE_BINARY_DIR}/Resources")
   else ()
-    set(LINK_PATH "${CMAKE_BINARY_DIR}")
+      set(LINK_PATH "${CMAKE_BINARY_DIR}")
   endif()
   add_custom_target(runinplace
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/installs/make-runinplace.sh ${CMAKE_SOURCE_DIR} ${LINK_PATH}
+      COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/installs/make-runinplace.sh ${CMAKE_SOURCE_DIR} ${LINK_PATH}
   )
 endif()
