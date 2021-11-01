@@ -55,8 +55,6 @@ else()
     add_subdirectory(src/rtaudio)
 endif()
 
-add_subdirectory(translations)
-
 
 target_compile_definitions(metronomek
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
@@ -74,6 +72,7 @@ set_target_properties(metronomek PROPERTIES
 
 qt_import_qml_plugins(metronomek)
 qt_finalize_executable(metronomek)
+
 
 if (UNIX AND NOT ANDROID)
   message(STATUS "
