@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 #else
 //   QLocale loc(qgetenv("LANG"));
   QLocale loc(QLocale(qgetenv("LANG")).language(), QLocale(qgetenv("LANG")).country());
-  QString p = qApp->applicationDirPath() + QLatin1String("/share/metronomek/translations/");
+  QString p = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/translations/");
 #endif
   QLocale::setDefault(loc);
 

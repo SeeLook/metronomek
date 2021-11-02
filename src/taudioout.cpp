@@ -432,7 +432,7 @@ QString TaudioOUT::getRawFilePath(const QString& fName) {
 #elif defined (Q_OS_WIN)
     QString rawFilePath = qApp->applicationDirPath() + QLatin1String("/sounds/");
 #else
-  QString rawFilePath = qApp->applicationDirPath() + QLatin1String("/share/metronomek/sounds/");
+  QString rawFilePath = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/sounds/");
 #endif
   return rawFilePath + fName +  QLatin1String(".raw48-16");
 }
