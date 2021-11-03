@@ -73,3 +73,7 @@ Thumbs.db
 
 # Kdevelop
 *.kdev4
+*.kate-swp
+
+# CMake
+*.txt.user
