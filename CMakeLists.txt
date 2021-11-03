@@ -57,7 +57,7 @@ target_compile_definitions(metronomek
 
 target_link_libraries(metronomek PRIVATE
   Qt5::Core Qt5::Gui Qt5::Quick Qt5::Multimedia
-  ${ALSA_LINK} ${PulseAudio_LINK}
+  ${ALSA_LIBRARIES} ${PulseAudio_LIBRARIES}
 )
 
 set_target_properties(metronomek PROPERTIES

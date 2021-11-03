@@ -27,9 +27,27 @@ if (UNIX)
       find_package(PulseAudio)
       if (PulseAudio_FOUND)
           add_definitions(-D__LINUX_PULSE__)
+          find_path(PulseAudio_INCLUDE_DIRS
+            NAMES
+              pulseaudio.h
+            PATHS
+              /usr/include
+              /usr/include/pulse
+              /usr/local/include
+              /opt/local/include
+          )
           include_directories(${PulseAudio_INCLUDE_DIRS})
+          find_library(PulseAudio_LIBRARIES
+              NAMES
+              pulse pulse-simple
+              PATHS
+              /lib
+              /usr/lib
+              /usr/lib/x86_64-linux-gnu
+              /usr/local/lib
+              /opt/local/lib
+          )
           message(STATUS "support for PulseAudio\t TRUE")
-          set(PulseAudio_LINK ${PulseAudio_LIBRARIES} PARENT_SCOPE)
       else()
           message(STATUS "support for PulseAudio\t FALSE")
       endif()
