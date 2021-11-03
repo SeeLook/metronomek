@@ -21,7 +21,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt5 COMPONENTS Core Gui Quick Multimedia REQUIRED)
 find_package(Qt5 COMPONENTS Core Gui Quick Multimedia REQUIRED)
 
-configure_file(${CMAKE_SOURCE_DIR}/src/metronomek_conf.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/metronomek_conf.h)
+configure_file(${CMAKE_SOURCE_DIR}/src/metronomek_conf_cmake.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/metronomek_conf.h)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
