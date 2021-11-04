@@ -11,7 +11,7 @@ but with all goods of computer program.
   - visible counting
   - determining tempo BPM by tapping
   - cross-platform: Android, Linux, Windows
-  - ... see TODO for more planed features
+  - ... see [TODO](TODO.md) for more planed features
 
 
 
@@ -22,7 +22,7 @@ MetronomeK can be compiled with Qt framework [https://www.qt.io/](https://www.qt
 To build the application perform (inside sources directory):
 
 ```
-qmake metronomek.pro
+cmake .
 make -jX # where X is number of CPU cores
 ```
 To install it, invoke:
@@ -35,5 +35,5 @@ to simply launch it where it was compiled
 
 ```
 make runinplace
-./src/metronomek
+./metronomek
 ```
