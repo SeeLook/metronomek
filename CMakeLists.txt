@@ -6,9 +6,9 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-set(METRONOMEK_VER 0.4.9)
+set(METRONOMEK_VER "0.5.0-devel")
 
-project(metronomek VERSION ${METRONOMEK_VER} LANGUAGES CXX)
+project(metronomek LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -74,8 +74,8 @@ target_link_libraries(metronomek PRIVATE
 
 set_target_properties(metronomek PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER org.seelook.metronomek
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE_BUNDLE_VERSION 1 # TODO - get git commits number here ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${METRONOMEK_VER}
 )
 
 ##############################################################################
