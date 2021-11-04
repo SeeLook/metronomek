@@ -6,13 +6,14 @@
 #define TAUDIOOUT_H
 
 
-#include <QtCore/qstringlist.h>
-#include <QtMultimedia/qaudio.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include <QtCore/qobject.h>
+// #include <QtMultimedia/qaudio.h>
+// #include <QtMultimedia/qaudiodeviceinfo.h>
 
 
-class QAudioOutput;
+// class QAudioOutput;
 class TaudioBuffer;
+class TabstractAudioOutput;
 
 
 /**
@@ -164,47 +165,48 @@ protected:
        */
   QString getRawFilePath(const QString& fName);
 
-  void createOutputDevice();
+//   void createOutputDevice();
 
   void setNameTempoId(int ntId);
   void setNameIdByTempo(int t);
 
 private slots:
-  void outCallBack(char* data, qint64 maxLen, qint64& wasRead);
+  void outCallBack(char* data, unsigned int maxLen, unsigned int& wasRead);
   void playingFinishedSlot();
-  void stateChangedSlot(QAudio::State state);
+  void stateChangedSlot();
   void startPlayingSlot();
 
 
 private:
-  static QString      m_devName;
-  static TaudioOUT   *m_instance;
-  bool                m_initialized = false;
-  int                 m_bufferFrames, m_sampleRate;
-  bool                m_callBackIsBussy;
-  QAudioOutput       *m_audioOUT;
-  TaudioBuffer       *m_buffer;
-  QAudioDeviceInfo    m_deviceInfo;
+  static QString         m_devName;
+  static TaudioOUT      *m_instance;
+  bool                   m_initialized = false;
+  int                    m_bufferFrames, m_sampleRate;
+  bool                   m_callBackIsBussy;
+  TabstractAudioOutput  *m_audioDevice;
+//   QAudioOutput          *m_audioOUT;
+  TaudioBuffer          *m_buffer;
+//   QAudioDeviceInfo       m_deviceInfo;
 
-  int                 m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
-  int                 m_currSample = 0;
-  bool                m_goingToStop = false;
-  int                 m_meterCount = 0;
-  TsoundData          m_beat;
-  TsoundData          m_ring;
-  bool                m_doBell = false;
-  qreal               m_offsetSample = 0.0;
-  qreal               m_offsetCounter = 0.0;
-  int                 m_missingSampleNr = 0;
+  int                    m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
+  int                    m_currSample = 0;
+  bool                   m_goingToStop = false;
+  int                    m_meterCount = 0;
+  TsoundData             m_beat;
+  TsoundData             m_ring;
+  bool                   m_doBell = false;
+  qreal                  m_offsetSample = 0.0;
+  qreal                  m_offsetCounter = 0.0;
+  int                    m_missingSampleNr = 0;
 
   // properties
-  bool                m_playing = false;
-  int                 m_beatType = -1;
-  int                 m_meter = 0;
-  bool                m_doRing = false;
-  int                 m_tempo = 60;
-  int                 m_ringType = 0;
-  int                 m_nameTempoId = 4;
+  bool                   m_playing = false;
+  int                    m_beatType = -1;
+  int                    m_meter = 0;
+  bool                   m_doRing = false;
+  int                    m_tempo = 60;
+  int                    m_ringType = 0;
+  int                    m_nameTempoId = 4;
 };
 
 #endif // TAUDIOOUT_H

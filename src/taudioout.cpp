@@ -4,11 +4,16 @@
 
 
 #include "taudioout.h"
+#if defined (Q_OS_ANDROID)
+
+#else
+  #include "trtaudioout.h"
+#endif
 #include "taudiobuffer.h"
 #include "tglob.h"
 
 #include <QtGui/qguiapplication.h>
-#include <QtMultimedia/qaudiooutput.h>
+// #include <QtMultimedia/qaudiooutput.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qfile.h>
 #include <QtCore/qdatastream.h>
@@ -68,11 +73,15 @@ void TsoundData::setFile(const QString& rawFileName) {
 
 /*static*/
 QStringList TaudioOUT::getAudioDevicesList() {
-  QStringList devNamesList;
-  QList<QAudioDeviceInfo> devList = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
-  for (int i = 0; i < devList.size(); ++i)
-    devNamesList << devList[i].deviceName();
-  return devNamesList;
+//   QStringList devNamesList;
+//   QList<QAudioDeviceInfo> devList = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
+//   for (int i = 0; i < devList.size(); ++i)
+//     devNamesList << devList[i].deviceName();
+#if defined (Q_OS_ANDROID)
+  return QStringList; //TODO
+#else
+  return TrtAudioOut::getAudioDevicesList();
+#endif
 }
 
 
@@ -101,8 +110,8 @@ TaudioOUT::TaudioOUT(QObject *parent) :
   ratioOfRate(1),
   m_bufferFrames(256),
   m_sampleRate(48000),
-  m_callBackIsBussy(false),
-  m_audioOUT(nullptr)
+  m_callBackIsBussy(false)
+//   m_audioOUT(nullptr)
 {
   if (m_instance) {
     qDebug() << "Nothing of this kind... TaudioOUT already exist!";
@@ -117,27 +126,29 @@ TaudioOUT::TaudioOUT(QObject *parent) :
   setRing(GLOB->settings()->value(QStringLiteral("doRing"), false).toBool());
 
   connect(this, &TaudioOUT::finishSignal, this, &TaudioOUT::playingFinishedSlot);
-#if defined (Q_OS_LINUX) && !defined (Q_OS_ANDROID)
-  QTimer::singleShot(1000, this, [=]{ init(); });
+// #if defined (Q_OS_LINUX) && !defined (Q_OS_ANDROID)
+//   QTimer::singleShot(1000, this, [=]{ init(); });
   // Qt Audio freezes launch under Linux
   // animations are sluggish then
   // so give it more time
-#else
+// #else
   QTimer::singleShot(500, this, [=]{ init(); });
-#endif
+// #endif
 }
 
 
 TaudioOUT::~TaudioOUT()
 {
   stopTicking();
-  m_devName = QStringLiteral("anything");
-  m_instance = 0;
-  if (m_audioOUT) {
-    delete m_audioOUT;
-    delete m_buffer;
-  }
-  GLOB->settings()->setValue(QStringLiteral("outDevice"), m_devName);
+//   m_devName = QStringLiteral("anything");
+  m_instance = nullptr;
+//   if (m_audioOUT) {
+//     delete m_audioOUT;
+//     delete m_buffer;
+//   }
+
+  if (m_audioDevice && m_audioDevice->deviceName() != QLatin1String("anything"))
+    GLOB->settings()->setValue(QStringLiteral("outDevice"), m_audioDevice->deviceName());
   GLOB->settings()->setValue(QStringLiteral("beatType"), m_beatType);
   GLOB->settings()->setValue(QStringLiteral("meter"), m_meter);
   GLOB->settings()->setValue(QStringLiteral("doRing"), m_doRing);
@@ -151,22 +162,34 @@ void TaudioOUT::init() {
       qDebug() << "[TaudioOUT] has been initialized already! Skipping.";
       return;
   } else {
-      m_devName = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();
-      setAudioOutParams();
+    #if defined (Q_OS_ANDROID)
+    // TODO
+    #else
+      m_audioDevice = new TrtAudioOut(this);
+    #endif
+      connect(m_audioDevice, &TabstractAudioOutput::feedAudio, this, &TaudioOUT::outCallBack, Qt::DirectConnection);
+//       connect(m_audioDevice, &TabstractAudioOutput::stateChenged, this, &TaudioOUT::stateChangedSlot);
+//       m_devName = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();
+      m_audioDevice->setDeviceName(GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString());
+//       m_audioDevice->setAudioOutParams();
+//       setAudioOutParams();
   }
 }
 
 
 void TaudioOUT::setDeviceName(const QString& devName) {
-  if (devName != m_devName) {
-    m_devName = devName;
-    createOutputDevice();
+  if (m_audioDevice->deviceName() != devName) {
+    m_audioDevice->setDeviceName(devName);
   }
+//   if (devName != m_devName) {
+//     m_devName = devName;
+//     createOutputDevice();
+//   }
 }
 
 
 void TaudioOUT::setAudioOutParams() {
-    createOutputDevice();
+//     createOutputDevice();
 }
 
 
@@ -180,47 +203,47 @@ void TaudioOUT::setPlaying(bool pl) {
 }
 
 
-void TaudioOUT::createOutputDevice() {
-  m_deviceInfo = QAudioDeviceInfo::defaultOutputDevice();
-  auto devList = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
-  for (int i = 0; i < devList.size(); ++i) { // find device with name or keep default one
-    if (devList[i].deviceName() == m_devName) {
-      m_deviceInfo = devList[i];
-      break;
-    }
-  }
-  m_devName = m_deviceInfo.deviceName();
-  qDebug() << m_deviceInfo.defaultOutputDevice().deviceName();
-  QAudioFormat format;
-    format.setChannelCount(1); // Mono
-    format.setSampleRate(m_sampleRate);
-    format.setSampleType(QAudioFormat::SignedInt);
-    format.setSampleSize(16);
-    format.setCodec(QStringLiteral("audio/pcm"));
-    format.setByteOrder(QAudioFormat::LittleEndian);
-  if (!m_deviceInfo.isFormatSupported(format)) {
-    qDebug() << "Output Format 48000/16 mono is not supported";
-    format = m_deviceInfo.nearestFormat(format);
-    qDebug() << "Format is" << format.sampleRate() << format.channelCount() << format.sampleSize();
-  }
-  m_sampleRate = format.sampleRate();
-
-  if (m_audioOUT) {
-    delete m_audioOUT;
-    delete m_buffer;
-  }
-  m_audioOUT = new QAudioOutput(m_deviceInfo, format, this);
-  m_audioOUT->setBufferSize(m_bufferFrames * 2);
-
-  m_buffer = new TaudioBuffer(this);
-  m_buffer->open(QIODevice::ReadOnly);
-  m_buffer->setBufferSize(m_audioOUT->bufferSize());
-
-  qDebug() << "OUT:" << m_deviceInfo.deviceName() << m_audioOUT->format().sampleRate();
-
-  connect(m_buffer, &TaudioBuffer::feedAudio, this, &TaudioOUT::outCallBack, Qt::DirectConnection);
-  connect(m_audioOUT, &QAudioOutput::stateChanged, this, &TaudioOUT::stateChangedSlot);
-}
+// void TaudioOUT::createOutputDevice() {
+//   m_deviceInfo = QAudioDeviceInfo::defaultOutputDevice();
+//   auto devList = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
+//   for (int i = 0; i < devList.size(); ++i) { // find device with name or keep default one
+//     if (devList[i].deviceName() == m_devName) {
+//       m_deviceInfo = devList[i];
+//       break;
+//     }
+//   }
+//   m_devName = m_deviceInfo.deviceName();
+//   qDebug() << m_deviceInfo.defaultOutputDevice().deviceName();
+//   QAudioFormat format;
+//     format.setChannelCount(1); // Mono
+//     format.setSampleRate(m_sampleRate);
+//     format.setSampleType(QAudioFormat::SignedInt);
+//     format.setSampleSize(16);
+//     format.setCodec(QStringLiteral("audio/pcm"));
+//     format.setByteOrder(QAudioFormat::LittleEndian);
+//   if (!m_deviceInfo.isFormatSupported(format)) {
+//     qDebug() << "Output Format 48000/16 mono is not supported";
+//     format = m_deviceInfo.nearestFormat(format);
+//     qDebug() << "Format is" << format.sampleRate() << format.channelCount() << format.sampleSize();
+//   }
+//   m_sampleRate = format.sampleRate();
+// 
+//   if (m_audioOUT) {
+//     delete m_audioOUT;
+//     delete m_buffer;
+//   }
+//   m_audioOUT = new QAudioOutput(m_deviceInfo, format, this);
+//   m_audioOUT->setBufferSize(m_bufferFrames * 2);
+// 
+//   m_buffer = new TaudioBuffer(this);
+//   m_buffer->open(QIODevice::ReadOnly);
+//   m_buffer->setBufferSize(m_audioOUT->bufferSize());
+// 
+//   qDebug() << "OUT:" << m_deviceInfo.deviceName() << m_audioOUT->format().sampleRate();
+// 
+//   connect(m_buffer, &TaudioBuffer::feedAudio, this, &TaudioOUT::outCallBack, Qt::DirectConnection);
+//   connect(m_audioOUT, &QAudioOutput::stateChanged, this, &TaudioOUT::stateChangedSlot);
+// }
 
 
 void TaudioOUT::startTicking() {
@@ -229,12 +252,16 @@ void TaudioOUT::startTicking() {
 
 
 void TaudioOUT::startPlayingSlot() {
-  if (m_audioOUT->state() != QAudio::ActiveState) {
+//   if (m_audioOUT->state() != QAudio::ActiveState) {
+  if (!m_playing) {
     m_currSample = 0;
     m_meterCount = 0;
     m_offsetCounter = 0.0;
     m_missingSampleNr = 0;
-    m_audioOUT->start(m_buffer);
+    m_audioDevice->startPlaying();
+    m_playing = true;
+    emit playingChanged();
+//     m_audioOUT->start(m_buffer);
   }
 }
 
@@ -244,10 +271,10 @@ void TaudioOUT::startPlayingSlot() {
  * To avoid that @p m_missingSampleNr adds single sample length to @p m_samplPerBeat
  * every whole integer summed with @p m_offsetSample
  */
-void TaudioOUT::outCallBack(char* data, qint64 maxLen, qint64& wasRead) {
+void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRead) {
   qint16 sample = 0;
   auto out = reinterpret_cast<qint16*>(data);
-  for (int i = 0; i < (maxLen / 2); i++) {
+  for (int i = 0; i < maxLen; i++) {
     sample = m_beat.sampleAt(m_currSample);
     m_currSample++;
     if (m_currSample >= m_samplPerBeat + m_missingSampleNr) {
@@ -280,23 +307,38 @@ void TaudioOUT::outCallBack(char* data, qint64 maxLen, qint64& wasRead) {
         m_doBell = false;
       }
     }
-    for (int r = 0; r < ratioOfRate; r++)
+    for (int r = 0; r < ratioOfRate; r++) {
       *out++ = sample; // left channel
+      *out++ = sample; // right channel
+    }
   }
+#if defined (Q_OS_ANDROID)
   wasRead = maxLen;
+#else
+  wasRead = 0; // RtAudio continue
+#endif
 }
 
 
-void TaudioOUT::stateChangedSlot(QAudio::State state) {
-  if (state == QAudio::IdleState)
-    playingFinishedSlot();
-  m_playing = state == QAudio::ActiveState;
+void TaudioOUT::stateChangedSlot() {
+//   if (state == QAudio::IdleState)
+//     playingFinishedSlot();
+#if defined (Q_OS_ANDROID)
+//   m_playing = state == QAudio::ActiveState;
+#else
+  m_playing = m_audioDevice->isPlaying();
+#endif
   emit playingChanged();
 }
 
 
 void TaudioOUT::playingFinishedSlot() {
-  m_audioOUT->stop();
+//   m_audioOUT->stop();
+  if (m_playing) {
+    m_audioDevice->stopPlaying();
+    m_playing = false;
+    emit playingChanged();
+  }
 }
 
 

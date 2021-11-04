@@ -19,7 +19,7 @@ if (UNIX)
           add_definitions(-D__LINUX_ALSA__)
           include_directories(${ALSA_INCLUDE_DIRS})
           message(STATUS "support for ALSA\t\t TRUE")
-          set(ALSA_LINK ${ALSA_LIBRARIES} PARENT_SCOPE)
+          set(ALSA_LIBRARIES ${ALSA_LIBRARIES} PARENT_SCOPE)
       else()
           message(STATUS "support for ALSA\t\t FALSE")
       endif()
@@ -27,6 +27,7 @@ if (UNIX)
       find_package(PulseAudio)
       if (PulseAudio_FOUND)
           add_definitions(-D__LINUX_PULSE__)
+          message(STATUS "support for PulseAudio\t TRUE")
           find_path(PulseAudio_INCLUDE_DIRS
             NAMES
               pulseaudio.h
@@ -47,13 +48,37 @@ if (UNIX)
               /usr/local/lib
               /opt/local/lib
           )
-          message(STATUS "support for PulseAudio\t TRUE")
+          find_library(PulseAudio_Simple_LIBRARIES
+              NAMES
+              pulse-simple
+              PATHS
+              /lib
+              /usr/lib
+              /usr/lib/x86_64-linux-gnu
+              /usr/local/lib
+              /opt/local/lib
+          )
+
       else()
           message(STATUS "support for PulseAudio\t FALSE")
       endif()
 
       if (ALSA_FOUND OR PulseAudio_FOUND)
-          target_sources(metronomek PRIVATE RtAudio.cpp)
+          find_library(PTHREAD_LIBRARIES
+            NAMES
+            pthread
+            PATHS
+            /usr/lib
+            /usr/lib/x86_64-linux-gnu
+            /usr/local/lib
+            /opt/local/lib
+            REQUIRED
+          )
+          set(RtAudio_LIBRARIES
+              ${ALSA_LIBRARIES} ${PulseAudio_LIBRARIES} ${PulseAudio_Simple_LIBRARIES}
+              ${PTHREAD_LIBRARIES}
+              PARENT_SCOPE
+          )
       else()
           message(STATUS "No audio libraries found!")
       endif()

@@ -18,17 +18,23 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt5 COMPONENTS Core Gui Quick Multimedia REQUIRED)
-find_package(Qt5 COMPONENTS Core Gui Quick Multimedia REQUIRED)
+find_package(QT NAMES Qt5 COMPONENTS Core Gui Quick REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Quick REQUIRED)
 
 configure_file(${CMAKE_SOURCE_DIR}/src/metronomek_conf_cmake.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/metronomek_conf.h)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
+if (NOT ANDROID)
+    add_subdirectory(src/rtaudio)
+endif()
+
 set(METRONOMEK_SRC
     src/main.cpp
     src/tglob.cpp
     src/taudioout.cpp
+    src/tabstractaudiooutput.cpp
+    src/trtaudioout.cpp
     src/tmetroshape.cpp
     src/taudiobuffer.h
     src/metronomek.qrc
@@ -36,6 +42,14 @@ set(METRONOMEK_SRC
 
 if (ANDROID)
     list(APPEND METRONOMEK_SRC src/android/tandroid.cpp)
+else()
+    if (ALSA_LIBRARIES)
+      add_definitions(-D__LINUX_ALSA__)
+    endif()
+    if (PulseAudio_LIBRARIES)
+      add_definitions(-D__LINUX_PULSE__)
+    endif()
+    list(APPEND METRONOMEK_SRC src/rtaudio/RtAudio.cpp)
 endif()
 
 add_executable(metronomek
@@ -46,8 +60,6 @@ if (ANDROID)
     set_target_properties(metronomek
       PROPERTIES QT_ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android"
     )
-else()
-    add_subdirectory(src/rtaudio)
 endif()
 
 
@@ -56,8 +68,8 @@ target_compile_definitions(metronomek
 )
 
 target_link_libraries(metronomek PRIVATE
-  Qt5::Core Qt5::Gui Qt5::Quick Qt5::Multimedia
-  ${ALSA_LIBRARIES} ${PulseAudio_LIBRARIES}
+  Qt5::Core Qt5::Gui Qt5::Quick
+  ${RtAudio_LIBRARIES}
 )
 
 set_target_properties(metronomek PROPERTIES
