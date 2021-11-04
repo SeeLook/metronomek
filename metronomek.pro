@@ -3,7 +3,10 @@
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
 
 android: TARGET = MetronomeK
-else: TARGET = metronomek
+else: {
+  TARGET = metronomek
+  error("To configure and build MetronomeK for desktop PC (Linux, Mac Windows) use cmake! This qmake script is for Android only!")
+}
 
 TEMPLATE = app
 
@@ -15,9 +18,9 @@ QT += multimedia gui quick quickcontrols2
 CONFIG += c++11
 
 # Actually it has to be 5.14 for Android due to newer manifest quirks
-!versionAtLeast(QT_VERSION, 5.10.0) {
+!versionAtLeast(QT_VERSION, 5.14.0) {
     message("Cannot use Qt $${QT_VERSION}")
-    error("Use Qt 5.10 or newer")
+    error("Use Qt 5.14 or newer")
 }
 
 DEFINES += QT_DEPRECATED_WARNINGS
