@@ -27,7 +27,6 @@ SetCompressor lzma
 
 ; Image
 !define MUI_HEADERIMAGE
-; !define MUI_WELCOMEFINISHPAGE_BITMAP "picts\logo-left.bmp"
 !define MUI_HEADERIMAGE_BITMAP "images\logo.bmp"
 
 ; Welcome page
@@ -92,16 +91,9 @@ Section "MainGroup" SEC01
   SetOutPath "$INSTDIR\qmltooling"
     File "qmltooling\*.dll"
 
-  SetOutPath "$INSTDIR\audio"
-    File "audio\*.dll"
-
-  SetOutPath "$INSTDIR\mediaservice"
-    File "mediaservice\*.dll"
-
   SetOutPath "$INSTDIR"
 ;    File /r "Qt"
     File /r /x "*.qmlc" "QtGraphicalEffects"
-;    File /r /x "*.qmlc" "QtQml"
     File /r /x "*.qmlc" "QtQuick"
     File /r /x "*.qmlc" "QtQuick.2"
 
@@ -109,9 +101,6 @@ Section "MainGroup" SEC01
   SetOutPath "$INSTDIR\sounds"
     File "sounds\*.raw48-16"
 
-;   SetOutPath "$INSTDIR\images"
-;     File "picts\*.ico"
-;     File "picts\*.png"
 
   SetOutPath "$INSTDIR\translations"
     File "translations\*.qm"
@@ -154,14 +143,11 @@ Section Uninstall
   Delete "$INSTDIR\*.dll"
   Delete "$INSTDIR\sounds\*.*"
   Delete "$INSTDIR\LICENSE"
-;   Delete "$INSTDIR\images\*.*"
   Delete "$INSTDIR\translations\*.*"
   Delete "$INSTDIR\platforms\*.*"
   Delete "$INSTDIR\bearer\*.*"
   Delete "$INSTDIR\imageformats\*.*"
   Delete "$INSTDIR\qmltooling\*.*"
-  Delete "$INSTDIR\audio\*.*"
-  Delete "$INSTDIR\mediaservice\*.*"
 
   Delete "$SMPROGRAMS\Metronomek\Uninstall.lnk"
   Delete "$SMPROGRAMS\Metronomek\Website.lnk"
@@ -170,17 +156,12 @@ Section Uninstall
 
   RMDir "$SMPROGRAMS\Metronomek"
   RMDir "$INSTDIR\sounds"
-;   RMDir "$INSTDIR\images"
   RMDir "$INSTDIR\translations"
   RMDir "$INSTDIR\platforms"
   RMDir "$INSTDIR\bearer"
   RMDir "$INSTDIR\imageformats"
   RMDir "$INSTDIR\qmltooling"
-  RMDir "$INSTDIR\audio"
-  RMDir "$INSTDIR\mediaservice"
-;  RMDir  /r "$INSTDIR\Qt"
   RMDir  /r "$INSTDIR\QtGraphicalEffects"
-;  RMDir  /r "$INSTDIR\QtQml"
   RMDir  /r "$INSTDIR\QtQuick"
   RMDir  /r "$INSTDIR\QtQuick.2"
   RMDir "$INSTDIR"
