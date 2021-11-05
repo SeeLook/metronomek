@@ -5,7 +5,7 @@
 Metronome that works and sounds similar to mechanical devices
 but with all goods of computer program.
 
-================================================================
+--------------------------
 
 ## Features:
   - natural (real audio) sounds
@@ -16,7 +16,7 @@ but with all goods of computer program.
   - cross-platform: Android, Linux, Mac, Windows
   - ... see [TODO](TODO.md) for more planed features
 
-================================================================
+--------------------------
 
 ## Building from sources
 
