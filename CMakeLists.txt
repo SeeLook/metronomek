@@ -67,8 +67,8 @@ install(FILES ${QM_STUFF} DESTINATION "${INS_PREF}/translations")
 
 # Icons & other stuff
 if (WIN32)
-    install(FILE installs/metronomek.nsi DESTINATION ${INS_PREF})
-    install(FILES images/metronomek.ico images/pack.ico images/logo.bmp DESTINATION ${INS_PREF})
+    install(FILES installs/metronomek.nsi DESTINATION ${INS_PREF})
+    install(FILES images/metronomek.ico images/pack.ico images/logo.bmp DESTINATION "${INS_PREF}/images")
     # MINGW libraries
     if (COPY_GCC_LIBS)
       get_filename_component(MAKE_DIR "${CMAKE_RC_COMPILER}" DIRECTORY)
@@ -109,5 +109,28 @@ if (UNIX AND NOT ANDROID)
   endif()
   add_custom_target(runinplace
       COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/installs/make-runinplace.sh ${CMAKE_SOURCE_DIR} ${LINK_PATH}
+  )
+endif()
+
+##############################################################################
+#            deploy target                                                   #
+#         (Mac Os & Windows)                                                 #
+##############################################################################
+
+get_target_property(QtCore_location_Release Qt5::Core LOCATION_Release)
+get_filename_component(QT_BINARY_DIR "${QtCore_location_Release}" DIRECTORY)
+
+if (APPLE)
+  add_custom_target(deploy
+    COMMAND echo "deploying..."
+    #COMMAND echo ${QT_BINARY_DIR}/../../bin
+    COMMAND ${QT_BINARY_DIR}/../../bin/macdeployqt ${CMAKE_INSTALL_PREFIX}/metronomek.app -qmldir=${CMAKE_SOURCE_DIR}/src/qml
+  )
+endif()
+
+if (WIN32)
+  add_custom_target(deploy
+    COMMAND echo "deploying..."
+    COMMAND ${QT_BINARY_DIR}/windeployqt.exe ${CMAKE_INSTALL_PREFIX}/metronomek.exe --no-translations --no-svg --qmldir "${CMAKE_SOURCE_DIR}/src/qml"
   )
 endif()
