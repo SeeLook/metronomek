@@ -85,4 +85,8 @@ if (UNIX)
 
   endif()
 
+elseif (WIN32)
+  set(RtAudio_LIBRARIES winmm ole32 mfuuid ksuser mfplat wmcodecdspuuid PARENT_SCOPE)
+  add_definitions(-D__WINDOWS_WASAPI__)
+
 endif()

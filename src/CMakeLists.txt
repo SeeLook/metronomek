@@ -23,18 +23,25 @@ set(METRONOMEK_SRC
 if (ANDROID)
     list(APPEND METRONOMEK_SRC android/tandroid.cpp)
 else()
-    if (ALSA_LIBRARIES)
-      add_definitions(-D__LINUX_ALSA__)
-    endif()
-    if (PulseAudio_LIBRARIES)
-      add_definitions(-D__LINUX_PULSE__)
+    if (UNIX)
+        if (APPLE)
+            add_definitions(-D__MACOSX_CORE__)
+        else()
+            if (ALSA_LIBRARIES)
+              add_definitions(-D__LINUX_ALSA__)
+            endif()
+            if (PulseAudio_LIBRARIES)
+              add_definitions(-D__LINUX_PULSE__)
+            endif()
+        endif()
+    elseif (WIN32)
+        add_definitions(-D__WINDOWS_WASAPI__)
+        set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_SOURCE_DIR}/images/metronomek.rc")
     endif()
     list(APPEND METRONOMEK_SRC rtaudio/RtAudio.cpp)
 endif()
 
-add_executable(metronomek
-    ${METRONOMEK_SRC}
-)
+add_executable(metronomek WIN32 ${APP_ICON_RESOURCE_WINDOWS} ${METRONOMEK_SRC})
 
 if (ANDROID)
     set_target_properties(metronomek

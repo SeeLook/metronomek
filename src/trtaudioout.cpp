@@ -21,7 +21,7 @@ void TrtAudioOut::createRtAudio() {
   if (m_rtAduio == nullptr) { // Create RtAudio instance only if doesn't exist
     RtAudio::Api rtAPI = RtAudio::RTAUDIO_DUMMY;
   #if defined(Q_OS_WIN)
-      rtAPII = RtAudio::WINDOWS_WASAPI;
+      rtAPI = RtAudio::WINDOWS_WASAPI;
   #elif defined(Q_OS_LINUX)
     #if defined(__LINUX_ALSA__)
       rtAPI = RtAudio::LINUX_ALSA;
