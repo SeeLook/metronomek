@@ -22,18 +22,31 @@ MetronomeK can be compiled with Qt framework [https://www.qt.io/](https://www.qt
 To build the application perform (inside sources directory):
 
 ```
-cmake .
-make -jX # where X is number of CPU cores
+$cmake .
+$make -jX # where X is number of CPU cores
+or
+$ninja
 ```
 To install it, invoke:
 
 ```
-make install
+$make install
+or
+$ninja install
 ```
 
-to simply launch it where it was compiled
+or, just to simply launch it where it was compiled without installation:
 
-```
-make runinplace
-./metronomek
-```
+ - invoke once:
+
+    ```
+    $make runinplace
+    or
+    $ninja runinplace
+    ```
+
+ - and launch the app this way:
+
+    ```
+    $./src/metronomek
+    ```
