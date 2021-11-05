@@ -169,9 +169,11 @@ void TaudioOUT::init() {
     #endif
       connect(m_audioDevice, &TabstractAudioOutput::feedAudio, this, &TaudioOUT::outCallBack, Qt::DirectConnection);
 //       connect(m_audioDevice, &TabstractAudioOutput::stateChenged, this, &TaudioOUT::stateChangedSlot);
-//       m_devName = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();
-      m_audioDevice->setDeviceName(GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString());
-//       m_audioDevice->setAudioOutParams();
+      auto dn = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();
+      if (dn != QLatin1String("anything")) // This is workaround for old device name handling
+        m_audioDevice->setDeviceName(GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString());
+      else
+        m_audioDevice->setAudioOutParams();
 //       setAudioOutParams();
   }
 }
