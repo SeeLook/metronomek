@@ -65,7 +65,7 @@ $LIN_DEP_QT AppDir/usr/share/applications/*.desktop -bundle-non-qt-libs -qmldir=
 
 # Obtain git commits number
 BUILD=$(git -C $SRC_DIR rev-list HEAD --count)
-mv Metronomek*.AppImage Metronomek-$VERSION-b$BUILD-x86_64.AppImage
+mv MetronomeK*.AppImage Metronomek-$VERSION-b$BUILD-x86_64.AppImage
 
 
 
