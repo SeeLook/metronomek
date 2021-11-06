@@ -1,0 +1,23 @@
+appimage-amd64:
+  image: ubuntu:18.04
+
+  before_script:
+    - apt-get update
+    - apt-get install -y mesa-common-dev libasound2-dev libpulse-dev git wget build-essential software-properties-common
+    - add-apt-repository -y -u ppa:beineri/opt-qt-5.15.2-bionic
+    - apt-get install -y qt515base qt515graphicaleffects qt515translations qt515x11extras libgl1-mesa-glx libgl1-mesa-dri qt515quickcontrols2 qt515quickcontrols libgl1-mesa-dev
+    - wget -qO "https://cmake.org/files/v3.14/cmake-3.14.0-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C ~/.local
+    - export PATH=`pwd`/.local/bin:$PATH
+
+  script:
+    - . "/opt/qt515/bin/qt515-env.sh" || true
+    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DQT_QMAKE_EXECUTABLE=/opt/qt515/bin/qmake .
+    - make
+    - make appimage
+    - ls -la
+
+  artifacts:
+    name: "Metronomek-AppImage-$(sed -n "4 p" src/metronomek_conf.h | awk -F" " '{ print $3 }' | sed 's/\"//g')-b$(git rev-list HEAD --count)"
+    paths:
+      - 'Metronomek-*.AppImage*'
+
