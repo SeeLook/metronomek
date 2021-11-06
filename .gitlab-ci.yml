@@ -17,7 +17,7 @@ appimage-amd64:
     - ls -la
 
   artifacts:
-    name: "Metronomek-AppImage-$(sed -n "4 p" src/metronomek_conf.h | awk -F" " '{ print $3 }' | sed 's/\"//g')-b$(git rev-list HEAD --count)"
+    name: Metronomek-AppImage-$(sed -n "4 p" src/metronomek_conf.h | awk -F" " '{ print $3 }' | sed 's/\"//g')-b$(git rev-list HEAD --count)
     paths:
       - 'Metronomek-*.AppImage*'
 
