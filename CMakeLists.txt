@@ -134,3 +134,17 @@ if (WIN32)
     COMMAND ${QT_BINARY_DIR}/windeployqt.exe ${CMAKE_INSTALL_PREFIX}/metronomek.exe --no-translations --no-svg --qmldir "${CMAKE_SOURCE_DIR}/src/qml"
   )
 endif()
+
+##############################################################################
+#            AppImage target                                                 #
+#                (Linux)                                                     #
+##############################################################################
+if (UNIX AND NOT APPLE)
+  # To correctly generate AppImage set install prefix to '/usr'
+  # and when using with older Linux system (i.e. Ubuntu Trusty 14.04)
+  # call
+  # cmake with -DQT_QMAKE_EXECUTABLE=/opt/qtXX/bin/qmake
+  add_custom_target(appimage
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/installs/make-appimage.sh ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${QT_QMAKE_EXECUTABLE} ${METRONOMEK_VER}
+  )
+endif()
