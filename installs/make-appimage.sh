@@ -40,7 +40,7 @@ else
   echo "-- fetching linuxdeployqt"
   wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   chmod a+x linuxdeployqt-continuous-x86_64.AppImage
-  LIN_DEP_QT="./linuxdeployqt-continuous-x86_64.AppImage "
+  LIN_DEP_QT="./linuxdeployqt-continuous-x86_64.AppImage --appimage-extract-and-run"
 fi
 
 if [ -d AppDir ]; then
