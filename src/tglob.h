@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #ifndef TGLOB_H
@@ -53,6 +53,7 @@ class Tglob : public QObject
   Q_PROPERTY(QRect geometry READ geometry WRITE setGeometry NOTIFY dummySignal)
   Q_PROPERTY(bool countVisible READ countVisible WRITE setCountVisible NOTIFY countVisibleChanged)
   Q_PROPERTY(bool stationary READ stationary WRITE setStationary NOTIFY stationaryChanged)
+  Q_PROPERTY(QString lang READ lang WRITE setLang NOTIFY langChanged)
 
 public:
   explicit Tglob(QObject *parent = nullptr);
@@ -70,6 +71,9 @@ public:
 
   bool stationary() const { return m_stationary;}
   void setStationary(bool stat);
+
+  QString lang() const { return m_lang; }
+  void setLang(const QString& l);
 
   Q_INVOKABLE Ttempo tempoName(int id) { return m_tempoList[id]; }
   Q_INVOKABLE int temposCount() const { return m_tempoList.count(); }
@@ -118,6 +122,7 @@ signals:
   void dummySignal();
   void countVisibleChanged();
   void stationaryChanged();
+  void langChanged();
 
 private:
   void createTempoList();
@@ -128,6 +133,7 @@ private:
   QRect               m_geometry;
   bool                m_countVisible;
   bool                m_stationary;
+  QString             m_lang;
 #if defined (Q_OS_ANDROID)
   bool                m_keepScreenOn;
   bool                m_disableRotation;

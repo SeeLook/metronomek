@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tglob.h"
@@ -52,6 +52,7 @@ Tglob::Tglob(QObject *parent) :
 #endif
   m_countVisible = m_settings->value(QStringLiteral("countVisible"), false).toBool();
   m_stationary = m_settings->value(QStringLiteral("pendulumStationary"), false).toBool();
+  m_lang = m_settings->value(QStringLiteral("language"), QString()).toString();
 
   qmlRegisterType<TmetroShape>("Metronomek", 1, 0, "TmetroShape");
 
@@ -71,6 +72,7 @@ Tglob::~Tglob()
 #endif
   m_settings->setValue(QStringLiteral("countVisible"), m_countVisible);
   m_settings->setValue(QStringLiteral("pendulumStationary"), m_stationary);
+  m_settings->setValue(QStringLiteral("language"), m_lang);
 }
 
 
@@ -86,6 +88,14 @@ void Tglob::setStationary(bool stat) {
   if (stat != m_stationary) {
     m_stationary = stat;
     emit stationaryChanged();
+  }
+}
+
+
+void Tglob::setLang(const QString& l) {
+  if (l != m_lang) {
+    m_lang = l;
+    emit langChanged();
   }
 }
 

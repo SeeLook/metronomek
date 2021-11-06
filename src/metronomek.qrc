@@ -15,6 +15,10 @@
 
     <file alias="metronomek.png">../images/metronomek.png</file>
 
+    <file alias="flags/default.png">../images/flags/default.png</file>
+    <file alias="flags/pl.png">../images/flags/pl.png</file>
+    <file alias="flags/us.png">../images/flags/us.png</file>
+
     <file alias="metronomek.otf">../fonts/metronomek.otf</file>
 
     <file>qtquickcontrols2.conf</file>

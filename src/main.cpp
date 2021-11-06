@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tglob.h"
@@ -27,6 +27,8 @@ int main(int argc, char *argv[])
   auto app = new QGuiApplication(argc, argv);
   app->setWindowIcon(QIcon(QStringLiteral(":/metronomek.png")));
 
+  auto glob = new Tglob();
+
 #if defined (Q_OS_ANDROID)
   auto pal = qApp->palette();
   pal.setColor(QPalette::Active, QPalette::Highlight, QColor(0, 0x96, 0x88)); // Teal color for highlight #009688
@@ -39,13 +41,14 @@ int main(int argc, char *argv[])
 #endif
 
 #if defined (Q_OS_ANDROID)
-  QLocale loc(QLocale::system());
+  QLocale loc(GLOB->lang().isEmpty() ? QLocale::system().language() : QLocale(GLOB->lang()).language());
   QString p = QStringLiteral("assets:/translations/");
 #elif defined (Q_OS_WIN)
-  QLocale loc(QLocale::system().uiLanguages().first());
+  QLocale loc(GLOB->lang().isEmpty() ? QLocale::system().uiLanguages().first() : GLOB->lang());
   QString p = qApp->applicationDirPath() + QLatin1String("/translations/");
 #else
-  QLocale loc(qgetenv("LANG"));
+  QLocale loc(QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).language(),
+              QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).country());
   QString p = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/translations/");
 #endif
   QLocale::setDefault(loc);
@@ -61,7 +64,6 @@ int main(int argc, char *argv[])
     return 111;
   }
 
-  auto glob = new Tglob();
   auto sound = new TaudioOUT();
 
   auto engine = new QQmlApplicationEngine();
