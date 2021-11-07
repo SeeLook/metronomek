@@ -78,7 +78,8 @@ else()
     if(APPLE)
       # TODO
     else() # Linux
-        install(FILES installs/metronomek.desktop DESTINATION share/applications)
+        install(FILES installs/net.sf.metronomek.desktop DESTINATION share/applications)
+        install(FILES installs/net.sf.metronomek.appdata.xml DESTINATION share/metainfo)
         install(FILES images/hicolor/16x16/apps/metronomek.png DESTINATION share/icons/hicolor/16x16/apps/)
         install(FILES images/hicolor/24x24/apps/metronomek.png DESTINATION share/icons/hicolor/24x24/apps/)
         install(FILES images/hicolor/32x32/apps/metronomek.png DESTINATION share/icons/hicolor/32x32/apps/)

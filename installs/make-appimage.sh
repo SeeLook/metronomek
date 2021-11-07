@@ -55,17 +55,13 @@ make DESTDIR="AppDir/" install
 
 export PATH="$QMAKE:$PATH"
 
-
-# desktop integration files TODO
-# mv AppDir/usr/share/metainfo/metronomek.appdata.xml AppDir/usr/share/metainfo/sf.net.metronomek.appdata.xml
-
-$LIN_DEP_QT AppDir/usr/share/applications/*.desktop -bundle-non-qt-libs -qmldir=$SRC_DIR/src/qml -qmake=$QMAKE -appimage
+$LIN_DEP_QT AppDir/usr/share/applications/*.desktop -bundle-non-qt-libs -no-translations -qmldir=$SRC_DIR/src/qml -qmake=$QMAKE -appimage
 
 
 
 # Obtain git commits number
 BUILD=$(git -C $SRC_DIR rev-list HEAD --count)
-mv MetronomeK*.AppImage Metronomek-$VERSION-b$BUILD-x86_64.AppImage
+mv Metronome*.AppImage Metronomek-$VERSION-b$BUILD-x86_64.AppImage
 
 
 
