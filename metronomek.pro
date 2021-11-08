@@ -10,10 +10,10 @@ else: {
 
 TEMPLATE = app
 
-VERSION = 0.5-git
+VERSION = 0.5-devel
 QMAKE_SUBSTITUTES += src/metronomek_conf.h.in
 
-QT += multimedia gui quick quickcontrols2
+QT += multimedia gui quick quickcontrols2 androidextras
 
 CONFIG += c++11
 
@@ -30,97 +30,26 @@ SOURCES += \
         src/main.cpp \
         src/tglob.cpp \
         src/taudioout.cpp \
+        src/tabstractaudiooutput.cpp \
+        src/tqtaudioout.cpp \
         src/tmetroshape.cpp \
+        \
+        src/android/tandroid.cpp \
 
 HEADERS += \
         src/tglob.h \
         src/taudiobuffer.h \
         src/taudioout.h \
+        src/tabstractaudiooutput.h \
+        src/tqtaudioout.h \
         src/tmetroshape.h \
-
-android {
-  QT += androidextras
-  SOURCES += src/android/tandroid.cpp\
-
-  HEADERS += src/android/tandroid.h\
-}
+        \
+        src/android/tandroid.h\
 
 RESOURCES += src/metronomek.qrc
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /bin
-else: windows: target.path = $${PREFIX}/
-!isEmpty(target.path): INSTALLS += target
-
-linux:!android {
-  # build executable in scr dir to keep '../share/metronomek/sounds' path valid during debug
-  DESTDIR = src
-  sounds.path = /share/metronomek/sounds
-  translations.path = /share/metronomek/translations
-  license.path = /share/metronomek
-
-  icon16.path = /share/icons/hicolor/16x16/apps
-  icon16.files = images/hicolor/16x16/apps/metronomek.png
-  icon24.path = /share/icons/hicolor/24x24/apps
-  icon24.files = images/hicolor/24x24/apps/metronomek.png
-  icon32.path = /share/icons/hicolor/32x32/apps
-  icon32.files = images/hicolor/32x32/apps/metronomek.png
-  icon48.path = /share/icons/hicolor/48x48/apps
-  icon48.files = images/hicolor/48x48/apps/metronomek.png
-  icon64.path = /share/icons/hicolor/64x64/apps
-  icon64.files = images/hicolor/64x64/apps/metronomek.png
-  icon128.path = /share/icons/hicolor/128x128/apps
-  icon128.files = images/hicolor/128x128/apps/metronomek.png
-  icon256.path = /share/icons/hicolor/256x256/apps
-  icon256.files = images/hicolor/256x256/apps/metronomek.png
-
-  desktop.path = /share/applications
-  desktop.files = installs/metronomek.desktop
-  INSTALLS += icon16 icon24 icon32 icon48 icon64 icon128 icon256 desktop
-
-  makesrc.target = src
-  makesrc.depends = first
-  makesrc.commands = $${PWD}/installs/make-src.sh \"$$VERSION\" \"$$OUT_PWD\" \"$$PWD\"
-
-  runinplace.target = runinplace
-  runinplace.depends = first
-  runinplace.commands = $${PWD}/installs/make-runinplace.sh \"$$PWD\" \"$$OUT_PWD\"
-
-  QMAKE_EXTRA_TARGETS += makesrc runinplace
-  INSTALLS += license
-}
-android {
-  sounds.path = /assets/sounds
-  translations.path = /assets/translations
-}
-windows {
-  RC_ICONS = images/metronomek.ico
-
-  sounds.path = $${PREFIX}/sounds
-  translations.path = $${PREFIX}/translations
-  license.path = $${PREFIX}
-
-  qtPrepareTool(QMAKE_WINDEPLOYQT, windeployqt)
-  deploy.target = deploy
-  deploy.depends = first
-  deploy.commands = $${QMAKE_WINDEPLOYQT} $${PREFIX}/metronomek.exe --release --no-translations --no-svg --qmldir $${PWD}/src
-  QMAKE_EXTRA_TARGETS += deploy
-
-  QMAKE_DIR = $$dirname(QMAKE_WINDEPLOYQT)
-
-  winstuff.path = $${PREFIX}
-  winstuff.files += $${QMAKE_DIR}/libgcc_s_dw2-1.dll
-  winstuff.files += $${QMAKE_DIR}/libwinpthread-1.dll
-  winstuff.files += $${QMAKE_DIR}/libstdc++-6.dll
-  winstuff.files += installs/metronomek.nsi # Windows installer build script
-
-  images.path= $${PREFIX}/images
-  images.files += $$files(images/*.ico, true)
-  images.files += $$files(images/*.bmp, true)
-
-  INSTALLS += winstuff license images
-}
+sounds.path = /assets/sounds
+translations.path = /assets/translations
 
 sounds.files = $$files(sounds/*.raw48-16, true)
 sounds.depends += FORCE

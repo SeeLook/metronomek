@@ -7,12 +7,8 @@
 
 
 #include <QtCore/qobject.h>
-// #include <QtMultimedia/qaudio.h>
-// #include <QtMultimedia/qaudiodeviceinfo.h>
 
 
-// class QAudioOutput;
-class TaudioBuffer;
 class TabstractAudioOutput;
 
 
@@ -165,15 +161,12 @@ protected:
        */
   QString getRawFilePath(const QString& fName);
 
-//   void createOutputDevice();
-
   void setNameTempoId(int ntId);
   void setNameIdByTempo(int t);
 
 private slots:
   void outCallBack(char* data, unsigned int maxLen, unsigned int& wasRead);
   void playingFinishedSlot();
-  void stateChangedSlot();
   void startPlayingSlot();
 
 
@@ -184,9 +177,6 @@ private:
   int                    m_bufferFrames, m_sampleRate;
   bool                   m_callBackIsBussy;
   TabstractAudioOutput  *m_audioDevice;
-//   QAudioOutput          *m_audioOUT;
-  TaudioBuffer          *m_buffer;
-//   QAudioDeviceInfo       m_deviceInfo;
 
   int                    m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
   int                    m_currSample = 0;
