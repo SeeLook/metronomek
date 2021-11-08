@@ -94,7 +94,6 @@ qint16 mix(qint16 sampleA, qint16 sampleB) {
 }
 
 
-QString                TaudioOUT::m_devName = QStringLiteral("default");
 TaudioOUT*             TaudioOUT::m_instance = nullptr;
 /*end static*/
 
@@ -128,7 +127,6 @@ TaudioOUT::TaudioOUT(QObject *parent) :
 TaudioOUT::~TaudioOUT()
 {
   stopTicking();
-//   m_devName = QStringLiteral("anything");
   m_instance = nullptr;
 
   if (m_audioDevice && m_audioDevice->deviceName() != QLatin1String("anything"))
@@ -138,6 +136,11 @@ TaudioOUT::~TaudioOUT()
   GLOB->settings()->setValue(QStringLiteral("doRing"), m_doRing);
   GLOB->settings()->setValue(QStringLiteral("tempo"), m_tempo);
   GLOB->settings()->setValue(QStringLiteral("ringType"), m_ringType);
+}
+
+
+QString TaudioOUT::outputName() {
+  return m_instance && m_instance->m_audioDevice ? m_instance->m_audioDevice->deviceName() : QString();
 }
 
 

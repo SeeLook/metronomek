@@ -83,7 +83,7 @@ public:
   void init();
 
   Q_INVOKABLE static QStringList getAudioDevicesList();
-  Q_INVOKABLE static QString outputName() { return m_devName; }
+  Q_INVOKABLE static QString outputName();
 
   Q_INVOKABLE void startTicking();
   Q_INVOKABLE void stopTicking();
@@ -171,7 +171,6 @@ private slots:
 
 
 private:
-  static QString         m_devName;
   static TaudioOUT      *m_instance;
   bool                   m_initialized = false;
   int                    m_bufferFrames, m_sampleRate;

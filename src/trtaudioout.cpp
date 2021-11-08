@@ -231,7 +231,6 @@ void TrtAudioOut::startPlaying() {
   if (rtDevice()) {
     startStream();
     p_isPlaying = true;
-    emit stateChenged();
   }
 }
 
@@ -243,7 +242,6 @@ void TrtAudioOut::stopPlaying() {
     else
       stopStream();
     p_isPlaying = false;
-    emit stateChenged();
   }
 }
 
