@@ -8,6 +8,8 @@ import QtQuick.Controls 2.12
 Dialog {
   id: settPage
 
+  padding: GLOB.fontSize() / 2
+
   visible: true
 
   Flickable {
@@ -18,11 +20,11 @@ Dialog {
 
     Column {
       id: col
-      width: parent.width
+      width: settPage.contentItem.width
       spacing: GLOB.fontSize()
 
       Frame {
-        width: GLOB.fontSize() * (GLOB.isAndroid() ? 21 : 30); height: GLOB.fontSize() * (GLOB.isAndroid() ? 7 : 9)
+        width: GLOB.fontSize() * (GLOB.isAndroid() ? 25 : 30); height: GLOB.fontSize() * (GLOB.isAndroid() ? 7 : 9)
         anchors.horizontalCenter: parent.horizontalCenter
 
         ListModel {
@@ -71,16 +73,16 @@ Dialog {
             dragMargin: width / 2
             path: Path {
               startX: 0
-              startY: GLOB.fontSize() * 2.2
+              startY: GLOB.fontSize() * (GLOB.isAndroid() ? 2 : 2.2)
               PathLine {
                 x: pathView.width
-                y: GLOB.fontSize() * 2.2
+                y: GLOB.fontSize() * (GLOB.isAndroid() ? 2 : 2.2)
               }
             }
           }
           Rectangle {
-            z: -1; width: parent.height * 1.1; height: parent.height * 0.9
-            x: parent.width / 2 - width / 2; y: parent.height * 0.005
+            z: -1; width: parent.height * 1.1; height: parent.height * 0.98
+            x: (parent.width - width) / 2; y: -parent.height * 0.01
             color: GLOB.alpha(activPal.highlight, 100)
             radius: width / 12
           }
@@ -88,10 +90,12 @@ Dialog {
       }
 
       Text {
+        width: parent.width - GLOB.fontSize()
         anchors.horizontalCenter: parent.horizontalCenter
-        horizontalAlignment: Text.AlignHCenter; textFormat: Text.StyledText
-        text: qsTr("Select a language.<br><font color=\"red\">To take effect, this requires restarting the application!</font>")
-        color: activPal.text
+        horizontalAlignment: Text.AlignHCenter
+        textFormat: Text.StyledText; wrapMode: Text.WordWrap
+        text: qsTr("Language change requires restarting the application!")
+        color: "red"
       }
 
       Row {
@@ -143,7 +147,6 @@ Dialog {
     mainWindow.dialogItem = settPage
     for (var i = 0; i < langModel.count; ++i) {
       if (langModel.get(i).flag === GLOB.lang || (i == 0 && GLOB.lang === "")) {
-        //langTumb.currentIndex = i + 1 // FIXME: workaround for Qt 5.10.1
         langTumb.currentIndex = i
         break
       }

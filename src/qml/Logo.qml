@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -24,7 +24,7 @@ Rectangle {
     Repeater {
       model: [ "M", "e", " ", "r", "o", "n", "o", "m", "e", "K" ]
       Text {
-        y: GLOB.logoLetterY(index, logo.height * 1.5)
+        y: GLOB.logoLetterY(index, logo.height * 1.5) - logo.height * 0.05
         rotation: -35 + index * (70 / 9)
         color: GLOB.randomColor(); style: Text.Raised
         text: modelData
@@ -35,7 +35,7 @@ Rectangle {
   }
 
   Text {
-    anchors { top: parent.top; right: parent.right; margins: height / 3 }
+    anchors { top: parent.top; right: parent.right; margins: GLOB.isAndroid() ? 4 : 1 }
     text: GLOB.version()
     color: activPal.text
     font { pixelSize: logo.height * 0.2; bold: true }
