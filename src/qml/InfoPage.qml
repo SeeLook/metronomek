@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -10,6 +10,9 @@ import QtQuick.Controls 2.12
 Dialog {
   id: infoPage
 
+  leftPadding: GLOB.fontSize() / 2; rightPadding: GLOB.fontSize() / 2
+  topPadding: 0; bottomPadding: GLOB.fontSize() / 2
+
   Logo {
     id: logo
     pauseDuration: 0
@@ -17,22 +20,16 @@ Dialog {
   }
 
   Flickable {
-    width: parent.width; height: parent.height - logo.height
+    width: parent.width; height: infoPage.height - infoPage.topPadding * 2 - logo.height
     anchors.top: logo.bottom
     clip: true
     ScrollBar.vertical: ScrollBar { active: true; visible: true }
-    contentWidth: parent.width; contentHeight: col.height
+    contentWidth: parent.width; contentHeight: col.height + 2 * GLOB.fontSize()
 
     Column {
       id: col
       width: parent.width
       spacing: fm.height / 2
-
-      LinkText {
-        text: "<br><br>" + GLOB.aboutQt() + "<br><a href=\"https://qt.io\">https://qt.io</a>"
-        anchors.horizontalCenter: parent.horizontalCenter
-        horizontalAlignment: Text.AlignHCenter
-      }
 
       LinkText {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -44,11 +41,25 @@ Dialog {
       }
 
       LinkText {
-        width: parent.width
+        text: GLOB.aboutQt() + "<br><a href=\"https://qt.io\">https://qt.io</a><br>"
+        anchors.horizontalCenter: parent.horizontalCenter
+        horizontalAlignment: Text.AlignHCenter
+      }
+
+      LinkText {
+        text: qsTr("Metronomek ticks and rings through<br><b>%1</b> library.")
+                .arg(GLOB.isAndroid() ? "<a href=\"https://github.com/google/oboe\">Oboe</a>"
+                : "<a href=\"https://www.music.mcgill.ca/~gary/rtaudio/index.html\">RtAudio</a>")
+        anchors.horizontalCenter: parent.horizontalCenter
+        horizontalAlignment: Text.AlignHCenter
+      }
+
+      LinkText {
+        width: parent.width - GLOB.fontSize()
         wrapMode: Text.WordWrap
         anchors.horizontalCenter: parent.horizontalCenter
         textFormat: Text.StyledText
-        text: qsTr("This program is free software; you can redistribute it and/or modify
+        text: "<br><br>" + qsTr("This program is free software; you can redistribute it and/or modify
           it under the terms of the GNU General Public License as published by
           the Free Software Foundation; either version 3 of the License, or
           (at your option) any later version.<br><br>
