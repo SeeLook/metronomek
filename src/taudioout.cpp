@@ -5,7 +5,8 @@
 
 #include "taudioout.h"
 #if defined (Q_OS_ANDROID)
-  #include "tqtaudioout.h"
+//  #include "tqtaudioout.h"
+  #include "toboeaudioout.h"
 #else
   #include "trtaudioout.h"
 #endif
@@ -73,7 +74,8 @@ void TsoundData::setFile(const QString& rawFileName) {
 /*static*/
 QStringList TaudioOUT::getAudioDevicesList() {
 #if defined (Q_OS_ANDROID)
-  return TqtAudioOut::getAudioDevicesList();
+  return QStringList();
+//  return TqtAudioOut::getAudioDevicesList();
 #else
   return TrtAudioOut::getAudioDevicesList();
 #endif
@@ -150,7 +152,8 @@ void TaudioOUT::init() {
       return;
   } else {
     #if defined (Q_OS_ANDROID)
-      m_audioDevice = new TqtAudioOut(this);
+//      m_audioDevice = new TqtAudioOut(this);
+      m_audioDevice = new ToboeAudioOut(this);
     #else
       m_audioDevice = new TrtAudioOut(this);
     #endif
@@ -192,7 +195,6 @@ void TaudioOUT::startTicking() {
 
 
 void TaudioOUT::startPlayingSlot() {
-//   if (m_audioOUT->state() != QAudio::ActiveState) {
   if (!m_playing) {
     m_currSample = 0;
     m_meterCount = 0;
@@ -201,7 +203,6 @@ void TaudioOUT::startPlayingSlot() {
     m_audioDevice->startPlaying();
     m_playing = true;
     emit playingChanged();
-//     m_audioOUT->start(m_buffer);
   }
 }
 
@@ -253,7 +254,7 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
     }
   }
 #if defined (Q_OS_ANDROID)
-  wasRead = maxLen;
+  wasRead = maxLen; // Unussed
 #else
   wasRead = 0; // RtAudio continue
 #endif
