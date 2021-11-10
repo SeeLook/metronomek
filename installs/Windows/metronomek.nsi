@@ -1,9 +1,11 @@
+Unicode True
+
 ; PRODUCT_VERSION is there
-; !include "NSIS.definitions.nsh"
+!include "NSIS.definitions.nsh"
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Metronomek"
-!define PRODUCT_PUBLISHER "Metronomek"
+!define PRODUCT_PUBLISHER "SeeLook"
 !define PRODUCT_WEB_SITE "https://metronomek.sourceforge.io"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\metronomek.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -54,8 +56,8 @@ SetCompressor lzma
 
 ; MUI end ------
 
-Name "Metronomek"
-OutFile "Metronomek-Windows-Installer.exe"
+Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
+OutFile "Metronomek-${PRODUCT_VERSION}-Windows-Installer.exe"
 InstallDir "$PROGRAMFILES\Metronomek"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
@@ -120,7 +122,7 @@ Section -Post
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\metronomek.exe"
-;   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
 SectionEnd

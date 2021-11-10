@@ -1,0 +1,2 @@
+!define PRODUCT_VERSION "@METRONOMEK_VER@"
+!define PATCH  "0"

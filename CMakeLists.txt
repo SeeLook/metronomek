@@ -67,13 +67,17 @@ install(FILES ${QM_STUFF} DESTINATION "${INS_PREF}/translations")
 
 # Icons & other stuff
 if (WIN32)
-    install(FILES installs/metronomek.nsi DESTINATION ${INS_PREF})
     install(FILES images/metronomek.ico images/pack.ico images/logo.bmp DESTINATION "${INS_PREF}/images")
     # MINGW libraries
     if (COPY_GCC_LIBS)
       get_filename_component(MAKE_DIR "${CMAKE_RC_COMPILER}" DIRECTORY)
       install(FILES "${MAKE_DIR}/libgcc_s_dw2-1.dll" "${MAKE_DIR}/libstdc++-6.dll" "${MAKE_DIR}/libwinpthread-1.dll" DESTINATION "${INS_PREF}")
     endif()
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/installs/Windows/definitions.nsh.in
+      ${CMAKE_BINARY_DIR}/NSIS.definitions.nsh
+    )
+    install(FILES installs/Windows/metronomek.nsi ${CMAKE_BINARY_DIR}/NSIS.definitions.nsh DESTINATION ${INS_PREF})
 else()
     if(APPLE)
       # TODO
