@@ -177,6 +177,24 @@
     </message>
 </context>
 <context>
+    <name>QPlatformTheme</name>
+    <message>
+        <location filename="../src/qml/SettingsPage.qml" line="154"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/qml/SettingsPage.qml" line="155"/>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/qml/InfoPage.qml" line="92"/>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>RingType</name>
     <message>
         <location filename="../src/taudioout.cpp" line="343"/>
@@ -247,17 +265,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/qml/SettingsPage.qml" line="170"/>
+        <location filename="../src/qml/SettingsPage.qml" line="172"/>
         <source>keep screen on</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/qml/SettingsPage.qml" line="175"/>
+        <location filename="../src/qml/SettingsPage.qml" line="177"/>
         <source>disable screen rotation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/qml/SettingsPage.qml" line="180"/>
+        <location filename="../src/qml/SettingsPage.qml" line="182"/>
         <source>use full screen</source>
         <translation type="unfinished"></translation>
     </message>

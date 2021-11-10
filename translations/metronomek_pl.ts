@@ -184,9 +184,24 @@ Place, Fifth Floor, Boston, MA  02110-1301  USA</translation>
 <context>
     <name>QMessageBox</name>
     <message>
-        <location filename="../src/tglob.cpp" line="137"/>
+        <location filename="../src/tglob.cpp" line="139"/>
         <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
         <translation>&lt;h3&gt;O Qt&lt;/h3&gt;&lt;p&gt;Ten program używa modelu Qt w wersji %1.&lt;/p&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>QPlatformTheme</name>
+    <message>
+        <source>Cancel</source>
+        <translation>Anuluj</translation>
+    </message>
+    <message>
+      <source>Apply</source>
+      <translation>Zastosuj</translation>
+    </message>
+    <message>
+      <source>OK</source>
+      <translation>OK</translation>
     </message>
 </context>
 <context>

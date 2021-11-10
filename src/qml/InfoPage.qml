@@ -87,5 +87,8 @@ Dialog {
       destroy()
   }
 
-  Component.onCompleted: mainWindow.dialogItem = infoPage
+  Component.onCompleted: {
+    mainWindow.dialogItem = infoPage
+    footer.standardButton(Dialog.Apply).text = qsTranslate("QPlatformTheme", "OK")
+  }
 }

@@ -151,6 +151,8 @@ Dialog {
         break
       }
     }
+    footer.standardButton(Dialog.Cancel).text = qsTranslate("QPlatformTheme", "Cancel")
+    footer.standardButton(Dialog.Apply).text = qsTranslate("QPlatformTheme", "Apply")
   }
 
   onVisibleChanged: {
