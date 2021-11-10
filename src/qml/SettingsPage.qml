@@ -24,7 +24,7 @@ Dialog {
       spacing: GLOB.fontSize()
 
       Frame {
-        width: GLOB.fontSize() * (GLOB.isAndroid() ? 25 : 30); height: GLOB.fontSize() * (GLOB.isAndroid() ? 7 : 9)
+        width: GLOB.fontSize() * (GLOB.isAndroid() ? 25 : 34); height: GLOB.fontSize() * (GLOB.isAndroid() ? 7 : 9)
         anchors.horizontalCenter: parent.horizontalCenter
 
         ListModel {
