@@ -62,7 +62,7 @@ target_link_libraries(metronomek PRIVATE
 if (APPLE)
   find_program(GIT_CMD git)
   if (GIT_CMD)
-    execute_process(COMMAND "${GIT_CMD}" rev-list HEAD --count
+    execute_process(COMMAND ${GIT_CMD} -C ${CMAKE_SOURCE_DIR} rev-list HEAD --count
       OUTPUT_VARIABLE COMITS_COUNT
       OUTPUT_STRIP_TRAILING_WHITESPACE
     )

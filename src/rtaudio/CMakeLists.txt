@@ -11,6 +11,7 @@ if (UNIX)
       find_library(CoreMidi_LIB              NAMES CoreMIDI)
       find_library(CoreFoundation_LIB        NAMES CoreFoundation)
       add_definitions(-D__MACOSX_CORE__)
+      set(RtAudio_LIBRARIES ${CoreAudio_LIB} ${CoreMidi_LIB} ${CoreFoundation_LIB} PARENT_SCOPE)
 
   else()
       # Linux ALSA and/or PulseAudio
