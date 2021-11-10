@@ -34,7 +34,7 @@ Dialog {
       LinkText {
         anchors.horizontalCenter: parent.horizontalCenter
         textFormat: Text.StyledText
-        text: "<br><br>Copyright © 2019-2020 Tomasz Bojczuk<br>
+        text: "<br><br>Copyright © 2019-2021 Tomasz Bojczuk<br>
         <a href=\"mailto:seelook.gmail.com\">seelook@gmail.com</a><br><br>"
         font.bold: true
         horizontalAlignment: Text.AlignHCenter
