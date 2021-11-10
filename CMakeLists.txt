@@ -80,7 +80,7 @@ if (WIN32)
     install(FILES installs/Windows/metronomek.nsi ${CMAKE_BINARY_DIR}/NSIS.definitions.nsh DESTINATION ${INS_PREF})
 else()
     if(APPLE)
-      # TODO
+      install(FILES "${CMAKE_SOURCE_DIR}/images/metronomek.icns" DESTINATION "${INS_PREF}")
     else() # Linux
         install(FILES installs/net.sf.metronomek.desktop DESTINATION share/applications)
         install(FILES installs/net.sf.metronomek.appdata.xml DESTINATION share/metainfo)
