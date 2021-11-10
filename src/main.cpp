@@ -46,6 +46,9 @@ int main(int argc, char *argv[])
 #elif defined (Q_OS_WIN)
   QLocale loc(GLOB->lang().isEmpty() ? QLocale::system().uiLanguages().first() : GLOB->lang());
   QString p = qApp->applicationDirPath() + QLatin1String("/translations/");
+#elif defined (Q_OS_MAC)
+  QLocale loc(GLOB->lang().isEmpty() ? QLocale::system().uiLanguages().first() : GLOB->lang());
+  QString p = qApp->applicationDirPath() + QLatin1String("/../Resources/translations/");
 #else
   QLocale loc(QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).language(),
               QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).country());
