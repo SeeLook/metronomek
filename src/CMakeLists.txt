@@ -4,6 +4,12 @@
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)            #
 ##############################################################################
 
+if (APPLE) # Mac RPath
+  set(CMAKE_MACOSX_RPATH 1)
+  set(CMAKE_INSTALL_RPATH "@loader_path/../Frameworks")
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+endif (APPLE)
+
 if (NOT ANDROID)
   add_subdirectory(rtaudio)
 endif()
@@ -59,21 +65,17 @@ target_link_libraries(metronomek PRIVATE
   ${RtAudio_LIBRARIES}
 )
 
-if (APPLE)
+if (APPLE) # info.plist
   find_program(GIT_CMD git)
   if (GIT_CMD)
-    execute_process(COMMAND ${GIT_CMD} -C ${CMAKE_SOURCE_DIR} rev-list HEAD --count
-      OUTPUT_VARIABLE COMITS_COUNT
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
+    execute_process(COMMAND ${GIT_CMD} -C ${CMAKE_SOURCE_DIR} rev-list HEAD --count OUTPUT_VARIABLE MAC_BUNDLE_VER OUTPUT_STRIP_TRAILING_WHITESPACE)
   else()
     message(NOTICE "!! Missing git command - cannot obtain MACOSX_BUNDLE_BUNDLE_VERSION !!")
   endif()
-  set_target_properties(metronomek PROPERTIES
-      MACOSX_BUNDLE_GUI_IDENTIFIER org.seelook.metronomek
-      MACOSX_BUNDLE_BUNDLE_VERSION ${COMITS_COUNT}
-      MACOSX_BUNDLE_SHORT_VERSION_STRING ${METRONOMEK_VER}
-  )
+
+  configure_file(${CMAKE_SOURCE_DIR}/installs/info.plist.in ${CMAKE_BINARY_DIR}/info.plist)
+  install(FILES "${CMAKE_BINARY_DIR}/info.plist" DESTINATION "${CMAKE_INSTALL_PREFIX}/metronomek.app/Contents")
+
 endif()
 
 
