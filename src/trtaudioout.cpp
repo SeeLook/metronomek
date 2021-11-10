@@ -211,10 +211,9 @@ void TrtAudioOut::setAudioOutParams() {
     m_outParams = nullptr;
   }
 
-//   m_outSR = m_sampleRate;
-//   #if !defined (Q_OS_MAC) // Mac has reaction for this flag - it opens streams with 15 buffer frames
-//   m_streamOptions->flags |= RTAUDIO_MINIMIZE_LATENCY;
-//   #endif
+#if !defined (Q_OS_MAC) // Mac has reaction for this flag - it opens streams with 15 buffer frames
+  m_streamOptions->flags |= RTAUDIO_MINIMIZE_LATENCY;
+#endif
   openStream();
 }
 
