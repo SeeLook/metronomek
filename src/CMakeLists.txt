@@ -59,10 +59,21 @@ target_link_libraries(metronomek PRIVATE
   ${RtAudio_LIBRARIES}
 )
 
-set_target_properties(metronomek PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER org.seelook.metronomek
-    MACOSX_BUNDLE_BUNDLE_VERSION 1 # TODO - get git commits number here ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${METRONOMEK_VER}
-)
+if (APPLE)
+  find_program(GIT_CMD git)
+  if (GIT_CMD)
+    execute_process(COMMAND "${GIT_CMD}" rev-list HEAD --count
+      OUTPUT_VARIABLE COMITS_COUNT
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  else()
+    message(NOTICE "!! Missing git command - cannot obtain MACOSX_BUNDLE_BUNDLE_VERSION !!")
+  endif()
+  set_target_properties(metronomek PROPERTIES
+      MACOSX_BUNDLE_GUI_IDENTIFIER org.seelook.metronomek
+      MACOSX_BUNDLE_BUNDLE_VERSION ${COMITS_COUNT}
+      MACOSX_BUNDLE_SHORT_VERSION_STRING ${METRONOMEK_VER}
+  )
+endif()
 
 

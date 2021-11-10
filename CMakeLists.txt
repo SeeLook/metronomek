@@ -128,7 +128,6 @@ get_filename_component(QT_BINARY_DIR "${QtCore_location_Release}" DIRECTORY)
 if (APPLE)
   add_custom_target(deploy
     COMMAND echo "deploying..."
-    #COMMAND echo ${QT_BINARY_DIR}/../../bin
     COMMAND ${QT_BINARY_DIR}/../../bin/macdeployqt ${CMAKE_INSTALL_PREFIX}/metronomek.app -qmldir=${CMAKE_SOURCE_DIR}/src/qml
   )
 endif()
