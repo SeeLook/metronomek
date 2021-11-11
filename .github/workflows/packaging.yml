@@ -12,7 +12,7 @@ jobs:
   win_installer:
     name:           Build Windows installer
     runs-on:        windows-latest
-    #if: "contains(github.event.head_commit.message, 'prepare_build')"
+    if: "contains(github.event.head_commit.message, 'prepare_build')"
 
     steps:
 
@@ -37,7 +37,6 @@ jobs:
         run: |
           Write-Output "${{ env.Qt5_DIR }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           Write-Output "${{ env.IQTA_TOOLS }}/mingw810_32/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          echo ("METRO_VERSION=0.5.0-devel") >> $env:GITHUB_ENV
           echo ("METRO_COM_CNT=" + $(git rev-list HEAD --count)) >> $env:GITHUB_ENV
 
 
@@ -45,6 +44,7 @@ jobs:
         shell: pwsh
         run: |
           ./installs/Windows/build_installer.ps1
+          echo ("METRO_VERSION=" + $((Get-Content .\build\VERSION.txt)) >> $env:GITHUB_ENV
           Move-Item -Path .\build\installs\Metronomek-*-Windows-Installer.exe -Destination "Metronomek-${{ env.METRO_VERSION }}-b${{ env.METRO_COM_CNT }}-Windows-Installer.exe"
 
       - name: Upload installer to GitHub
@@ -58,7 +58,7 @@ jobs:
     name:           Build Mac dmg
     runs-on:        macos-latest
     needs:          win_installer
-    #if: "contains(github.event.commits[0].message, 'prepare_build')"
+    if: "contains(github.event.commits[0].message, 'prepare_build')"
 
     steps:
       - name: Select Xcode version for Mac

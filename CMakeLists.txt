@@ -7,6 +7,13 @@
 cmake_minimum_required(VERSION 3.14)
 
 set(METRONOMEK_VER "0.5.0-devel")
+#WARNING Keep above line exactly as 9th line of this file.
+#        Needed for CD/CI to obtain version
+
+if (WIN32)
+  # GitHub actions use this file to get version number
+  file(WRITE ${CMAKE_BINARY_DIR}/VERSION.txt "${METRONOMEK_VER}")
+endif()
 
 project(metronomek LANGUAGES CXX)
 
