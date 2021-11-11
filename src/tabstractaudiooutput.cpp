@@ -9,3 +9,11 @@ TabstractAudioOutput::TabstractAudioOutput(QObject* parent) :
   QObject(parent)
 {
 }
+
+
+void TabstractAudioOutput::setSamplaRate(quint32 sr) {
+  if (sr != m_sampleRate) {
+    m_sampleRate = sr;
+    emit sampleRateChanged();
+  }
+}

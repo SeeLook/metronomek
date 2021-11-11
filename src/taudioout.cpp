@@ -103,8 +103,7 @@ TaudioOUT*             TaudioOUT::m_instance = nullptr;
 
 TaudioOUT::TaudioOUT(QObject *parent) :
   QObject(parent),
-  ratioOfRate(1),
-  m_bufferFrames(256),
+  p_ratioOfRate(1),
   m_sampleRate(48000),
   m_callBackIsBussy(false)
 {
@@ -159,23 +158,28 @@ void TaudioOUT::init() {
     #endif
       connect(m_audioDevice, &TabstractAudioOutput::feedAudio, this, &TaudioOUT::outCallBack, Qt::DirectConnection);
       auto dn = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();
-      if (dn != QLatin1String("anything")) // This is workaround for old device name handling
-        m_audioDevice->setDeviceName(GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString());
-      else
-        m_audioDevice->setAudioOutParams();
+      if (dn != QLatin1String("anything")) { // This is workaround for old device name handling
+          setDeviceName(GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString());
+          changeSampleRate(m_audioDevice->sampleRate());
+      } else {
+          setAudioOutParams();
+      }
       m_initialized = true;
   }
 }
 
 
 void TaudioOUT::setDeviceName(const QString& devName) {
-  if (m_audioDevice->deviceName() != devName)
+  if (m_audioDevice->deviceName() != devName) {
     m_audioDevice->setDeviceName(devName);
+  }
 }
 
 
 void TaudioOUT::setAudioOutParams() {
   m_audioDevice->setAudioOutParams();
+  if (m_audioDevice)
+    changeSampleRate(m_audioDevice->sampleRate());
 }
 
 
@@ -248,7 +252,7 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
         m_doBell = false;
       }
     }
-    for (int r = 0; r < ratioOfRate; r++) {
+    for (int r = 0; r < p_ratioOfRate; r++) {
       *out++ = sample; // left channel
       *out++ = sample; // right channel
     }
@@ -378,8 +382,8 @@ void TaudioOUT::setRing(bool r) {
 void TaudioOUT::setTempo(int t) {
   if (t != m_tempo && t > 39 && t < 241) {
     m_tempo = t;
-    m_samplPerBeat = (48000 * 60) / t;
-    m_offsetSample = static_cast<qreal>((60 * 48000) - m_samplPerBeat * t) / static_cast<qreal>(t);
+    m_samplPerBeat = (m_sampleRate * 60) / t;
+    m_offsetSample = static_cast<qreal>((60 * m_sampleRate) - m_samplPerBeat * t) / static_cast<qreal>(t);
     m_offsetCounter = 0.0;
     m_missingSampleNr = 0;
     emit tempoChanged();
@@ -424,5 +428,16 @@ void TaudioOUT::setNameIdByTempo(int t) {
       setNameTempoId(i);
       return;
     }
+  }
+}
+
+
+void TaudioOUT::changeSampleRate(quint32 sr) {
+  if (sr != m_sampleRate) {
+    m_sampleRate = sr;
+    // Also refresh tempo related variables - force tempo change routines
+    //TODO: when sample rate is greater than 48000, set p_ratioOfRate according to it
+    m_tempo++;
+    setTempo(m_tempo - 1);
   }
 }

@@ -78,6 +78,8 @@ protected:
     emit m_instance->feedAudio(outBuffer, nBufferFrames, retVal);
   }
 
+  quint32 determineSampleRate(RtAudio::DeviceInfo& devInfo);
+
 private:
   static TrtAudioOut                     *m_instance;
   static RtAudio                         *m_rtAduio;

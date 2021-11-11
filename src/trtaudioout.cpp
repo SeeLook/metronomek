@@ -11,7 +11,6 @@
 /*static*/
 
 #define                            PREF_BUFF_FR (512) /**< Preferred frame size of audio buffer */
-#define                            SAMPLE_RATE (48000)
 
 RtAudio*                           TrtAudioOut::m_rtAduio = nullptr;
 TrtAudioOut*                       TrtAudioOut::m_instance = nullptr;
@@ -211,6 +210,8 @@ void TrtAudioOut::setAudioOutParams() {
     m_outParams = nullptr;
   }
 
+  setSamplaRate(determineSampleRate(outDevInfo));
+
 #if !defined (Q_OS_MAC) // Mac has reaction for this flag - it opens streams with 15 buffer frames
   m_streamOptions->flags |= RTAUDIO_MINIMIZE_LATENCY;
 #endif
@@ -255,7 +256,7 @@ bool TrtAudioOut::openStream() {
       bool m_paramsUpdated = true;
       unsigned int m_bufferFrames = PREF_BUFF_FR; // reset when it was overridden by another rt API
       if (!rtDevice()->isStreamOpen())
-        rtDevice()->openStream(m_outParams, nullptr, RTAUDIO_SINT16, SAMPLE_RATE, &m_bufferFrames, rtCallBack, nullptr, m_streamOptions);
+        rtDevice()->openStream(m_outParams, nullptr, RTAUDIO_SINT16, sampleRate(), &m_bufferFrames, rtCallBack, nullptr, m_streamOptions);
 
       if (rtDevice()->isStreamOpen()) {
           if (m_isAlsaDefault) {
@@ -268,7 +269,8 @@ bool TrtAudioOut::openStream() {
           }
           if (m_paramsUpdated) { // print params once
             if (m_outParams)
-              qDebug() << RtAudio::getApiName(getCurrentApi()).data() << "OUT:" << m_outDevName << ", buffer size:" << m_bufferFrames;
+              qDebug() << RtAudio::getApiName(getCurrentApi()).data() << "OUT:" << m_outDevName
+                       << ", sample rate:" << sampleRate() << ", buffer size:" << m_bufferFrames;
             m_paramsUpdated = false;
           }
           return true;
@@ -347,4 +349,22 @@ void TrtAudioOut::abortStream() {
   }catch (RtAudioError& e) {
       qDebug() << "[TrtAudioOut] can't abort stream";
   }
+}
+
+
+quint32 TrtAudioOut::determineSampleRate(RtAudio::DeviceInfo& devInfo) {
+//   return devInfo.preferredSampleRate;
+  static const quint32 srArr[4] = { 48000, 44100, 96000, 192000 };
+  for (int s = 0; s < 4; ++s) {
+    for (int i = 0; i < devInfo.sampleRates.size(); i++) {
+      quint32 sr = devInfo.sampleRates.at(i);
+      if (srArr[s] == sr)
+        return sr;
+    }
+  }
+
+  if (devInfo.sampleRates.size() > 0)
+    return devInfo.sampleRates.at(devInfo.sampleRates.size() - 1);
+  else
+    return 48000;
 }

@@ -47,6 +47,9 @@ public:
 
   bool isPlaying() const { return p_isPlaying; }
 
+  quint32 sampleRate() const { return m_sampleRate; }
+  void setSamplaRate(quint32 sr);
+
 signals:
 
       /**
@@ -64,8 +67,13 @@ signals:
        */
   void feedAudio(char*, unsigned int, unsigned int&);
 
+  void sampleRateChanged();
+
 protected:
   bool                  p_isPlaying = false;
+
+private:
+  quint32               m_sampleRate = 48000;
 
 };
 

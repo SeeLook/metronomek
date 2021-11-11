@@ -153,7 +153,7 @@ signals:
   void nameTempoIdChanged();
 
 protected:
-  int                  ratioOfRate; // ratio of current sample rate to 48000
+  int                  p_ratioOfRate; /**< ratio of current sample rate to 48000 */
 
       /**
        * Returns path of given file name depending on OS.
@@ -164,6 +164,12 @@ protected:
   void setNameTempoId(int ntId);
   void setNameIdByTempo(int t);
 
+      /**
+       * Change sample rate - on this value depends audio frames count.
+       * TODO: There is no resampling implemented yet
+       */
+  void changeSampleRate(quint32 sr);
+
 private slots:
   void outCallBack(char* data, unsigned int maxLen, unsigned int& wasRead);
   void playingFinishedSlot();
@@ -173,7 +179,7 @@ private slots:
 private:
   static TaudioOUT      *m_instance;
   bool                   m_initialized = false;
-  int                    m_bufferFrames, m_sampleRate;
+  quint32                m_sampleRate;
   bool                   m_callBackIsBussy;
   TabstractAudioOutput  *m_audioDevice;
 
