@@ -28,7 +28,7 @@ appimage-amd64:
     - rsync -avzr --delete Metronomek*.AppImage $SSH_USER@$SSH_HOST:/$REMOTE_PATH/testing/
 
   artifacts:
-    name: Metronomek-AppImage-$(sed -n "4 p" src/metronomek_conf.h | awk -F" " '{ print $3 }' | sed 's/\"//g')-b$(git rev-list HEAD --count)
+    name: Metronomek-AppImage-$(sed -n "9 p" CMakeLists.txt | awk -F" " '{ print $2 }' | sed 's/\"//g' | sed 's/)//g')-b$(git rev-list HEAD --count)
     paths:
       - 'Metronomek-*.AppImage*'
 
