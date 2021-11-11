@@ -89,8 +89,8 @@ else()
     if(APPLE)
       install(FILES "${CMAKE_SOURCE_DIR}/images/metronomek.icns" DESTINATION "${INS_PREF}")
     else() # Linux
-        install(FILES installs/net.sf.metronomek.desktop DESTINATION share/applications)
-        install(FILES installs/net.sf.metronomek.appdata.xml DESTINATION share/metainfo)
+        install(FILES installs/Linux/net.sf.metronomek.desktop DESTINATION share/applications)
+        install(FILES installs/Linux/net.sf.metronomek.appdata.xml DESTINATION share/metainfo)
         install(FILES images/hicolor/16x16/apps/metronomek.png DESTINATION share/icons/hicolor/16x16/apps/)
         install(FILES images/hicolor/24x24/apps/metronomek.png DESTINATION share/icons/hicolor/24x24/apps/)
         install(FILES images/hicolor/32x32/apps/metronomek.png DESTINATION share/icons/hicolor/32x32/apps/)
@@ -156,7 +156,7 @@ if (UNIX AND NOT APPLE)
   # call
   # cmake with -DQT_QMAKE_EXECUTABLE=/opt/qtXX/bin/qmake
   add_custom_target(appimage
-    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/installs/make-appimage.sh ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${QT_QMAKE_EXECUTABLE} ${METRONOMEK_VER}
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/installs/Linux/make-appimage.sh ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${QT_QMAKE_EXECUTABLE} ${METRONOMEK_VER}
   )
 endif()
 
