@@ -154,6 +154,17 @@ if (UNIX AND NOT APPLE)
 endif()
 
 ##############################################################################
+#                dmg target                                                  #
+#                (Mac Os)                                                    #
+##############################################################################
+if (APPLE)
+  add_custom_target(dmg
+    COMMAND echo "creating dmg image..."
+    COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/installs/Mac/create-dmg.sh ${METRONOMEK_VER} ${CMAKE_SOURCE_DIR} ${CMAKE_INSTALL_PREFIX}
+    )
+endif()
+
+##############################################################################
 #                 uninstall target                                           #
 ##############################################################################
 configure_file(
