@@ -73,7 +73,7 @@ if (APPLE) # info.plist
     message(NOTICE "!! Missing git command - cannot obtain MACOSX_BUNDLE_BUNDLE_VERSION !!")
   endif()
 
-  configure_file(${CMAKE_SOURCE_DIR}/installs/info.plist.in ${CMAKE_BINARY_DIR}/info.plist)
+  configure_file(${CMAKE_SOURCE_DIR}/installs/Mac/info.plist.in ${CMAKE_BINARY_DIR}/info.plist)
   install(FILES "${CMAKE_BINARY_DIR}/info.plist" DESTINATION "${CMAKE_INSTALL_PREFIX}/metronomek.app/Contents")
 
 endif()
