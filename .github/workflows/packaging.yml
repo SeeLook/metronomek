@@ -37,7 +37,6 @@ jobs:
         run: |
           Write-Output "${{ env.Qt5_DIR }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           Write-Output "${{ env.IQTA_TOOLS }}/mingw810_32/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-        # echo ("METRO_VERSION=" + $((Get-Content .\src\libs\core\nootkaconfig.h | %{ $_.Split(' ')[2]; }) -replace '"', '')) >> $env:GITHUB_ENV
           echo ("METRO_VERSION=0.5.0-devel") >> $env:GITHUB_ENV
           echo ("METRO_COM_CNT=" + $(git rev-list HEAD --count)) >> $env:GITHUB_ENV
 
