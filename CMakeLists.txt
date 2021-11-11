@@ -66,7 +66,7 @@ endif()
 file(GLOB BEAT_FILES "${CMAKE_CURRENT_SOURCE_DIR}/sounds/*.raw48-16")
 install(FILES ${BEAT_FILES} DESTINATION "${INS_PREF}/sounds")
 
-install(FILES LICENSE DESTINATION "${INS_PREF}")
+install(FILES LICENSE CHANGELOG.md DESTINATION "${INS_PREF}")
 
 # translations (*.qm)
 file(GLOB QM_STUFF "${CMAKE_CURRENT_SOURCE_DIR}/translations/*.qm")
