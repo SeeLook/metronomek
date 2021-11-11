@@ -111,7 +111,7 @@ if (UNIX AND NOT ANDROID)
   message(STATUS "
     To enable launching MetronomeK without installing, call:
     make runinplace
-    and launch it invoking: ./metronomek
+    and launch it invoking: ./src/metronomek
     "
   )
   if (APPLE)
