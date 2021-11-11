@@ -49,7 +49,7 @@ jobs:
       - name: move installer, propare to upload
         shell: pwsh
         run: |
-          echo (Metronomek-${{ env.METRO_VERSION }}-b${{ env.METRO_COM_CNT }}-Windows-Installer.exe)
+          echo "Metronomek-${{ env.METRO_VERSION }}-b${{ env.METRO_COM_CNT }}-Windows-Installer.exe"
           Move-Item -Path .\build\installs\Metronomek-*-Windows-Installer.exe -Destination "Metronomek-${{ env.METRO_VERSION }}-b${{ env.METRO_COM_CNT }}-Windows-Installer.exe"
 
       - name: Upload installer to GitHub
