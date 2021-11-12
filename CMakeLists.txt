@@ -102,6 +102,19 @@ else()
     endif()
 endif()
 
+##############################################################################
+#                 src target                                                 #
+#                  (Linux)                                                   #
+##############################################################################
+if(UNIX AND NOT APPLE)
+  message(STATUS "
+    To build source package, call:
+    make src
+  ")
+  add_custom_target(src
+    COMMAND ${CMAKE_SOURCE_DIR}/installs/make-src.sh ${METRONOMEK_VER} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}
+  )
+endif()
 
 ##############################################################################
 #         runinplace target                                                  #

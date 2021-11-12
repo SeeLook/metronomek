@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# Copyright (C) 2020 by Tomasz Bojczuk (seelook@gmail.com)
+# Copyright (C) 2020-2021 by Tomasz Bojczuk (seelook@gmail.com)
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
 
 # Script for building MetronomeK source tar-ball package
@@ -26,12 +26,23 @@ cp -r $SRC_DIR/android $DST_DIR
 cp -r $SRC_DIR/fonts $DST_DIR
 cp -r $SRC_DIR/installs $DST_DIR
 cp -r $SRC_DIR/src $DST_DIR
+rm -r $DST_DIR/src/oboe
+mkdir $DST_DIR/src/oboe
+cat > $DST_DIR/src/oboe/README.md <<EOF
+To build Metronomek for Android  
+Clone here [Oboe git repo](https://github.com/google/oboe)
+``````
+git clone https://github.com/google/oboe
+``````
+EOF
+
 cp -r $SRC_DIR/translations $DST_DIR
 
 cp $SRC_DIR/LICENSE $DST_DIR
-cp $SRC_DIR/README.md $DST_DIR
-cp $SRC_DIR/TODO.md $DST_DIR
+cp $SRC_DIR/*.md $DST_DIR 
+
 cp $SRC_DIR/metronomek.pro $DST_DIR
+cp $SRC_DIR/CMakeLists.txt $DST_DIR
 
 tar -cjf $DST_DIR.tar.bz2 $DST_DIR
 rm -r $DST_DIR
