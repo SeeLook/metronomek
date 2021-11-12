@@ -221,7 +221,7 @@ Window {
   AbstractButton {
     id: cntButt
     anchors { top: parent.top; right: parent.right; margins: fm.height / 3 }
-    width: height * 3; height: metro.height * 0.05
+    width: height * 3; height: fm.height * 2
     property var meterDrewer: null
     visible: !meterDrewer || !meterDrewer.visible
     background: Rectangle {
