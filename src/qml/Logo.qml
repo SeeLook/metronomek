@@ -17,10 +17,14 @@ Rectangle {
 
   // private
   property real textW: 0
+  property real initFontS: 0
+
+  Component.onCompleted: initFontS = logo.height * 0.4
 
   Row {
     x: logo.width * 0.03
-    spacing: (logo.width * 0.9 - textW) / 9
+    // (logo.height * 0.4) / initFontS is a font size factor when logo size changes
+    spacing: (logo.width * 0.9 - textW * ((logo.height * 0.4) / initFontS)) / 9
     Repeater {
       model: [ "M", "e", " ", "r", "o", "n", "o", "m", "e", "K" ]
       Text {

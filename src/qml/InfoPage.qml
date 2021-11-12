@@ -10,6 +10,7 @@ import QtQuick.Controls 2.12
 Dialog {
   id: infoPage
 
+  width: mainWindow.width; height: mainWindow.height
   leftPadding: GLOB.fontSize() / 2; rightPadding: GLOB.fontSize() / 2
   topPadding: 0; bottomPadding: GLOB.fontSize() / 2
 
@@ -89,6 +90,8 @@ Dialog {
 
   Component.onCompleted: {
     mainWindow.dialogItem = infoPage
-    footer.standardButton(Dialog.Apply).text = qsTranslate("QPlatformTheme", "OK")
+    footer.standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK")
+    height = Qt.binding(function() { return mainWindow.height })
+    width = Qt.binding(function() { return mainWindow.width })
   }
 }
