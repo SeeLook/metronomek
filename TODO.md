@@ -1,10 +1,12 @@
 # TODO list for MetronomeK
 
  - configuration for programming tempo change:
-   - event after tempo is changed (time, bar/beats number, click/touch)
+   - event after tempo will be changed (time, bar/beats number, click/touch)
    - target tempo
+   - allow acceleration and slowing down
    - storing set of tempo changes (piece) into XML structure
  - sounds and option for verbal counting
+ - option for playing beat/ring in separate speaker/earphone of stereo output
  - dark mode (Android for sure, maybe desktop)
  - option for blinking of background during tick
  - icons for menu
@@ -14,6 +16,4 @@
 ### KNOWING ISSUES:
 
  - \[Android\] incoming call locks sound but doesn't lock pendulum = not synchronized move and sound
- - logo size doesn't fit, when drawer/about-page is resized (i.e. due to screen rotation)
- - meter drawer can hide two-digits numbers - fit it to actual font to fix
  - some sounds are simply not acceptable - remove them (after some pool)
