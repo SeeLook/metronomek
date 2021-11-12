@@ -10,7 +10,7 @@ else: {
 
 TEMPLATE = app
 
-VERSION = 0.5-devel
+VERSION = 0.5.0
 QMAKE_SUBSTITUTES += src/metronomek_conf.h.in
 
 QT += gui quick quickcontrols2 androidextras #multimedia
