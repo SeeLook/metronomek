@@ -63,7 +63,7 @@ void ToboeAudioOut::setDeviceName(const QString& devName) {
 
 
 QString ToboeAudioOut::deviceName() const {
-  return QString();
+  return QStringLiteral("anything");
 }
 
 
@@ -77,7 +77,7 @@ void ToboeAudioOut::setAudioOutParams() {
     m_oboe->setSharingMode(oboe::SharingMode::Shared);
     m_oboe->setFormat(oboe::AudioFormat::I16);
     m_oboe->setChannelCount(oboe::ChannelCount::Stereo);
-    m_oboe->setSampleRate(48000);
+    m_oboe->setSampleRate(sampleRate());
     m_oboe->setDataCallback(m_callBackClass);
 
     auto result = m_oboe->openStream(m_stream);
