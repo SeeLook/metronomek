@@ -44,6 +44,8 @@
     </screenshot>
   </screenshots>
 
+  <url type="homepage">https://metronomek.sourceforge.io</url>
+
   <content_rating type="oars-1.0">
     <content_attribute id="violence-cartoon">none</content_attribute>
     <content_attribute id="violence-fantasy">none</content_attribute>
@@ -70,7 +72,7 @@
   <update_contact>seelook_AT_gmail.com</update_contact>
 
   <releases>
-    <release date="2021-11-16" version="0.6.0"/>
+    <release date="2021-11-12" version="0.5.0"/>
   </releases>
 
 </component>
