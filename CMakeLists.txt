@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-set(METRONOMEK_VER "0.5.0")
+set(METRONOMEK_VER "0.5.7-devel")
 #WARNING Keep above line exactly as 9th line of this file.
 #        Needed for CD/CI to obtain version
 
