@@ -18,6 +18,16 @@ but with all goods of computer program.
 
 --------------------------
 
+## Download and installation
+Binary packages (Linux AppImage, Mac Os dmg, Windows installer and Android apk)  
+are hosted [at SourceForge](https://sourceforge.net/projects/metronomek/files/)
+
+  - [Arch Linux (AUR)](https://aur.archlinux.org/packages/metronomek/)  
+    ```
+    yay -S metronomek
+    ```
+
+--------------------------
 ## Building from sources
 
 **MetronomeK** can be compiled with Qt framework [https://www.qt.io/](https://www.qt.io/).
