@@ -64,15 +64,15 @@ license.files = LICENSE
 INSTALLS += sounds translations
 
 DISTFILES += \
-  android/AndroidManifest.xml \
-  android/build.gradle \
-  android/gradle/wrapper/gradle-wrapper.jar \
-  android/gradle/wrapper/gradle-wrapper.properties \
-  android/gradlew \
-  android/gradlew.bat \
-  android/res/values/libs.xml
+  installs/android/AndroidManifest.xml \
+  installs/android/build.gradle \
+  installs/android/gradle/wrapper/gradle-wrapper.jar \
+  installs/android/gradle/wrapper/gradle-wrapper.properties \
+  installs/android/gradlew \
+  installs/android/gradlew.bat \
+  installs/android/res/values/libs.xml
 
-ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/installs/android
 
 
 # Google Oboe audio library
