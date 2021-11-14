@@ -10,7 +10,11 @@ else: {
 
 TEMPLATE = app
 
-VERSION = 0.5.0
+VERSION = $$system(sed -n \"9 p\" $$PWD/CMakeLists.txt | awk -F\" \" \'{ print $2 }\' | sed \'s/\"//g\' | sed \'s/\)//g\')
+
+ANDROID_VERSION_NAME = $$VERSION
+ANDROID_VERSION_CODE = "3"
+
 QMAKE_SUBSTITUTES += src/metronomek_conf.h.in
 
 QT += gui quick quickcontrols2 androidextras #multimedia
