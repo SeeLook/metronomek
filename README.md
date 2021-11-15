@@ -28,9 +28,9 @@ are hosted [at SourceForge](https://sourceforge.net/projects/metronomek/files/)
     ```
 
   - [Flatpak](https://flathub.org/apps/details/net.sf.metronomek)  
-  ```
+    ```
     flatpak install flathub net.sf.metronomek
-  ```
+    ```
 
 --------------------------
 ## Building from sources
