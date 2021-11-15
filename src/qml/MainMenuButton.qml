@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -45,8 +45,7 @@ AbstractButton {
     onAboutToShow: {
       mainWindow.stopMetronome()
       if (!drawerContent) {
-        var c = Qt.createComponent("qrc:/MainDrawerContent.qml")
-        drawerContent = c.createObject(drawer.contentItem)
+        drawerContent = Qt.createComponent("qrc:/MainDrawerContent.qml").createObject(drawer.contentItem)
       }
     }
   }

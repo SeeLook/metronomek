@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -245,10 +245,8 @@ Window {
       }
     }
     onClicked: {
-      if (!meterDrewer) {
-        var m = Qt.createComponent("qrc:/MeterDrawer.qml")
-        meterDrewer = m.createObject(mainWindow)
-      }
+      if (!meterDrewer)
+        meterDrewer = Qt.createComponent("qrc:/MeterDrawer.qml").createObject(mainWindow)
       meterDrewer.open()
     }
   }
