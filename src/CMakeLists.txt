@@ -22,7 +22,9 @@ set(METRONOMEK_SRC
     trtaudioout.cpp
     tmetroshape.cpp
     taudiobuffer.h
-    metronomek.qrc
+
+    qml/metronomek_qml.qrc
+    ${CMAKE_SOURCE_DIR}/images/metronomek_images.qrc
 )
 
 

@@ -1,0 +1,13 @@
+<RCC>
+  <qresource prefix="/">
+
+    <file>metronomek.png</file>
+
+    <file>flags/default.png</file>
+    <file>flags/pl.png</file>
+    <file>flags/us.png</file>
+
+    <file alias="metronomek.otf">../fonts/metronomek.otf</file>
+
+  </qresource>
+</RCC>
