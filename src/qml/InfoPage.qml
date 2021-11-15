@@ -7,7 +7,7 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 
 
-Dialog {
+Tdialog {
   id: infoPage
 
   width: mainWindow.width; height: mainWindow.height
@@ -82,11 +82,6 @@ Dialog {
   } // Flickable
 
   standardButtons: Dialog.Ok
-
-  onVisibleChanged: {
-    if (!visible)
-      destroy()
-  }
 
   Component.onCompleted: {
     mainWindow.dialogItem = infoPage

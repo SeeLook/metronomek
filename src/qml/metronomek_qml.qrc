@@ -1,17 +1,20 @@
 <RCC>
   <qresource prefix="/">
     <file>MainWindow.qml</file>
+    <file>Logo.qml</file>
     <file>MainMenuButton.qml</file>
     <file>MainDrawerContent.qml</file>
-    <file>Logo.qml</file>
     <file>DrawerButton.qml</file>
-    <file>InfoPage.qml</file>
-    <file>SettingsPage.qml</file>
-    <file>LinkText.qml</file>
     <file>MeterDrawer.qml</file>
     <file>MetroImage.qml</file>
+
+    <file>InfoPage.qml</file>
+    <file>SettingsPage.qml</file>
+
     <file>TipRect.qml</file>
     <file>TspinBox.qml</file>
+    <file>Tdialog.qml</file>
+    <file>LinkText.qml</file>
 
     <file>qtquickcontrols2.conf</file>
     <file>+android/qtquickcontrols2.conf</file>

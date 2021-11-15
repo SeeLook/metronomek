@@ -86,7 +86,7 @@ Flickable {
     DrawerButton {
       text: qsTr("settings")
       onClicked: {
-        Qt.createComponent("qrc:/SettingsPage.qml").createObject(mainWindow, { width: mainWindow.width, height: mainWindow.height })
+        Qt.createComponent("qrc:/SettingsPage.qml").createObject(mainWindow)
         drawer.close()
       }
     }
@@ -96,7 +96,7 @@ Flickable {
       text: qsTr("about the app")
       onClicked: {
         if (!infoPage)
-          infoPage = Qt.createComponent("qrc:/InfoPage.qml").createObject(mainWindow, { width: mainWindow.width, height: mainWindow.height })
+          infoPage = Qt.createComponent("qrc:/InfoPage.qml").createObject(mainWindow)
 
         infoPage.open()
         drawer.close()

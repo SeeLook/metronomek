@@ -5,7 +5,7 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 
-Dialog {
+Tdialog {
   id: settPage
 
   padding: GLOB.fontSize() / 2
@@ -155,11 +155,6 @@ Dialog {
     footer.standardButton(Dialog.Apply).text = qsTranslate("QPlatformTheme", "Apply")
     height = Qt.binding(function() { return mainWindow.height })
     width = Qt.binding(function() { return mainWindow.width })
-  }
-
-  onVisibleChanged: {
-    if (!visible)
-      destroy()
   }
 
   Component {
