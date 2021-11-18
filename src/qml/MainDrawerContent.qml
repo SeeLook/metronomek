@@ -84,6 +84,14 @@ Flickable {
     }
 
     DrawerButton {
+      text: qsTr("programming tempo")
+      onClicked: {
+        Qt.createComponent("qrc:/TempoPage.qml").createObject(mainWindow)
+        drawer.close()
+      }
+    }
+
+    DrawerButton {
       text: qsTr("settings")
       onClicked: {
         Qt.createComponent("qrc:/SettingsPage.qml").createObject(mainWindow)

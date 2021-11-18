@@ -24,6 +24,11 @@ Window {
   SystemPalette { id: activPal;  colorGroup: SystemPalette.Active }
   FontMetrics { id: fm }
 
+  // controlling tempo
+  property int partId: 0
+  property int beatNr: 1
+  property int tempoToShow: SOUND.getTempoForBeat(partId, beatNr)
+
   property var dialogItem: null
   property bool leanEnough: false // pendulum is leaned out enough to start playing
   property alias counterPressed: countArea.containsPress
@@ -120,7 +125,7 @@ Window {
         color: countArea.containsPress ? GLOB.valueColor(activPal.text, 20) : activPal.highlight
         text: "\u00A4"
         anchors.horizontalCenter: parent.horizontalCenter
-        y: pendulum.height * 0.65 * ((SOUND.tempo - 40) / 200)
+        y: pendulum.height * 0.65 * ((tempoToShow - 40) / 200)
         Behavior on y { NumberAnimation {} }
         Text { // inner counterweight
           font { family: "metronomek"; pixelSize: pendulum.height * 0.18 }
@@ -144,7 +149,10 @@ Window {
           drag.axis: Drag.YAxis
           drag.minimumY: 0; drag.maximumY: pendulum.height * 0.65
           cursorShape: drag.active ? Qt.DragMoveCursor : Qt.ArrowCursor
-          onPositionChanged: SOUND.tempo = Math.round((200 * countW.y) / (pendulum.height * 0.65) + 40)
+          onPositionChanged: {
+            SOUND.tempo = Math.round((200 * countW.y) / (pendulum.height * 0.65) + 40)
+            tempoToShow = SOUND.tempo
+          }
         }
       }
     }
@@ -158,11 +166,12 @@ Window {
 
     TspinBox {
       id: sb
+      editable: false
       height: parent.height * 0.06 //; width: height * 3
       x: parent.width * 0.73 - width; y: parent.height * 0.75
       font { bold: true; }
       from: 40; to: 240
-      value: SOUND.tempo
+      value: tempoToShow
       onValueModified: SOUND.tempo = value
     }
 
@@ -252,10 +261,13 @@ Window {
   }
 
   function startMetronome() {
+    partId = 0
+    beatNr = 1
+    tempoToShow = SOUND.getTempoForBeat(partId, beatNr)
     SOUND.meterCount = 0
     timer.toLeft = pendulum.rotation <= 0
     initAnim.to = GLOB.stationary ? 0 : (timer.toLeft ? -25 : 25)
-    initAnim.duration = (30000 / SOUND.tempo) * ((25 - Math.abs(pendulum.rotation)) / 25)
+    initAnim.duration = (30000 / tempoToShow) * ((25 - Math.abs(pendulum.rotation)) / 25)
     pendAnim.stop()
     initAnim.start()
   }
@@ -263,7 +275,7 @@ Window {
   function stopMetronome() {
     SOUND.playing = false;
     finishAnim.to = 0
-    finishAnim.duration = (30000 / SOUND.tempo) * ((25 - Math.abs(pendulum.rotation)) / 25)
+    finishAnim.duration = (30000 / tempoToShow) //* ((25 - Math.abs(pendulum.rotation)) / 25)
     pendAnim.stop()
     finishAnim.start()
   }
@@ -271,7 +283,7 @@ Window {
   NumberAnimation {
     id: pendAnim
     target: pendulum; property: "rotation"
-    duration: 60000 / SOUND.tempo
+    duration: 60000 / tempoToShow
   }
 
   NumberAnimation {
@@ -293,7 +305,6 @@ Window {
     id: timer
     running: SOUND.playing && !GLOB.stationary
     repeat: true; triggeredOnStart: true
-//     interval: 60000 / SOUND.tempo
     property real elap: 0
     property real lag: 0
     property bool toLeft: true
@@ -311,10 +322,22 @@ Window {
         elap = currTime - elap
         lag += elap - interval
       }
+      var t = SOUND.getTempoForBeat(partId, beatNr)
+      if (t == 0) {
+        partId ++
+        beatNr = 1
+        t = SOUND.getTempoForBeat(partId, beatNr)
+        if (t == 0) {
+          stopMetronome()
+          return
+        }
+      }
+      tempoToShow = t
       elap = currTime
-      interval = Math.max((60000 / SOUND.tempo) - lag, 1)
+      interval = Math.max((60000 / tempoToShow) - lag, 1)
       lag = 0
       toLeft = !toLeft
+      beatNr++
     }
   }
 
@@ -326,6 +349,7 @@ Window {
     var currTime = new Date().getTime()
     if (currTime - lastTime < 1500)
       SOUND.tempo = Math.round(60000 / (currTime - lastTime))
+      tempoToShow = SOUND.tempo
       lastTime = currTime
   }
 

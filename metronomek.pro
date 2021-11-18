@@ -39,6 +39,9 @@ SOURCES += \
         src/toboeaudioout.cpp \
         src/tmetroshape.cpp \
         \
+        src/tspeedhandler.cpp \
+        src/ttempopart.cpp \
+        \
         src/android/tandroid.cpp \
 
 HEADERS += \
@@ -50,9 +53,12 @@ HEADERS += \
         src/toboeaudioout.h \
         src/tmetroshape.h \
         \
+        src/tspeedhandler.h \
+        src/ttempopart.h \
+        \
         src/android/tandroid.h\
 
-RESOURCES += src/metronomek.qrc
+RESOURCES += src/qml/metronomek_qml.qrc images/metronomek_images.qrc
 
 sounds.path = /assets/sounds
 translations.path = /assets/translations

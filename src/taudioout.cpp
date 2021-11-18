@@ -10,9 +10,12 @@
 #else
   #include "trtaudioout.h"
 #endif
-#include "taudiobuffer.h"
+// #include "taudiobuffer.h"
+#include "ttempopart.h"
+#include "tspeedhandler.h"
 #include "tglob.h"
 
+#include <QtQml/qqml.h>
 #include <QtGui/qguiapplication.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qfile.h>
@@ -113,6 +116,9 @@ TaudioOUT::TaudioOUT(QObject *parent) :
   }
   m_instance = this;
 
+  qmlRegisterUncreatableType<TtempoPart>("Metronomek", 1, 0, "TempoPart", QStringLiteral("Creating TempoPart in QML not allowed!"));
+  qmlRegisterUncreatableType<TspeedHandler>("Metronomek", 1, 0, "SpeedHandler", QStringLiteral("Creating SpeedHandler in QML not allowed!"));
+
   setTempo(qBound(40, GLOB->settings()->value(QStringLiteral("tempo"), 60).toInt(), 240));
   setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), beatTypeCount() - 1));
   setMeter(qBound(0, GLOB->settings()->value(QStringLiteral("meter"), 4).toInt(), 12));
@@ -200,6 +206,13 @@ void TaudioOUT::startTicking() {
 
 void TaudioOUT::startPlayingSlot() {
   if (!m_playing) {
+    m_playingPart = 0;
+    m_playingBeat = 1;
+    int t = m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
+    m_samplPerBeat = (m_sampleRate * 60) / t;
+    m_offsetSample = static_cast<qreal>((60 * m_sampleRate) - m_samplPerBeat * t) / static_cast<qreal>(t);
+    setNameIdByTempo(t);
+
     m_currSample = 0;
     m_meterCount = 0;
     m_offsetCounter = 0.0;
@@ -223,6 +236,18 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
     sample = m_beat.sampleAt(m_currSample);
     m_currSample++;
     if (m_currSample >= m_samplPerBeat + m_missingSampleNr) {
+      m_playingBeat++;
+      int t = m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
+      if (t == 0) {
+        m_playingPart++;
+        t = m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
+        if (t == 0) {
+          wasRead = 2; // stop playing
+          return;
+        }
+      }
+      m_samplPerBeat = (m_sampleRate * 60) / t;
+      m_offsetSample = static_cast<qreal>((60 * m_sampleRate) - m_samplPerBeat * t) / static_cast<qreal>(t);
       m_currSample = 0;
       m_meterCount++;
       if (m_offsetSample != 0.0) {
@@ -258,7 +283,7 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
     }
   }
 #if defined (Q_OS_ANDROID)
-  wasRead = maxLen; // Unussed
+  wasRead = maxLen; // Unused
 #else
   wasRead = 0; // RtAudio continue
 #endif
@@ -396,6 +421,23 @@ QString TaudioOUT::getTempoNameById(int nameId) {
   return nameId < GLOB->temposCount() ? GLOB->tempoName(nameId).name() : QString();
 }
 
+//#################################################################################################
+//############                Tempo change methods         ########################################
+//#################################################################################################
+
+TspeedHandler* TaudioOUT::speedHandler() {
+  if (!m_speedHandler)
+    m_speedHandler = new TspeedHandler(this);
+  return m_speedHandler;
+}
+
+
+int TaudioOUT::getTempoForBeat(int partId, int beatNr) {
+  if (m_speedHandler)
+    return m_speedHandler->getTempoForBeat(partId, beatNr);
+
+  return m_tempo;
+}
 
 //#################################################################################################
 //###################                PROTECTED         ############################################

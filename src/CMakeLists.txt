@@ -21,7 +21,10 @@ set(METRONOMEK_SRC
     tabstractaudiooutput.cpp
     trtaudioout.cpp
     tmetroshape.cpp
-    taudiobuffer.h
+    #taudiobuffer.h Android Qt Audio, TODO rather to remove
+
+    tspeedhandler.cpp
+    ttempopart.cpp
 
     qml/metronomek_qml.qrc
     ${CMAKE_SOURCE_DIR}/images/metronomek_images.qrc

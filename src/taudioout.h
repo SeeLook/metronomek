@@ -10,6 +10,10 @@
 
 
 class TabstractAudioOutput;
+class TspeedHandler;
+
+
+#define SOUND (TaudioOUT::instance())
 
 
 /**
@@ -73,6 +77,7 @@ class TaudioOUT : public QObject
   Q_PROPERTY(bool ring READ ring WRITE setRing NOTIFY ringChanged)
   Q_PROPERTY(int tempo READ tempo WRITE setTempo NOTIFY tempoChanged)
   Q_PROPERTY(int nameTempoId READ nameTempoId NOTIFY nameTempoIdChanged)
+  // tempo change properties
 
 public:
   TaudioOUT(QObject* parent = nullptr);
@@ -141,6 +146,18 @@ public:
 
   Q_INVOKABLE QString getTempoNameById(int nameId);
 
+//############  Tempo change methods    ####################
+
+  Q_INVOKABLE TspeedHandler* speedHandler();
+
+      /**
+       * Returns tempo value for given number of beat of tempo part.
+       * When tempo doesn't change it is always the same value,
+       * but when there is accelerando or rallentando values are different.
+       */
+  Q_INVOKABLE int getTempoForBeat(int partId, int beatNr);
+
+
 signals:
   void finishSignal();
   void playingChanged();
@@ -151,6 +168,7 @@ signals:
   void meterCountChanged();
   void tempoChanged();
   void nameTempoIdChanged();
+  void tempoPartIdChanged();
 
 protected:
   int                  p_ratioOfRate; /**< ratio of current sample rate to 48000 */
@@ -182,6 +200,10 @@ private:
   quint32                m_sampleRate;
   bool                   m_callBackIsBussy;
   TabstractAudioOutput  *m_audioDevice;
+
+  TspeedHandler         *m_speedHandler = nullptr;
+  int                    m_playingPart = 0;
+  int                    m_playingBeat = 1;
 
   int                    m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
   int                    m_currSample = 0;
