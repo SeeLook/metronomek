@@ -11,9 +11,8 @@ Dialog {
 
   width: mainWindow.width; height: mainWindow.height
 
-  scale: 0
-  enter: Transition { NumberAnimation { property: "scale"; to: 1.0 }}
-  exit: Transition { NumberAnimation { property: "scale"; to: 0 }}
+  enter: Transition { NumberAnimation { property: "opacity"; from: 0; to: 1 }}
+  exit: Transition { NumberAnimation { property: "opacity"; to: 0 }}
 
   onVisibleChanged: {
     if (!visible)
