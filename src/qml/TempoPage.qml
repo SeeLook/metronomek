@@ -26,7 +26,7 @@ Tdialog {
 
     header: TextField {
       width: parent.width
-      placeholderText: qsTr("Name of rhythm piece")
+      placeholderText: qsTr("Name of rhythmic composition")
       selectByMouse: true
     }
 
@@ -82,40 +82,21 @@ Tdialog {
       }
 
       Grid {
-        columns: tempoPage.width < initRow.width + targetRow.width ? 1 : 2
+        columns: tempoPage.width < initCtrl.width + targetCtrl.width ? 1 : 2
         spacing: GLOB.fontSize() / 2
-        Row {
-          id: initRow
-          spacing: GLOB.fontSize()
-          Text {
-            anchors.verticalCenter: parent.verticalCenter
-            text: qsTr("initial tempo").replace(" ", "<br>")
-            color: activPal.text
-          }
-          SpinBox {
-            editable: true
-            anchors.verticalCenter: parent.verticalCenter
-            from: 40; to: 240
-            value: pop.tp ? pop.tp.initTempo : 40
-            onValueModified: pop.tp.initTempo = value
-          }
+
+        TempoEdit {
+          id: initCtrl
+          text: qsTr("initial tempo").replace(" ", "<br>")
+          tempo: pop.tp ? pop.tp.initTempo : 40
+          onTempoModified: pop.tp.initTempo = tempo
         }
 
-        Row {
-          id: targetRow
-          spacing: GLOB.fontSize()
-          Text {
-            anchors.verticalCenter: parent.verticalCenter
-            text: qsTr("target tempo").replace(" ", "<br>")
-            color: activPal.text
-          }
-          SpinBox {
-            editable: true
-            anchors.verticalCenter: parent.verticalCenter
-            from: 40; to: 240
-            value: pop.tp ? pop.tp.targetTempo : 40
-            onValueModified: pop.tp.targetTempo = value
-          }
+        TempoEdit {
+          id: targetCtrl
+          text: qsTr("target tempo").replace(" ", "<br>")
+          tempo: pop.tp ? pop.tp.targetTempo : 40
+          onTempoModified: pop.tp.targetTempo = tempo
         }
       }
 

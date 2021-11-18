@@ -24,6 +24,7 @@ Rectangle {
     id: tCol
     spacing: GLOB.fontSize() / 2
     padding: GLOB.fontSize() / 4
+    width: parent.width - settBut.width - GLOB.fontSize()
 
     Text {
       anchors.horizontalCenter: parent.horizontalCenter
@@ -36,10 +37,32 @@ Rectangle {
                              + ", " + qsTr("%n second(s)", "", tp.seconds)
       color: activPal.text
     }
+  }
 
-    Button {
-      text: "S"
-      onClicked: tpDelegate.clicked()
+  // private
+  property real dotW: settBut.width / 3
+
+  AbstractButton {
+    id: settBut
+    hoverEnabled: true
+    anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: GLOB.fontSize() / 2 }
+    width: GLOB.fontSize() * 2; height: GLOB.fontSize() * 5
+
+    background: Rectangle {
+      color: settBut.hovered ? activPal.highlight : activPal.button; radius: width / 4
     }
+
+    contentItem: Item {
+      property real dotW: settBut.width / 3
+      Repeater {
+        model: 3
+        Rectangle {
+          x: dotW; y: (settBut.height - 5 * dotW) / 2 + index * dotW * 2
+          width: dotW; height: dotW; radius: dotW / 2
+          color: settBut.pressed ? activPal.base : activPal.text
+        }
+      }
+    }
+    onClicked: tpDelegate.clicked()
   }
 }
