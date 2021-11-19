@@ -237,10 +237,11 @@ void TrtAudioOut::startPlaying() {
 
 void TrtAudioOut::stopPlaying() {
   if (p_isPlaying) {
-    if (getCurrentApi() == RtAudio::LINUX_PULSE)
-      abortStream();
-    else
-      stopStream();
+    if (getCurrentApi() == RtAudio::LINUX_PULSE) {
+        abortStream();
+        closeStream();
+    } else
+        stopStream();
     p_isPlaying = false;
   }
 }
@@ -250,10 +251,10 @@ void TrtAudioOut::stopPlaying() {
 //###################                PROTECTED         ############################################
 //#################################################################################################
 
+bool m_devNameDbgMessage = true;
 bool TrtAudioOut::openStream() {
   try {
     if (rtDevice()) {
-      bool m_paramsUpdated = true;
       unsigned int m_bufferFrames = PREF_BUFF_FR; // reset when it was overridden by another rt API
       if (!rtDevice()->isStreamOpen())
         rtDevice()->openStream(m_outParams, nullptr, RTAUDIO_SINT16, sampleRate(), &m_bufferFrames, rtCallBack, nullptr, m_streamOptions);
@@ -267,11 +268,11 @@ bool TrtAudioOut::openStream() {
               if (m_outParams && getDeviceInfo(di, m_outParams->deviceId))
                 m_outDevName = convDevName(di);
           }
-          if (m_paramsUpdated) { // print params once
+          if (m_devNameDbgMessage) { // print params once
             if (m_outParams)
               qDebug() << RtAudio::getApiName(getCurrentApi()).data() << "OUT:" << m_outDevName
                        << ", sample rate:" << sampleRate() << ", buffer size:" << m_bufferFrames;
-            m_paramsUpdated = false;
+            m_devNameDbgMessage = false;
           }
           return true;
       } else
