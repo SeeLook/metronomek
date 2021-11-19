@@ -33,8 +33,15 @@ Rectangle {
     }
 
     Text {
-      text: qsTr("Duration") + ": " + qsTr("%n bar(s)", "", tp.bars) + ", " + qsTr("%n beat(s)", "", tp.beats)
-                             + ", " + qsTr("%n second(s)", "", tp.seconds)
+      //anchors.horizontalCenter: parent.horizontalCenter
+      text: GLOB.TR("TempoPage", "Meter") + " (" + GLOB.TR("MainWindow", "count to") + "): " + tp.meter
+      color: activPal.text
+    }
+
+    Text {
+      text: GLOB.TR("TempoPage", "Duration") + ": " + qsTr("%n bar(s)", "", tp.bars)
+                                             + " = " + qsTr("%n beat(s)", "", tp.beats)
+                                             + " = " + qsTr("%n second(s)", "", tp.seconds)
       color: activPal.text
     }
   }

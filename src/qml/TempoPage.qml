@@ -100,9 +100,26 @@ Tdialog {
         }
       }
 
+      Row {
+        spacing: GLOB.fontSize()
+        anchors.horizontalCenter: parent.horizontalCenter
+        Text {
+          anchors.verticalCenter: parent.verticalCenter
+          text: qsTr("Meter")
+          color: activPal.text
+        }
+        SpinBox {
+          editable: true
+          anchors.verticalCenter: parent.verticalCenter
+          from: 1; to: 12
+          value: pop.tp ? pop.tp.meter : 4
+          onValueModified: pop.tp.meter = value
+        }
+      }
+
       Text {
         anchors.horizontalCenter: parent.horizontalCenter
-        text: "<u>" + qsTr("duration") + "</u>"
+        text: "<u>" + qsTr("Duration") + "</u>"
         color: activPal.text; font.bold: true
       }
 

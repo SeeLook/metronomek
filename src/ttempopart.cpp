@@ -48,7 +48,9 @@ void TtempoPart::setTempos(int init, int target) {
 void TtempoPart::setMeter(int m) {
   if (m != m_meter) {
     m_meter = m;
-    //TODO: calculate beats number and duration
+    m_beats = m_bars * m_meter;
+    calculateDuration();
+    emit updateDuration();
     emit meterChanged();
   }
 }
@@ -103,8 +105,19 @@ int TtempoPart::getTempoForBeat(int beatNr) {
 
 
 QString TtempoPart::tempoText() const {
+  bool ch = m_initTempo != m_targetTempo;
+  QString speedUpOrDown;
+  if (ch) {
+    if (m_initTempo < m_targetTempo)
+      speedUpOrDown = tr("accelerando", "This is official glob wide music term, so it shouldn't be translated.");
+    else
+      speedUpOrDown = tr("rallentando", "This is official glob wide music term, so it shouldn't be translated.");
+    speedUpOrDown.prepend(QLatin1String("  <i>("));
+    speedUpOrDown.append(QLatin1String(")</i>"));
+  }
   return QString("<b><font size=\"5\">%1. </b></font>    ").arg(m_nr) + tr("Tempo")
-      + QString(": <b>%1%2</b>").arg(m_initTempo).arg(m_initTempo != m_targetTempo ? QString(" -> %1").arg(m_targetTempo) : QString());
+      + QString(": <b>%1%2</b>").arg(m_initTempo).arg(ch ? QString(" -> %1").arg(m_targetTempo) : QString())
+      + speedUpOrDown;
 }
 
 
