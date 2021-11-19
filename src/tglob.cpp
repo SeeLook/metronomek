@@ -99,6 +99,15 @@ void Tglob::setLang(const QString& l) {
   }
 }
 
+/** HACK:
+ * wrapper of standard Qt @p QApplication::translate method
+ * to avoid parsing texts by lupdate.
+ * This way translations of Qt can be used without adding them to *.ts files.
+ */
+QString Tglob::TR(const QString& context, const QString& text, const QString& disambiguation, int n) {
+  return QGuiApplication::translate(qPrintable(context), qPrintable(text), qPrintable(disambiguation), n);
+}
+
 
 QColor Tglob::alpha(const QColor& c, int a) {
   return QColor(c.red(), c.green(), c.blue(), a);
