@@ -22,6 +22,7 @@ Window {
   color: activPal.base
 
   SystemPalette { id: activPal;  colorGroup: SystemPalette.Active }
+  SystemPalette { id: disblPal;  colorGroup: SystemPalette.Disabled }
   FontMetrics { id: fm }
 
   // controlling tempo
