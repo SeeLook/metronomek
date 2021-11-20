@@ -63,28 +63,35 @@ Flickable {
     }
 
     DrawerButton {
-      text: qsTr("count down visible")
-      checkable: true
-      checked: GLOB.countVisible
-      onToggled: GLOB.countVisible = checked
-    }
-
-    DrawerButton {
       text: qsTr("ring at \"one\"")
+      bgColor: "red"
       checkable: true
       checked: SOUND.ring
       onToggled: SOUND.ring = checked
     }
 
     DrawerButton {
+      text: qsTr("count down visible")
+      bgColor: "yellow"
+      checkable: true
+      checked: GLOB.countVisible
+      onToggled: GLOB.countVisible = checked
+    }
+
+    DrawerButton {
       text: qsTr("pendulum stationary")
+      bgColor: "lime"
       checkable: true
       checked: GLOB.stationary
       onToggled: GLOB.stationary = checked
     }
 
     DrawerButton {
-      text: qsTr("programming tempo")
+      text: GLOB.TR("MainWindow", "Tempo changes").toLowerCase()
+      bgColor: "skyblue"
+      checkable: true
+      checked: SOUND.variableTempo
+      onToggled: SOUND.variableTempo = checked
       onClicked: {
         Qt.createComponent("qrc:/TempoPage.qml").createObject(mainWindow)
         drawer.close()
