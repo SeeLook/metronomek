@@ -33,7 +33,7 @@
   <screenshots>
     <screenshot type="default">
       <caption>General view</caption>
-      <image>https://www.opencode.net/seelook/metronomek/-/raw/master/images/metronomek.png</image>
+      <image>https://metronomek.sourceforge.io/images/main.png</image>
     </screenshot>
     <screenshot>
       <caption>Changing tempo</caption>
@@ -46,6 +46,8 @@
   </screenshots>
 
   <url type="homepage">https://metronomek.sourceforge.io</url>
+  <url type="bugtracker">https://github.com/SeeLook/metronomek/issues</url>
+  <url type="translate">https://www.opencode.net/seelook/metronomek/-/blob/master/CONTRIBUTING.md</url>
 
   <content_rating type="oars-1.0">
     <content_attribute id="violence-cartoon">none</content_attribute>
@@ -73,7 +75,7 @@
   <update_contact>seelook_AT_gmail.com</update_contact>
 
   <releases>
-    <release date="2021-11-12" version="0.5.0"/>
+    <release date="2021-11-19" version="0.5.1"/>
   </releases>
 
 </component>

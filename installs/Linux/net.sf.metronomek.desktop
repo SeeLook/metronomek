@@ -9,4 +9,4 @@ Comment[pl]=Prosty metronom z naturalnymi dźwiękami
 Exec=metronomek %f
 Icon=metronomek
 Terminal=false
-Categories=Audio;Qt;Education;Music;
+Categories=Qt;Education;Music;
