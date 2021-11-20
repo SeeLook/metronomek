@@ -222,10 +222,11 @@ Window {
       x: metro.width * 0.06; y: sb.y + sb.height + metro.height * 0.01
       height: metro.width * 0.13; width: height * 2.5
       onClicked: {
-        if (SOUND.variableTempo)
-          Qt.createComponent("qrc:/TempoPage.qml").createObject(mainWindow)
-        else
-          tapTempo()
+        if (SOUND.variableTempo) {
+            stopMetronome()
+            Qt.createComponent("qrc:/TempoPage.qml").createObject(mainWindow)
+        } else
+            tapTempo()
       }
       focus: true
     }
@@ -273,7 +274,7 @@ Window {
     SOUND.meterCount = 0
     timer.toLeft = pendulum.rotation <= 0
     initAnim.to = GLOB.stationary ? 0 : (timer.toLeft ? -25 : 25)
-    initAnim.duration = (30000 / tempoToShow) * ((25 - Math.abs(pendulum.rotation)) / 25)
+    initAnim.duration = (30000 / tempoToShow)
     pendAnim.stop()
     initAnim.start()
   }
@@ -281,7 +282,7 @@ Window {
   function stopMetronome() {
     SOUND.playing = false;
     finishAnim.to = 0
-    finishAnim.duration = (30000 / tempoToShow) //* ((25 - Math.abs(pendulum.rotation)) / 25)
+    finishAnim.duration = (30000 / tempoToShow)
     pendAnim.stop()
     finishAnim.start()
   }
@@ -347,7 +348,7 @@ Window {
     }
   }
 
-  Shortcut { id: spaceShort; sequence: " "; onActivated: tapTempo() }
+  Shortcut { id: spaceShort; sequence: " "; enabled: !SOUND.variableTempo; onActivated: tapTempo() }
 
   property real lastTime: new Date().getTime()
 
