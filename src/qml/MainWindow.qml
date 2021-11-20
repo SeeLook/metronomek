@@ -208,9 +208,10 @@ Window {
       Behavior on scale { NumberAnimation {} }
       background: TipRect {
         radius: height / 2
+        border { color: "skyblue"; width: SOUND.variableTempo ? fm.height / 6 : 0 }
         Text {
           font.pixelSize: tapButt.height / 3
-          text: qsTr("Tap tempo")
+          text: SOUND.variableTempo ? qsTr("Tempo changes") : qsTr("Tap tempo")
           color: activPal.text
           anchors.centerIn: parent
           width: tapButt.width - GLOB.fontSize()
@@ -220,7 +221,12 @@ Window {
       }
       x: metro.width * 0.06; y: sb.y + sb.height + metro.height * 0.01
       height: metro.width * 0.13; width: height * 2.5
-      onClicked: tapTempo()
+      onClicked: {
+        if (SOUND.variableTempo)
+          Qt.createComponent("qrc:/TempoPage.qml").createObject(mainWindow)
+        else
+          tapTempo()
+      }
       focus: true
     }
   }
