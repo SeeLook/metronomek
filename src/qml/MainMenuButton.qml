@@ -15,7 +15,7 @@ AbstractButton {
   property var drawerContent: null
 
   background: Rectangle {
-    color: GLOB.alpha(activPal.text, pressed ? 120 : 20)
+    color: SOUND.variableTempo ? GLOB.alpha("skyblue", pressed ? 200 : 80) : GLOB.alpha(activPal.text, pressed ? 120 : 20)
     radius: width / 4
   }
   contentItem: Column {
