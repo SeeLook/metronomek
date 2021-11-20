@@ -22,7 +22,6 @@ mkdir $DST_DIR
 
 cp -r $SRC_DIR/images $DST_DIR
 cp -r $SRC_DIR/sounds $DST_DIR
-cp -r $SRC_DIR/android $DST_DIR
 cp -r $SRC_DIR/fonts $DST_DIR
 cp -r $SRC_DIR/installs $DST_DIR
 cp -r $SRC_DIR/src $DST_DIR
