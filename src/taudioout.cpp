@@ -210,7 +210,7 @@ void TaudioOUT::startPlayingSlot() {
   if (!m_playing) {
     m_playingPart = 0;
     m_playingBeat = 1;
-    int t = m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
+    int t = m_variableTempo && m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
     m_samplPerBeat = (m_sampleRate * 60) / t;
     m_offsetSample = static_cast<qreal>((60 * m_sampleRate) - m_samplPerBeat * t) / static_cast<qreal>(t);
     setNameIdByTempo(t);
@@ -239,10 +239,10 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
     m_currSample++;
     if (m_currSample >= m_samplPerBeat + m_missingSampleNr) {
       m_playingBeat++;
-      int t = m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
+      int t = m_variableTempo && m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
       if (t == 0) {
         m_playingPart++;
-        t = m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
+        t = m_variableTempo && m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
         if (t == 0) {
           wasRead = 2; // stop playing
           return;
