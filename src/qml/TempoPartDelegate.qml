@@ -39,9 +39,10 @@ Rectangle {
     }
 
     Text {
-      text: GLOB.TR("TempoPage", "Duration") + ": " + qsTr("%n bar(s)", "", tp.bars)
-                                             + " = " + qsTr("%n beat(s)", "", tp.beats)
-                                             + " = " + qsTr("%n second(s)", "", tp.seconds)
+      text: GLOB.TR("TempoPage", "Duration") + ": " + (tp.infinite ? GLOB.TR("TempoPage", "infinite")
+                                                                   : qsTr("%n bar(s)", "", tp.bars)
+                                                           + " = " + qsTr("%n beat(s)", "", tp.beats)
+                                                           + " = " + qsTr("%n second(s)", "", tp.seconds))
       color: activPal.text
     }
   }

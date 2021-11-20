@@ -28,6 +28,7 @@ class TtempoPart : public QObject
   Q_PROPERTY(int bars READ bars WRITE setBars NOTIFY updateDuration)
   Q_PROPERTY(int beats READ beats WRITE setBeats NOTIFY updateDuration)
   Q_PROPERTY(int seconds READ seconds WRITE setSeconds NOTIFY updateDuration)
+  Q_PROPERTY(bool infinite READ infinite WRITE setInfinite NOTIFY infiniteChanged)
   Q_PROPERTY(QString tempoText READ tempoText NOTIFY tempoTextChanged)
 
 public:
@@ -57,6 +58,9 @@ public:
   int seconds() const { return m_seconds; }
   void setSeconds(int sec);
 
+  bool infinite() const { return m_infinite; }
+  void setInfinite(bool inf);
+
   enum EspeedType {
     SpeedStatic = 0, SpeedAccel = 1, SpeedRall = 2
   };
@@ -84,6 +88,7 @@ signals:
   void meterChanged();
   void updateDuration();
   void tempoTextChanged();
+  void infiniteChanged();
 
 protected:
   void calculateDuration();
@@ -95,6 +100,7 @@ private:
   int               m_meter = 4;
   int               m_bars = 1, m_beats = 4, m_seconds = 4;
   QEasingCurve      m_speedProfile; /**< By default it is linear */
+  bool              m_infinite = false;
 };
 
 #endif // TTEMPOPART_H

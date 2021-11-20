@@ -16,7 +16,7 @@ Tdialog {
   property SpeedHandler speedHandler: null
 
   visible: true
-  topPadding: 0; bottomPadding: GLOB.fontSize() / 2
+  topPadding: GLOB.fontSize() / 2; bottomPadding: GLOB.fontSize() / 2
 
   ListModel { id: tempoModel }
 
@@ -117,13 +117,26 @@ Tdialog {
         }
       }
 
-      Text {
+      Row {
         anchors.horizontalCenter: parent.horizontalCenter
-        text: "<u>" + qsTr("Duration") + "</u>"
-        color: activPal.text; font.bold: true
+        spacing: GLOB.fontSize() * 2
+        Text {
+          anchors.verticalCenter: parent.verticalCenter
+          text: qsTr("Duration")
+          color: activPal.text; font.bold: true
+        }
+        CheckBox {
+          id: infiChB
+          enabled: pop.tp && pop.tp.initTempo === pop.tp.targetTempo
+          anchors.verticalCenter: parent.verticalCenter
+          checked: pop.tp && pop.tp.infinite
+          onToggled: pop.tp.infinite = checked
+          text: qsTr("infinite")
+        }
       }
 
       Grid {
+        enabled: !infiChB.checked
         spacing: GLOB.fontSize()
         columns: tempoPage.width < barCol.width + beatCol.width + secCol.width ? 1 : 3
         Column {
@@ -139,7 +152,7 @@ Tdialog {
           Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("bars", "", barsSpin.value)
-            color: activPal.text
+            color: enabled ? activPal.text : disblPal.text
           }
         }
         Column {
@@ -155,7 +168,7 @@ Tdialog {
           Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("beats", "", beatsSpin.value)
-            color: activPal.text
+            color: enabled ? activPal.text : disblPal.text
           }
         }
         Column {
@@ -171,7 +184,7 @@ Tdialog {
           Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: qsTr("seconds", "", secSpin.value)
-            color: activPal.text
+            color: enabled ? activPal.text : disblPal.text
           }
         }
       }

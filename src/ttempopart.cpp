@@ -24,6 +24,10 @@ void TtempoPart::setInitTempo(int it) {
     emit initTempoChanged();
     emit updateDuration();
     emit tempoTextChanged();
+    if (m_initTempo != m_targetTempo && m_infinite) {
+      m_infinite = false;
+      emit infiniteChanged();
+    }
   }
 }
 
@@ -35,6 +39,10 @@ void TtempoPart::setTargetTempo(int tt) {
     emit targetTempoChanged();
     emit updateDuration();
     emit tempoTextChanged();
+    if (m_initTempo != m_targetTempo && m_infinite) {
+      m_infinite = false;
+      emit infiniteChanged();
+    }
   }
 }
 
@@ -83,6 +91,14 @@ void TtempoPart::setSeconds(int sec) {
 }
 
 
+void TtempoPart::setInfinite(bool inf) {
+  if (inf != m_infinite) {
+    m_infinite = inf;
+    emit infiniteChanged();
+  }
+}
+
+
 void TtempoPart::setSpeedProfile(QEasingCurve::Type type) {
   if (m_speedProfile.type() != type) {
     m_speedProfile.setType(type);
@@ -91,7 +107,7 @@ void TtempoPart::setSpeedProfile(QEasingCurve::Type type) {
 
 
 int TtempoPart::getTempoForBeat(int beatNr) {
-  if (m_initTempo == m_targetTempo) // TODO but only when infinite
+  if (m_initTempo == m_targetTempo && m_infinite)
     return m_initTempo;
 
   if (beatNr > m_beats)
@@ -109,9 +125,9 @@ QString TtempoPart::tempoText() const {
   QString speedUpOrDown;
   if (ch) {
     if (m_initTempo < m_targetTempo)
-      speedUpOrDown = tr("accelerando", "This is official glob wide music term, so it shouldn't be translated.");
+      speedUpOrDown = tr("accelerando", "This is official, glob wide music term, so it shouldn't be translated.");
     else
-      speedUpOrDown = tr("rallentando", "This is official glob wide music term, so it shouldn't be translated.");
+      speedUpOrDown = tr("rallentando", "This is official, glob wide music term, so it shouldn't be translated.");
     speedUpOrDown.prepend(QLatin1String("  <i>("));
     speedUpOrDown.append(QLatin1String(")</i>"));
   }
