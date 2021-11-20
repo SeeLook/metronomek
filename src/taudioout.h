@@ -78,6 +78,7 @@ class TaudioOUT : public QObject
   Q_PROPERTY(int tempo READ tempo WRITE setTempo NOTIFY tempoChanged)
   Q_PROPERTY(int nameTempoId READ nameTempoId NOTIFY nameTempoIdChanged)
   // tempo change properties
+  Q_PROPERTY(bool variableTempo READ variableTempo WRITE setVariableTempo NOTIFY variableTempoChanged)
 
 public:
   TaudioOUT(QObject* parent = nullptr);
@@ -144,6 +145,9 @@ public:
 
   int nameTempoId() const { return m_nameTempoId; }
 
+  bool variableTempo() const { return m_variableTempo; }
+  void setVariableTempo(bool varTemp);
+
   Q_INVOKABLE QString getTempoNameById(int nameId);
 
 //############  Tempo change methods    ####################
@@ -169,6 +173,7 @@ signals:
   void tempoChanged();
   void nameTempoIdChanged();
   void tempoPartIdChanged();
+  void variableTempoChanged();
 
 protected:
   int                  p_ratioOfRate; /**< ratio of current sample rate to 48000 */
@@ -224,6 +229,7 @@ private:
   int                    m_tempo = 60;
   int                    m_ringType = 0;
   int                    m_nameTempoId = 4;
+  bool                   m_variableTempo = false;
 };
 
 #endif // TAUDIOOUT_H

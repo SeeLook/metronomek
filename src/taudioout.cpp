@@ -124,6 +124,7 @@ TaudioOUT::TaudioOUT(QObject *parent) :
   setMeter(qBound(0, GLOB->settings()->value(QStringLiteral("meter"), 4).toInt(), 12));
   setRingType(qBound(0, GLOB->settings()->value(QStringLiteral("ringType"), 0).toInt(), ringTypeCount() - 1));
   setRing(GLOB->settings()->value(QStringLiteral("doRing"), false).toBool());
+  setVariableTempo(GLOB->settings()->value(QStringLiteral("variableTempo"), false).toBool());
 
   connect(this, &TaudioOUT::finishSignal, this, &TaudioOUT::playingFinishedSlot);
 
@@ -143,6 +144,7 @@ TaudioOUT::~TaudioOUT()
   GLOB->settings()->setValue(QStringLiteral("doRing"), m_doRing);
   GLOB->settings()->setValue(QStringLiteral("tempo"), m_tempo);
   GLOB->settings()->setValue(QStringLiteral("ringType"), m_ringType);
+  GLOB->settings()->setValue(QStringLiteral("variableTempo"), m_variableTempo);
 }
 
 
@@ -417,6 +419,14 @@ void TaudioOUT::setTempo(int t) {
 }
 
 
+void TaudioOUT::setVariableTempo(bool varTemp) {
+  if (varTemp != m_variableTempo) {
+    m_variableTempo = varTemp;
+    emit variableTempoChanged();
+  }
+}
+
+
 QString TaudioOUT::getTempoNameById(int nameId) {
   return nameId < GLOB->temposCount() ? GLOB->tempoName(nameId).name() : QString();
 }
@@ -433,7 +443,7 @@ TspeedHandler* TaudioOUT::speedHandler() {
 
 
 int TaudioOUT::getTempoForBeat(int partId, int beatNr) {
-  if (m_speedHandler)
+  if (m_variableTempo && m_speedHandler)
     return m_speedHandler->getTempoForBeat(partId, beatNr);
 
   return m_tempo;
