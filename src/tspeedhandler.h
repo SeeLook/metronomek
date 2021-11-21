@@ -39,6 +39,9 @@ public:
 
   int getTempoForBeat(int partId, int beatNr);
 
+  void saveToXMLFile(const QString& xmlFile);
+  void readFromXMLFile(const QString& xmlFile);
+
 signals:
   void appendTempoChange(TtempoPart* tp);
 

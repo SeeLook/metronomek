@@ -10,6 +10,10 @@
 #include <QtCore/qeasingcurve.h>
 
 
+class QXmlStreamWriter;
+class QXmlStreamReader;
+
+
 /**
  * @class TtempoPart describes tempo change.
  * Properties @p initTempo() and @p targetTempo()
@@ -80,6 +84,9 @@ public:
   int getTempoForBeat(int beatNr);
 
   QString tempoText() const;
+
+  void writeToXML(QXmlStreamWriter& xml);
+  void readFromXML(QXmlStreamReader& xml);
 
 signals:
   void nrChanged();

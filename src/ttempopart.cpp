@@ -4,6 +4,9 @@
 
 #include "ttempopart.h"
 
+#include <QtCore/qxmlstream.h>
+#include <QtCore/qdebug.h>
+
 
 TtempoPart::TtempoPart(int partNr, QObject* parent) :
   QObject(parent),
@@ -134,6 +137,40 @@ QString TtempoPart::tempoText() const {
   return QString("<b><font size=\"5\">%1. </b></font>    ").arg(m_nr) + tr("Tempo")
       + QString(": <b>%1%2</b>").arg(m_initTempo).arg(ch ? QString(" -> %1").arg(m_targetTempo) : QString())
       + speedUpOrDown;
+}
+
+
+void TtempoPart::writeToXML(QXmlStreamWriter& xml) {
+  xml.writeStartElement(QLatin1String("tempoChange"));
+    xml.writeTextElement(QLatin1String("init"), QString::number(m_initTempo));
+    xml.writeTextElement(QLatin1String("target"), QString::number(m_targetTempo));
+    xml.writeTextElement(QLatin1String("meter"), QString::number(m_meter));
+    xml.writeTextElement(QLatin1String("beats"), QString::number(m_beats));
+    if (m_infinite)
+      xml.writeEmptyElement(QLatin1String("infinite"));
+  xml.writeEndElement(); // tempo
+}
+
+
+void TtempoPart::readFromXML(QXmlStreamReader& xml) {
+  while (xml.readNextStartElement()) {
+    if (xml.name() == QLatin1String("init"))
+        m_initTempo = qBound(40, xml.readElementText().toInt(), 240);
+    else if (xml.name() == QLatin1String("target"))
+        m_targetTempo = qBound(40, xml.readElementText().toInt(), 240);
+    else if (xml.name() == QLatin1String("meter"))
+        m_meter = qBound(1, xml.readElementText().toInt(), 12);
+    else if (xml.name() == QLatin1String("beats"))
+        setBeats(qMax(1, xml.readElementText().toInt()));
+    else if (xml.name() == QLatin1String("infinite")) {
+        if (m_initTempo == m_targetTempo)
+          m_infinite = true;
+        else
+          qDebug() << "[TtempoPart] Duration sets to infinite but initial and target tempos are different!";
+        xml.skipCurrentElement();
+    } else
+        xml.skipCurrentElement();
+  }
 }
 
 
