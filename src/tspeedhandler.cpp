@@ -48,9 +48,8 @@ void TspeedHandler::remove(int tpId) {
   if (tpId > -1 && tpId < m_tempoList.count()) {
     emit removeTempoChange(tpId);
     QTimer::singleShot(100, this, [=]{
-      qDebug() << "delete" << tpId;
       delete m_tempoList.takeAt(tpId);
-      for (int i = tpId - 1; i < m_tempoList.size(); ++i)
+      for (int i = tpId; i < m_tempoList.size(); ++i)
         m_tempoList[i]->setNr(i + 1);
     });
   }
