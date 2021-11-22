@@ -13,10 +13,11 @@ Rectangle {
   id: tpDelegate
 
   width: parent ? parent.width : 0; height: tCol ? tCol.height : 0
-  color: nr % 2 ? activPal.base : activPal.alternateBase
+  color: ma.pressed ? Qt.tint(activPal.base, GLOB.alpha(toDel ? "red" : activPal.highlight, 50)) : (nr % 2 ? activPal.base : activPal.alternateBase)
 
   property TempoPart tp: null
   property int nr: tp ? tp.nr + 1 : -1
+  property bool toDel: Math.abs(x) > delText.width
 
   signal clicked()
 
@@ -48,26 +49,23 @@ Rectangle {
   }
 
   Text {
-    id: trash
-    visible: false
+    id: delText
+    visible: toDel
     parent: tpDelegate.parent
     text: qsTranslate("QLineEdit", "Delete")
     y: tpDelegate.y + (tpDelegate.height - height) / 2
-    x: tpDelegate.x > tpDelegate.width / 4 ? fm.height : tpDelegate.width - fm.height - width
+    x: tpDelegate.x > delText.width ? fm.height : tpDelegate.width - fm.height - width
     color: "red"; font.bold: true
   }
 
   MouseArea {
-    id: dragArea
+    id: ma
     anchors.fill: parent
     drag.axis: Drag.XAxis
     drag.minimumX: -width / 3; drag.maximumX: width / 3
     drag.target: parent
-    onPositionChanged: {
-        trash.visible = Math.abs(tpDelegate.x) > width / 4
-    }
     onReleased: {
-      if (Math.abs(tpDelegate.x) > width / 4) {
+      if (Math.abs(tpDelegate.x) > delText.width + fm.height) {
           rmAnim.to = tpDelegate.x > 0 ? tpDelegate.width : -tpDelegate.width
           rmAnim.start()
       } else
