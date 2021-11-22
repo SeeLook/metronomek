@@ -31,6 +31,8 @@ public:
        */
   Q_INVOKABLE void add();
 
+  Q_INVOKABLE void remove(int tpId);
+
       /**
        * Invokes @p appendTempoChange() signal
        * for every tempo part in the list
@@ -44,6 +46,7 @@ public:
 
 signals:
   void appendTempoChange(TtempoPart* tp);
+  void removeTempoChange(int tpId);
 
 protected:
   TtempoPart* createTempoPart(int tempo = 0);

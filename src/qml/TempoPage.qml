@@ -33,7 +33,6 @@ Tdialog {
     model: tempoModel
 
     delegate: TempoPartDelegate {
-      nr: index + 1
       tp: modelData
       onClicked: {
         pop.tp = tp
@@ -68,6 +67,7 @@ Tdialog {
   Connections {
     target: speedHandler
     onAppendTempoChange: tempoModel.append( {"tempoPart": tp} )
+    onRemoveTempoChange: tempoModel.remove(tpId)
   }
 
   Popup {

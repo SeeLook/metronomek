@@ -12,6 +12,7 @@
 #include <QtCore/qdir.h>
 #include <QtCore/qfileinfo.h>
 #include <QtCore/qsettings.h>
+#include <QtCore/qtimer.h>
 
 #include <QtCore/qdebug.h>
 
@@ -40,6 +41,19 @@ void TspeedHandler::add() {
   int t = m_tempoList.isEmpty() ? SOUND->tempo() : m_tempoList.last()->targetTempo();
   m_tempoList << createTempoPart(t);
   emit appendTempoChange(m_tempoList.last());
+}
+
+
+void TspeedHandler::remove(int tpId) {
+  if (tpId > -1 && tpId < m_tempoList.count()) {
+    emit removeTempoChange(tpId);
+    QTimer::singleShot(100, this, [=]{
+      qDebug() << "delete" << tpId;
+      delete m_tempoList.takeAt(tpId);
+      for (int i = tpId - 1; i < m_tempoList.size(); ++i)
+        m_tempoList[i]->setNr(i + 1);
+    });
+  }
 }
 
 
@@ -102,6 +116,8 @@ void TspeedHandler::readFromXMLFile(const QString& xmlFile) {
               xml.skipCurrentElement();
         }
       }
+  } else {
+      qDebug() << "[TspeedHandler] Cannot read XML file:" << xmlFile;
   }
 }
 
