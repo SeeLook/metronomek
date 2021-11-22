@@ -23,7 +23,8 @@ TspeedHandler::TspeedHandler(QObject* parent) :
   readFromXMLFile(QDir::toNativeSeparators(QFileInfo(
     GLOB->settings()->fileName()).absolutePath() + QLatin1String("/tempoChanges.metronomek.xml")
   ));
-//   m_tempoList << createTempoPart();
+  if (m_tempoList.isEmpty())
+    m_tempoList << createTempoPart();
 }
 
 
