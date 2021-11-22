@@ -13,7 +13,8 @@ Rectangle {
   id: tpDelegate
 
   width: parent ? parent.width : 0; height: tCol ? tCol.height : 0
-  color: ma.pressed ? Qt.tint(activPal.base, GLOB.alpha(toDel ? "red" : activPal.highlight, 50)) : (nr % 2 ? activPal.base : activPal.alternateBase)
+  color: ma.pressed || ma.containsMouse ? Qt.tint(activPal.base, GLOB.alpha(toDel ? "red": activPal.highlight, 50))
+                                        : (nr % 2 ? activPal.base : activPal.alternateBase)
 
   property TempoPart tp: null
   property int nr: tp ? tp.nr + 1 : -1
@@ -25,7 +26,7 @@ Rectangle {
     id: tCol
     spacing: GLOB.fontSize() / 2
     padding: GLOB.fontSize() / 4
-    width: parent.width - settBut.width - GLOB.fontSize()
+    width: parent.width - GLOB.fontSize()
 
     Text {
       anchors.horizontalCenter: parent.horizontalCenter
@@ -58,18 +59,29 @@ Rectangle {
     color: "red"; font.bold: true
   }
 
+  // private
+  property bool wasDragged: false
   MouseArea {
     id: ma
     anchors.fill: parent
+    hoverEnabled: !GLOB.isAndroid()
     drag.axis: Drag.XAxis
     drag.minimumX: -width / 3; drag.maximumX: width / 3
-    drag.target: parent
+    drag.target: tempoModel.count > 1 ? parent : null
+    onPressed: wasDragged = false
+    onPositionChanged: {
+      if (Math.abs(tpDelegate.x) > fm.height)
+        wasDragged = true
+    }
     onReleased: {
       if (Math.abs(tpDelegate.x) > delText.width + fm.height) {
           rmAnim.to = tpDelegate.x > 0 ? tpDelegate.width : -tpDelegate.width
           rmAnim.start()
-      } else
+      } else {
           backAnim.start()
+          if (!wasDragged && Math.abs(tpDelegate.x) < fm.height)
+            tpDelegate.clicked()
+      }
     }
   }
 
@@ -83,32 +95,5 @@ Rectangle {
     id: rmAnim
     target: tpDelegate; property: "x"
     onFinished: speedHandler.remove(tp.nr - 1)
-  }
-
-  // private
-  property real dotW: settBut.width / 3
-
-  AbstractButton {
-    id: settBut
-    hoverEnabled: true
-    anchors { verticalCenter: parent.verticalCenter; right: parent.right; rightMargin: GLOB.fontSize() / 2 }
-    width: GLOB.fontSize() * 2; height: GLOB.fontSize() * 5
-
-    background: Rectangle {
-      color: settBut.hovered ? activPal.highlight : activPal.button; radius: width / 4
-    }
-
-    contentItem: Item {
-      property real dotW: settBut.width / 3
-      Repeater {
-        model: 3
-        Rectangle {
-          x: dotW; y: (settBut.height - 5 * dotW) / 2 + index * dotW * 2
-          width: dotW; height: dotW; radius: dotW / 2
-          color: settBut.pressed ? activPal.base : activPal.text
-        }
-      }
-    }
-    onClicked: tpDelegate.clicked()
   }
 }

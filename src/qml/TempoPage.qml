@@ -21,6 +21,7 @@ Tdialog {
   ListModel { id: tempoModel }
 
   ListView {
+    id: chengesList
     width: parent.width; height: parent.height
     spacing: 1
 
@@ -48,10 +49,21 @@ Tdialog {
       }
     }
 
-    footer: Button {
+    footer: Column {
       width: parent.width
-      text: qsTr("Add tempo change")
-      onClicked: speedHandler.add()
+      spacing: fm.height / 2
+      Button {
+        width: parent.width
+        text: qsTr("Add tempo change")
+        onClicked: speedHandler.add()
+      }
+      Text {
+        width: parent.width
+        horizontalAlignment: Text.AlignHCenter
+        color: activPal.text
+        text: qsTr("Tap or cliick to edit tempo change.") + "<br><font color=\"red\">"
+            + qsTr("Drag it left or right to remove.")
+      }
     }
   }
 
@@ -159,7 +171,6 @@ Tdialog {
           columns: tempoPage.width < barCol.width + beatCol.width + secCol.width ? 1 : 3
           Column {
             id: barCol
-  //           columns: 2
             SpinBox {
               id: barsSpin
               editable: true
