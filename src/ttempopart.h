@@ -40,6 +40,7 @@ public:
   ~TtempoPart() override;
 
   int nr() const { return m_nr; }
+  void setNr(int nr);
 
   int initTempo() const { return m_initTempo; }
   void setInitTempo(int it);

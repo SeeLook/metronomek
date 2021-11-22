@@ -20,6 +20,15 @@ TtempoPart::~TtempoPart()
 }
 
 
+void TtempoPart::setNr(int nr) {
+  if (nr != m_nr) {
+    m_nr = nr;
+    emit nrChanged();
+    emit tempoTextChanged();
+  }
+}
+
+
 void TtempoPart::setInitTempo(int it) {
   if (it != m_initTempo) {
     m_initTempo = it;
