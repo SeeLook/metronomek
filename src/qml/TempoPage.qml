@@ -62,7 +62,7 @@ Tdialog {
         horizontalAlignment: Text.AlignHCenter
         color: activPal.text
         text: qsTr("Tap or cliick to edit tempo change.") + "<br><font color=\"red\">"
-            + qsTr("Drag it left or right to remove.")
+            + qsTr("Drag the item left or right to remove it.")
       }
     }
   }
@@ -82,7 +82,7 @@ Tdialog {
     onRemoveTempoChange: tempoModel.remove(tpId)
   }
 
-  Popup {
+  Dialog {
     id: pop
 
     scale: 0
@@ -90,19 +90,14 @@ Tdialog {
     exit: Transition { NumberAnimation { property: "scale"; to: 0 }}
 
     property TempoPart tp: null
+    property real extraH: topPadding + bottomPadding + implicitFooterHeight + implicitHeaderHeight
 
-    height: Math.min(tCol.height + headText.height, tempoPage.height) + topPadding + bottomPadding
+    height: Math.min(extraH + tCol.height, tempoPage.height)
     width: tCol.width + leftPadding + rightPadding
-
-    Text {
-      id: headText
-      text: pop.tp ? pop.tp.nr + "." : ""
-      color: activPal.text; font.bold: true
-    }
+    title: pop.tp ? pop.tp.nr + "." : ""
 
     Flickable {
-      y: headText.height
-      height: Math.min(tCol.height + pop.padding, tempoPage.height) - headText.height
+      height: Math.min(tCol.height + fm.height, tempoPage.height - pop.extraH)
       width: tCol.width
       contentHeight: tCol.height; contentWidth: tCol.width
       clip: true
@@ -220,5 +215,9 @@ Tdialog {
         }
       }
     } // Flickable
-  }
+
+    standardButtons: Dialog.Ok
+    Component.onCompleted: footer.standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK")
+  } // Dialog
+
 }
