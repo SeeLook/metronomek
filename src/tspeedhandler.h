@@ -22,9 +22,14 @@ class TspeedHandler : public QObject
 
   Q_OBJECT
 
+  Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
+
 public:
   TspeedHandler(QObject* parent = nullptr);
   ~TspeedHandler() override;
+
+  QString title() const { return m_title; }
+  void setTitle(const QString& t);
 
       /**
        * Adds new, default tempo part to the list
@@ -47,12 +52,14 @@ public:
 signals:
   void appendTempoChange(TtempoPart* tp);
   void removeTempoChange(int tpId);
+  void titleChanged();
 
 protected:
   TtempoPart* createTempoPart(int tempo = 0);
 
 private:
   QList<TtempoPart*>                  m_tempoList;
+  QString                             m_title;
 
 };
 

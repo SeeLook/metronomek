@@ -29,6 +29,8 @@ Tdialog {
       width: parent.width
       placeholderText: qsTr("Name of rhythmic composition")
       selectByMouse: true
+      text: speedHandler ? speedHandler.title : ""
+      onTextEdited: speedHandler.title = text
     }
 
     model: tempoModel
