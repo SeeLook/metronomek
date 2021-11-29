@@ -94,6 +94,6 @@ Rectangle {
   NumberAnimation {
     id: rmAnim
     target: tpDelegate; property: "x"
-    onFinished: speedHandler.remove(tp.nr - 1)
+    onFinished: speedHandler.removeTempo(tp.nr - 1)
   }
 }

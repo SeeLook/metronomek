@@ -25,12 +25,23 @@ Tdialog {
     width: parent.width; height: parent.height
     spacing: 1
 
-    header: TextField {
+    header: ComboBox {
+      id: comboEdit
       width: parent.width
-      placeholderText: qsTr("Name of rhythmic composition")
-      selectByMouse: true
-      text: speedHandler ? speedHandler.title : ""
-      onTextEdited: speedHandler.title = text
+      editable: true
+      model: speedHandler ? speedHandler.titleModel : null
+
+      contentItem: TextField {
+        width: parent.width
+        placeholderText: qsTr("Rhythmic Composition")
+        text: comboEdit.displayText
+        selectedTextColor: activPal.highlightedText
+        selectionColor: activPal.highlight
+        selectByMouse: true
+        onTextEdited: speedHandler.title = text
+      }
+
+      onActivated: speedHandler.setComposition(index)
     }
 
     model: tempoModel
@@ -57,23 +68,24 @@ Tdialog {
       Button {
         width: parent.width
         text: qsTr("Add tempo change")
-        onClicked: speedHandler.add()
+        onClicked: speedHandler.addTempo()
       }
       Text {
         width: parent.width
         horizontalAlignment: Text.AlignHCenter
         color: activPal.text
-        text: qsTr("Tap or cliick to edit tempo change.") + "<br><font color=\"red\">"
+        text: qsTr("Tap or click to edit tempo change.") + "<br><font color=\"red\">"
             + qsTr("Drag the item left or right to remove it.")
       }
     }
   }
 
-  standardButtons: Dialog.Ok
+  standardButtons: Dialog.Ok | Dialog.Help
 
   Component.onCompleted: {
     mainWindow.dialogItem = tempoPage
     footer.standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK")
+    footer.standardButton(Dialog.Help).text = qsTr("More") + " ..."
     speedHandler = SOUND.speedHandler()
     speedHandler.emitAllTempos()
   }
@@ -82,7 +94,34 @@ Tdialog {
     target: speedHandler
     onAppendTempoChange: tempoModel.append( {"tempoPart": tp} )
     onRemoveTempoChange: tempoModel.remove(tpId)
+    onClearAllChanges: tempoModel.clear()
   }
+
+  Menu {
+    y: tempoPage.height - height - tempoPage.implicitFooterHeight
+    id: moreMenu
+    MenuItem {
+      text: qsTr("New composition")
+      onClicked: speedHandler.newComposition()
+    }
+    MenuItem {
+      text: qsTr("Duplicate")
+    }
+    MenuItem {
+      text: qsTranslate("QFileDialog", "Open")
+    }
+    MenuItem {
+      text: qsTranslate("QFileDialog", "Save As")
+    }
+    MenuItem {
+      text: qsTranslate("QPlatformTheme", "Reset")
+    }
+    MenuItem {
+      text: qsTranslate("QFileDialog", "Remove")
+    }
+  }
+
+  onHelpRequested: moreMenu.open()
 
   Dialog {
     id: pop
