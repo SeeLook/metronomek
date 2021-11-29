@@ -36,6 +36,7 @@ TrtmComposition::~TrtmComposition()
 void TrtmComposition::setTitle(const QString& t) {
   if (t != m_title) {
     m_title = t;
+    emit titleChanged();
   }
 }
 
@@ -143,15 +144,12 @@ TspeedHandler::TspeedHandler(QObject* parent) :
       auto comp = new TrtmComposition(this);
       comp->add();
       m_compositions << comp;
-      m_titleModel << getTitle(1);
   } else {
       auto comp = new TrtmComposition(this);
       comp->readFromXMLFile(m_fileNames.first());
       m_compositions << comp;
       if (comp->title().isEmpty())
-        m_titleModel << getTitle(1);
-      else
-        m_titleModel << comp->title();
+        comp->setTitle(getTitle(1));
       if (m_fileNames.size() > 1) {
         QTimer::singleShot(200, this, [=]{
             for (int f = 1; f < m_fileNames.size(); ++f) {
@@ -159,11 +157,9 @@ TspeedHandler::TspeedHandler(QObject* parent) :
               comp->readFromXMLFile(m_fileNames[f]);
               m_compositions << comp;
               if (comp->title().isEmpty())
-                m_titleModel << getTitle(f + 1);
-              else
-                m_titleModel << comp->title();
+                comp->setTitle(getTitle(f + 1));
             }
-            emit titleModelChanged();
+            emit compositionsChanged();
         });
       }
   }
@@ -210,7 +206,6 @@ QString TspeedHandler::title() const {
 void TspeedHandler::setTitle(const QString& t) {
   if (currComp()->title() != t) {
     currComp()->setTitle(t);
-    emit titleChanged();
   }
 }
 
@@ -220,10 +215,10 @@ void TspeedHandler::newComposition() {
   auto comp = new TrtmComposition(this);
   comp->add();
   m_compositions << comp;
-  m_titleModel << QString();
+  comp->setTitle(getTitle(m_compositions.size()));
   m_current = m_compositions.size() - 1;
   emit clearAllChanges();
-  emit titleModelChanged();
+  emit compositionsChanged();
   emitAllTempos();
 }
 

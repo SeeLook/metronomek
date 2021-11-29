@@ -28,8 +28,10 @@ Tdialog {
     header: ComboBox {
       id: comboEdit
       width: parent.width
+      popup.contentItem.width: parent.width
       editable: true
-      model: speedHandler ? speedHandler.titleModel : null
+      model: speedHandler ? speedHandler.compositions : null
+      textRole: "title"
 
       contentItem: TextField {
         width: parent.width
@@ -38,10 +40,17 @@ Tdialog {
         selectedTextColor: activPal.highlightedText
         selectionColor: activPal.highlight
         selectByMouse: true
-        onTextEdited: speedHandler.title = text
+//         onTextEdited: speedHandler.setTitle(text)
       }
 
-      onActivated: speedHandler.setComposition(index)
+      onActivated: {
+        speedHandler.setComposition(index)
+        displayText = currentText
+      }
+      onAccepted: {
+        displayText = editText
+        speedHandler.setTitle(editText)
+      }
     }
 
     model: tempoModel

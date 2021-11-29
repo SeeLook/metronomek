@@ -22,6 +22,8 @@ class TrtmComposition : public QObject
 
   Q_OBJECT
 
+  Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
+
 public:
   TrtmComposition(QObject* parent = nullptr);
   ~TrtmComposition() override;
@@ -56,6 +58,9 @@ public:
   void add();
   void remove(int tpId);
 
+signals:
+  void titleChanged();
+
 protected:
   TtempoPart* createTempoPart(int tempo = 0);
 
@@ -75,17 +80,16 @@ class TspeedHandler : public QObject
 
   Q_OBJECT
 
-  Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
-  Q_PROPERTY(QStringList titleModel READ titleModel NOTIFY titleModelChanged)
+  Q_PROPERTY(QList<TrtmComposition*> compositions READ compositions NOTIFY compositionsChanged)
 
 public:
   TspeedHandler(QObject* parent = nullptr);
   ~TspeedHandler() override;
 
   QString title() const;
-  void setTitle(const QString& t);
+  Q_INVOKABLE void setTitle(const QString& t);
 
-  QStringList titleModel() const { return m_titleModel; }
+  QList<TrtmComposition*> compositions() { return m_compositions; }
 
       /**
        * Actually selected composition
@@ -123,13 +127,11 @@ signals:
   void appendTempoChange(TtempoPart* tp);
   void removeTempoChange(int tpId);
   void clearAllChanges();
-  void titleChanged();
-  void titleModelChanged();
+  void compositionsChanged();
 
 private:
   QStringList                         m_fileNames;
   QList<TrtmComposition*>             m_compositions;
-  QStringList                         m_titleModel;
   int                                 m_current = 0;
 
 };

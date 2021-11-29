@@ -118,6 +118,7 @@ TaudioOUT::TaudioOUT(QObject *parent) :
 
   qmlRegisterUncreatableType<TtempoPart>("Metronomek", 1, 0, "TempoPart", QStringLiteral("Creating TempoPart in QML not allowed!"));
   qmlRegisterUncreatableType<TspeedHandler>("Metronomek", 1, 0, "SpeedHandler", QStringLiteral("Creating SpeedHandler in QML not allowed!"));
+  qmlRegisterUncreatableType<TrtmComposition>("Metronomek", 1, 0, "Composition", QStringLiteral("Creating Composition in QML not allowed!"));
 
   setTempo(qBound(40, GLOB->settings()->value(QStringLiteral("tempo"), 60).toInt(), 240));
   setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), beatTypeCount() - 1));
