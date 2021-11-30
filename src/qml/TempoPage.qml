@@ -14,6 +14,7 @@ Tdialog {
 
   // private
   property SpeedHandler speedHandler: null
+  property ComboBox combo: null
 
   visible: true
   topPadding: GLOB.fontSize() / 2; bottomPadding: GLOB.fontSize() / 2
@@ -21,7 +22,7 @@ Tdialog {
   ListModel { id: tempoModel }
 
   ListView {
-    id: chengesList
+    id: changesList
     width: parent.width; height: parent.height
     spacing: 1
 
@@ -43,6 +44,7 @@ Tdialog {
 //         onTextEdited: speedHandler.setTitle(text)
       }
 
+      Component.onCompleted: combo = this
       onActivated: {
         speedHandler.setComposition(index)
         displayText = currentText
@@ -111,7 +113,10 @@ Tdialog {
     id: moreMenu
     MenuItem {
       text: qsTr("New composition")
-      onClicked: speedHandler.newComposition()
+      onClicked: {
+        speedHandler.newComposition()
+        combo.currentIndex = combo.count - 1
+      }
     }
     MenuItem {
       text: qsTr("Duplicate")
