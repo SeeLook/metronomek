@@ -58,16 +58,20 @@ public:
   void add();
   void remove(int tpId);
 
+  bool notSaved() const { return m_notSaved; }
+
 signals:
   void titleChanged();
 
 protected:
   TtempoPart* createTempoPart(int tempo = 0);
+  void notSavedSlot();
 
 private:
   QString                             m_title;
   QString                             m_xmlFileName;
   QList<TtempoPart*>                  m_tempoList;
+  bool                                m_notSaved = true;
 };
 
 

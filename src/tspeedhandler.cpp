@@ -36,12 +36,18 @@ TrtmComposition::~TrtmComposition()
 void TrtmComposition::setTitle(const QString& t) {
   if (t != m_title) {
     m_title = t;
+    m_notSaved = true;
     emit titleChanged();
   }
 }
 
 
 void TrtmComposition::saveToXMLFile(const QString& xmlName) {
+  if (!m_notSaved) {
+    qDebug() << "[TrtmComposition] Nothing changed, nothing to save" << m_title;
+    return;
+  }
+
   if (xmlName.isEmpty() && m_xmlFileName.isEmpty())
     return;
 
@@ -63,6 +69,7 @@ void TrtmComposition::saveToXMLFile(const QString& xmlName) {
       xml.writeEndElement();
       xml.writeEndDocument();
       file.close();
+      m_notSaved = false;
   } else {
       qDebug() << "[TrtmComposition] Cannot write to" << m_xmlFileName;
   }
@@ -90,10 +97,13 @@ void TrtmComposition::readFromXMLFile(const QString& xmlName) {
               auto tp = new TtempoPart(m_tempoList.size() + 1, this);
               tp->readFromXML(xml);
               m_tempoList << tp;
+              connect(tp, &TtempoPart::infiniteChanged, this, &TrtmComposition::notSavedSlot);
+              connect(tp, &TtempoPart::updateDuration, this, &TrtmComposition::notSavedSlot);
           } else
               xml.skipCurrentElement();
         }
       }
+      m_notSaved = false;
   } else {
       qDebug() << "[TspeedHandler] Cannot read XML file:" << xmlName;
   }
@@ -103,6 +113,7 @@ void TrtmComposition::readFromXMLFile(const QString& xmlName) {
 void TrtmComposition::add() {
   int t = m_tempoList.isEmpty() ? SOUND->tempo() : m_tempoList.last()->targetTempo();
   m_tempoList << createTempoPart(t);
+  m_notSaved = true;
 }
 
 
@@ -117,11 +128,24 @@ void TrtmComposition::remove(int tpId) {
 }
 
 
-TtempoPart * TrtmComposition::createTempoPart(int tempo) {
+TtempoPart* TrtmComposition::createTempoPart(int tempo) {
   auto tp = new TtempoPart(m_tempoList.size() + 1, this);
   int t = tempo < 40 || tempo > 240 ? SOUND->tempo() : tempo;
   tp->setTempos(t, t);
+  connect(tp, &TtempoPart::infiniteChanged, this, &TrtmComposition::notSavedSlot);
+  connect(tp, &TtempoPart::updateDuration, this, &TrtmComposition::notSavedSlot);
   return tp;
+}
+
+
+void TrtmComposition::notSavedSlot() {
+  if (!m_notSaved) {
+    for (auto tp : m_tempoList) {
+      disconnect(tp, &TtempoPart::infiniteChanged, this, &TrtmComposition::notSavedSlot);
+      disconnect(tp, &TtempoPart::updateDuration, this, &TrtmComposition::notSavedSlot);
+    }
+  }
+  m_notSaved = true;
 }
 
 
