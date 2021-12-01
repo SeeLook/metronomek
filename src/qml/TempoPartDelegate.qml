@@ -31,20 +31,20 @@ Rectangle {
 
     Text {
       anchors.horizontalCenter: parent.horizontalCenter
-      text: tp.tempoText
+      text: tp ? tp.tempoText : ""
       color: activPal.text
     }
 
     Text {
-      text: GLOB.TR("TempoPage", "Meter") + " (" + GLOB.TR("MainWindow", "count to") + "): " + tp.meter
+      text: GLOB.TR("TempoPage", "Meter") + " (" + GLOB.TR("MainWindow", "count to") + "): " + (tp ? tp.meter : 4)
       color: activPal.text
     }
 
     Text {
-      text: GLOB.TR("TempoPage", "Duration") + ": " + (tp.infinite ? GLOB.TR("TempoPage", "infinite")
-                                                                   : qsTr("%n bar(s)", "", tp.bars)
-                                                           + " = " + qsTr("%n beat(s)", "", tp.beats)
-                                                           + " = " + qsTr("%n second(s)", "", tp.seconds))
+      text: GLOB.TR("TempoPage", "Duration") + ": " + (tp && tp.infinite ? GLOB.TR("TempoPage", "infinite")
+                                                                   : qsTr("%n bar(s)", "", tp ? tp.bars : 0)
+                                                           + " = " + qsTr("%n beat(s)", "", tp ? tp.beats : 0)
+                                                           + " = " + qsTr("%n second(s)", "", tp ? tp.seconds : 0))
       color: activPal.text
     }
   }
