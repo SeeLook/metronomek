@@ -19,6 +19,7 @@ Rectangle {
   property TempoPart tp: null
   property int nr: tp ? tp.nr + 1 : -1
   property bool toDel: Math.abs(x) > delText.width
+  property alias rmAnim: rmAnim
 
   signal clicked()
 
@@ -35,7 +36,6 @@ Rectangle {
     }
 
     Text {
-      //anchors.horizontalCenter: parent.horizontalCenter
       text: GLOB.TR("TempoPage", "Meter") + " (" + GLOB.TR("MainWindow", "count to") + "): " + tp.meter
       color: activPal.text
     }

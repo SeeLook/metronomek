@@ -3,6 +3,7 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "ttempopart.h"
+#include "taudioout.h"
 
 #include <QtCore/qxmlstream.h>
 #include <QtCore/qdebug.h>
@@ -193,6 +194,15 @@ void TtempoPart::copy(TtempoPart* other) {
   m_infinite = other->infinite();
   m_speedProfile = other->speedProfile();
 }
+
+
+void TtempoPart::reset() {
+  setTempos(SOUND->tempo(), SOUND->tempo());
+//   setMeter(SOUND->meter());
+  setBars(1);
+  setInfinite(false);
+}
+
 
 
 //#################################################################################################

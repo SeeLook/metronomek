@@ -90,6 +90,7 @@ public:
   void readFromXML(QXmlStreamReader& xml);
 
   void copy(TtempoPart* other);
+  Q_INVOKABLE void reset();
 
 signals:
   void nrChanged();

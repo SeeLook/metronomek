@@ -23,6 +23,7 @@ Tdialog {
 
   ListView {
     id: changesList
+
     width: parent.width; height: parent.height
     spacing: 1
 
@@ -133,6 +134,17 @@ Tdialog {
     }
     MenuItem {
       text: qsTranslate("QPlatformTheme", "Reset")
+      onClicked: {
+        var c = changesList.count - 1
+        for (var t = c; t > 0; --t) {
+          var it = changesList.itemAtIndex(t)
+          it.toDel = false
+          it.rmAnim.duration = 150 + (c - t) * 25
+          it.rmAnim.to = -it.width
+          it.rmAnim.start()
+        }
+        changesList.itemAtIndex(0).tp.reset()
+      }
     }
     MenuItem {
       text: qsTranslate("QFileDialog", "Remove")
