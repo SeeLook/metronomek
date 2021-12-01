@@ -89,6 +89,8 @@ public:
   void writeToXML(QXmlStreamWriter& xml);
   void readFromXML(QXmlStreamReader& xml);
 
+  void copy(TtempoPart* other);
+
 signals:
   void nrChanged();
   void targetTempoChanged();

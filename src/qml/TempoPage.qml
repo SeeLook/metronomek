@@ -96,7 +96,7 @@ Tdialog {
   Component.onCompleted: {
     mainWindow.dialogItem = tempoPage
     footer.standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK")
-    footer.standardButton(Dialog.Help).text = qsTr("More") + " ..."
+    footer.standardButton(Dialog.Help).text = qsTr("Actions")
     speedHandler = SOUND.speedHandler()
     speedHandler.emitAllTempos()
   }
@@ -120,6 +120,10 @@ Tdialog {
     }
     MenuItem {
       text: qsTr("Duplicate")
+      onClicked: {
+        speedHandler.duplicateComposition()
+        combo.currentIndex = combo.count - 1
+      }
     }
     MenuItem {
       text: qsTranslate("QFileDialog", "Open")

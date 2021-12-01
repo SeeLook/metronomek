@@ -101,7 +101,7 @@ public:
   TrtmComposition* currComp() { return m_compositions[m_current]; }
 
   Q_INVOKABLE void newComposition();
-//   Q_INVOKABLE void duplicate();
+  Q_INVOKABLE void duplicateComposition();
 //   Q_INVOKABLE void reset();
 //   Q_INVOKABLE void removeComposition();
 

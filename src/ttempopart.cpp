@@ -183,6 +183,18 @@ void TtempoPart::readFromXML(QXmlStreamReader& xml) {
 }
 
 
+void TtempoPart::copy(TtempoPart* other) {
+  m_initTempo = other->initTempo();
+  m_targetTempo = other->targetTempo();
+  m_meter = other->meter();
+  m_beats = other->beats();
+  m_bars = other->bars();
+  m_seconds = other->seconds();
+  m_infinite = other->infinite();
+  m_speedProfile = other->speedProfile();
+}
+
+
 //#################################################################################################
 //###################                PROTECTED         ############################################
 //#################################################################################################

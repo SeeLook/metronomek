@@ -169,19 +169,37 @@ TspeedHandler::TspeedHandler(QObject* parent) :
       comp->add();
       m_compositions << comp;
   } else {
-      auto comp = new TrtmComposition(this);
-      comp->readFromXMLFile(m_fileNames.first());
-      m_compositions << comp;
-      if (comp->title().isEmpty())
-        comp->setTitle(getTitle(1));
+      if (QFileInfo::exists(m_fileNames.first())) {
+          auto comp = new TrtmComposition(this);
+          comp->readFromXMLFile(m_fileNames.first());
+          m_compositions << comp;
+          if (comp->title().isEmpty())
+            comp->setTitle(getTitle(1));
+      } else
+          m_fileNames.removeFirst();
+
       if (m_fileNames.size() > 1) {
         QTimer::singleShot(200, this, [=]{
+            QStringList toRemove;
             for (int f = 1; f < m_fileNames.size(); ++f) {
+              auto fName = m_fileNames[f];
+              if (QFileInfo::exists(fName)) {
+                  auto comp = new TrtmComposition(this);
+                  comp->readFromXMLFile(fName);
+                  m_compositions << comp;
+                  if (comp->title().isEmpty())
+                    comp->setTitle(getTitle(f + 1));
+              } else
+                  toRemove << fName;
+            }
+            if (!toRemove.isEmpty()) {
+              for (const QString& f : toRemove)
+                m_fileNames.removeOne(f);
+            }
+            if (m_compositions.isEmpty()) { // all compositions files disappeared - create default
               auto comp = new TrtmComposition(this);
-              comp->readFromXMLFile(m_fileNames[f]);
+              comp->add();
               m_compositions << comp;
-              if (comp->title().isEmpty())
-                comp->setTitle(getTitle(f + 1));
             }
             emit compositionsChanged();
         });
@@ -245,6 +263,25 @@ void TspeedHandler::newComposition() {
   emit compositionsChanged();
   emitAllTempos();
 }
+
+
+void TspeedHandler::duplicateComposition() {
+  saveCurrentComposition();
+  auto comp = new TrtmComposition(this);
+  comp->setTitle(currComp()->title());
+  for (int t = 0; t < currComp()->partsCount(); ++t) {
+    comp->add();
+    auto p = comp->getPart(t);
+    p->copy(currComp()->getPart(t));
+    p->setNr(t + 1);
+  }
+  m_compositions << comp;
+  m_current = m_compositions.size() - 1;
+  emit clearAllChanges();
+  emit compositionsChanged();
+  emitAllTempos();
+}
+
 
 
 void TspeedHandler::setComposition(int id) {
