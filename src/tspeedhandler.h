@@ -93,6 +93,8 @@ public:
   QString title() const;
   Q_INVOKABLE void setTitle(const QString& t);
 
+  Q_INVOKABLE QString getTitle(int nr) const;
+
   QList<TrtmComposition*> compositions() { return m_compositions; }
 
       /**

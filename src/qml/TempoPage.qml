@@ -144,6 +144,9 @@ Tdialog {
           it.rmAnim.start()
         }
         changesList.itemAtIndex(0).tp.reset()
+        var titl = speedHandler.getTitle(combo.currentIndex + 1)
+        speedHandler.setTitle(titl)
+        combo.displayText = titl
       }
     }
     MenuItem {

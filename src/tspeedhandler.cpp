@@ -153,7 +153,7 @@ void TrtmComposition::notSavedSlot() {
 //###################              TspeedHandler       ############################################
 //#################################################################################################
 
-QString getTitle(int nr) {
+QString TspeedHandler::getTitle(int nr) const {
   return GLOB->TR(QStringLiteral("TempoPage"),
                   QStringLiteral("Rhythmic Composition")) + QString(" #%1").arg(nr, 2, 'g', -1, '0');
 }
