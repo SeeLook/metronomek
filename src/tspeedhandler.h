@@ -104,8 +104,8 @@ public:
 
   Q_INVOKABLE void newComposition();
   Q_INVOKABLE void duplicateComposition();
-//   Q_INVOKABLE void reset();
-//   Q_INVOKABLE void removeComposition();
+//   Q_INVOKABLE void resetComposition(); NOTE: preformed using QML only
+  Q_INVOKABLE void removeComposition(bool alsoDeleteFile = false);
 
   Q_INVOKABLE void setComposition(int id);
 

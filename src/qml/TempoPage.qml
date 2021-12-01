@@ -151,6 +151,12 @@ Tdialog {
     }
     MenuItem {
       text: qsTranslate("QFileDialog", "Remove")
+      enabled: combo.count > 1
+      onClicked: {
+        speedHandler.removeComposition(false)
+        combo.currentIndex = 0
+        combo.displayText = combo.currentText
+      }
     }
   }
 

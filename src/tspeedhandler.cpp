@@ -283,6 +283,29 @@ void TspeedHandler::duplicateComposition() {
 }
 
 
+void TspeedHandler::removeComposition(bool alsoDeleteFile) {
+  if (m_compositions.count() > 1) {
+      delete m_compositions.takeAt(m_current);
+      auto fileName = m_fileNames.takeAt(m_current);
+      QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation).first();
+      if (!dataPath.isEmpty()) {
+        dataPath.append("/Metronomek");
+        if (dataPath == QFileInfo(fileName).absolutePath())
+          alsoDeleteFile = true; // delete file anyway when hidden from user
+      }
+      if (alsoDeleteFile) {
+        QFile(fileName).remove();
+        qDebug() << "[TspeedHandler] Removed composition file" << fileName;
+      }
+      m_current = 0;
+      emit clearAllChanges();
+      emit compositionsChanged();
+      emitAllTempos();
+  } else
+      qDebug() << "[TspeedHandler] Trying to remove only one rhythmic composition from the list!";
+}
+
+
 
 void TspeedHandler::setComposition(int id) {
   if (id > -1 && id < m_compositions.count()) {
