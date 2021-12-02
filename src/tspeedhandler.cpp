@@ -215,7 +215,11 @@ TspeedHandler::~TspeedHandler()
 
 
 void TspeedHandler::saveCurrentComposition() {
+#if defined (Q_OS_ANDROID)
+  QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericConfigLocation).first();
+#else
   QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation).first();
+#endif
   if (dataPath.isEmpty()) {
     // TODO: Find another path or give some debug
   } else {
@@ -287,7 +291,11 @@ void TspeedHandler::removeComposition(bool alsoDeleteFile) {
   if (m_compositions.count() > 1) {
       delete m_compositions.takeAt(m_current);
       auto fileName = m_fileNames.takeAt(m_current);
+  #if defined (Q_OS_ANDROID)
+      QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericConfigLocation).first();
+  #else
       QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation).first();
+  #endif
       if (!dataPath.isEmpty()) {
         dataPath.append("/Metronomek");
         if (dataPath == QFileInfo(fileName).absolutePath())
