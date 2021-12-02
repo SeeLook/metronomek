@@ -173,6 +173,8 @@ void TaudioOUT::init() {
       } else {
           setAudioOutParams();
       }
+      if (m_variableTempo && !m_speedHandler)
+        speedHandler();
       m_initialized = true;
   }
 }
@@ -243,6 +245,7 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
       int t = m_variableTempo && m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
       if (t == 0) {
         m_playingPart++;
+        m_playingBeat = 1;
         t = m_variableTempo && m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
         if (t == 0) {
           wasRead = 2; // stop playing
