@@ -126,12 +126,12 @@ Tdialog {
         combo.currentIndex = combo.count - 1
       }
     }
-    MenuItem {
-      text: qsTranslate("QFileDialog", "Open")
-    }
-    MenuItem {
-      text: qsTranslate("QFileDialog", "Save As")
-    }
+    //MenuItem {
+      //text: qsTranslate("QFileDialog", "Open")
+    //}
+    //MenuItem {
+      //text: qsTranslate("QFileDialog", "Save As")
+    //}
     MenuItem {
       text: qsTranslate("QPlatformTheme", "Reset")
       onClicked: {
