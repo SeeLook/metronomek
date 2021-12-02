@@ -332,7 +332,7 @@ Window {
       }
       var t = SOUND.getTempoForBeat(partId, beatNr)
       if (t == 0) {
-        partId ++
+        partId++
         beatNr = 1
         t = SOUND.getTempoForBeat(partId, beatNr)
         if (t == 0) {
