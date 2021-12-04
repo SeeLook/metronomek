@@ -20,20 +20,23 @@ AbstractButton {
   }
   contentItem: Column {
     width: parent.width
-    spacing: height / 6
+    spacing: height / 10
     topPadding: spacing
-    Rectangle {
-      width: menuButt.width / 3; height: width; radius: width / 2
+    Text {
+      text: "\u00A4"
+      font { family: "metronomek"; pixelSize: menuButt.width / 2 }
       anchors.horizontalCenter: parent.horizontalCenter
       color: SOUND.ring ? "red" : activPal.text
     }
-    Rectangle {
-      width: menuButt.width / 3; height: width; radius: width / 2
+    Text {
+      text: "\u00A4"
+      font { family: "metronomek"; pixelSize: menuButt.width / 2 }
       anchors.horizontalCenter: parent.horizontalCenter
       color: GLOB.countVisible ? "yellow" : activPal.text
     }
-    Rectangle {
-      width: menuButt.width / 3; height: width; radius: width / 2
+    Text {
+      text: "\u00A4"
+      font { family: "metronomek"; pixelSize: menuButt.width / 2 }
       anchors.horizontalCenter: parent.horizontalCenter
       color: GLOB.stationary ? activPal.text : "lime"
     }

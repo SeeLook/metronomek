@@ -27,27 +27,22 @@ AbstractButton {
     Loader {
       active: dButt.checkable
       anchors { right: parent.right; verticalCenter: parent.verticalCenter }
-      sourceComponent: Switch {
-        id: stch
+      sourceComponent: CheckBox {
+        id: chB
         checkable: true
         checked: dButt.checked
-        indicator: Rectangle {
-          implicitWidth: fm.height * 4; implicitHeight: fm.height / 3
-          x: stch.leftPadding; y: (parent.height - height) / 2
-          radius: height / 2
-          color: stch.checked ? bgColor : activPal.base
-          Behavior on color { ColorAnimation {} }
+        indicator: Text {
+          font { family: "metronomek"; pixelSize: fm.height * 2 }
+          x: chB.leftPadding; y: (parent.height - height) / 2
+          color: bgColor
+          text: "\u00A4"
 
-          Rectangle {
-            x: stch.checked ? parent.width - width : 0; y: -height / 2 + parent.height / 2
-            width: fm.height * 2; height: width; radius: width / 2
-            color: bgColor
-            Behavior on x { NumberAnimation {} }
-            border {
-              width: stch.checked ? 2 : fm.height / 2
-              Behavior on width { NumberAnimation {} }
-              color: stch.down ? activPal.base : activPal.button
-            }
+          Text {
+            anchors.centerIn: parent
+            color: chB.checked ? activPal.text : activPal.base
+            Behavior on color { ColorAnimation {} }
+            font { family: "metronomek"; pixelSize: fm.height * 1.2 }
+            text: "\u00A4"
           }
         }
         onToggled: {
