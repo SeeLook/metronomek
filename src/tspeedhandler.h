@@ -23,6 +23,7 @@ class TrtmComposition : public QObject
   Q_OBJECT
 
   Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
+  Q_PROPERTY(QList<TtempoPart*> parts READ parts NOTIFY partsChanged)
 
 public:
   TrtmComposition(QObject* parent = nullptr);
@@ -37,8 +38,9 @@ public:
   QString xmlFileName() const { return m_xmlFileName; }
   void setXmlFileName(const QString& xml) { m_xmlFileName = xml; }
 
-  int partsCount() const { return m_tempoList.count(); }
-  TtempoPart* getPart(int id) { return id < partsCount() ? m_tempoList[id] : nullptr; }
+  QList<TtempoPart*> parts() { return m_tempoList; }
+  Q_INVOKABLE int partsCount() const { return m_tempoList.count(); }
+  Q_INVOKABLE TtempoPart* getPart(int id) { return id < partsCount() ? m_tempoList[id] : nullptr; }
   TtempoPart* first() { return m_tempoList.first(); }
   TtempoPart* last() { return m_tempoList.last(); }
 
@@ -62,6 +64,7 @@ public:
 
 signals:
   void titleChanged();
+  void partsChanged();
 
 protected:
   TtempoPart* createTempoPart(int tempo = 0);
@@ -85,6 +88,7 @@ class TspeedHandler : public QObject
   Q_OBJECT
 
   Q_PROPERTY(QList<TrtmComposition*> compositions READ compositions NOTIFY compositionsChanged)
+  Q_PROPERTY(TrtmComposition* currComp READ currComp NOTIFY currCompChanged)
 
 public:
   TspeedHandler(QObject* parent = nullptr);
@@ -134,6 +138,7 @@ signals:
   void removeTempoChange(int tpId);
   void clearAllChanges();
   void compositionsChanged();
+  void currCompChanged();
 
 private:
   QStringList                         m_fileNames;

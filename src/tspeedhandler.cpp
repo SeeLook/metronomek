@@ -266,6 +266,7 @@ void TspeedHandler::newComposition() {
   emit clearAllChanges();
   emit compositionsChanged();
   emitAllTempos();
+  emit currCompChanged();
 }
 
 
@@ -284,6 +285,7 @@ void TspeedHandler::duplicateComposition() {
   emit clearAllChanges();
   emit compositionsChanged();
   emitAllTempos();
+  emit currCompChanged();
 }
 
 
@@ -309,6 +311,7 @@ void TspeedHandler::removeComposition(bool alsoDeleteFile) {
       emit clearAllChanges();
       emit compositionsChanged();
       emitAllTempos();
+      emit currCompChanged();
   } else
       qDebug() << "[TspeedHandler] Trying to remove only one rhythmic composition from the list!";
 }
@@ -321,6 +324,7 @@ void TspeedHandler::setComposition(int id) {
     m_current = id;
     emit clearAllChanges();
     emitAllTempos();
+    emit currCompChanged();
   }
 }
 
