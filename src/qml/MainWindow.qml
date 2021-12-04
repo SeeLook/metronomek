@@ -233,6 +233,11 @@ Window {
     }
   }
 
+  Loader {
+    active: SOUND.variableTempo && SOUND.speedHandler()
+    source: "qrc:/CompositionView.qml"
+  }
+
   MainMenuButton { x: parent.width * 0.01; y: parent.height * 0.01}
 
   AbstractButton {
