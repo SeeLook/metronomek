@@ -11,7 +11,7 @@ import Metronomek 1.0
 
 
 Item {
-  width: metro.width; height: mainWindow.height * 0.72
+  width: metro.width; height: mainWindow.height * 0.71
   x: mainWindow.width - width; y: mainWindow.height * 0.05
   clip: true
 
@@ -40,8 +40,8 @@ Item {
       property real factor: {
         if (tp.beats * GLOB.fontSize() < fm.height * 4)
           return (fm.height * 4) / tp.beats
-        else if (tp.beats * GLOB.fontSize() > partList.height)
-          return partList.height / tp.beats
+        else if (tp.beats * GLOB.fontSize() > partList.height * 0.9)
+          return (partList.height * 0.9) / tp.beats
         else
           return GLOB.fontSize()
       }
@@ -58,9 +58,10 @@ Item {
         visible: tp.initTempo !== tp.targetTempo
         color: activPal.text
         text: tp.initTempo > tp.targetTempo ? "rall." : "accel."
-        x: -width - GLOB.fontSize() / 2; y: fm.height * 2 //parent.height - height - GLOB.fontSize() / 2
+        font { italic: true; bold: true }
+        x: -width - GLOB.fontSize() / 2; y: fm.height * 2
         transformOrigin: Item.Right
-        scale: visible && SOUND.playing && index == partId && beatNr < 4 ? 3 : 1
+        scale: visible && SOUND.playing && index == partId && beatNr < 6 ? 3 : 1
         Behavior on scale { NumberAnimation {} }
       }
     } // delegate
