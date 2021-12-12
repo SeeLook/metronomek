@@ -29,29 +29,10 @@ Window {
   property int partId: 0
   property int beatNr: 1
   property int tempoToShow: SOUND.getTempoForBeat(partId, beatNr)
-  property var pendulumMark: null
 
   property var dialogItem: null
   property bool leanEnough: false // pendulum is leaned out enough to start playing
   property alias counterPressed: countArea.containsPress
-
-  Connections {
-    target: SOUND
-    onVariableTempoChanged: {
-      if (SOUND.variableTempo) {
-          if (!pendulumMark)
-            pendulumMark = Qt.createComponent("qrc:/PendulumMark.qml").createObject(pendulum)
-      } else {
-          if (pendulumMark)
-            pendulumMark.destroy()
-      }
-    }
-  }
-
-  Component.onCompleted: {
-    if (SOUND.variableTempo)
-      pendulumMark = Qt.createComponent("qrc:/PendulumMark.qml").createObject(pendulum)
-  }
 
   MetroImage {
     id: metro
@@ -254,11 +235,6 @@ Window {
     }
   }
 
-  Loader {
-    active: SOUND.variableTempo && SOUND.speedHandler()
-    source: "qrc:/CompositionView.qml"
-  }
-
   MainMenuButton { x: parent.width * 0.01; y: parent.height * 0.01}
 
   AbstractButton {
@@ -385,6 +361,32 @@ Window {
       SOUND.tempo = Math.round(60000 / (currTime - lastTime))
       tempoToShow = SOUND.tempo
       lastTime = currTime
+  }
+
+  Component.onCompleted: {
+    varTempoSlot()
+  }
+
+  Connections {
+    target: SOUND
+    onVariableTempoChanged: varTempoSlot()
+  }
+
+  property var pendulumMark: null
+  property var compView: null
+
+  function varTempoSlot() {
+    if (SOUND.variableTempo) {
+        if (!pendulumMark)
+          pendulumMark = Qt.createComponent("qrc:/PendulumMark.qml").createObject(pendulum)
+        if (!compView)
+          compView = Qt.createComponent("qrc:/CompositionView.qml").createObject(mainWindow.contentItem)
+    } else {
+        if (pendulumMark)
+          pendulumMark.destroy()
+        if (compView)
+          compView.destroy()
+    }
   }
 
   onClosing: {
