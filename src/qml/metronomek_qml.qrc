@@ -14,6 +14,7 @@
     <file>TempoEdit.qml</file>
     <file>TempoPartDelegate.qml</file>
     <file>CompositionView.qml</file>
+    <file>PendulumMark.qml</file>
 
     <file>TipRect.qml</file>
     <file>TspinBox.qml</file>

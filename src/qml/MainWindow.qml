@@ -29,10 +29,29 @@ Window {
   property int partId: 0
   property int beatNr: 1
   property int tempoToShow: SOUND.getTempoForBeat(partId, beatNr)
+  property var pendulumMark: null
 
   property var dialogItem: null
   property bool leanEnough: false // pendulum is leaned out enough to start playing
   property alias counterPressed: countArea.containsPress
+
+  Connections {
+    target: SOUND
+    onVariableTempoChanged: {
+      if (SOUND.variableTempo) {
+          if (!pendulumMark)
+            pendulumMark = Qt.createComponent("qrc:/PendulumMark.qml").createObject(pendulum)
+      } else {
+          if (pendulumMark)
+            pendulumMark.destroy()
+      }
+    }
+  }
+
+  Component.onCompleted: {
+    if (SOUND.variableTempo)
+      pendulumMark = Qt.createComponent("qrc:/PendulumMark.qml").createObject(pendulum)
+  }
 
   MetroImage {
     id: metro
@@ -100,6 +119,7 @@ Window {
 
       MouseArea {
         id: pendArea
+        z: 10
         property bool dragged: false
         enabled: !SOUND.playing
         width: parent.width * 3; height: parent.height; x: -parent.width
@@ -122,6 +142,7 @@ Window {
 
       Text {
         id: countW // counterweight
+        z: 15
         font { family: "metronomek"; pixelSize: parent.height * 0.24 }
         color: countArea.containsPress ? GLOB.valueColor(activPal.text, 20) : activPal.highlight
         text: "\u00A4"
@@ -130,7 +151,7 @@ Window {
         Behavior on y { NumberAnimation {} }
         Text { // inner counterweight
           font { family: "metronomek"; pixelSize: pendulum.height * 0.18 }
-          color: activPal.highlight
+          color: SOUND.variableTempo ? "skyblue" : activPal.highlight
           text: "\u00A4"
           anchors.centerIn: parent
         }
