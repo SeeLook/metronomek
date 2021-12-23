@@ -11,11 +11,12 @@
 #include <QtQml/qqmlapplicationengine.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qelapsedtimer.h>
-#include <QtCore/qdebug.h>
 #include <QtQml/qqmlcontext.h>
 #include <QtCore/qtranslator.h>
 #include <QtGui/qfontdatabase.h>
 #include <QtCore/qloggingcategory.h>
+#include <QtCore/qsettings.h>
+#include <QtCore/qdebug.h>
 
 
 int main(int argc, char *argv[])
@@ -43,6 +44,21 @@ int main(int argc, char *argv[])
   pal.setColor(QPalette::Active, QPalette::Button, QColor(189, 189, 189));
   pal.setColor(QPalette::Active, QPalette::Mid, QColor(124, 124, 124));
   qApp->setPalette(pal);
+#endif
+
+#if defined (Q_OS_WIN)
+  QSettings accent(QStringLiteral("HKEY_USERS\\.DEFAULT\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Accent"),
+                   QSettings::NativeFormat);
+  if (accent.contains(QLatin1String("StartColorMenu"))) {
+    int color = accent.value(QLatin1String("StartColorMenu")).toInt();
+    int r = color & 0xff;
+    int g = (color >> 8) & 0xff;
+    int b = (color >> 16) & 0xff;
+    auto pal = qApp->palette();
+    QColor c(r, g, b);
+    pal.setColor(QPalette::Active, QPalette::Highlight, c.lighter(110));
+    qApp->setPalette(pal);
+  }
 #endif
 
 #if defined (Q_OS_ANDROID)
