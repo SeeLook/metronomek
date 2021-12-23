@@ -35,14 +35,14 @@ AbstractButton {
           font { family: "metronomek"; pixelSize: fm.height * 2 }
           x: chB.leftPadding; y: (parent.height - height) / 2
           color: bgColor
-          text: "\u00A4"
+          text: "\u00A4"; style: Text.Raised; styleColor: activPal.shadow
 
           Text {
             anchors.centerIn: parent
             color: chB.checked ? activPal.text : activPal.base
             Behavior on color { ColorAnimation {} }
             font { family: "metronomek"; pixelSize: fm.height * 1.2 }
-            text: "\u00A4"
+            text: "\u00A4"; style: Text.Sunken; styleColor: activPal.shadow
           }
         }
         onToggled: {

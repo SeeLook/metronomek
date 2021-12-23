@@ -68,7 +68,7 @@ Window {
         x: Math.max(0, tLabel.x + (index % 2 ? (mainWindow.counterPressed && index === SOUND.nameTempoId ? -width: tLabel.width / 30)
                       : (mainWindow.counterPressed && index === SOUND.nameTempoId ? tLabel.width: tLabel.width * 0.967 - width)))
         y: tLabel.y + (GLOB.tempoName(index).mid / 200.0) * tLabel.height * 0.85 - tLabel.height * 0.11 - height / 2
-        text: GLOB.tempoName(index).name
+        text: GLOB.tempoName(index).name; style: Text.Raised; styleColor: activPal.shadow
         width: tLabel.width / 2 - parent.width / 80
         font { pixelSize: tLabel.height / 35; bold: index === SOUND.nameTempoId }
         horizontalAlignment: index % 2 ? Text.AlignLeft : Text.AlignRight
