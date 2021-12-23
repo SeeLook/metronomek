@@ -1,3 +1,15 @@
+## 0.5.7-devel
+
+  #### Added programmable speed up & slow down (_accelerando_ and _rallentando_)
+    - list of tempo changes can be defined - kind of rhythmic composition
+    - every change has initial and target tempos and its duration can be set in bars, beats or seconds
+    - changes set (composition) can be stored in XML file
+    - and there is the list of compositions to select
+
+  #### Color of switches in menu corresponds with color of the menu button dots
+
+------------------------------------------------------------
+
 ## 0.5.1
 
   #### [Linux] Fixed high CPU usage
