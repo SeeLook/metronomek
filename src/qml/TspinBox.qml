@@ -15,7 +15,7 @@ SpinBox {
 
   contentItem: Item {}
 
-  background: Rectangle {
+  background: TipRect {
     color: activPal.base
     width: sb.width - 2 * sb.height; height: sb.height
     x: sb.height

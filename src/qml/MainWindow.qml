@@ -181,7 +181,7 @@ Window {
     AbstractButton {
       scale: pressed ? 0.9 : 1
       Behavior on scale { NumberAnimation {} }
-      background: TipRect { radius: width / 2 }
+      background: TipRect { radius: width / 2; raised: !parent.pressed }
       x: sb.x + (sb.width - width) / 2; y: sb.y + sb.height + metro.height * 0.01
       width: metro.width * 0.13; height: width
       onClicked: {
@@ -210,14 +210,14 @@ Window {
       scale: pressed ? 0.9 : 1
       Behavior on scale { NumberAnimation {} }
       background: TipRect {
-        radius: height / 2
+        radius: height / 2; raised: !parent.pressed
         border { color: "skyblue"; width: SOUND.variableTempo ? fm.height / 6 : 0 }
         Text {
           font.pixelSize: tapButt.height / 3
           text: SOUND.variableTempo ? qsTr("Tempo changes") : qsTr("Tap tempo")
           color: activPal.text
           anchors.centerIn: parent
-          width: tapButt.width - GLOB.fontSize()
+          width: tapButt.width - GLOB.fontSize() * 2
           wrapMode: Text.WordWrap
           horizontalAlignment: Text.AlignHCenter
         }
