@@ -39,7 +39,7 @@ AbstractButton {
 
           Text {
             anchors.centerIn: parent
-            color: chB.checked ? activPal.text : activPal.base
+            color: chB.checked ? bgColor : "white"
             Behavior on color { ColorAnimation {} }
             font { family: "metronomek"; pixelSize: fm.height * 1.2 }
             text: "\u00A4"; style: Text.Sunken; styleColor: activPal.shadow
