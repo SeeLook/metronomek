@@ -75,6 +75,9 @@ public:
   QString lang() const { return m_lang; }
   void setLang(const QString& l);
 
+  Q_INVOKABLE int bound(int low, int val, int hi) { return qBound(low, val, hi); }
+  Q_INVOKABLE qreal bound(qreal low, qreal val, qreal hi) { return qBound(low, val, hi); }
+
   Q_INVOKABLE QString TR(const QString& context, const QString& text, const QString& disambiguation = QString(), int n = -1);
 
   Q_INVOKABLE Ttempo tempoName(int id) { return m_tempoList[id]; }
