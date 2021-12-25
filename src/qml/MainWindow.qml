@@ -357,8 +357,8 @@ Window {
 
   function tapTempo() {
     var currTime = new Date().getTime()
-    if (currTime - lastTime < 1500)
-      SOUND.tempo = Math.round(60000 / (currTime - lastTime))
+    if (currTime - lastTime < 2000)
+      SOUND.tempo = GLOB.bound(40, Math.round(60000 / (currTime - lastTime)), 240)
       tempoToShow = SOUND.tempo
       lastTime = currTime
   }
