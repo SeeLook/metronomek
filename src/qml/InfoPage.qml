@@ -17,6 +17,14 @@ Tdialog {
     id: logo
     pauseDuration: 0
     anim.running: parent.visible
+    anim.loops: 4
+    anim.onFinished: animTimer.start()
+    Timer {
+      id: animTimer
+      repeat: false
+      interval: 4000
+      onTriggered: logo.anim.start()
+    }
   }
 
   Flickable {

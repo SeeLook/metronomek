@@ -4,6 +4,7 @@
 
 
 import QtQuick 2.12
+import QtQuick.Shapes 1.12
 
 
 Rectangle {
@@ -30,7 +31,7 @@ Rectangle {
       Text {
         y: GLOB.logoLetterY(index, logo.height * 1.5) - logo.height * 0.05
         rotation: -35 + index * (70 / 9)
-        color: GLOB.randomColor(); style: Text.Raised
+        color: GLOB.randomColor(); style: Text.Raised; styleColor: activPal.shadow
         text: modelData
         font { pixelSize: logo.height * 0.4; bold: true }
         Component.onCompleted: textW += width
@@ -56,18 +57,30 @@ Rectangle {
 
   Rectangle {
     id: pendulum
-    color: activPal.text
+    color: activPal.highlight
     width: logo.height * 0.1; height: logo.height * 3
     radius: width / 2
     x: logo.width / 2 - width / 2
     transformOrigin: Item.Bottom
-    rotation: -21
-    Rectangle {
-      color: parent.color
-      height: parent.width * 2; width: parent.width * 3
-      radius: height / 2
+    rotation: -20.5
+    Shape {
+      width: parent.width * 3; height: parent.width * 2
       anchors.horizontalCenter: parent.horizontalCenter
-      y: height / 2
+      y: parent.height * (0.05 + ((-5) / 200) * 0.65)
+
+      ShapePath {
+        strokeWidth: pendulum.width / 3
+        strokeColor: activPal.highlight
+        fillColor: activPal.highlight
+        capStyle: ShapePath.RoundCap; joinStyle: ShapePath.RoundJoin
+        startX: 0; startY: 0
+        PathLine { x: pendulum.width * 3; y: 0 }
+        PathLine { x: pendulum.width * 3; y: pendulum.width }
+        PathLine { x: pendulum.width * 2.5; y: pendulum.width * 2 }
+        PathLine { x: pendulum.width * 0.5; y: pendulum.width * 2 }
+        PathLine { x: 0; y: pendulum.width }
+        PathLine { x: 0; y: 0 }
+      }
     }
   }
 
@@ -77,10 +90,10 @@ Rectangle {
     loops: Animation.Infinite
     alwaysRunToEnd: true
     PauseAnimation { duration: pauseDuration }
-    NumberAnimation { target: pendulum; property: "rotation"; to: -45; duration: 500 * (21 / 45) }
+    NumberAnimation { target: pendulum; property: "rotation"; to: -45; duration: 500 * (20.5 / 45) }
     NumberAnimation { target: pendulum; property: "rotation"; to: 0; duration: 500 }
     NumberAnimation { target: pendulum; property: "rotation"; to: 45; duration: 500 }
     NumberAnimation { target: pendulum; property: "rotation"; to: 0; duration: 500 }
-    NumberAnimation { target: pendulum; property: "rotation"; to: -21; duration: 500 * (21 / 45) }
+    NumberAnimation { target: pendulum; property: "rotation"; to: -20.5; duration: 500 * (20.5 / 45) }
   }
 }
