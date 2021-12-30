@@ -221,6 +221,7 @@ void TaudioOUT::startPlayingSlot() {
     m_playedTempo.clear();
     m_playedTempo << t;
     fillNextTempo(m_playingBeat, m_playingPart);
+    m_playingBeat = 0;
 
     m_currSample = 0;
     m_meterCount = 0;
@@ -255,7 +256,7 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
             wasRead = 2; // stop playing
             return;
         }
-        m_playingBeat = 0; // will be increased in next loop
+        m_playingBeat = 0; // will be increased in the next loop
       }
       fillNextTempo(m_playingBeat, m_playingPart);
       if (m_toNextPart) {
@@ -265,6 +266,7 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
         m_playingPart++;
         m_playingBeat = 1;
         fillNextTempo(m_playingBeat, m_playingPart);
+        m_playingBeat = 0;  // will be increased in the next loop
       }
 
       m_samplPerBeat = (m_sampleRate * 60) / t;
