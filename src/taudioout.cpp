@@ -218,6 +218,10 @@ void TaudioOUT::startPlayingSlot() {
     m_offsetSample = static_cast<qreal>((60 * m_sampleRate) - m_samplPerBeat * t) / static_cast<qreal>(t);
     setNameIdByTempo(t);
 
+    m_playedTempo.clear();
+    m_playedTempo << t;
+    fillNextTempo(m_playingBeat, m_playingPart);
+
     m_currSample = 0;
     m_meterCount = 0;
     m_offsetCounter = 0.0;
@@ -248,10 +252,21 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
         m_playingBeat = 1;
         t = m_variableTempo && m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
         if (t == 0) {
-          wasRead = 2; // stop playing
-          return;
+            wasRead = 2; // stop playing
+            return;
         }
+        m_playingBeat = 0; // will be increased in next loop
       }
+      fillNextTempo(m_playingBeat, m_playingPart);
+      if (m_toNextPart) {
+        m_toNextPart = false;
+        m_playedTempo.removeLast();
+        m_playedTempo << 0;
+        m_playingPart++;
+        m_playingBeat = 1;
+        fillNextTempo(m_playingBeat, m_playingPart);
+      }
+
       m_samplPerBeat = (m_sampleRate * 60) / t;
       m_offsetSample = static_cast<qreal>((60 * m_sampleRate) - m_samplPerBeat * t) / static_cast<qreal>(t);
       m_currSample = 0;
@@ -453,6 +468,34 @@ int TaudioOUT::getTempoForBeat(int partId, int beatNr) {
   return m_tempo;
 }
 
+
+bool TaudioOUT::isPartInfinite(int partId) {
+  if (m_variableTempo && m_speedHandler && partId < m_speedHandler->currComp()->partsCount() - 1) {
+      auto p = m_speedHandler->currComp()->getPart(partId);
+      return p ? p->infinite() : false;
+  } else
+      return false;
+}
+
+
+void TaudioOUT::switchInfinitePart() {
+  if (isPartInfinite(m_playingPart))
+    m_toNextPart = true;
+  else
+    qDebug() << "[TaudioOUT] FIXME! Trying to switch non infinite tempo part!";
+}
+
+
+int TaudioOUT::nextTempo() {
+  if (m_playedTempo.isEmpty()) {
+      qDebug() << "[TaudioOUT] FIXME! Missing next tempo in the list!";
+      return 0;
+  } else {
+      return m_playedTempo.takeFirst();
+  }
+}
+
+
 //#################################################################################################
 //###################                PROTECTED         ############################################
 //#################################################################################################
@@ -495,5 +538,18 @@ void TaudioOUT::changeSampleRate(quint32 sr) {
     //TODO: when sample rate is greater than 48000, set p_ratioOfRate according to it
     m_tempo++;
     setTempo(m_tempo - 1);
+  }
+}
+
+
+void TaudioOUT::fillNextTempo(int currBeat, int currPart) {
+  currBeat++;
+  int t = m_variableTempo && m_speedHandler ? m_speedHandler->getTempoForBeat(currPart, currBeat) : m_tempo;
+  m_playedTempo << t;
+  if (t == 0) {
+    currPart++;
+    currBeat = 1;
+    t = m_variableTempo && m_speedHandler ? m_speedHandler->getTempoForBeat(currPart, currBeat) : m_tempo;
+    m_playedTempo << t;
   }
 }
