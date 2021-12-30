@@ -30,7 +30,7 @@ Item {
     model: currComp.partsCount()
 
     currentIndex: partId
-    contentY: SOUND.playing && currentItem ? currentItem.y + (beatNr - 1) * currentItem.factor - height / 4 : 0
+    contentY: SOUND.playing && currentItem ? currentItem.y + (currentItem.tp.infinite ? currentItem.height / 2 : (beatNr - 1) * currentItem.factor) - height / 4 : 0
     cacheBuffer: height
 
     delegate: Rectangle {
