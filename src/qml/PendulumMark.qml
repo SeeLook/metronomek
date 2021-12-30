@@ -14,5 +14,5 @@ Text {
   y: tp && visible ? parent.height * 0.65 * ((tp.targetTempo - 40) / 200) + (rall ? height / 2 : parent.height * 0.18 - height / 2) : 0
   font { family: "Metronomek"; pixelSize: parent.width }
   text: "\u00Be"; color: "skyblue"
-  visible: tp && tp.initTempo !== tp.targetTempo
+  visible: SOUND.playing && tp && tp.initTempo !== tp.targetTempo
 }
