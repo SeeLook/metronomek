@@ -100,6 +100,7 @@ Tdialog {
     footer.standardButton(Dialog.Help).text = qsTr("Actions")
     speedHandler = SOUND.speedHandler()
     speedHandler.emitAllTempos()
+    combo.currentIndex = speedHandler.currCompId
   }
 
   Connections {

@@ -89,6 +89,7 @@ class TspeedHandler : public QObject
 
   Q_PROPERTY(QList<TrtmComposition*> compositions READ compositions NOTIFY compositionsChanged)
   Q_PROPERTY(TrtmComposition* currComp READ currComp NOTIFY currCompChanged)
+  Q_PROPERTY(qreal currCompId READ currCompId WRITE setComposition NOTIFY currCompChanged)
 
 public:
   TspeedHandler(QObject* parent = nullptr);
@@ -105,6 +106,7 @@ public:
        * Actually selected composition
        */
   TrtmComposition* currComp() { return m_compositions[m_current]; }
+  int currCompId() const { return m_current; }
 
   Q_INVOKABLE void newComposition();
   Q_INVOKABLE void duplicateComposition();
