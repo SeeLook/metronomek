@@ -29,6 +29,7 @@ Window {
   property int partId: 0
   property int beatNr: 1
   property int tempoToShow: SOUND.getTempoForBeat(partId, beatNr)
+  property int nextTempo: 0
 
   property var dialogItem: null
   property bool leanEnough: false // pendulum is leaned out enough to start playing
@@ -129,7 +130,7 @@ Window {
         text: "\u00A4"
         anchors.horizontalCenter: parent.horizontalCenter
         y: pendulum.height * 0.65 * ((tempoToShow - 40) / 200)
-        Behavior on y { NumberAnimation {} }
+        Behavior on y { NumberAnimation { duration: SOUND.playing ? 50 : 150 } }
         Text { // inner counterweight
           font { family: "metronomek"; pixelSize: pendulum.height * 0.18 }
           color: SOUND.variableTempo ? "skyblue" : activPal.highlight
@@ -196,7 +197,7 @@ Window {
         radius: SOUND.playing ? 0 : width / 2
         color: SOUND.playing ? "red" : "green"
       }
-    }
+    } // MetroImage
 
     Text {
       x: metro.width * 0.12; y: sb.y + (sb.height - height) / 2
@@ -280,6 +281,8 @@ Window {
     initAnim.duration = (30000 / tempoToShow)
     pendAnim.stop()
     initAnim.start()
+    if (SOUND.isPartInfinite(partId))
+      nextTempoPop()
   }
 
   function stopMetronome() {
@@ -302,6 +305,7 @@ Window {
     onStopped: {
       timer.interval = 2 // delay to allow the timer react on starting sound signal
       SOUND.playing = true
+      nextTempo = SOUND.nextTempo()
     }
   }
 
@@ -311,10 +315,18 @@ Window {
     to: 0
   }
 
+  function nextTempoPop() {
+    var ntp = Qt.createComponent("qrc:/NextTempoPop.qml").createObject(mainWindow)
+    ntp.open()
+    ntp.done.connect(function() {
+      SOUND.switchInfinitePart()
+    })
+  }
+
   Timer {
     id: timer
     running: SOUND.playing && !GLOB.stationary
-    repeat: true; triggeredOnStart: true
+    repeat: true
     property real elap: 0
     property real lag: 0
     property bool toLeft: true
@@ -332,22 +344,27 @@ Window {
         elap = currTime - elap
         lag += elap - interval
       }
-      var t = SOUND.getTempoForBeat(partId, beatNr)
-      if (t == 0) {
-        partId++
-        beatNr = 1
-        t = SOUND.getTempoForBeat(partId, beatNr)
-        if (t == 0) {
-          stopMetronome()
-          return
-        }
-      }
-      tempoToShow = t
+
+      tempoToShow = nextTempo
       elap = currTime
       interval = Math.max((60000 / tempoToShow) - lag, 1)
       lag = 0
       toLeft = !toLeft
       beatNr++
+      nextTempo = SOUND.nextTempo()
+      if (nextTempo == 0) {
+        nextTempo = SOUND.nextTempo()
+        if (nextTempo == 0) {
+            timer.stop()
+            stopMetronome()
+            return
+        } else {
+            partId++
+            beatNr = 1
+            if (SOUND.isPartInfinite(partId))
+              nextTempoPop()
+        }
+      }
     }
   }
 
