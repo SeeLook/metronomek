@@ -28,7 +28,6 @@ Window {
   // controlling tempo
   property int partId: 0
   property int beatNr: 1
-  property int tempoToShow: SOUND.getTempoForBeat(partId, beatNr)
   property int nextTempo: 0
 
   property var dialogItem: null
@@ -129,7 +128,7 @@ Window {
         color: countArea.containsPress ? GLOB.valueColor(activPal.text, 20) : activPal.highlight
         text: "\u00A4"
         anchors.horizontalCenter: parent.horizontalCenter
-        y: pendulum.height * 0.65 * ((tempoToShow - 40) / 200)
+        y: pendulum.height * 0.65 * ((SOUND.tempo - 40) / 200)
         Behavior on y { NumberAnimation { id: weightAnim } }
         Text { // inner counterweight
           font { family: "metronomek"; pixelSize: pendulum.height * 0.18 }
@@ -155,7 +154,6 @@ Window {
           cursorShape: drag.active ? Qt.DragMoveCursor : Qt.ArrowCursor
           onPositionChanged: {
             SOUND.tempo = Math.round((200 * countW.y) / (pendulum.height * 0.65) + 40)
-            tempoToShow = SOUND.tempo
           }
         }
       }
@@ -175,7 +173,7 @@ Window {
       x: parent.width * 0.73 - width; y: parent.height * 0.75
       font { bold: true; }
       from: 40; to: 240
-      value: tempoToShow
+      value: SOUND.tempo
       onValueModified: SOUND.tempo = value
     }
 
@@ -274,11 +272,11 @@ Window {
   function startMetronome() {
     partId = 0
     beatNr = 1
-    tempoToShow = SOUND.getTempoForBeat(partId, beatNr)
+    SOUND.tempo = SOUND.getTempoForBeat(partId, beatNr)
     SOUND.meterCount = 0
     timer.toLeft = pendulum.rotation <= 0
     initAnim.to = GLOB.stationary ? 0 : (timer.toLeft ? -25 : 25)
-    initAnim.duration = (30000 / tempoToShow)
+    initAnim.duration = (30000 / SOUND.tempo)
     pendAnim.stop()
     initAnim.start()
     if (SOUND.isPartInfinite(partId))
@@ -288,7 +286,7 @@ Window {
   function stopMetronome() {
     SOUND.playing = false;
     finishAnim.to = 0
-    finishAnim.duration = (30000 / tempoToShow)
+    finishAnim.duration = (30000 / SOUND.tempo)
     pendAnim.stop()
     finishAnim.start()
   }
@@ -296,7 +294,7 @@ Window {
   NumberAnimation {
     id: pendAnim
     target: pendulum; property: "rotation"
-    duration: 60000 / tempoToShow
+    duration: 60000 / SOUND.tempo
   }
 
   NumberAnimation {
@@ -350,7 +348,7 @@ Window {
       interval = Math.max((60000 / nextTempo) - lag, 1)
       if (SOUND.variableTempo && nextTempo)
         weightAnim.duration = interval
-      tempoToShow = nextTempo
+      SOUND.tempo = nextTempo
       lag = 0
       toLeft = !toLeft
       beatNr++
@@ -381,7 +379,6 @@ Window {
     var currTime = new Date().getTime()
     if (currTime - lastTime < 2000)
       SOUND.tempo = GLOB.bound(40, Math.round(60000 / (currTime - lastTime)), 240)
-      tempoToShow = SOUND.tempo
       lastTime = currTime
   }
 
