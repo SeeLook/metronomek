@@ -221,7 +221,6 @@ void TaudioOUT::startPlayingSlot() {
     m_playedTempo.clear();
     m_playedTempo << t;
     fillNextTempo(m_playingBeat, m_playingPart);
-    m_playingBeat = 0;
 
     m_currSample = 0;
     m_meterCount = 0;
