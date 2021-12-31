@@ -130,7 +130,7 @@ Window {
         text: "\u00A4"
         anchors.horizontalCenter: parent.horizontalCenter
         y: pendulum.height * 0.65 * ((tempoToShow - 40) / 200)
-        Behavior on y { NumberAnimation { duration: SOUND.playing ? 50 : 150 } }
+        Behavior on y { NumberAnimation { id: weightAnim } }
         Text { // inner counterweight
           font { family: "metronomek"; pixelSize: pendulum.height * 0.18 }
           color: SOUND.variableTempo ? "skyblue" : activPal.highlight
@@ -313,6 +313,7 @@ Window {
     id: finishAnim
     target: pendulum; property: "rotation"
     to: 0
+    onStopped: weightAnim.duration = 150
   }
 
   function nextTempoPop() {
@@ -338,16 +339,14 @@ Window {
     onTriggered: {
       pendAnim.stop()
       pendAnim.to = toLeft ? 25 : -25
-      pendAnim.start()
       var currTime = new Date().getTime()
       if (elap > 0) {
         elap = currTime - elap
         lag += elap - interval
       }
-
-      tempoToShow = nextTempo
       elap = currTime
-      interval = Math.max((60000 / tempoToShow) - lag, 1)
+
+      interval = Math.max((60000 / nextTempo) - lag, 1)
       lag = 0
       toLeft = !toLeft
       beatNr++
@@ -365,6 +364,10 @@ Window {
               nextTempoPop()
         }
       }
+      if (SOUND.variableTempo && nextTempo)
+        weightAnim.duration = 60000 / nextTempo
+      tempoToShow = nextTempo
+      pendAnim.start()
     }
   }
 
