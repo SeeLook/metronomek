@@ -76,4 +76,4 @@ Thumbs.db
 *.kate-swp
 
 # CMake
-*.txt.user
+*.txt.user*
