@@ -231,6 +231,7 @@ private:
   int                    m_playingBeat = 1;
   int                    m_infiBeats = 0; /**< Beats number when current par is infinite */
   bool                   m_toNextPart = false; /**< TRUE when @p outCallBack will switch to next tempo part */
+  int                    m_staticTempo;
 
   int                    m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
   int                    m_currSample = 0;

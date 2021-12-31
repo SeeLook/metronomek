@@ -121,6 +121,7 @@ TaudioOUT::TaudioOUT(QObject *parent) :
   qmlRegisterUncreatableType<TrtmComposition>("Metronomek", 1, 0, "Composition", QStringLiteral("Creating Composition in QML not allowed!"));
 
   setTempo(qBound(40, GLOB->settings()->value(QStringLiteral("tempo"), 60).toInt(), 240));
+  m_staticTempo = m_tempo;
   setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), beatTypeCount() - 1));
   setMeter(qBound(0, GLOB->settings()->value(QStringLiteral("meter"), 4).toInt(), 12));
   setRingType(qBound(0, GLOB->settings()->value(QStringLiteral("ringType"), 0).toInt(), ringTypeCount() - 1));
@@ -143,7 +144,7 @@ TaudioOUT::~TaudioOUT()
   GLOB->settings()->setValue(QStringLiteral("beatType"), m_beatType);
   GLOB->settings()->setValue(QStringLiteral("meter"), m_meter);
   GLOB->settings()->setValue(QStringLiteral("doRing"), m_doRing);
-  GLOB->settings()->setValue(QStringLiteral("tempo"), m_tempo);
+  GLOB->settings()->setValue(QStringLiteral("tempo"), m_variableTempo ? m_staticTempo : m_tempo);
   GLOB->settings()->setValue(QStringLiteral("ringType"), m_ringType);
   GLOB->settings()->setValue(QStringLiteral("variableTempo"), m_variableTempo);
 }
@@ -433,6 +434,10 @@ void TaudioOUT::setTempo(int t) {
 void TaudioOUT::setVariableTempo(bool varTemp) {
   if (varTemp != m_variableTempo) {
     m_variableTempo = varTemp;
+    if (m_variableTempo)
+      m_staticTempo = m_tempo;
+    else
+      setTempo(m_staticTempo);
     emit variableTempoChanged();
   }
 }
