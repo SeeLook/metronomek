@@ -303,9 +303,9 @@ Window {
     id: initAnim
     target: pendulum; property: "rotation"
     onStopped: {
+      nextTempo = SOUND.getTempoForBeat(partId, beatNr)
       timer.interval = 2 // delay to allow the timer react on starting sound signal
       SOUND.playing = true
-      nextTempo = SOUND.nextTempo()
     }
   }
 
@@ -336,6 +336,7 @@ Window {
         elap = 0; lag = 0
       }
     }
+
     onTriggered: {
       pendAnim.stop()
       pendAnim.to = toLeft ? 25 : -25
@@ -347,26 +348,27 @@ Window {
       elap = currTime
 
       interval = Math.max((60000 / nextTempo) - lag, 1)
+      if (SOUND.variableTempo && nextTempo)
+        weightAnim.duration = interval
+      tempoToShow = nextTempo
       lag = 0
       toLeft = !toLeft
       beatNr++
-      nextTempo = SOUND.nextTempo()
+
+      nextTempo = SOUND.getTempoForBeat(partId, beatNr)
       if (nextTempo == 0) {
-        nextTempo = SOUND.nextTempo()
+        partId++
+        beatNr = 1
+        nextTempo = SOUND.getTempoForBeat(partId, beatNr)
         if (nextTempo == 0) {
             timer.stop()
             stopMetronome()
             return
         } else {
-            partId++
-            beatNr = 1
             if (SOUND.isPartInfinite(partId))
               nextTempoPop()
         }
       }
-      if (SOUND.variableTempo && nextTempo)
-        weightAnim.duration = 60000 / nextTempo
-      tempoToShow = nextTempo
       pendAnim.start()
     }
   }

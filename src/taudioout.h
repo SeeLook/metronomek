@@ -155,7 +155,16 @@ public:
   Q_INVOKABLE TspeedHandler* speedHandler();
 
       /**
-       * Returns tempo value for given number of beat of tempo part.
+       *
+       * Visual ticking animation and playing audio callbacks
+       * work totally in parallel and there is only one common factor:
+       *                the time.
+       *
+       * It is easy to keep them in sync for static tempo, but when tempo changes
+       * filling audio stream routines are ahead of time loop of pendulum animation
+       *
+       * @p getTempoForBeat(part ID, beat number)
+       * returns tempo value for given number of beat of tempo part.
        * When tempo doesn't change it is always the same value,
        * but when there is accelerando or rallentando values are different.
        * Returns 0 when there is not such a beat number in given part ID.
@@ -171,21 +180,6 @@ public:
        * Switches current infinite tempo part to the next one.
        */
   Q_INVOKABLE void switchInfinitePart();
-
-      /**
-       * Visual ticking animation and playing audio callbacks
-       * work totally in parallel and there is only one common factor:
-       *                the time.
-       * It is easy to keep them in sync for static tempo, but when tempo changes
-       * filling audio stream routines are ahead of time loop of pendulum anim.
-       * @p m_playedTempo is a list that stores tempos processed by playing
-       * ant it is available through @p nextTempo() method.
-       * It returns and removes the first value of @p m_playedTempo list,
-       * which is next tempo value or 0 if all beats of current tempo part
-       * has been played already. QML has to switch to next part then.
-       * It may return another 0 - means finish current composition.
-       */
-  Q_INVOKABLE int nextTempo();
 
 
 signals:
@@ -219,12 +213,6 @@ protected:
        */
   void changeSampleRate(quint32 sr);
 
-      /**
-       * Helper methods that fills @p m_playedTempo list
-       * with next tempo value for actual part and beat.
-       */
-  void fillNextTempo(int currBeat, int currPart);
-
 private slots:
   void outCallBack(char* data, unsigned int maxLen, unsigned int& wasRead);
   void playingFinishedSlot();
@@ -241,13 +229,8 @@ private:
   TspeedHandler         *m_speedHandler = nullptr;
   int                    m_playingPart = 0;
   int                    m_playingBeat = 1;
-  QList<int>             m_playedTempo;
-  int                    m_infiBeats = 0;
-
-      /**
-       * TRUE when @p outCallBack will switch to next tempo part
-       */
-  bool                   m_toNextPart = false;
+  int                    m_infiBeats = 0; /**< Beats number when current par is infinite */
+  bool                   m_toNextPart = false; /**< TRUE when @p outCallBack will switch to next tempo part */
 
   int                    m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
   int                    m_currSample = 0;
