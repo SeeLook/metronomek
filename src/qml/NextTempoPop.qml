@@ -10,6 +10,8 @@ import QtQuick.Controls 2.12
 Popup {
   signal done()
 
+  padding: fm.height / 2
+
   width: Math.min(mainWindow.width, fm.height * 60)
   height: mainWindow.height * 0.2
   x: (parent.width - width) / 2
