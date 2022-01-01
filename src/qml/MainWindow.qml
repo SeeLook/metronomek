@@ -171,7 +171,7 @@ Window {
       id: sb
       editable: false
       height: parent.height * 0.06 //; width: height * 3
-      x: parent.width * 0.73 - width; y: parent.height * 0.75
+      x: parent.width * 0.76 - width; y: parent.height * 0.75
       font { bold: true; }
       from: 40; to: 240
       value: SOUND.tempo
@@ -199,10 +199,11 @@ Window {
     } // MetroImage
 
     Text {
-      x: metro.width * 0.12; y: sb.y + (sb.height - height) / 2
+      x: metro.width * 0.08; y: sb.y + (sb.height - height) / 2
       text: SOUND.getTempoNameById(SOUND.nameTempoId)
-      font { pixelSize: metro.height / 50; bold: true }
-      color: activPal.text
+      font { pixelSize: metro.height / 40; bold: true }
+      style: SOUND.variableTempo ? Text.Outline : Text.Normal
+      color: activPal.text; styleColor: "skyblue"
     }
 
     AbstractButton {
