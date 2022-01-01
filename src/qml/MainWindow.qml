@@ -123,13 +123,14 @@ Window {
 
       Text {
         id: countW // counterweight
+        property int tempo: SOUND.tempo
         z: 15
         font { family: "metronomek"; pixelSize: parent.height * 0.24 }
         color: countArea.containsPress ? GLOB.valueColor(activPal.text, 20) : activPal.highlight
         text: "\u00A4"
         anchors.horizontalCenter: parent.horizontalCenter
-        y: pendulum.height * 0.65 * ((SOUND.tempo - 40) / 200)
-        Behavior on y { NumberAnimation { id: weightAnim } }
+        y: pendulum.height * 0.65 * ((countW.tempo - 40) / 200)
+        Behavior on y { NumberAnimation { id: countAnim } }
         Text { // inner counterweight
           font { family: "metronomek"; pixelSize: pendulum.height * 0.18 }
           color: SOUND.variableTempo ? "skyblue" : activPal.highlight
@@ -289,6 +290,8 @@ Window {
     finishAnim.duration = (30000 / SOUND.tempo)
     pendAnim.stop()
     finishAnim.start()
+    if (SOUND.variableTempo)
+      countW.tempo = Qt.binding( function() { return SOUND.tempo } )
   }
 
   NumberAnimation {
@@ -311,7 +314,7 @@ Window {
     id: finishAnim
     target: pendulum; property: "rotation"
     to: 0
-    onStopped: weightAnim.duration = 150
+    onStopped: countAnim.duration = 150
   }
 
   function nextTempoPop() {
@@ -346,13 +349,11 @@ Window {
       elap = currTime
 
       interval = Math.max((60000 / nextTempo) - lag, 1)
-      if (SOUND.variableTempo && nextTempo)
-        weightAnim.duration = interval
       SOUND.tempo = nextTempo
       lag = 0
       toLeft = !toLeft
-      beatNr++
 
+      beatNr++
       nextTempo = SOUND.getTempoForBeat(partId, beatNr)
       if (nextTempo == 0) {
         partId++
@@ -366,6 +367,10 @@ Window {
             if (SOUND.isPartInfinite(partId))
               nextTempoPop()
         }
+      }
+      if (SOUND.variableTempo) {
+        countAnim.duration = interval
+        countW.tempo = nextTempo
       }
       pendAnim.start()
     }
