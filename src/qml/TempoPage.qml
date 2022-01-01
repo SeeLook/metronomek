@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2021-20212 by Tomasz Bojczuk (seelook@gmail.com)    *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -257,7 +257,7 @@ Tdialog {
             }
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
-              text: qsTr("bars", "", barsSpin.value)
+              text: GLOB.chopS(qsTr("bars", "", barsSpin.value), barsSpin.value)
               color: enabled ? activPal.text : disblPal.text
             }
           }
@@ -273,7 +273,7 @@ Tdialog {
             }
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
-              text: qsTr("beats", "", beatsSpin.value)
+              text: GLOB.chopS(qsTr("beats", "", beatsSpin.value), beatsSpin.value)
               color: enabled ? activPal.text : disblPal.text
             }
           }
@@ -289,7 +289,7 @@ Tdialog {
             }
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
-              text: qsTr("seconds", "", secSpin.value)
+              text: GLOB.chopS(qsTr("seconds", "", secSpin.value), secSpin.value)
               color: enabled ? activPal.text : disblPal.text
             }
           }

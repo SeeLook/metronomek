@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2021-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -36,15 +36,16 @@ Rectangle {
     }
 
     Text {
-      text: GLOB.TR("TempoPage", "Meter") + " (" + GLOB.TR("MainWindow", "count to") + "): " + (tp ? tp.meter : 4)
+      text: GLOB.TR("TempoPage", "Meter") + " (" + GLOB.TR("MainWindow", "count to") + "): "
+            + "<b>" + (tp ? tp.meter : 4) + "</b>"
       color: activPal.text
     }
 
     Text {
       text: GLOB.TR("TempoPage", "Duration") + ": " + (tp && tp.infinite ? GLOB.TR("TempoPage", "infinite")
-                                                                   : qsTr("%n bar(s)", "", tp ? tp.bars : 0)
-                                                           + " = " + qsTr("%n beat(s)", "", tp ? tp.beats : 0)
-                                                           + " = " + qsTr("%n second(s)", "", tp ? tp.seconds : 0))
+                                           : "<br>" + GLOB.chopS(qsTr("<b>%n</b> bars", "", tp ? tp.bars : 0), tp ? tp.bars : 0)
+                                            + " = " + GLOB.chopS(qsTr("<b>%n</b> beats", "", tp ? tp.beats : 0), tp ? tp.beats : 0)
+                                            + " = " + GLOB.chopS(qsTr("<b>%n</b> seconds", "", tp ? tp.seconds : 0), tp ? tp.seconds : 0))
       color: activPal.text
     }
   }
