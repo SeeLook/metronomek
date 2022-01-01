@@ -68,7 +68,7 @@ Tdialog {
             pop.y = p.y - pop.height - height - fm.height
           else
             pop.y = p.y
-          pop.x = (tempoPage.contentItem.width - pop.width) / 2
+          pop.x = (tempoPage.width - pop.width) / 2
         }
         pop.open()
       }
@@ -86,6 +86,7 @@ Tdialog {
         width: parent.width
         horizontalAlignment: Text.AlignHCenter
         color: activPal.text
+        wrapMode: Text.WordWrap
         text: qsTr("Tap or click to edit tempo change.") + "<br><font color=\"red\">"
             + qsTr("Drag the item left or right to remove it.")
       }
@@ -175,7 +176,7 @@ Tdialog {
 
     height: Math.min(extraH + tCol.height, tempoPage.height)
     width: tCol.width + leftPadding + rightPadding
-    title: pop.tp ? pop.tp.nr + "." : ""
+    title: pop.tp ? pop.tp.tempoText : ""
 
     Flickable {
       height: Math.min(tCol.height + fm.height, tempoPage.height - pop.extraH)
@@ -189,7 +190,9 @@ Tdialog {
 
         Grid {
           columns: tempoPage.width < initCtrl.width + targetCtrl.width ? 1 : 2
-          spacing: GLOB.fontSize() / 2
+          spacing: GLOB.fontSize()
+          anchors.horizontalCenter: parent.horizontalCenter
+          z: 10
 
           TempoEdit {
             id: initCtrl
@@ -245,6 +248,7 @@ Tdialog {
           enabled: !infiChB.checked
           spacing: GLOB.fontSize()
           columns: tempoPage.width < barCol.width + beatCol.width + secCol.width ? 1 : 3
+          anchors.horizontalCenter: parent.horizontalCenter
           Column {
             id: barCol
             SpinBox {
