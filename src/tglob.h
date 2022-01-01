@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #ifndef TGLOB_H
@@ -75,6 +75,16 @@ public:
   QString lang() const { return m_lang; }
   void setLang(const QString& l);
 
+  bool langLoaded() const { return m_langLoaded; }
+  void setLangLoaded(bool ll) { m_langLoaded = ll; }
+
+      /**
+       * Removes last 's' letter from @p plural string
+       * but only if @p n is bigger than 1
+       * and translator language was not loaded (is original English)
+       */
+  Q_INVOKABLE QString chopS(const QString& plural, int n);
+
   Q_INVOKABLE int bound(int low, int val, int hi) { return qBound(low, val, hi); }
   Q_INVOKABLE qreal bound(qreal low, qreal val, qreal hi) { return qBound(low, val, hi); }
 
@@ -139,6 +149,7 @@ private:
   bool                m_countVisible;
   bool                m_stationary;
   QString             m_lang;
+  bool                m_langLoaded = false;
 #if defined (Q_OS_ANDROID)
   bool                m_keepScreenOn;
   bool                m_disableRotation;

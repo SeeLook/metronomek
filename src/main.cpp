@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tglob.h"
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 
   QTranslator mTranslator;
   if (mTranslator.load(loc, QStringLiteral("metronomek_"), QString(), p))
-    app->installTranslator(&mTranslator);
+    GLOB->setLangLoaded(app->installTranslator(&mTranslator));
 
   QFontDatabase fd;
   int fid = fd.addApplicationFont(QStringLiteral(":/metronomek.otf"));

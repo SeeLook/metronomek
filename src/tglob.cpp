@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tglob.h"
@@ -98,6 +98,15 @@ void Tglob::setLang(const QString& l) {
     emit langChanged();
   }
 }
+
+
+QString Tglob::chopS(const QString& plural, int n) {
+  if (!m_langLoaded && n == 1)
+    return plural.chopped(1);
+  else
+    return plural;
+}
+
 
 /** HACK:
  * wrapper of standard Qt @p QApplication::translate method
