@@ -39,10 +39,10 @@ int main(int argc, char *argv[])
   auto pal = qApp->palette();
   pal.setColor(QPalette::Active, QPalette::Highlight, QColor(0, 0x96, 0x88)); // Teal color for highlight #009688
   pal.setColor(QPalette::Active, QPalette::HighlightedText, QColor(0xff, 0xf4, 0x05)); // #fff405
-  pal.setColor(QPalette::Active, QPalette::Shadow, Qt::lightGray);
   pal.setColor(QPalette::Active, QPalette::Shadow, QColor(90, 90, 90)); // Dark gray for shadow
-  pal.setColor(QPalette::Active, QPalette::Button, QColor(189, 189, 189));
+  pal.setColor(QPalette::Active, QPalette::Button, QColor(240, 240, 240)); // Very light gray for button
   pal.setColor(QPalette::Active, QPalette::Mid, QColor(124, 124, 124));
+  pal.setColor(QPalette::Active, QPalette::Window, QColor(250, 250, 250)); // Almost white for windows
   qApp->setPalette(pal);
 #endif
 
