@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2021-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #ifndef TSPEEDHANDLER_H
@@ -24,6 +24,7 @@ class TrtmComposition : public QObject
 
   Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
   Q_PROPERTY(QList<TtempoPart*> parts READ parts NOTIFY partsChanged)
+  Q_PROPERTY(int partsCount READ partsCount NOTIFY partsChanged)
 
 public:
   TrtmComposition(QObject* parent = nullptr);
@@ -39,7 +40,7 @@ public:
   void setXmlFileName(const QString& xml) { m_xmlFileName = xml; }
 
   QList<TtempoPart*> parts() { return m_tempoList; }
-  Q_INVOKABLE int partsCount() const { return m_tempoList.count(); }
+  int partsCount() const { return m_tempoList.count(); }
   Q_INVOKABLE TtempoPart* getPart(int id) { return id < partsCount() ? m_tempoList[id] : nullptr; }
   TtempoPart* first() { return m_tempoList.first(); }
   TtempoPart* last() { return m_tempoList.last(); }

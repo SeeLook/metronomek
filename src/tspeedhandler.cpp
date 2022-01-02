@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 20212022 by Tomasz Bojczuk (seelook@gmail.com)      *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tspeedhandler.h"
@@ -104,6 +104,7 @@ void TrtmComposition::readFromXMLFile(const QString& xmlName) {
         }
       }
       m_notSaved = false;
+      emit partsChanged();
   } else {
       qDebug() << "[TspeedHandler] Cannot read XML file:" << xmlName;
   }
@@ -114,6 +115,7 @@ void TrtmComposition::add() {
   int t = m_tempoList.isEmpty() ? SOUND->tempo() : m_tempoList.last()->targetTempo();
   m_tempoList << createTempoPart(t);
   m_notSaved = true;
+  emit partsChanged();
 }
 
 
@@ -123,6 +125,7 @@ void TrtmComposition::remove(int tpId) {
       delete m_tempoList.takeAt(tpId);
       for (int i = tpId; i < m_tempoList.size(); ++i)
         m_tempoList[i]->setNr(i + 1);
+      emit partsChanged();
     });
   }
 }
