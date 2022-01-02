@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2021-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -9,18 +9,19 @@
 
 
 class ToboeCallBack : public oboe::AudioStreamDataCallback {
+
 public:
   ToboeCallBack(ToboeAudioOut* outParent = nullptr) : oboe::AudioStreamDataCallback(), m_out(outParent) {}
   oboe::DataCallbackResult onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames) {
       Q_UNUSED(audioStream)
       unsigned int retVal = 0;
-      m_out->feedAudio(static_cast<char*>(audioData), static_cast<unsigned int>(numFrames), retVal);
-      // TODO maybe do something with retVal
-      return oboe::DataCallbackResult::Continue;
+      emit m_out->feedAudio(static_cast<char*>(audioData), static_cast<unsigned int>(numFrames), retVal);
+      return retVal == 0 ? oboe::DataCallbackResult::Continue : oboe::DataCallbackResult::Stop;
   }
 
 private:
   ToboeAudioOut           *m_out;
+
 };
 
 
