@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -211,7 +211,7 @@ void TaudioOUT::startTicking() {
 
 
 void TaudioOUT::startPlayingSlot() {
-  if (!m_playing) {
+  if (!m_playing && !m_goingToStop) {
     m_playingPart = 0;
     m_playingBeat = 1;
     int t = m_variableTempo && m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
@@ -228,6 +228,9 @@ void TaudioOUT::startPlayingSlot() {
     emit playingChanged();
   }
 }
+
+#define CALLBACK_CONTINUE (0)
+#define CALLBACK_STOP (2)
 
 /**
  * When @p m_offsetSample is greater than 0 - means length of single beat @p m_samplPerBeat (samples number)
@@ -249,7 +252,7 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
         m_playingBeat = 1;
         t = m_variableTempo && m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
         if (t == 0) {
-            wasRead = 2; // stop playing
+            wasRead = CALLBACK_STOP;
             return;
         }
       }
@@ -258,6 +261,12 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
         m_toNextPart = false;
         m_playingPart++;
         m_playingBeat = 0;
+      }
+
+      if (m_goingToStop) {
+        m_goingToStop = false;
+        wasRead = CALLBACK_STOP;
+        return;
       }
 
       m_samplPerBeat = (m_sampleRate * 60) / t;
@@ -296,19 +305,23 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
       *out++ = sample; // right channel
     }
   }
-#if defined (Q_OS_ANDROID)
-  wasRead = maxLen; // Unused
-#else
-  wasRead = 0; // RtAudio continue
-#endif
+//   wasRead = maxLen; // DEPRECATED This is valid only with Android Qt Audio
+  wasRead = CALLBACK_CONTINUE;
 }
 
 
 void TaudioOUT::playingFinishedSlot() {
   if (m_playing) {
-    m_audioDevice->stopPlaying();
     m_playing = false;
     emit playingChanged();
+    if (!m_goingToStop) {
+      m_goingToStop = true;
+      int delay = ((m_samplPerBeat - m_currSample) * 1000) / m_sampleRate + 50;
+      QTimer::singleShot(qMax(100, delay), this, [=] {
+          m_audioDevice->stopPlaying();
+          m_goingToStop = false;
+      });
+    }
   }
 }
 
