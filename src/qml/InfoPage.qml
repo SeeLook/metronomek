@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -32,7 +32,7 @@ Tdialog {
     anchors.top: logo.bottom
     clip: true
     ScrollBar.vertical: ScrollBar { active: true; visible: true }
-    contentWidth: parent.width; contentHeight: col.height + 2 * GLOB.fontSize()
+    contentWidth: parent.width; contentHeight: col.height + 4 * GLOB.fontSize()
 
     Column {
       id: col
@@ -40,21 +40,25 @@ Tdialog {
       spacing: fm.height / 2
 
       LinkText {
+        width: parent.width - fm.height
         anchors.horizontalCenter: parent.horizontalCenter
         textFormat: Text.StyledText
-        text: "<br><br>Copyright © 2019-2021 Tomasz Bojczuk<br>
+        text: "<br><a href=\"https://metronomek.sourceforge.io\">metronomek.sf.net</a>
+        <br>Copyright © 2019-2022 Tomasz Bojczuk<br>
         <a href=\"mailto:seelook.gmail.com\">seelook@gmail.com</a><br><br>"
         font.bold: true
         horizontalAlignment: Text.AlignHCenter
       }
 
       LinkText {
+        width: parent.width - fm.height
         text: GLOB.aboutQt() + "<br><a href=\"https://qt.io\">https://qt.io</a><br>"
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
       }
 
       LinkText {
+        width: parent.width - fm.height
         text: qsTr("Metronomek ticks and rings through<br><b>%1</b> library.")
                 .arg(GLOB.isAndroid() ? "<a href=\"https://github.com/google/oboe\">Oboe</a>"
                 : "<a href=\"https://www.music.mcgill.ca/~gary/rtaudio/index.html\">RtAudio</a>")
