@@ -44,13 +44,50 @@ Column {
           anchors.centerIn: parent
           font { pixelSize: parent.height * 0.3; bold: true }
           color: activPal.buttonText
-          text: Math.round(tDial.value)
+          text: tempo
         }
         MouseArea {
           id: tapArea
           anchors.fill: parent
           onClicked: tDial.tapTempo()
         }
+      }
+
+      AbstractButton {
+        id: incrButt
+        height: tDial.width / 6; width: tDial.width / 6
+        x: tDial.mirrored ? 0 : tDial.width - width
+        indicator: Item {
+          implicitHeight: tDial.width / 6; implicitWidth: tDial.width / 6
+          scale: incrButt.pressed ? 0.8 : 1
+          Behavior on scale { NumberAnimation {} }
+          Rectangle {
+            x: parent.width / 4; width: parent.width / 2; height: parent.height / 15; y: parent.height * 0.48
+            color: activPal.text
+          }
+          Rectangle {
+            x: parent.width / 4; width: parent.width / 2; height: parent.height / 15; y: parent.height * 0.48
+            color: activPal.text
+            rotation: 90
+          }
+        }
+        onClicked: tDial.increase()
+      }
+
+      AbstractButton {
+        id: decrButt
+        height: tDial.width / 6; width: tDial.width / 6
+        x: tDial.mirrored ? tDial.width - width : 0
+        indicator: Item {
+          implicitHeight: tDial.width / 6; implicitWidth: tDial.width / 6
+          scale: decrButt.pressed ? 0.8 : 1
+          Behavior on scale { NumberAnimation {} }
+          Rectangle {
+            x: parent.width / 4; width: parent.width / 2; height: parent.height / 15; y: parent.height * 0.48
+            color: activPal.text
+          }
+        }
+        onClicked: tDial.decrease()
       }
 
       property real lastTime: new Date().getTime()
