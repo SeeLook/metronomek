@@ -198,14 +198,14 @@ Tdialog {
             id: initCtrl
             text: qsTr("initial tempo").replace(" ", "<br>")
             tempo: pop.tp ? pop.tp.initTempo : 40
-            onTempoModified: pop.tp.initTempo = tempo
+            onTempoModified: if (pop.tp) pop.tp.initTempo = t
           }
 
           TempoEdit {
             id: targetCtrl
             text: qsTr("target tempo").replace(" ", "<br>")
             tempo: pop.tp ? pop.tp.targetTempo : 40
-            onTempoModified: pop.tp.targetTempo = tempo
+            onTempoModified: if (pop.tp) pop.tp.targetTempo = t
           }
         }
 

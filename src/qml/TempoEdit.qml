@@ -12,7 +12,7 @@ Column {
   property alias text: text.text
   property int tempo: 60
 
-  signal tempoModified()
+  signal tempoModified(var t)
 
   spacing: GLOB.fontSize()
 
@@ -25,16 +25,12 @@ Column {
 
     Dial {
       id: tDial
-      width: fm.height * 8; height: width
       anchors.horizontalCenter: parent.horizontalCenter
       from: 40; to: 240
       stepSize: 1
       wheelEnabled: true
       value: tempo
-      onMoved: {
-        tempo = value
-        tc.tempoModified()
-      }
+      onValueChanged: tempoModified(value)
 
       TipRect {
         id: tapRect
@@ -60,10 +56,8 @@ Column {
 
       function tapTempo() {
         var currTime = new Date().getTime()
-        if (currTime - tDial.lastTime < 2000) {
-          tempo = GLOB.bound(40, Math.round(60000 / (currTime - lastTime)), 240)
-          tc.tempoModified()
-        }
+        if (currTime - tDial.lastTime < 2000)
+          tc.tempoModified(GLOB.bound(40, Math.round(60000 / (currTime - lastTime)), 240))
         tDial.lastTime = currTime
       }
 
