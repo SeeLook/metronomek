@@ -25,6 +25,7 @@ Column {
 
     Dial {
       id: tDial
+      width: Math.min(mainWindow.width, fm.height * 40) * 0.35; height: width
       anchors.horizontalCenter: parent.horizontalCenter
       from: 40; to: 240
       stepSize: 1
@@ -37,12 +38,12 @@ Column {
         property bool lighter: false
         anchors.centerIn: parent
         width: parent.width * 0.55; height: parent.height * 0.55; radius: width / 2
-        color: Qt.lighter(activPal.window, tDial.pressed || tapRect.lighter ? 1.2 : 1)
+        color: Qt.lighter(activPal.button, tDial.pressed || tapRect.lighter || tapArea.pressed ? 1.2 : 1)
         raised: !tapArea.pressed
         Text {
           anchors.centerIn: parent
           font { pixelSize: parent.height * 0.3; bold: true }
-          color: activPal.text
+          color: activPal.buttonText
           text: Math.round(tDial.value)
         }
         MouseArea {
