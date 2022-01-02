@@ -45,7 +45,7 @@ Item {
       }
       width: metro.width / 20; height: (tp ? tp.beats : 1) * factor
       radius: width / 3
-      color: Qt.lighter("skyBlue", index % 2 ? 0.8 : 1.2)
+      color: Qt.lighter(activPal.varTempo, index % 2 ? 0.8 : 1.2)
       Text {
         color: activPal.text
         text: tp ? tp.initTempo : ""

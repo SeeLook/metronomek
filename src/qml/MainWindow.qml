@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -21,7 +21,11 @@ Window {
   title: qsTr("MetronomeK")
   color: activPal.base
 
-  SystemPalette { id: activPal;  colorGroup: SystemPalette.Active }
+  SystemPalette {
+    id: activPal
+    property color varTempo: "skyblue"
+    colorGroup: SystemPalette.Active
+  }
   SystemPalette { id: disblPal;  colorGroup: SystemPalette.Disabled }
   FontMetrics { id: fm }
 
@@ -133,7 +137,7 @@ Window {
         Behavior on y { NumberAnimation { id: countAnim } }
         Text { // inner counterweight
           font { family: "metronomek"; pixelSize: pendulum.height * 0.18 }
-          color: SOUND.variableTempo ? "skyblue" : activPal.highlight
+          color: SOUND.variableTempo ? activPal.varTempo : activPal.highlight
           text: "\u00A4"
           anchors.centerIn: parent
         }
@@ -203,7 +207,7 @@ Window {
       text: SOUND.getTempoNameById(SOUND.nameTempoId)
       font { pixelSize: metro.height / 40; bold: true }
       style: SOUND.variableTempo ? Text.Outline : Text.Normal
-      color: activPal.text; styleColor: "skyblue"
+      color: activPal.text; styleColor: activPal.varTempo
     }
 
     AbstractButton {
@@ -212,7 +216,7 @@ Window {
       Behavior on scale { NumberAnimation {} }
       background: TipRect {
         radius: height / 2; raised: !parent.pressed
-        border { color: "skyblue"; width: SOUND.variableTempo ? fm.height / 6 : 0 }
+        border { color: activPal.varTempo; width: SOUND.variableTempo ? fm.height / 6 : 0 }
         Text {
           font.pixelSize: tapButt.height / 3
           text: SOUND.variableTempo ? qsTr("Tempo changes") : qsTr("Tap tempo")

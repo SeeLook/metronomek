@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -15,7 +15,7 @@ AbstractButton {
   property var drawerContent: null
 
   background: Rectangle {
-    color: SOUND.variableTempo ? GLOB.alpha("skyblue", pressed ? 200 : 80) : GLOB.alpha(activPal.text, pressed ? 120 : 20)
+    color: GLOB.alpha(activPal.text, pressed ? 120 : 20)
     radius: width / 4
   }
   contentItem: Column {

@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2021-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -18,7 +18,7 @@ Popup {
   y: parent.height + height
   enter: Transition { NumberAnimation { duration: 300; property: "y"; to: mainWindow.height - height + fm.height }}
   exit: Transition { NumberAnimation { duration: 300; property: "y"; to: parent.height + height }}
-  background: TipRect { color: "skyblue"; radius: fm.height }
+  background: TipRect { color: activPal.varTempo; radius: fm.height }
   focus: true // HACK for onPressed
 
   Text {

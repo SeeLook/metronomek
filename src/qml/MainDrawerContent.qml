@@ -88,7 +88,7 @@ Flickable {
 
     DrawerButton {
       text: GLOB.TR("MainWindow", "Tempo changes").toLowerCase()
-      bgColor: "skyblue"
+      bgColor: activPal.varTempo
       checkable: true
       checked: SOUND.variableTempo
       onToggled: {
