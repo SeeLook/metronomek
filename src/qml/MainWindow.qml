@@ -33,6 +33,7 @@ Window {
   property int partId: 0
   property int beatNr: 1
   property int nextTempo: 0
+  property int meterCount: 0
 
   property var dialogItem: null
   property bool leanEnough: false // pendulum is leaned out enough to start playing
@@ -142,8 +143,8 @@ Window {
           anchors.centerIn: parent
         }
         Text {
-          visible: SOUND.meter > 1 && GLOB.countVisible && SOUND.playing
-          text: SOUND.meterCount + 1
+          visible: GLOB.countVisible && meterCount && SOUND.playing
+          text: meterCount
           y: parent.height * 0.15
           anchors.horizontalCenter: parent.horizontalCenter
           color: activPal.highlightedText
@@ -279,7 +280,7 @@ Window {
     partId = 0
     beatNr = 1
     SOUND.tempo = SOUND.getTempoForBeat(partId, beatNr)
-    SOUND.meterCount = 0
+    meterCount = 0
     timer.toLeft = pendulum.rotation <= 0
     initAnim.to = GLOB.stationary ? 0 : (timer.toLeft ? -25 : 25)
     initAnim.duration = (30000 / SOUND.tempo)
@@ -352,6 +353,9 @@ Window {
         lag += elap - interval
       }
       elap = currTime
+
+      if (GLOB.countVisible)
+        meterCount = ((beatNr - 1) % SOUND.meterOfPart(partId)) + 1
 
       interval = Math.max((60000 / nextTempo) - lag, 1)
       SOUND.tempo = nextTempo
