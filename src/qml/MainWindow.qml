@@ -99,8 +99,8 @@ Window {
       color: leanEnough ? "green" :
                           (stopArea.containsPress && SOUND.playing ? "red" :
                               (pendArea.dragged ? activPal.base : GLOB.valueColor(activPal.text, GLOB.stationary ? 40 : 0)))
-      width: parent.width / 20; y: parent.height * 0.132 - width / 2
-      x: parent.width * 0.3969; height: parent.height * 0.6
+      width: parent.width / 20; height: parent.height * 0.6
+      x: parent.width * 0.3969; y: parent.height * 0.132 - width / 2
       radius: width / 2
       transformOrigin: Item.Bottom
 
@@ -410,18 +410,13 @@ Window {
     onVariableTempoChanged: varTempoSlot()
   }
 
-  property var pendulumMark: null
   property var compView: null
 
   function varTempoSlot() {
     if (SOUND.variableTempo) {
-        if (!pendulumMark)
-          pendulumMark = Qt.createComponent("qrc:/PendulumMark.qml").createObject(pendulum)
         if (!compView)
           compView = Qt.createComponent("qrc:/CompositionView.qml").createObject(mainWindow.contentItem)
     } else {
-        if (pendulumMark)
-          pendulumMark.destroy()
         if (compView)
           compView.destroy()
     }
