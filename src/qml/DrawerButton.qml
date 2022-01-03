@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -17,14 +17,19 @@ AbstractButton {
     color: pressed ? activPal.highlight : activPal.window //Qt.tint(activPal.window, GLOB.alpha(bgColor, 40))
 
     Text {
+      width: parent.width - (dButt.checkable ? chLoader.item.width : 0)
       anchors.verticalCenter: parent.verticalCenter
       leftPadding: fm.height
       text: dButt.text
+      font.pixelSize: fm.height
+      minimumPixelSize: fm.height / 2; fontSizeMode: Text.Fit
       textFormat: Text.StyledText
+      elide: Text.ElideRight
       color: pressed ? activPal.highlightedText : activPal.text
     }
 
     Loader {
+      id: chLoader
       active: dButt.checkable
       anchors { right: parent.right; verticalCenter: parent.verticalCenter }
       sourceComponent: CheckBox {

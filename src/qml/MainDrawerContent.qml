@@ -25,12 +25,13 @@ Flickable {
     }
 
     DrawerButton {
-      text: qsTr("beat sound") + ":<br>&nbsp;&nbsp;&nbsp;&nbsp;<b> - " + SOUND.getBeatName(SOUND.beatType) + "</b>"
+      text: qsTr("beat sound") + ":<br>&nbsp;<b> - " + SOUND.getBeatName(SOUND.beatType) + "</b>"
       onClicked: beatMenu.popup()
 
       Menu {
         id: beatMenu
-        width: parent.width * 0.9
+        parent: mainWindow.contentItem
+        width: Math.min(drawCol.width, fm.height * 20)
         Repeater {
           model: SOUND.beatTypeCount()
           MenuItem {
@@ -44,12 +45,13 @@ Flickable {
     }
 
     DrawerButton {
-      text: qsTr("ring at \"one\"") + ":<br>&nbsp;&nbsp;&nbsp;&nbsp;<b> - " + SOUND.getRingName(SOUND.ringType) + "</b>"
+      text: qsTr("ring at \"one\"") + ":<br>&nbsp;<b> - " + SOUND.getRingName(SOUND.ringType) + "</b>"
       onClicked: ringMenu.popup()
 
       Menu {
         id: ringMenu
-        width: parent.width* 0.9
+        parent: mainWindow.contentItem
+        width: Math.min(drawCol.width, fm.height * 20)
         Repeater {
           model: SOUND.ringTypeCount()
           MenuItem {
