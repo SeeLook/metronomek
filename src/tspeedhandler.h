@@ -41,7 +41,7 @@ public:
 
   QList<TtempoPart*> parts() { return m_tempoList; }
   int partsCount() const { return m_tempoList.count(); }
-  Q_INVOKABLE TtempoPart* getPart(int id) { return id < partsCount() ? m_tempoList[id] : nullptr; }
+  Q_INVOKABLE TtempoPart* getPart(int id) { return id > -1 && id < partsCount() ? m_tempoList[id] : nullptr; }
   TtempoPart* first() { return m_tempoList.first(); }
   TtempoPart* last() { return m_tempoList.last(); }
 
