@@ -132,7 +132,7 @@ Window {
         property int tempo: SOUND.tempo
         z: 15
         font { family: "metronomek"; pixelSize: parent.height * 0.24 }
-        color: countArea.containsPress ? GLOB.valueColor(activPal.text, 20) : activPal.highlight
+        color: countArea.containsPress ? GLOB.valueColor(activPal.text, 20) : (SOUND.variableTempo ? activPal.varTempo : activPal.highlight)
         text: "\u00A4"
         anchors.horizontalCenter: parent.horizontalCenter
         y: pendulum.height * 0.65 * ((countW.tempo - 40) / 200)
