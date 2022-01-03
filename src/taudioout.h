@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #ifndef TAUDIOOUT_H
@@ -72,7 +72,6 @@ class TaudioOUT : public QObject
   Q_PROPERTY(bool playing READ playing WRITE setPlaying NOTIFY playingChanged)
   Q_PROPERTY(int beatType READ beatType WRITE setBeatType NOTIFY beatTypeChanged)
   Q_PROPERTY(int meter READ meter WRITE setMeter NOTIFY meterChanged)
-  Q_PROPERTY(int meterCount READ meterCount WRITE setMeterCount NOTIFY meterCountChanged)
   Q_PROPERTY(int ringType READ ringType WRITE setRingType NOTIFY ringTypeChanged)
   Q_PROPERTY(bool ring READ ring WRITE setRing NOTIFY ringChanged)
   Q_PROPERTY(int tempo READ tempo WRITE setTempo NOTIFY tempoChanged)
@@ -134,9 +133,6 @@ public:
   int meter() const { return m_meter; }
   void setMeter(int m);
 
-  int meterCount() const { return m_meterCount; }
-  void setMeterCount(int mc);
-
   bool ring() const { return m_doRing; }
   void setRing(bool r);
 
@@ -181,6 +177,8 @@ public:
        */
   Q_INVOKABLE void switchInfinitePart();
 
+  Q_INVOKABLE int meterOfPart(int partId);
+
 
 signals:
   void finishSignal();
@@ -189,7 +187,6 @@ signals:
   void meterChanged();
   void ringChanged();
   void ringTypeChanged();
-  void meterCountChanged();
   void tempoChanged();
   void nameTempoIdChanged();
   void tempoPartIdChanged();
@@ -236,7 +233,6 @@ private:
   int                    m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
   int                    m_currSample = 0;
   bool                   m_goingToStop = false;
-  int                    m_meterCount = 0;
   TsoundData             m_beat;
   TsoundData             m_ring;
   bool                   m_doBell = false;

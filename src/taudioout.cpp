@@ -220,9 +220,12 @@ void TaudioOUT::startPlayingSlot() {
     setNameIdByTempo(t);
 
     m_currSample = 0;
-    m_meterCount = 0;
     m_offsetCounter = 0.0;
     m_missingSampleNr = 0;
+    if (m_doRing) {
+      m_ring.resetPos();
+      m_doBell = true;
+    }
     m_audioDevice->startPlaying();
     m_playing = true;
     emit playingChanged();
@@ -245,6 +248,12 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
     sample = m_beat.sampleAt(m_currSample);
     m_currSample++;
     if (m_currSample >= m_samplPerBeat + m_missingSampleNr) {
+      if (m_goingToStop) {
+        m_goingToStop = false;
+        wasRead = CALLBACK_STOP;
+        return;
+      }
+
       m_playingBeat++;
       int t = m_variableTempo && m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
       if (t == 0) {
@@ -256,6 +265,12 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
             return;
         }
       }
+
+      if (m_doRing && (m_playingBeat - 1) % meterOfPart(m_playingPart) == 0) {
+        m_ring.resetPos();
+        m_doBell = true;
+      }
+
       if (m_toNextPart) {
         m_infiBeats = m_playingBeat;
         m_toNextPart = false;
@@ -263,16 +278,9 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
         m_playingBeat = 0;
       }
 
-      if (m_goingToStop) {
-        m_goingToStop = false;
-        wasRead = CALLBACK_STOP;
-        return;
-      }
-
       m_samplPerBeat = (m_sampleRate * 60) / t;
       m_offsetSample = static_cast<qreal>((60 * m_sampleRate) - m_samplPerBeat * t) / static_cast<qreal>(t);
       m_currSample = 0;
-      m_meterCount++;
       if (m_offsetSample != 0.0) {
         m_offsetCounter += m_offsetSample;
         if (m_offsetCounter > 1.0) {
@@ -282,15 +290,8 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
             m_missingSampleNr = 0;
         }
       }
-      if (m_meterCount == m_meter) {
-        if (m_meter > 1 && m_doRing) { // ring a bell
-          m_ring.resetPos();
-          m_doBell = true;
-        }
-        m_meterCount = 0;
-      }
-      emit meterCountChanged();
     }
+
     if (m_doBell) {
       if (sample)
         sample = mix(sample, m_ring.readSample());
@@ -410,15 +411,6 @@ void TaudioOUT::setMeter(int m) {
   if (m_meter != m) {
     m_meter = m;
     emit meterChanged();
-    setMeterCount(0);
-  }
-}
-
-
-void TaudioOUT::setMeterCount(int mc) {
-  if (m_meterCount != mc) {
-    m_meterCount = mc;
-    emit meterCountChanged();
   }
 }
 
@@ -502,6 +494,15 @@ void TaudioOUT::switchInfinitePart() {
   else
     qDebug() << "[TaudioOUT] FIXME! Trying to switch non infinite tempo part!";
 }
+
+
+int TaudioOUT::meterOfPart(int partId) {
+  if (m_variableTempo && m_speedHandler && partId < m_speedHandler->currComp()->partsCount())
+    return m_speedHandler->currComp()->getPart(partId)->meter();
+  else
+    return m_meter;
+}
+
 
 //#################################################################################################
 //###################                PROTECTED         ############################################
