@@ -34,6 +34,7 @@ Window {
   property int beatNr: 1
   property int nextTempo: 0
   property int meterCount: 0
+  property bool inMotion: false /**< state of pendulum */
 
   property var dialogItem: null
   property bool leanEnough: false // pendulum is leaned out enough to start playing
@@ -143,7 +144,7 @@ Window {
           anchors.centerIn: parent
         }
         Text {
-          visible: GLOB.countVisible && meterCount && SOUND.playing
+          visible: GLOB.countVisible && meterCount && inMotion
           text: meterCount
           y: parent.height * 0.15
           anchors.horizontalCenter: parent.horizontalCenter
@@ -309,6 +310,7 @@ Window {
   NumberAnimation {
     id: initAnim
     target: pendulum; property: "rotation"
+    onStarted: inMotion = true
     onStopped: {
       nextTempo = SOUND.getTempoForBeat(partId, beatNr)
       timer.interval = 2 // delay to allow the timer react on starting sound signal
@@ -320,7 +322,10 @@ Window {
     id: finishAnim
     target: pendulum; property: "rotation"
     to: 0
-    onStopped: countAnim.duration = 150
+    onStopped: {
+      countAnim.duration = 150
+      inMotion = false
+    }
   }
 
   function nextTempoPop() {
