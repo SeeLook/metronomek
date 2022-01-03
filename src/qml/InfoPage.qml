@@ -41,6 +41,7 @@ Tdialog {
 
       LinkText {
         width: parent.width - fm.height
+        wrapMode: Text.WordWrap
         anchors.horizontalCenter: parent.horizontalCenter
         textFormat: Text.StyledText
         text: "<br><a href=\"https://metronomek.sourceforge.io\">metronomek.sf.net</a>
@@ -59,6 +60,7 @@ Tdialog {
 
       LinkText {
         width: parent.width - fm.height
+        wrapMode: Text.WordWrap
         text: qsTr("Metronomek ticks and rings through<br><b>%1</b> library.")
                 .arg(GLOB.isAndroid() ? "<a href=\"https://github.com/google/oboe\">Oboe</a>"
                 : "<a href=\"https://www.music.mcgill.ca/~gary/rtaudio/index.html\">RtAudio</a>")
