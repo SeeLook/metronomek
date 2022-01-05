@@ -1,11 +1,7 @@
 # TODO list for MetronomeK
 
- - configuration for programming tempo change:
-   - event after tempo will be changed (time, bar/beats number, click/touch)
-   - target tempo
-   - allow acceleration and slowing down
-   - storing set of tempo changes (piece) into XML structure
  - sounds and option for verbal counting
+ - save/load rhythmic composition to/from file system
  - option for playing beat/ring in separate speaker/earphone of stereo output
  - dark mode (Android for sure, maybe desktop)
  - option for blinking of background during tick

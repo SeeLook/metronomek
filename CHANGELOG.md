@@ -1,12 +1,20 @@
-## 0.5.7-devel
+## 0.6.0
 
   #### Added programmable speed up & slow down (_accelerando_ and _rallentando_)
+    - new settings page to manage tempo change(s)
     - list of tempo changes can be defined - kind of rhythmic composition
     - every change has initial and target tempos and its duration can be set in bars, beats or seconds
+    - duration may be infinite, then popup appears to switch to the next tempo
     - changes set (composition) can be stored in XML file
     - and there is the list of compositions to select
 
-  #### Color of switches in menu corresponds with color of the menu button dots
+  #### Avoid cracks and cuts when playing finishes
+    - terminate playing only when audio data of entire beat was sent
+
+  #### Many of visual improvements
+    - keep main menu text visible - adjust font size to width or elide
+    - color of switches in menu corresponds with color of the menu button dots
+    - [Windows] use system accent color for highlight
 
 ------------------------------------------------------------
 
