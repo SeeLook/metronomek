@@ -18,6 +18,10 @@
 #include <QtCore/qsettings.h>
 #include <QtCore/qdebug.h>
 
+#if !defined (Q_OS_ANDROID)
+  #include <QtCore/qcommandlineparser.h>
+#endif
+
 
 int main(int argc, char *argv[])
 {
@@ -102,6 +106,19 @@ int main(int argc, char *argv[])
   engine->load(url);
 
   qDebug() << "==== METRONOMEK LAUNCH TIME" << startElapsed.nsecsElapsed() / 1000000.0 << "[ms] ====";
+
+#if !defined (Q_OS_ANDROID)
+  if (argc > 1) {
+    QCommandLineParser cmd;
+    auto helpOpt = cmd.addHelpOption();
+
+    cmd.addOptions({{ QStringLiteral("no-version"), QStringLiteral("Do not display app version.\n")}});
+
+    cmd.parse(app->arguments());
+    if (cmd.isSet(helpOpt))
+      cmd.showHelp();
+  }
+#endif
 
   int execCode = app->exec();
 

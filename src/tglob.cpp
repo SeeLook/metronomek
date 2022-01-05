@@ -158,7 +158,10 @@ QString Tglob::aboutQt() const {
 
 
 QString Tglob::version() const {
-  return QString(METRONOMEK_VERSION);
+  if (qApp->arguments().last().contains(QLatin1String("--no-version")))
+    return QString();
+  else
+    return QString(METRONOMEK_VERSION);
 }
 
 
