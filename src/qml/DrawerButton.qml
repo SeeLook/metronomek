@@ -21,7 +21,7 @@ AbstractButton {
       anchors.verticalCenter: parent.verticalCenter
       leftPadding: fm.height
       text: dButt.text
-      font.pixelSize: fm.height
+      font.pixelSize: fm.height * 0.9
       minimumPixelSize: fm.height / 2; fontSizeMode: Text.Fit
       textFormat: Text.StyledText
       elide: Text.ElideRight
@@ -36,18 +36,18 @@ AbstractButton {
         id: chB
         checkable: true
         checked: dButt.checked
-        indicator: Text {
-          font { family: "metronomek"; pixelSize: fm.height * 2 }
-          x: chB.leftPadding; y: (parent.height - height) / 2
+        scale: pressed ? 0.8 : 1
+        Behavior on scale { NumberAnimation {} }
+        indicator: TipRect {
           color: bgColor
-          text: "\u00A4"; style: Text.Raised; styleColor: activPal.shadow
-
-          Text {
+          x: chB.leftPadding; y: (parent.height - height) / 2
+          width: fm.height * 1.6; height: width
+          Rectangle {
             anchors.centerIn: parent
-            color: chB.checked ? bgColor : "white"
+            border { width: chB.checked ? 0 : 1; color: Qt.darker(bgColor, 1.3) }
+            width: parent.width * 0.6; height: width; radius: width / 8
+            color: chB.checked ? bgColor : activPal.base
             Behavior on color { ColorAnimation {} }
-            font { family: "metronomek"; pixelSize: fm.height * 1.2 }
-            text: "\u00A4"; style: Text.Sunken; styleColor: activPal.shadow
           }
         }
         onToggled: {

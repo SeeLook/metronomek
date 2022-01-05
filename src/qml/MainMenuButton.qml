@@ -15,28 +15,25 @@ AbstractButton {
   property var drawerContent: null
 
   background: Rectangle {
-    color: GLOB.alpha(activPal.text, pressed ? 120 : 20)
+    color: GLOB.alpha(activPal.text, pressed ? 120 : 30)
     radius: width / 4
   }
   contentItem: Column {
     width: parent.width
-    spacing: height / 10
+    spacing: height / 6.6666
     topPadding: spacing
-    Text {
-      text: "\u00A4"
-      font { family: "metronomek"; pixelSize: menuButt.width / 2 }
+    Rectangle {
+      width: menuButt.width / 3; height: width; radius: width / 4
       anchors.horizontalCenter: parent.horizontalCenter
       color: SOUND.ring ? "red" : activPal.text
     }
-    Text {
-      text: "\u00A4"
-      font { family: "metronomek"; pixelSize: menuButt.width / 2 }
+    Rectangle {
+      width: menuButt.width / 3; height: width; radius: width / 4
       anchors.horizontalCenter: parent.horizontalCenter
       color: GLOB.countVisible ? "yellow" : activPal.text
     }
-    Text {
-      text: "\u00A4"
-      font { family: "metronomek"; pixelSize: menuButt.width / 2 }
+    Rectangle {
+      width: menuButt.width / 3; height: width; radius: width / 4
       anchors.horizontalCenter: parent.horizontalCenter
       color: GLOB.stationary ? activPal.text : "lime"
     }
