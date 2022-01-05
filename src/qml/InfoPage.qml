@@ -53,7 +53,8 @@ Tdialog {
 
       LinkText {
         width: parent.width - fm.height
-        text: GLOB.aboutQt() + "<br><a href=\"https://qt.io\">https://qt.io</a><br>"
+        wrapMode: Text.WordWrap
+        text: GLOB.aboutQt() + "<br><b><a href=\"https://qt.io\">https://qt.io</a></b><br>"
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
       }
