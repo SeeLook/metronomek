@@ -2,6 +2,7 @@
 
  - sounds and option for verbal counting
  - save/load rhythmic composition to/from file system
+ - divisions of a beat
  - option for playing beat/ring in separate speaker/earphone of stereo output
  - dark mode (Android for sure, maybe desktop)
  - option for blinking of background during tick
