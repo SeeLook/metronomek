@@ -21,7 +21,7 @@
     <ul>
       <li>natural (real audio) beat sounds</li>
       <li>selectable sounds of ticking and ringing (i.e.: mechanical metronome, clapping, snapping, etc.)</li>
-      <li>programmable changes of tempo (aka <i>accelerando</i>/<i>rallentando</i>)</li>
+      <li>programmable changes of tempo (aka accelerando and rallentando)</li>
       <li>visible counting</li>
       <li>determining tempo BPM by tapping or clicking</li>
       <li>cross-platform: Android, Linux, Mac, Windows</li>
