@@ -122,6 +122,7 @@ Column {
     SequentialAnimation {
       id: hintAnim
       running: visible && runAnimOnce
+      alwaysRunToEnd: true
       PauseAnimation { duration: 500 }
       ScriptAction{ script: tDial.showHint = true }
       SequentialAnimation {
