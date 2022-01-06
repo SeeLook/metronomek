@@ -21,7 +21,7 @@
     <ul>
       <li>natural (real audio) beat sounds</li>
       <li>selectable sounds of ticking and ringing (i.e.: mechanical metronome, clapping, snapping, etc.)</li>
-      <li>possibility to change meter</li>
+      <li>programmable changes of tempo (aka <i>accelerando</i>/<i>rallentando</i>)</li>
       <li>visible counting</li>
       <li>determining tempo BPM by tapping or clicking</li>
       <li>cross-platform: Android, Linux, Mac, Windows</li>
@@ -36,12 +36,16 @@
       <image>https://metronomek.sourceforge.io/images/main.png</image>
     </screenshot>
     <screenshot>
-      <caption>Changing tempo</caption>
+      <caption>In action</caption>
       <image>https://a.fsdn.com/con/app/proj/metronomek/screenshots/MetronomeK-1.png</image>
     </screenshot>
     <screenshot>
-      <caption>Options</caption>
+      <caption>Natural sounds to choose</caption>
       <image>https://a.fsdn.com/con/app/proj/metronomek/screenshots/MetronomeK-2.png</image>
+    </screenshot>
+    <screenshot>
+      <caption>Programming tempo changes</caption>
+      <image>https://a.fsdn.com/con/app/proj/metronomek/screenshots/MetronomeK-3.png</image>
     </screenshot>
   </screenshots>
 
@@ -75,7 +79,7 @@
   <update_contact>seelook_AT_gmail.com</update_contact>
 
   <releases>
-    <release date="2021-11-19" version="0.5.1"/>
+    <release date="2022-01-05" version="0.6.0"/>
   </releases>
 
 </component>

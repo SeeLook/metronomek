@@ -1,5 +1,5 @@
 # This file is part of Metronomek
-# Copyright (C) 2019-2020 by Tomasz Bojczuk (seelook@gmail.com)
+# Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
 
 android: TARGET = MetronomeK
@@ -13,7 +13,7 @@ TEMPLATE = app
 VERSION = $$system(sed -n \"9 p\" $$PWD/CMakeLists.txt | awk -F\" \" \'{ print $2 }\' | sed \'s/\"//g\' | sed \'s/\)//g\')
 
 ANDROID_VERSION_NAME = $$VERSION
-ANDROID_VERSION_CODE = "3"
+ANDROID_VERSION_CODE = "4"
 
 QMAKE_SUBSTITUTES += src/metronomek_conf.h.in
 
