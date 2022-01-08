@@ -127,6 +127,7 @@ TaudioOUT::TaudioOUT(QObject *parent) :
   setRingType(qBound(0, GLOB->settings()->value(QStringLiteral("ringType"), 0).toInt(), ringTypeCount() - 1));
   setRing(GLOB->settings()->value(QStringLiteral("doRing"), false).toBool());
   setVariableTempo(GLOB->settings()->value(QStringLiteral("variableTempo"), false).toBool());
+  setVerbalCount(GLOB->settings()->value(QStringLiteral("verbalCount"), false).toBool());
 
   connect(this, &TaudioOUT::finishSignal, this, &TaudioOUT::playingFinishedSlot);
 
@@ -139,6 +140,9 @@ TaudioOUT::~TaudioOUT()
   stopTicking();
   m_instance = nullptr;
 
+  if (!m_numerals.isEmpty())
+    qDeleteAll(m_numerals);
+
   if (m_audioDevice && m_audioDevice->deviceName() != QLatin1String("anything"))
     GLOB->settings()->setValue(QStringLiteral("outDevice"), m_audioDevice->deviceName());
   GLOB->settings()->setValue(QStringLiteral("beatType"), m_beatType);
@@ -147,6 +151,7 @@ TaudioOUT::~TaudioOUT()
   GLOB->settings()->setValue(QStringLiteral("tempo"), m_variableTempo ? m_staticTempo : m_tempo);
   GLOB->settings()->setValue(QStringLiteral("ringType"), m_ringType);
   GLOB->settings()->setValue(QStringLiteral("variableTempo"), m_variableTempo);
+  GLOB->settings()->setValue(QStringLiteral("verbalCount"), m_verbalCount);
 }
 
 
@@ -244,10 +249,20 @@ void TaudioOUT::startPlayingSlot() {
 void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRead) {
   qint16 sample = 0;
   auto out = reinterpret_cast<qint16*>(data);
+
+  int verbCount = 0;
+  if (m_verbalCount)
+    verbCount = qBound(0, (m_playingBeat - 1) % meterOfPart(m_playingPart), 11);
+
   for (unsigned int i = 0; i < maxLen; i++) {
-    sample = m_beat.sampleAt(m_currSample);
+    if (m_verbalCount)
+      sample = m_numerals[verbCount]->sampleAt(m_currSample);
+    else
+      sample = m_beat.sampleAt(m_currSample);
+
     m_currSample++;
     if (m_currSample >= m_samplPerBeat + m_missingSampleNr) {
+
       if (m_goingToStop) {
         m_goingToStop = false;
         wasRead = CALLBACK_STOP;
@@ -277,6 +292,9 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
         m_playingPart++;
         m_playingBeat = 0;
       }
+
+      if (m_verbalCount)
+        verbCount = qBound(0, (m_playingBeat - 1) % meterOfPart(m_playingPart), 11);
 
       m_samplPerBeat = (m_sampleRate * 60) / t;
       m_offsetSample = static_cast<qreal>((60 * m_sampleRate) - m_samplPerBeat * t) / static_cast<qreal>(t);
@@ -432,6 +450,25 @@ void TaudioOUT::setTempo(int t) {
     m_missingSampleNr = 0;
     emit tempoChanged();
     setNameIdByTempo(m_tempo);
+  }
+}
+
+
+void TaudioOUT::setVerbalCount(bool vc) {
+  if (vc != m_verbalCount) {
+    m_verbalCount = vc;
+    if (m_verbalCount && m_numerals.isEmpty()) {
+      QString vLang;
+      if (GLOB->lang().isEmpty()) {
+        QLocale l;
+        vLang = l.name().left(2);
+      }
+      vLang = vLang != QLatin1String("pl") ? QStringLiteral("en") : QStringLiteral("pl");
+      for (int n = 0; n < 12; ++n) {
+        m_numerals << new TsoundData(getRawFilePath(QString("counting/%1/%2").arg(vLang).arg(n + 1)));
+      }
+    }
+    emit verbalCountChanged();
   }
 }
 

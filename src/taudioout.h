@@ -76,6 +76,7 @@ class TaudioOUT : public QObject
   Q_PROPERTY(bool ring READ ring WRITE setRing NOTIFY ringChanged)
   Q_PROPERTY(int tempo READ tempo WRITE setTempo NOTIFY tempoChanged)
   Q_PROPERTY(int nameTempoId READ nameTempoId NOTIFY nameTempoIdChanged)
+  Q_PROPERTY(bool verbalCount READ verbalCount WRITE setVerbalCount NOTIFY verbalCountChanged)
   // tempo change properties
   Q_PROPERTY(bool variableTempo READ variableTempo WRITE setVariableTempo NOTIFY variableTempoChanged)
 
@@ -139,6 +140,9 @@ public:
   int tempo() const { return m_tempo; }
   void setTempo(int t);
 
+  bool verbalCount() const { return m_verbalCount; }
+  void setVerbalCount(bool vc);
+
   int nameTempoId() const { return m_nameTempoId; }
 
   bool variableTempo() const { return m_variableTempo; }
@@ -188,6 +192,7 @@ signals:
   void ringChanged();
   void ringTypeChanged();
   void tempoChanged();
+  void verbalCountChanged();
   void nameTempoIdChanged();
   void tempoPartIdChanged();
   void variableTempoChanged();
@@ -228,7 +233,10 @@ private:
   int                    m_playingBeat = 1;
   int                    m_infiBeats = 0; /**< Beats number when current par is infinite */
   bool                   m_toNextPart = false; /**< TRUE when @p outCallBack will switch to next tempo part */
+
   int                    m_staticTempo;
+  bool                   m_verbalCount = false;
+  QVector<TsoundData*>   m_numerals;
 
   int                    m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
   int                    m_currSample = 0;

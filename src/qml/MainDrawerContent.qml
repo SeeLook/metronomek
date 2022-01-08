@@ -25,7 +25,8 @@ Flickable {
     }
 
     DrawerButton {
-      text: qsTr("beat sound") + ":<br>&nbsp;<b> - " + SOUND.getBeatName(SOUND.beatType) + "</b>"
+      text: qsTr("beat sound") + ":<br>&nbsp;<b> - "
+          + (SOUND.verbalCount ? qsTr("Verbal count") : SOUND.getBeatName(SOUND.beatType)) + "</b>"
       onClicked: beatMenu.popup()
 
       Menu {
@@ -33,12 +34,16 @@ Flickable {
         parent: mainWindow.contentItem
         width: Math.min(drawCol.width, fm.height * 20)
         Repeater {
-          model: SOUND.beatTypeCount()
+          model: SOUND.beatTypeCount() + 1
           MenuItem {
-            text: SOUND.getBeatName(index)
-            onClicked: SOUND.beatType = index
+            text: index ? SOUND.getBeatName(index - 1) : qsTr("Verbal count")
+            onClicked: {
+              if (index)
+                SOUND.beatType = index - 1
+              SOUND.verbalCount = index === 0
+            }
             checkable: true
-            checked: SOUND.beatType === index
+            checked: SOUND.verbalCount ? index === 0 : SOUND.beatType === index - 1
           }
         }
       }
