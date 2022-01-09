@@ -224,6 +224,12 @@ void TaudioOUT::startPlayingSlot() {
     m_offsetSample = static_cast<qreal>((60 * m_sampleRate) - m_samplPerBeat * t) / static_cast<qreal>(t);
     setNameIdByTempo(t);
 
+    if (m_verbalCount) {
+      for (int n = 0; n < 12; ++n) {
+        m_numerals[n]->setStarted(n == 0);
+        m_numerals[n]->resetPos();
+      }
+    }
     m_currSample = 0;
     m_offsetCounter = 0.0;
     m_missingSampleNr = 0;
@@ -255,10 +261,24 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
     verbCount = qBound(0, (m_playingBeat - 1) % meterOfPart(m_playingPart), 11);
 
   for (unsigned int i = 0; i < maxLen; i++) {
-    if (m_verbalCount)
-      sample = m_numerals[verbCount]->sampleAt(m_currSample);
-    else
-      sample = m_beat.sampleAt(m_currSample);
+    if (m_verbalCount) {
+        if (m_numerals[verbCount]->hasNext())
+          sample = m_numerals[verbCount]->readSample();
+        else
+          sample = 0;
+
+        int vCnt = verbCount > 0 ? verbCount - 1 : meterOfPart(m_playingPart) - 1;
+        while (m_numerals[vCnt]->started() && m_numerals[vCnt]->hasNext()) {
+          sample = mix(sample, m_numerals[vCnt]->readSample());
+          if (!m_numerals[vCnt]->hasNext())
+            m_numerals[vCnt]->setStarted(false);
+          vCnt--;
+          if (vCnt < 0)
+            vCnt = meterOfPart(m_playingPart) - 1;
+        }
+//     sample = mix(m_numerals[verbCount]->sampleAt(m_currSample), qRound(m_beat.sampleAt(m_currSample) * 0.6));
+    } else
+        sample = m_beat.sampleAt(m_currSample);
 
     m_currSample++;
     if (m_currSample >= m_samplPerBeat + m_missingSampleNr) {
@@ -293,8 +313,11 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
         m_playingBeat = 0;
       }
 
-      if (m_verbalCount)
+      if (m_verbalCount) {
         verbCount = qBound(0, (m_playingBeat - 1) % meterOfPart(m_playingPart), 11);
+        m_numerals[verbCount]->resetPos();
+        m_numerals[verbCount]->setStarted(true);
+      }
 
       m_samplPerBeat = (m_sampleRate * 60) / t;
       m_offsetSample = static_cast<qreal>((60 * m_sampleRate) - m_samplPerBeat * t) / static_cast<qreal>(t);
@@ -465,7 +488,7 @@ void TaudioOUT::setVerbalCount(bool vc) {
       }
       vLang = vLang != QLatin1String("pl") ? QStringLiteral("en") : QStringLiteral("pl");
       for (int n = 0; n < 12; ++n) {
-        m_numerals << new TsoundData(getRawFilePath(QString("counting/%1/%2").arg(vLang).arg(n + 1)));
+        m_numerals << new TsoundData(getRawFilePath(QString("counting/%1/%2").arg(vLang).arg(n + 1, 2, 'g', -1, '0')));
       }
     }
     emit verbalCountChanged();

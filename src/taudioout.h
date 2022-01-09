@@ -33,6 +33,9 @@ public:
        */
   qint16 sampleAt(int samPos) const { return samPos < m_size ? m_data[samPos] : 0; }
 
+  bool started() const { return m_started; }
+  void setStarted(bool st) { m_started = st; }
+
       /**
        * Returns sample at current position and moves one step forward.
        * When position is out of scope, returns null
@@ -45,6 +48,7 @@ public:
        * Resets position
        */
   void resetPos() { m_pos = 0; }
+  bool hasNext() const { return m_pos < m_size; }
 
   qint16* data() { return m_data; }
 
@@ -59,6 +63,7 @@ private:
   qint16             *m_data = nullptr;
   int                 m_pos = 0;
   int                 m_size = 0;
+  bool                m_started = false;
 };
 
 
