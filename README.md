@@ -10,6 +10,7 @@ but with all goods of computer program.
 ## Features:
   - natural (real audio) sounds
   - selectable beat and ring sounds (i.e.: real metronome, clapping, snapping, etc.)
+  - programmable tempo changes (aka accelerando and rallentando)
   - possibility to change meter
   - visible counting
   - determining tempo BPM by tapping
@@ -19,15 +20,28 @@ but with all goods of computer program.
 --------------------------
 
 ## Download and installation
-Binary packages (Linux AppImage, Mac Os dmg, Windows installer and Android apk)  
-are hosted [at SourceForge](https://sourceforge.net/projects/metronomek/files/)
+**Binary packages**  (Linux AppImage, Mac Os dmg, Windows installer and Android apk)  
+and **sources** are hosted  
+ [at SourceForge](https://sourceforge.net/projects/metronomek/files/)
+ [<img src="https://a.fsdn.com/con/app/sf-download-button" alt="SF" width="17%">](https://sourceforge.net/projects/metronomek/files/)
 
-  - [Arch Linux (AUR)](https://aur.archlinux.org/packages/metronomek/)  
+**Metronomek is also available at:**
+
+  - [Google Play Store](https://play.google.com/store/apps/details?id=net.sf.metronomek)
+    [<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
+    alt="Get it on Google Play"
+    width="15%">](https://play.google.com/store/apps/details?id=net.sf.metronomek)
+
+  - [Arch Linux (AUR)](https://aur.archlinux.org/packages/metronomek/)
+    [<img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Archlinux-icon-crystal-64.svg" alt="AUR" width="5%">](https://aur.archlinux.org/packages/metronomek/)  
     ```
     yay -S metronomek
     ```
 
-  - [Flatpak](https://flathub.org/apps/details/net.sf.metronomek)  
+  - [Flatpak](https://flathub.org/apps/details/net.sf.metronomek)
+    [<img src="https://flathub.org/assets/themes/flathub/flathub-logo-toolbar.svg"
+    alt="Metronomek FlatPak"
+    width="100">](https://flathub.org/apps/details/net.sf.metronomek)  
     ```
     flatpak install flathub net.sf.metronomek
     ```
