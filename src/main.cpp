@@ -109,14 +109,23 @@ int main(int argc, char *argv[])
 
 #if !defined (Q_OS_ANDROID)
   if (argc > 1) {
-    QCommandLineParser cmd;
-    auto helpOpt = cmd.addHelpOption();
+    auto ext = app->arguments().last().right(4).toLower();
+    if (ext == QLatin1String(".wav") || ext == QLatin1String(".raw")) {
+        sound->importFromCommandline();
+    } else {
+        QCommandLineParser cmd;
+        auto helpOpt = cmd.addHelpOption();
 
-    cmd.addOptions({{ QStringLiteral("no-version"), QStringLiteral("Do not display app version.\n")}});
+        cmd.addOptions({{ QStringLiteral("no-version"), QStringLiteral("Do not display app version.\n")}});
 
-    cmd.parse(app->arguments());
-    if (cmd.isSet(helpOpt))
-      cmd.showHelp();
+        cmd.addOptions({{QStringList() << QStringLiteral("noise-threshold") << QStringLiteral("t"),
+                      QStringLiteral("Percentage value above which a word is detected in audio file.\n"),
+                      QStringLiteral("1.2%")}});
+
+        cmd.parse(app->arguments());
+        if (cmd.isSet(helpOpt))
+          cmd.showHelp();
+    }
   }
 #endif
 
