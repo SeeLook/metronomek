@@ -15,6 +15,24 @@
 #include <QtCore/qdebug.h>
 
 
+class Tmark
+{
+  public:
+    Tmark(quint32 f, quint32 t) : m_from(f), m_to(t) {}
+    Tmark(int f, int t) : m_from(f), m_to(t) {}
+
+    quint32 from() const { return m_from; }
+
+    quint32 to() const { return m_to; }
+
+    quint32 length() const { return m_to - m_from; }
+
+  private:
+    quint32       m_from = 0;
+    quint32       m_to = 0;
+};
+
+
 TcountingImport::TcountingImport(QVector<TsoundData*>* numList, QObject* parent) :
   QObject(parent),
   m_numerals(numList)
@@ -47,7 +65,7 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
 
   quint32          sampleRate = 48000;
   int              frames;
-  qint16*          data;
+  qint16*          data = nullptr;
   bool             ok = true;
 
 // Read audio data from file into data array
@@ -76,7 +94,7 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
               quint16 audioFormat;
               in >> audioFormat;
               audioFormat = qFromBigEndian<quint16>(audioFormat);
-              qDebug() << "format" << reinterpret_cast<char*>(&headChunk) << audioFormat;
+              // TODO: interpret audioFormat == 0 - another header
               if (headChunk == 544501094 && audioFormat == 1) { // 544501094 is 'value' of 'fmt ' text in valid WAV file
                   in >> channelsNr;
                   channelsNr = qFromBigEndian<quint16>(channelsNr);
@@ -131,8 +149,11 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
       qDebug() << "[TcountingImport] Cannot open file" << fileName;
   }
 
-  if (!ok)
+  if (!data || !ok) {
+    if (data)
+      delete[] data;
     return;
+  }
 
 // determine noise level
   qint16 noiseLevel = 10;
@@ -147,7 +168,7 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
   int onSetAt = 0;
   int onEndAt = 0;
   int silCnt = 0;
-  QVector<QPoint> numerals;
+  QVector<Tmark> numerals;
 
   for (int f = 48001; f < frames; ++f) {
     qint16 absData = qAbs(data[f]);
@@ -162,7 +183,7 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
                     onSetFound = false;
                     onEndAt = f;
                     silCnt = 0;
-                    numerals << QPoint(onSetAt, onEndAt);
+                    numerals << Tmark(onSetAt, onEndAt);
                     qDebug() << "finished" << onEndAt << (onEndAt / 48000.0) << "dur:" << (onEndAt - onSetAt) << ((onEndAt - onSetAt) / 48000.0);
                 }
               } else if (f - onSetAt > 2000) { // 55 ms
@@ -197,11 +218,11 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
 
     for (int d = 0; d < 12; ++d) {
       if (d < numerals.size()) {
-        auto marks = numerals[d];
+        Tmark* marks = &numerals[d];
         if (doCreate)
-          m_numerals->append(new TsoundData(data + marks.x(), marks.y() - marks.x()));
+          m_numerals->append(new TsoundData(data + marks->from(), marks->length()));
         else
-          m_numerals->at(d)->copyData(data + marks.x(), marks.y() - marks.x());
+          m_numerals->at(d)->copyData(data + marks->from(), marks->length());
       }
     }
 //     if (!outDir.isEmpty()) {
