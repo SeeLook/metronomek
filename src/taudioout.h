@@ -6,65 +6,17 @@
 #define TAUDIOOUT_H
 
 
+#include "tsounddata.h"
 #include <QtCore/qobject.h>
 
 
 class TabstractAudioOutput;
 class TspeedHandler;
+class TcountingImport;
 
 
 #define SOUND (TaudioOUT::instance())
 
-
-/**
- * Buffer-like structure to keep and handle audio data
- */
-class TsoundData {
-
-public:
-  TsoundData() {}
-  TsoundData(const QString& rawFileName);
-  ~TsoundData();
-
-  int size() const { return m_size; }
-
-      /**
-       * sample value or null if out of scope
-       */
-  qint16 sampleAt(int samPos) const { return samPos < m_size ? m_data[samPos] : 0; }
-
-  bool started() const { return m_started; }
-  void setStarted(bool st) { m_started = st; }
-
-      /**
-       * Returns sample at current position and moves one step forward.
-       * When position is out of scope, returns null
-       */
-  qint16 readSample() { m_pos++; return sampleAt(m_pos - 1); }
-
-  int pos() const { return m_pos; }
-
-      /**
-       * Resets position
-       */
-  void resetPos() { m_pos = 0; }
-  bool hasNext() const { return m_pos < m_size; }
-
-  qint16* data() { return m_data; }
-
-      /**
-       * Reads audio data from raw audio file with given name
-       */
-  void setFile(const QString& rawFileName);
-
-  void deleteData();
-
-private:
-  qint16             *m_data = nullptr;
-  int                 m_pos = 0;
-  int                 m_size = 0;
-  bool                m_started = false;
-};
 
 
 /**
@@ -155,6 +107,8 @@ public:
 
   Q_INVOKABLE QString getTempoNameById(int nameId);
 
+  void importFromCommandline();
+
 //############  Tempo change methods    ####################
 
   Q_INVOKABLE TspeedHandler* speedHandler();
@@ -242,6 +196,7 @@ private:
   int                    m_staticTempo;
   bool                   m_verbalCount = false;
   QVector<TsoundData*>   m_numerals;
+  TcountingImport        *m_countImport = nullptr;
 
   int                    m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
   int                    m_currSample = 0;

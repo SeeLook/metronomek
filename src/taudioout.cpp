@@ -13,6 +13,7 @@
 // #include "taudiobuffer.h"
 #include "ttempopart.h"
 #include "tspeedhandler.h"
+#include "tcountingimport.h"
 #include "tglob.h"
 
 #include <QtQml/qqml.h>
@@ -25,50 +26,6 @@
 
 #include <QtCore/qdebug.h>
 
-
-//#################################################################################################
-//###################                TsoundData        ############################################
-//#################################################################################################
-
-TsoundData::TsoundData(const QString& rawFileName)
-{
-  if (!rawFileName.isEmpty())
-    setFile(rawFileName);
-}
-
-
-TsoundData::~TsoundData()
-{
-  deleteData();
-}
-
-
-void TsoundData::deleteData()  {
-  if (m_data && m_size) {
-    delete m_data;
-    m_data = nullptr;
-    m_size = 0;
-  }
-}
-
-
-void TsoundData::setFile(const QString& rawFileName) {
-  deleteData();
-  if (rawFileName.isEmpty())
-    return;
-
-  QFile rawFile(rawFileName);
-  if (rawFile.exists()) {
-      rawFile.open(QIODevice::ReadOnly);
-      m_size = static_cast<int>(rawFile.size() / 2);
-      m_data = new qint16[m_size];
-      QDataStream beatStream(&rawFile);
-      beatStream.readRawData(reinterpret_cast<char*>(m_data), m_size * 2);
-  } else {
-      m_size = 0;
-      qDebug() << "[TaudioOUT] sound file" << rawFileName << "doesn't exist";
-  }
-}
 
 //#################################################################################################
 //###################                TaudioOUT         ############################################
@@ -511,6 +468,14 @@ void TaudioOUT::setVariableTempo(bool varTemp) {
 QString TaudioOUT::getTempoNameById(int nameId) {
   return nameId < GLOB->temposCount() ? GLOB->tempoName(nameId).name() : QString();
 }
+
+
+void TaudioOUT::importFromCommandline() {
+  if (!m_countImport)
+    m_countImport = new TcountingImport(&m_numerals, this);
+  m_countImport->importFromCommandline();
+}
+
 
 //#################################################################################################
 //############                Tempo change methods         ########################################

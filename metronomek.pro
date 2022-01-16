@@ -37,6 +37,8 @@ SOURCES += \
         src/tabstractaudiooutput.cpp \
 #        src/tqtaudioout.cpp \
         src/toboeaudioout.cpp \
+        src/tsounddata.cpp \
+        src/tcountingimport.cpp \
         src/tmetroshape.cpp \
         \
         src/tspeedhandler.cpp \
@@ -51,6 +53,8 @@ HEADERS += \
         src/tabstractaudiooutput.h \
 #        src/tqtaudioout.h \
         src/toboeaudioout.h \
+        src/tsounddata.h \
+        src/tcountingimport.h \
         src/tmetroshape.h \
         \
         src/tspeedhandler.h \
