@@ -23,12 +23,11 @@ appimage-amd64:
     - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DQT_QMAKE_EXECUTABLE=/opt/qt515/bin/qmake .
     - make
     - make appimage
-    - ls
     - echo "Uploading AppImage"
     - rsync -avzr --delete Metronomek*.AppImage $SSH_USER@$SSH_HOST:/$REMOTE_PATH/testing/
 
   artifacts:
-    name: Metronomek-AppImage-$(sed -n "9 p" CMakeLists.txt | awk -F" " '{ print $2 }' | sed 's/\"//g' | sed 's/)//g')-b$(git rev-list HEAD --count)
+    name: Metronomek-AppImage-$(head -9 CMakeLists.txt | tail -1 | awk -F ' ' '{ print $2 }' | sed 's/\"//g' | sed 's/)//g')-b$(git rev-list HEAD --count)
     paths:
       - 'Metronomek-*.AppImage*'
 
