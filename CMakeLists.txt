@@ -62,9 +62,8 @@ else()
     endif()
 endif()
 
-# Beat sound samples
-file(GLOB BEAT_FILES "${CMAKE_CURRENT_SOURCE_DIR}/sounds/*.raw48-16")
-install(FILES ${BEAT_FILES} DESTINATION "${INS_PREF}/sounds")
+# Sound samples
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/sounds" DESTINATION "${INS_PREF}")
 
 install(FILES LICENSE CHANGELOG.md DESTINATION "${INS_PREF}")
 

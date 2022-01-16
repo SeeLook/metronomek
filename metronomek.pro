@@ -67,7 +67,7 @@ RESOURCES += src/qml/metronomek_qml.qrc images/metronomek_images.qrc
 sounds.path = /assets/sounds
 translations.path = /assets/translations
 
-sounds.files = $$files(sounds/*.raw48-16, true)
+sounds.files = sounds/*
 sounds.depends += FORCE
 
 translations.files = $$files(translations/*.qm, true)
