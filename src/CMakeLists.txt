@@ -62,6 +62,54 @@ if (ANDROID)
     )
 endif()
 
+if (UNIX)
+  IF(SOUNDTOUCH_LIBRARIES AND SOUNDTOUCH_INCLUDE_DIRS)
+    set(SOUNDTOUCH_FOUND TRUE)
+  ELSE(SOUNDTOUCH_LIBRARIES AND SOUNDTOUCH_INCLUDE_DIRS)
+    find_path(SOUNDTOUCH_INCLUDE_DIR
+          NAMES
+            soundtouch/SoundTouch.h
+          PATHS
+            /usr/include
+            /usr/local/include
+            /opt/local/include
+            ${CMAKE_CURRENT_SOURCE_DIR}
+            ${CMAKE_BINARY_DIR}/../soundtouch
+        )
+
+    find_library(SOUNDTOUCH_LIBRARY
+          NAMES
+            SoundTouch
+          PATHS
+            /usr/lib
+            /usr/lib64
+            /usr/local/lib
+            /opt/local/lib
+            /sw/lib
+            ${CMAKE_BINARY_DIR}/../soundtouch
+            ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
+    set(SOUNDTOUCH_INCLUDE_DIRS
+      ${SOUNDTOUCH_INCLUDE_DIR}
+    )
+    set(SOUNDTOUCH_LIBRARIES
+      ${SOUNDTOUCH_LIBRARY}
+    )
+
+    IF(SOUNDTOUCH_INCLUDE_DIRS AND SOUNDTOUCH_LIBRARIES)
+      set(SOUNDTOUCH_FOUND TRUE)
+    ENDIF(SOUNDTOUCH_INCLUDE_DIRS AND SOUNDTOUCH_LIBRARIES)
+
+    IF(SOUNDTOUCH_FOUND)
+        message(STATUS "SoundTouch was Found in:\n${SOUNDTOUCH_LIBRARIES}\nheaders are in: ${SOUNDTOUCH_INCLUDE_DIRS}")
+    ELSE(SOUNDTOUCH_FOUND)
+        message(FATAL_ERROR "Could not find SoundTouch\nTry call cmake with args:\n-DSOUNDTOUCH_LIBRARIES=/path_to/libSoundTouch.la(dll) -DSOUNDTOUCH_INCLUDE_DIRS=/path_to_dir_with/libSoundTouch.h\nor put those files in build dir or source dir")
+    ENDIF(SOUNDTOUCH_FOUND)
+
+  ENDIF(SOUNDTOUCH_LIBRARIES AND SOUNDTOUCH_INCLUDE_DIRS)
+endif (UNIX)
+
 
 target_compile_definitions(metronomek
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
@@ -70,6 +118,7 @@ target_compile_definitions(metronomek
 target_link_libraries(metronomek PRIVATE
   Qt5::Core Qt5::Gui Qt5::Quick
   ${RtAudio_LIBRARIES}
+  ${SOUNDTOUCH_LIBRARY}
 )
 
 if (APPLE) # info.plist

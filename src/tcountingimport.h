@@ -38,6 +38,13 @@ public:
 signals:
   void finishedChanged();
 
+protected:
+      /**
+       * Changes length of @p in counting data to appropriate duration: 300ms.
+       * Saves new stream into @p out with duration @p outLen frames
+       */
+  void squash(qint16* in, quint32 inLen, qint16*& out, quint32& outLen);
+
 private:
   bool                              m_finished = false;
   QVector<TsoundData*>             *m_numerals = nullptr;

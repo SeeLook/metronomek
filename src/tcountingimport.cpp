@@ -6,6 +6,8 @@
 #include "tcountingimport.h"
 #include "tsounddata.h"
 
+#include <soundtouch/SoundTouch.h>
+
 #include <QtCore/qcommandlineparser.h>
 #include <QtCore/qfile.h>
 #include <QtCore/qdatastream.h>
@@ -219,10 +221,18 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
     for (int d = 0; d < 12; ++d) {
       if (d < numerals.size()) {
         Tmark* marks = &numerals[d];
+        bool doSquash = marks->length() > 17500;
+        quint32 len = doSquash ? 0 : marks->length();
+        qint16* squashData = doSquash ? nullptr : data + marks->from();
+        if (doSquash) {
+          squash(data + marks->from(), marks->length(), squashData, len);
+        }
         if (doCreate)
-          m_numerals->append(new TsoundData(data + marks->from(), marks->length()));
+          m_numerals->append(new TsoundData(squashData, len));
         else
-          m_numerals->at(d)->copyData(data + marks->from(), marks->length());
+          m_numerals->at(d)->copyData(squashData, len);
+        if (doSquash)
+          delete[] squashData;
       }
     }
 //     if (!outDir.isEmpty()) {
@@ -247,3 +257,36 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
 //     emit finishedChanged();
 //   }
 // }
+
+
+//#################################################################################################
+//###################                PROTECTED         ############################################
+//#################################################################################################
+
+void TcountingImport::squash(qint16* in, quint32 inLen, qint16*& out, quint32& outLen) {
+  auto sTouch = new soundtouch::SoundTouch();
+  sTouch->setChannels(1);
+  sTouch->setSampleRate(48000);
+  sTouch->setTempo(static_cast<qreal>(inLen) / 16800.0);
+  auto floatIn = new float[inLen];
+  for (int s = 0; s < inLen; ++s)
+    floatIn[s] = in[s] / 32768.0f;
+
+  auto outTouch = new float[inLen];
+  sTouch->putSamples(static_cast<soundtouch::SAMPLETYPE*>(floatIn), inLen);
+  uint samplesReady = 0;
+  outLen = 0;
+  do {
+      samplesReady = sTouch->receiveSamples(static_cast<soundtouch::SAMPLETYPE*>(outTouch), inLen);
+      outLen += samplesReady;
+  } while (samplesReady != 0);
+
+  qDebug() << "squash" << static_cast<qreal>(inLen) / 16800.0 << inLen << outLen;
+  out = new qint16[outLen];
+  for (int s = 0; s < outLen; ++s)
+    out[s] = static_cast<qint16>(outTouch[s] * 32768);
+
+  delete[] outTouch;
+  delete[] floatIn;
+  delete sTouch;
+}
