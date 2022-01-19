@@ -34,6 +34,8 @@ void TsoundData::deleteData()  {
     delete m_data;
     m_data = nullptr;
     m_size = 0;
+    m_offset = 0;
+    m_peakAt = 0;
   }
 }
 
@@ -64,3 +66,16 @@ void TsoundData::copyData(qint16* other, int len) {
   std::copy(other, other + len, m_data);
 }
 
+
+int TsoundData::findPeakPos() {
+  qint16 max = 0;
+  qint16 sample;
+  for (int s = 0; s < m_size; ++s) {
+    sample = qAbs(m_data[s]);
+    if (sample > max) {
+      max = sample;
+      m_peakAt = s;
+    }
+  }
+  return m_peakAt;
+}

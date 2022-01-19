@@ -121,6 +121,9 @@ int main(int argc, char *argv[])
         cmd.addOptions({{QStringList() << QStringLiteral("noise-threshold") << QStringLiteral("t"),
                       QStringLiteral("Percentage value above which a word is detected in audio file.\n"),
                       QStringLiteral("1.2%")}});
+        cmd.addOptions({{QStringList() << QStringLiteral("no-align") << QStringLiteral("a"),
+          QStringLiteral("Do not align beginning audio data of counting."
+                         " By default it is done to keep their strongest part at the same position for all numerals.\n")}});
 #if defined (WITH_SOUNDTOUCH)
         cmd.addOptions({{QStringList() << QStringLiteral("shrink-counting") << QStringLiteral("s"),
           QStringLiteral("Squash numeral audio data duration when it is too long (> 300ms).\n"),

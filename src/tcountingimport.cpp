@@ -52,9 +52,14 @@ void TcountingImport::importFromCommandline() {
                               QStringLiteral("%"));
   cmd.addOption(noiseThresholdOpt);
 
+  QCommandLineOption alignCntOpt(QStringList() << QStringLiteral("no-align") << QStringLiteral("a"),
+                                 QStringLiteral("\n"),
+                                 QString());
+  cmd.addOption(alignCntOpt);
+
 #if defined (WITH_SOUNDTOUCH)
   QCommandLineOption shrinkOpt(QStringList() << QStringLiteral("shrink-counting") << QStringLiteral("s"),
-                               QStringLiteral(".\n"),
+                               QStringLiteral("\n"),
                                QStringLiteral("false"));
   cmd.addOption(shrinkOpt);
 #endif
@@ -62,9 +67,13 @@ void TcountingImport::importFromCommandline() {
   cmd.parse(qApp->arguments());
   if (cmd.isSet(noiseThresholdOpt))
     noiseThreshold = qRound((cmd.value(noiseThresholdOpt).toDouble() * 32768.0) / 100.0);
+  if (cmd.isSet(alignCntOpt))
+    m_alignCounting = false;
+
 #if defined (WITH_SOUNDTOUCH)
   m_doSquash = cmd.isSet(shrinkOpt);
 #endif
+
   importFormFile(qApp->arguments().last(), noiseThreshold);
 }
 
@@ -254,6 +263,11 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
         if (doSquash)
           delete[] squashData;
         maxTopPos = qMax(maxTopPos, m_numerals->at(d)->findPeakPos());
+      }
+    }
+    if (m_alignCounting) {
+      for (int d = 0; d < qMin(numerals.size(), 12); ++d) {
+        m_numerals->at(d)->setOffset(maxTopPos - m_numerals->at(d)->peakAt());
       }
     }
   }
