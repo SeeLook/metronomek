@@ -10,6 +10,11 @@ if (APPLE) # Mac RPath
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif (APPLE)
 
+option(USE_SOUNDTOUCH "Use SoundTouch library to squash verbal counting audio data" OFF)
+if (${USE_SOUNDTOUCH})
+  add_compile_definitions(WITH_SOUNDTOUCH)
+endif()
+
 if (NOT ANDROID)
   add_subdirectory(rtaudio)
 endif()
@@ -62,7 +67,7 @@ if (ANDROID)
     )
 endif()
 
-if (UNIX)
+if (USE_SOUNDTOUCH)
   IF(SOUNDTOUCH_LIBRARIES AND SOUNDTOUCH_INCLUDE_DIRS)
     set(SOUNDTOUCH_FOUND TRUE)
   ELSE(SOUNDTOUCH_LIBRARIES AND SOUNDTOUCH_INCLUDE_DIRS)
@@ -108,7 +113,7 @@ if (UNIX)
     ENDIF(SOUNDTOUCH_FOUND)
 
   ENDIF(SOUNDTOUCH_LIBRARIES AND SOUNDTOUCH_INCLUDE_DIRS)
-endif (UNIX)
+endif ()
 
 
 target_compile_definitions(metronomek

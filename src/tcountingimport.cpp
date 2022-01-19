@@ -6,7 +6,9 @@
 #include "tcountingimport.h"
 #include "tsounddata.h"
 
-#include <soundtouch/SoundTouch.h>
+#if defined (WITH_SOUNDTOUCH)
+  #include <soundtouch/SoundTouch.h>
+#endif
 
 #include <QtCore/qcommandlineparser.h>
 #include <QtCore/qfile.h>
@@ -49,9 +51,20 @@ void TcountingImport::importFromCommandline() {
                               QStringLiteral("\n"),
                               QStringLiteral("%"));
   cmd.addOption(noiseThresholdOpt);
+
+#if defined (WITH_SOUNDTOUCH)
+  QCommandLineOption shrinkOpt(QStringList() << QStringLiteral("shrink-counting") << QStringLiteral("s"),
+                               QStringLiteral(".\n"),
+                               QStringLiteral("false"));
+  cmd.addOption(shrinkOpt);
+#endif
+
   cmd.parse(qApp->arguments());
   if (cmd.isSet(noiseThresholdOpt))
     noiseThreshold = qRound((cmd.value(noiseThresholdOpt).toDouble() * 32768.0) / 100.0);
+#if defined (WITH_SOUNDTOUCH)
+  m_doSquash = cmd.isSet(shrinkOpt);
+#endif
   importFormFile(qApp->arguments().last(), noiseThreshold);
 }
 
@@ -218,32 +231,31 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
 
     bool doCreate = m_numerals->isEmpty();
 
+    int maxTopPos = 0;
     for (int d = 0; d < 12; ++d) {
       if (d < numerals.size()) {
         Tmark* marks = &numerals[d];
-        bool doSquash = marks->length() > 17500;
+#if defined (WITH_SOUNDTOUCH)
+        bool doSquash = m_doSquash && marks->length() > 17500;
+#else
+        bool doSquash = false;
+#endif
         quint32 len = doSquash ? 0 : marks->length();
         qint16* squashData = doSquash ? nullptr : data + marks->from();
+#if defined (WITH_SOUNDTOUCH)
         if (doSquash) {
           squash(data + marks->from(), marks->length(), squashData, len);
         }
+#endif
         if (doCreate)
           m_numerals->append(new TsoundData(squashData, len));
         else
           m_numerals->at(d)->copyData(squashData, len);
         if (doSquash)
           delete[] squashData;
+        maxTopPos = qMax(maxTopPos, m_numerals->at(d)->findPeakPos());
       }
     }
-//     if (!outDir.isEmpty()) {
-//       for (int n =0; n < numerals.size(); ++n) {
-//         QPoint& num = numerals[n];
-//         QFile rawF(QString("%1/%2.raw48-16").arg(outDir).arg(n + 1, 2, 'g', -1, '0'));
-//         if (rawF.open(QIODevice::ReadWrite)) {
-//           rawF.write(reinterpret_cast<char*>(data + num.x()), (num.y() - num.x()) * 2);
-//         }
-//       }
-//     }
   }
 
   delete[] data;
@@ -263,6 +275,7 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
 //###################                PROTECTED         ############################################
 //#################################################################################################
 
+#if defined (WITH_SOUNDTOUCH)
 void TcountingImport::squash(qint16* in, quint32 inLen, qint16*& out, quint32& outLen) {
   auto sTouch = new soundtouch::SoundTouch();
   sTouch->setChannels(1);
@@ -290,3 +303,4 @@ void TcountingImport::squash(qint16* in, quint32 inLen, qint16*& out, quint32& o
   delete[] floatIn;
   delete sTouch;
 }
+#endif
