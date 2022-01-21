@@ -109,6 +109,8 @@ public:
 
   void importFromCommandline();
 
+  QVector<TsoundData*>* numerals() { return &m_numerals; }
+
 //############  Tempo change methods    ####################
 
   Q_INVOKABLE TspeedHandler* speedHandler();
