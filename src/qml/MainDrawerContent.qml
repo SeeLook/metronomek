@@ -28,7 +28,10 @@ Flickable {
       text: qsTr("beat sound") + ":<br>&nbsp;<b> - "
           + (SOUND.verbalCount ? qsTr("Verbal count") : SOUND.getBeatName(SOUND.beatType)) + "</b>"
       onClicked: beatMenu.popup()
-
+      onPressAndHold: {
+        Qt.createComponent("qrc:/VerbalCountPage.qml").createObject(mainWindow)
+        drawer.close()
+      }
       Menu {
         id: beatMenu
         parent: mainWindow.contentItem

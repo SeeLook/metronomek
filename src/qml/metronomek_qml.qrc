@@ -11,6 +11,7 @@
     <file>InfoPage.qml</file>
     <file>SettingsPage.qml</file>
     <file>TempoPage.qml</file>
+    <file>VerbalCountPage.qml</file>
     <file>TempoEdit.qml</file>
     <file>TempoPartDelegate.qml</file>
     <file>CompositionView.qml</file>
