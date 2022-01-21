@@ -1,3 +1,8 @@
+/** This file is part of Metronomek                                  *
+ * Copyright (C) 2020-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
+
+
 #include "tmetroshape.h"
 
 #include <QtGui/qguiapplication.h>
@@ -9,7 +14,7 @@ TmetroShape::TmetroShape(QQuickItem* parent) :
   QQuickPaintedItem(parent)
 {
   setAntialiasing(true);
-  connect(qApp, &QGuiApplication::paletteChanged, [=]{ update(); });
+  connect(qApp, &QGuiApplication::paletteChanged, this, [=]{ update(); });
 }
 
 
