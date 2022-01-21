@@ -33,6 +33,10 @@ public:
 
   void importFromCommandline();
 
+#if defined (Q_OS_ANDROID)
+  void importFromTTS();
+#endif
+
 //   void importFromResources();
 
 signals:
@@ -49,7 +53,7 @@ protected:
 
 private:
   bool                              m_finished = false;
-  QVector<TsoundData*>             *m_numerals = nullptr;
+  QVector<TsoundData*>              *m_numerals = nullptr;
   bool                              m_doSquash = false;
   bool                              m_alignCounting = true;
 };

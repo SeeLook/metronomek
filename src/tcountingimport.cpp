@@ -276,6 +276,13 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
 }
 
 
+#if defined (Q_OS_ANDROID)
+void TcountingImport::importFromTTS() {
+
+}
+#endif
+
+
 // void TcountingImport::setFinished(bool finished)
 // {
 //   if (m_finished != finished) {
