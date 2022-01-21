@@ -22,7 +22,7 @@ endif()
 set(METRONOMEK_SRC
     main.cpp
     tglob.cpp
-    taudioout.cpp
+    tsound.cpp
     tabstractaudiooutput.cpp
     tsounddata.cpp
     tnumeralspectrum.cpp

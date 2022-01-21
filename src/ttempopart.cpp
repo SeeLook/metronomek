@@ -3,7 +3,7 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "ttempopart.h"
-#include "taudioout.h"
+#include "tsound.h"
 
 #include <QtCore/qxmlstream.h>
 #include <QtCore/qdebug.h>

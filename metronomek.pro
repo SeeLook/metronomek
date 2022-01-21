@@ -33,7 +33,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         src/main.cpp \
         src/tglob.cpp \
-        src/taudioout.cpp \
+        src/tsound.cpp \
         src/tabstractaudiooutput.cpp \
 #        src/tqtaudioout.cpp \
         src/toboeaudioout.cpp \
@@ -50,7 +50,7 @@ SOURCES += \
 HEADERS += \
         src/tglob.h \
         src/taudiobuffer.h \
-        src/taudioout.h \
+        src/tsound.h \
         src/tabstractaudiooutput.h \
 #        src/tqtaudioout.h \
         src/toboeaudioout.h \

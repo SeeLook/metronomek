@@ -2,8 +2,8 @@
  * Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TAUDIOOUT_H
-#define TAUDIOOUT_H
+#ifndef TSOUND_H
+#define TSOUND_H
 
 
 #include "tsounddata.h"
@@ -221,4 +221,4 @@ private:
   bool                   m_variableTempo = false;
 };
 
-#endif // TAUDIOOUT_H
+#endif // TSOUND_H

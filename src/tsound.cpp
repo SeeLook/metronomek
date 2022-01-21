@@ -3,7 +3,7 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
-#include "taudioout.h"
+#include "tsound.h"
 #if defined (Q_OS_ANDROID)
 //  #include "tqtaudioout.h"
   #include "toboeaudioout.h"

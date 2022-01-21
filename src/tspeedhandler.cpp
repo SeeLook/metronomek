@@ -4,7 +4,7 @@
 
 #include "tspeedhandler.h"
 #include "ttempopart.h"
-#include "taudioout.h"
+#include "tsound.h"
 #include "tglob.h"
 
 #include <QtCore/qxmlstream.h>
