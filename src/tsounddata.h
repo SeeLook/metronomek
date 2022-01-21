@@ -26,9 +26,9 @@ public:
        * sample value or null if out of scope
        */
   qint16 sampleAt(int samPos) const {
-    if (samPos < m_offset)
+    if (static_cast<quint32>(samPos) < m_offset)
       return 0;
-    if (samPos < m_size + m_offset)
+    if (static_cast<quint32>(samPos) < m_size + m_offset)
       return m_data[samPos - m_offset];
     return 0;
   }
@@ -62,7 +62,7 @@ public:
        * Resets position
        */
   void resetPos() { m_pos = 0; }
-  bool hasNext() const { return m_pos < m_size + m_offset; }
+  bool hasNext() const { return static_cast<quint32>(m_pos) < m_size + m_offset; }
 
   qint16* data() { return m_data; }
 
