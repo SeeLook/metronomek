@@ -38,6 +38,7 @@ SOURCES += \
 #        src/tqtaudioout.cpp \
         src/toboeaudioout.cpp \
         src/tsounddata.cpp \
+        src/tnumeralspectrum.cpp \
         src/tcountingimport.cpp \
         src/tmetroshape.cpp \
         \
@@ -54,6 +55,7 @@ HEADERS += \
 #        src/tqtaudioout.h \
         src/toboeaudioout.h \
         src/tsounddata.h \
+        src/tnumeralspectrum.h \
         src/tcountingimport.h \
         src/tmetroshape.h \
         \

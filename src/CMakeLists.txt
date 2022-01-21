@@ -25,6 +25,7 @@ set(METRONOMEK_SRC
     taudioout.cpp
     tabstractaudiooutput.cpp
     tsounddata.cpp
+    tnumeralspectrum.cpp
     trtaudioout.cpp
     tcountingimport.cpp
     tmetroshape.cpp
