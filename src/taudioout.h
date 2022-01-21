@@ -15,14 +15,14 @@ class TspeedHandler;
 class TcountingImport;
 
 
-#define SOUND (TaudioOUT::instance())
+#define SOUND (Tsound::instance())
 
 
 
 /**
  * Class that manages selected beat samples to Qt audio output
  */
-class TaudioOUT : public QObject
+class Tsound : public QObject
 {
   Q_OBJECT
 
@@ -38,10 +38,10 @@ class TaudioOUT : public QObject
   Q_PROPERTY(bool variableTempo READ variableTempo WRITE setVariableTempo NOTIFY variableTempoChanged)
 
 public:
-  TaudioOUT(QObject* parent = nullptr);
-  ~TaudioOUT() override;
+  Tsound(QObject* parent = nullptr);
+  ~Tsound() override;
 
-  static TaudioOUT* instance() { return m_instance; }
+  static Tsound* instance() { return m_instance; }
 
   void init();
 
@@ -183,7 +183,7 @@ private slots:
 
 
 private:
-  static TaudioOUT      *m_instance;
+  static Tsound         *m_instance;
   bool                   m_initialized = false;
   quint32                m_sampleRate;
   bool                   m_callBackIsBussy;

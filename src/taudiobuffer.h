@@ -11,7 +11,7 @@
 
 /**
  * The @p TaudioBuffer class is proxy between physical mobile sound device
- * and Nootka @p TaudioOUT and @p TaudioIN classes.
+ * and Nootka @p Tsound and @p TaudioIN classes.
  * It catch @p readData() method and emits @p feedAudio signal from there (output)
  * or @p writeData() and emits @p readAudio (input)
  * then audio data is send to/from the physical device.

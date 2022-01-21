@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
     return 111;
   }
 
-  auto sound = new TaudioOUT();
+  auto sound = new Tsound();
 
   auto engine = new QQmlApplicationEngine();
   const QUrl url(QStringLiteral("qrc:/MainWindow.qml"));

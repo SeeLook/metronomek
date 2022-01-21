@@ -29,11 +29,11 @@
 
 
 //#################################################################################################
-//###################                TaudioOUT         ############################################
+//###################                Tsound         ############################################
 //#################################################################################################
 
 /*static*/
-QStringList TaudioOUT::getAudioDevicesList() {
+QStringList Tsound::getAudioDevicesList() {
 #if defined (Q_OS_ANDROID)
   return QStringList();
 //  return TqtAudioOut::getAudioDevicesList();
@@ -57,19 +57,19 @@ qint16 mix(qint16 sampleA, qint16 sampleB) {
 }
 
 
-TaudioOUT*             TaudioOUT::m_instance = nullptr;
+Tsound*             Tsound::m_instance = nullptr;
 /*end static*/
 
 
 
-TaudioOUT::TaudioOUT(QObject *parent) :
+Tsound::Tsound(QObject *parent) :
   QObject(parent),
   p_ratioOfRate(1),
   m_sampleRate(48000),
   m_callBackIsBussy(false)
 {
   if (m_instance) {
-    qDebug() << "Nothing of this kind... TaudioOUT already exist!";
+    qDebug() << "Nothing of this kind... Tsound already exist!";
     return;
   }
   m_instance = this;
@@ -88,13 +88,13 @@ TaudioOUT::TaudioOUT(QObject *parent) :
   setVariableTempo(GLOB->settings()->value(QStringLiteral("variableTempo"), false).toBool());
   setVerbalCount(GLOB->settings()->value(QStringLiteral("verbalCount"), false).toBool());
 
-  connect(this, &TaudioOUT::finishSignal, this, &TaudioOUT::playingFinishedSlot);
+  connect(this, &Tsound::finishSignal, this, &Tsound::playingFinishedSlot);
 
   QTimer::singleShot(500, this, [=]{ init(); });
 }
 
 
-TaudioOUT::~TaudioOUT()
+Tsound::~Tsound()
 {
   stopTicking();
   m_instance = nullptr;
@@ -114,14 +114,14 @@ TaudioOUT::~TaudioOUT()
 }
 
 
-QString TaudioOUT::outputName() {
+QString Tsound::outputName() {
   return m_instance && m_instance->m_audioDevice ? m_instance->m_audioDevice->deviceName() : QString();
 }
 
 
-void TaudioOUT::init() {
+void Tsound::init() {
   if (m_initialized) {
-      qDebug() << "[TaudioOUT] has been initialized already! Skipping.";
+      qDebug() << "[Tsound] has been initialized already! Skipping.";
       return;
   } else {
     #if defined (Q_OS_ANDROID)
@@ -130,7 +130,7 @@ void TaudioOUT::init() {
     #else
       m_audioDevice = new TrtAudioOut(this);
     #endif
-      connect(m_audioDevice, &TabstractAudioOutput::feedAudio, this, &TaudioOUT::outCallBack, Qt::DirectConnection);
+      connect(m_audioDevice, &TabstractAudioOutput::feedAudio, this, &Tsound::outCallBack, Qt::DirectConnection);
       auto dn = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();
       if (dn != QLatin1String("anything")) { // This is workaround for old device name handling
           setDeviceName(GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString());
@@ -145,21 +145,21 @@ void TaudioOUT::init() {
 }
 
 
-void TaudioOUT::setDeviceName(const QString& devName) {
+void Tsound::setDeviceName(const QString& devName) {
   if (m_audioDevice->deviceName() != devName) {
     m_audioDevice->setDeviceName(devName);
   }
 }
 
 
-void TaudioOUT::setAudioOutParams() {
+void Tsound::setAudioOutParams() {
   m_audioDevice->setAudioOutParams();
   if (m_audioDevice)
     changeSampleRate(m_audioDevice->sampleRate());
 }
 
 
-void TaudioOUT::setPlaying(bool pl) {
+void Tsound::setPlaying(bool pl) {
   if (m_playing != pl) {
     if (pl)
       startTicking();
@@ -169,12 +169,12 @@ void TaudioOUT::setPlaying(bool pl) {
 }
 
 
-void TaudioOUT::startTicking() {
+void Tsound::startTicking() {
   startPlayingSlot();
 }
 
 
-void TaudioOUT::startPlayingSlot() {
+void Tsound::startPlayingSlot() {
   if (!m_playing && !m_goingToStop) {
     m_playingPart = 0;
     m_playingBeat = 1;
@@ -211,7 +211,7 @@ void TaudioOUT::startPlayingSlot() {
  * To avoid that @p m_missingSampleNr adds single sample length to @p m_samplPerBeat
  * every whole integer summed with @p m_offsetSample
  */
-void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRead) {
+void Tsound::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRead) {
   qint16 sample = 0;
   auto out = reinterpret_cast<qint16*>(data);
 
@@ -311,7 +311,7 @@ void TaudioOUT::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRe
 }
 
 
-void TaudioOUT::playingFinishedSlot() {
+void Tsound::playingFinishedSlot() {
   if (m_playing) {
     m_playing = false;
     emit playingChanged();
@@ -327,14 +327,14 @@ void TaudioOUT::playingFinishedSlot() {
 }
 
 
-void TaudioOUT::stopTicking() {
+void Tsound::stopTicking() {
   playingFinishedSlot();
 }
 
 
-void TaudioOUT::setBeatType(int bt) {
+void Tsound::setBeatType(int bt) {
   if (bt < 0 || bt > static_cast<int>(Beat_TypesCount) - 1) {
-    qDebug() << "[TaudioOUT] Wrong beat type!" << bt << "Restore to classic default.";
+    qDebug() << "[Tsound] Wrong beat type!" << bt << "Restore to classic default.";
     bt = 0;
   }
   if (bt != m_beatType) {
@@ -345,7 +345,7 @@ void TaudioOUT::setBeatType(int bt) {
 }
 
 
-QString TaudioOUT::getBeatFileName(TaudioOUT::EbeatType bt) {
+QString Tsound::getBeatFileName(Tsound::EbeatType bt) {
   static const char* const beatFileArray[static_cast<int>(Beat_TypesCount)] = {
     "classic", "classic2", "snap", "parapet", "sticks", "sticks2", "clap", "guitar",
     "drum1", "drum2", "drum3", "basedrum", "snaredrum"
@@ -354,7 +354,7 @@ QString TaudioOUT::getBeatFileName(TaudioOUT::EbeatType bt) {
 }
 
 
-QString TaudioOUT::getBeatName(int bt) {
+QString Tsound::getBeatName(int bt) {
   if (bt < 0 || bt > beatTypeCount() - 1)
     return QString();
   static const char* const beatNameArr[static_cast<int>(Beat_TypesCount)] = {
@@ -369,9 +369,9 @@ QString TaudioOUT::getBeatName(int bt) {
 }
 
 
-void TaudioOUT::setRingType(int rt) {
+void Tsound::setRingType(int rt) {
   if (rt < 0 || rt > ringTypeCount() - 1) {
-    qDebug() << "[TaudioOUT] Wrong ring type!" << rt << "Set to none.";
+    qDebug() << "[Tsound] Wrong ring type!" << rt << "Set to none.";
     rt = 0;
   }
   if (rt != m_ringType) {
@@ -385,7 +385,7 @@ void TaudioOUT::setRingType(int rt) {
 }
 
 
-QString TaudioOUT::getRingFileName(TaudioOUT::EringType rt) {
+QString Tsound::getRingFileName(Tsound::EringType rt) {
   static const char* const ringFileArray[static_cast<int>(Ring_TypesCount)] = {
     "", "bell", "bell1", "bell2", "glass", "metal", "mug", "harmonic", "hihat", "woodblock"
   };
@@ -393,7 +393,7 @@ QString TaudioOUT::getRingFileName(TaudioOUT::EringType rt) {
 }
 
 
-QString TaudioOUT::getRingName(int rt) {
+QString Tsound::getRingName(int rt) {
   if (rt < 0 || rt > ringTypeCount() - 1)
     return QString();
   static const char* const ringNameArr[static_cast<int>(Ring_TypesCount)] = {
@@ -407,7 +407,7 @@ QString TaudioOUT::getRingName(int rt) {
 }
 
 
-void TaudioOUT::setMeter(int m) {
+void Tsound::setMeter(int m) {
   if (m_meter != m) {
     m_meter = m;
     emit meterChanged();
@@ -415,7 +415,7 @@ void TaudioOUT::setMeter(int m) {
 }
 
 
-void TaudioOUT::setRing(bool r) {
+void Tsound::setRing(bool r) {
   if (r != m_doRing) {
     m_doRing = r;
     emit ringChanged();
@@ -423,7 +423,7 @@ void TaudioOUT::setRing(bool r) {
 }
 
 
-void TaudioOUT::setTempo(int t) {
+void Tsound::setTempo(int t) {
   if (t != m_tempo && t > 39 && t < 241) {
     m_tempo = t;
     m_samplPerBeat = (m_sampleRate * 60) / t;
@@ -436,7 +436,7 @@ void TaudioOUT::setTempo(int t) {
 }
 
 
-void TaudioOUT::setVerbalCount(bool vc) {
+void Tsound::setVerbalCount(bool vc) {
   if (vc != m_verbalCount) {
     m_verbalCount = vc;
     if (m_verbalCount && m_numerals.isEmpty()) {
@@ -455,7 +455,7 @@ void TaudioOUT::setVerbalCount(bool vc) {
 }
 
 
-void TaudioOUT::setVariableTempo(bool varTemp) {
+void Tsound::setVariableTempo(bool varTemp) {
   if (varTemp != m_variableTempo) {
     m_variableTempo = varTemp;
     if (m_variableTempo)
@@ -467,12 +467,12 @@ void TaudioOUT::setVariableTempo(bool varTemp) {
 }
 
 
-QString TaudioOUT::getTempoNameById(int nameId) {
+QString Tsound::getTempoNameById(int nameId) {
   return nameId < GLOB->temposCount() ? GLOB->tempoName(nameId).name() : QString();
 }
 
 
-void TaudioOUT::importFromCommandline() {
+void Tsound::importFromCommandline() {
   if (!m_countImport)
     m_countImport = new TcountingImport(&m_numerals, this);
   m_countImport->importFromCommandline();
@@ -483,14 +483,14 @@ void TaudioOUT::importFromCommandline() {
 //############                Tempo change methods         ########################################
 //#################################################################################################
 
-TspeedHandler* TaudioOUT::speedHandler() {
+TspeedHandler* Tsound::speedHandler() {
   if (!m_speedHandler)
     m_speedHandler = new TspeedHandler(this);
   return m_speedHandler;
 }
 
 
-int TaudioOUT::getTempoForBeat(int partId, int beatNr) {
+int Tsound::getTempoForBeat(int partId, int beatNr) {
   if (m_variableTempo && m_speedHandler) {
     if (partId < m_speedHandler->currComp()->partsCount() && m_speedHandler->currComp()->getPart(partId)->infinite()
       && m_infiBeats && beatNr >= m_infiBeats)
@@ -506,7 +506,7 @@ int TaudioOUT::getTempoForBeat(int partId, int beatNr) {
 }
 
 
-bool TaudioOUT::isPartInfinite(int partId) {
+bool Tsound::isPartInfinite(int partId) {
   if (m_variableTempo && m_speedHandler && partId < m_speedHandler->currComp()->partsCount() - 1) {
       auto p = m_speedHandler->currComp()->getPart(partId);
       return p ? p->infinite() : false;
@@ -515,15 +515,15 @@ bool TaudioOUT::isPartInfinite(int partId) {
 }
 
 
-void TaudioOUT::switchInfinitePart() {
+void Tsound::switchInfinitePart() {
   if (isPartInfinite(m_playingPart))
     m_toNextPart = true;
   else
-    qDebug() << "[TaudioOUT] FIXME! Trying to switch non infinite tempo part!";
+    qDebug() << "[Tsound] FIXME! Trying to switch non infinite tempo part!";
 }
 
 
-int TaudioOUT::meterOfPart(int partId) {
+int Tsound::meterOfPart(int partId) {
   if (m_variableTempo && m_speedHandler && partId < m_speedHandler->currComp()->partsCount())
     return m_speedHandler->currComp()->getPart(partId)->meter();
   else
@@ -534,7 +534,7 @@ int TaudioOUT::meterOfPart(int partId) {
 //#################################################################################################
 //###################                PROTECTED         ############################################
 //#################################################################################################
-QString TaudioOUT::getRawFilePath(const QString& fName) {
+QString Tsound::getRawFilePath(const QString& fName) {
 #if defined (Q_OS_ANDROID)
   QString rawFilePath = QStringLiteral("assets:/sounds/");
 #elif defined (Q_OS_WIN)
@@ -548,7 +548,7 @@ QString TaudioOUT::getRawFilePath(const QString& fName) {
 }
 
 
-void TaudioOUT::setNameTempoId(int ntId) {
+void Tsound::setNameTempoId(int ntId) {
   if (ntId != m_nameTempoId) {
     m_nameTempoId = ntId;
     emit nameTempoIdChanged();
@@ -556,7 +556,7 @@ void TaudioOUT::setNameTempoId(int ntId) {
 }
 
 
-void TaudioOUT::setNameIdByTempo(int t) {
+void Tsound::setNameIdByTempo(int t) {
   for (int i = 0; i < GLOB->temposCount(); ++i) {
     if (t <= GLOB->tempoName(i).hi()) {
       setNameTempoId(i);
@@ -566,7 +566,7 @@ void TaudioOUT::setNameIdByTempo(int t) {
 }
 
 
-void TaudioOUT::changeSampleRate(quint32 sr) {
+void Tsound::changeSampleRate(quint32 sr) {
   if (sr != m_sampleRate) {
     m_sampleRate = sr;
     // Also refresh tempo related variables - force tempo change routines
