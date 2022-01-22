@@ -17,6 +17,9 @@ Tdialog {
 
   ButtonGroup { id: soundsGr }
 
+  // private
+  property CountImport cntImport: SOUND.countImport()
+
   header: Column {
     Text {
       anchors.horizontalCenter: parent.horizontalCenter
@@ -83,10 +86,27 @@ Tdialog {
                 font { pixelSize: parent.height * 0.3; bold: true }
               }
             }
+            onClicked: {
+              playAnim.start()
+              cntImport.play(index)
+            }
           }
           NumeralSpectrum {
             nr: index
+            clip: true
             width: numList.width - playButt.width - recButt.width - 3 * fm.height; height: bgRect.height
+            Rectangle {
+              id: playTick
+              width: fm.height / 4; height: parent.height
+              color: activPal.highlight
+              visible: playAnim.running
+            }
+            NumberAnimation {
+              id: playAnim
+              target: playTick; property: "x"
+              duration: 750
+              from: 0; to: parent.width
+            }
           }
           AbstractButton {
             id: recButt
@@ -115,5 +135,11 @@ Tdialog {
   }
 
   standardButtons: Dialog.Ok | Dialog.Cancel
-//   Component.onCompleted: footer.standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "Save")
+  Component.onCompleted: {
+    //footer.standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "Save")
+    SOUND.initCountingSettings()
+  }
+  Component.onDestruction: {
+    SOUND.restoreAfterCountSettings()
+  }
 }

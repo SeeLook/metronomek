@@ -10,6 +10,7 @@
 
 
 class TsoundData;
+class TabstractAudioOutput;
 
 
 /**
@@ -39,6 +40,11 @@ public:
 
 //   void importFromResources();
 
+  void initSettings(TabstractAudioOutput* audioDev);
+  void restoreSettings();
+
+  Q_INVOKABLE void play(int numer);
+
 signals:
   void finishedChanged();
 
@@ -51,11 +57,16 @@ protected:
   void squash(qint16* in, quint32 inLen, qint16*& out, quint32& outLen);
 #endif
 
+  void playCallBack(char* data, unsigned int maxLen, unsigned int& wasRead);
+
 private:
   bool                              m_finished = false;
   QVector<TsoundData*>             *m_numerals = nullptr;
   bool                              m_doSquash = false;
   bool                              m_alignCounting = true;
+  TabstractAudioOutput             *m_audioDevice = nullptr;
+  int                               m_currSample = 0;
+  int                               m_playNum = 0;
 };
 
 #endif // TCOUNTINGIMPORT_H

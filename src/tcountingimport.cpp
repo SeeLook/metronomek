@@ -5,6 +5,7 @@
 
 #include "tcountingimport.h"
 #include "tsounddata.h"
+#include "tabstractaudiooutput.h"
 
 #if defined (WITH_SOUNDTOUCH)
   #include <soundtouch/SoundTouch.h>
@@ -283,6 +284,24 @@ void TcountingImport::importFromTTS() {
 #endif
 
 
+void TcountingImport::initSettings(TabstractAudioOutput* audioDev) {
+  m_audioDevice = audioDev;
+  connect(m_audioDevice, &TabstractAudioOutput::feedAudio, this, &TcountingImport::playCallBack, Qt::DirectConnection);
+}
+
+
+void TcountingImport::restoreSettings() {
+  disconnect(m_audioDevice, &TabstractAudioOutput::feedAudio, this, &TcountingImport::playCallBack);
+}
+
+
+void TcountingImport::play(int numer) {
+  m_playNum = numer;
+  m_currSample = 0;
+  m_audioDevice->startPlaying();
+}
+
+
 // void TcountingImport::setFinished(bool finished)
 // {
 //   if (m_finished != finished) {
@@ -290,7 +309,6 @@ void TcountingImport::importFromTTS() {
 //     emit finishedChanged();
 //   }
 // }
-
 
 //#################################################################################################
 //###################                PROTECTED         ############################################
@@ -325,3 +343,23 @@ void TcountingImport::squash(qint16* in, quint32 inLen, qint16*& out, quint32& o
   delete sTouch;
 }
 #endif
+
+#define CALLBACK_CONTINUE (0)
+#define CALLBACK_STOP (2)
+
+void TcountingImport::playCallBack(char* data, unsigned int maxLen, unsigned int& wasRead) {
+  qint16 sample = 0;
+  auto out = reinterpret_cast<qint16*>(data);
+  auto num = m_numerals->at(m_playNum);
+
+  for (unsigned int i = 0; i < maxLen; i++) {
+    sample = num->sampleAt(m_currSample);
+    *out++ = sample; // left channel
+    *out++ = sample; // right channel
+    m_currSample++;
+  }
+  if (m_currSample < 36000)
+    wasRead = CALLBACK_CONTINUE;
+  else
+    wasRead = CALLBACK_STOP;
+}

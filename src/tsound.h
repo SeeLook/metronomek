@@ -111,6 +111,18 @@ public:
 
   QVector<TsoundData*>* numerals() { return &m_numerals; }
 
+  Q_INVOKABLE TcountingImport* countImport() { return m_countImport; }
+
+      /**
+       * Initializes sound back-end state
+       * for verbal counting setting routines.
+       * It will be:
+       * - disconnect metronome audio callback for another one
+       */
+  Q_INVOKABLE void initCountingSettings();
+
+  Q_INVOKABLE void restoreAfterCountSettings();
+
 //############  Tempo change methods    ####################
 
   Q_INVOKABLE TspeedHandler* speedHandler();
