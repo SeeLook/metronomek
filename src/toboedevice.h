@@ -2,8 +2,8 @@
  * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TOBOEAUDIOOUT_H
-#define TOBOEAUDIOOUT_H
+#ifndef TOBOEDEVICE_H
+#define TOBOEDEVICE_H
 
 
 #include "tabstractaudiodevice.h"
@@ -16,14 +16,14 @@ class ToboeCallBack;
 /**
  * @todo write docs
  */
-class ToboeAudioOut : public TabstractAudioDevice
+class TOboeDevice : public TabstractAudioDevice
 {
 
   Q_OBJECT
 
 public:
-  ToboeAudioOut(QObject* parent = nullptr);
-  ~ToboeAudioOut();
+  TOboeDevice(QObject* parent = nullptr);
+  ~TOboeDevice();
 
   void startPlaying() override;
   void stopPlaying() override;
@@ -34,10 +34,10 @@ public:
   void setAudioOutParams() override;
 
 private:
-  oboe::AudioStreamBuilder             *m_oboe = nullptr;
-  std::shared_ptr<oboe::AudioStream>    m_stream;
-  ToboeCallBack                        *m_callBackClass = nullptr;
+  oboe::AudioStreamBuilder               *m_oboe = nullptr;
+  std::shared_ptr<oboe::AudioStream>      m_stream;
+  ToboeCallBack                          *m_callBackClass = nullptr;
 
 };
 
-#endif // TOBOEAUDIOOUT_H
+#endif // TOBOEDEVICE_H

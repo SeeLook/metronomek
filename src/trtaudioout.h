@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2021-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #ifndef TRTAUDIOOUT_H
@@ -11,16 +11,16 @@
 
 
 /**
- * @class TrtAudioOut is Linux/Mac/Windows back-end of Metronomek audio
+ * @class TRtAudioDevice is Linux/Mac/Windows back-end of Metronomek audio
  */
-class TrtAudioOut : public TabstractAudioDevice
+class TRtAudioDevice : public TabstractAudioDevice
 {
 
   Q_OBJECT
 
 public:
-  TrtAudioOut(QObject* parent = nullptr);
-  ~TrtAudioOut() override;
+  TRtAudioDevice(QObject* parent = nullptr);
+  ~TRtAudioDevice() override;
 
   static QStringList getAudioDevicesList();
 
@@ -81,7 +81,7 @@ protected:
   quint32 determineSampleRate(RtAudio::DeviceInfo& devInfo);
 
 private:
-  static TrtAudioOut                     *m_instance;
+  static TRtAudioDevice                  *m_instance;
   static RtAudio                         *m_rtAduio;
 
   bool                                    m_isAlsaDefault = false;

@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2021-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "trtaudioout.h"
@@ -12,11 +12,11 @@
 
 #define                            PREF_BUFF_FR (512) /**< Preferred frame size of audio buffer */
 
-RtAudio*                           TrtAudioOut::m_rtAduio = nullptr;
-TrtAudioOut*                       TrtAudioOut::m_instance = nullptr;
+RtAudio*                           TRtAudioDevice::m_rtAduio = nullptr;
+TRtAudioDevice*                    TRtAudioDevice::m_instance = nullptr;
 
 
-void TrtAudioOut::createRtAudio() {
+void TRtAudioDevice::createRtAudio() {
   if (m_rtAduio == nullptr) { // Create RtAudio instance only if doesn't exist
     RtAudio::Api rtAPI = RtAudio::RTAUDIO_DUMMY;
   #if defined(Q_OS_WIN)
@@ -40,65 +40,65 @@ void TrtAudioOut::createRtAudio() {
         m_rtAduio = new RtAudio(rtAPI);
         m_rtAduio->showWarnings(false);
     } catch (RtAudioError& e) {
-        qDebug() << "[TrtAudioOut] Cannot create RtAudio instance" << QString::fromStdString(e.getMessage());
+        qDebug() << "[TRtAudioDevice] Cannot create RtAudio instance" << QString::fromStdString(e.getMessage());
         m_rtAduio = nullptr;
     }
   }
 }
 
 
-RtAudio::Api TrtAudioOut::getCurrentApi() {
+RtAudio::Api TRtAudioDevice::getCurrentApi() {
   RtAudio::Api api = RtAudio::UNSPECIFIED;
   if (rtDevice()) {
     try {
         api = rtDevice()->getCurrentApi();
     } catch (RtAudioError& e) {
-        qDebug() << "[TrtAudioOut] Cannot determine current API";;
+        qDebug() << "[TRtAudioDevice] Cannot determine current API";;
     }
   }
   return api;
 }
 
 
-bool TrtAudioOut::getDeviceInfo(RtAudio::DeviceInfo& devInfo, unsigned int id) {
+bool TRtAudioDevice::getDeviceInfo(RtAudio::DeviceInfo& devInfo, unsigned int id) {
   try {
       devInfo = rtDevice()->getDeviceInfo(id);
   }
   catch (RtAudioError& e) {
-      qDebug() << "[TrtAudioOut] error when probing audio device" << id;
+      qDebug() << "[TRtAudioDevice] error when probing audio device" << id;
       return false;
   }
   return true;
 }
 
 
-unsigned int TrtAudioOut::getDeviceCount() {
+unsigned int TRtAudioDevice::getDeviceCount() {
   unsigned int cnt = 0;
   if (rtDevice()) {
     try {
         cnt = rtDevice()->getDeviceCount();
     } catch (RtAudioError& e) {
-        qDebug() << "[TrtAudioOut] Cannot obtain devices number";
+        qDebug() << "[TRtAudioDevice] Cannot obtain devices number";
     }
   }
   return cnt;
 }
 
 
-int TrtAudioOut::getDefaultOutput() {
+int TRtAudioDevice::getDefaultOutput() {
   int outNr = -1;
   if (rtDevice()) {
     try {
         outNr = rtDevice()->getDefaultOutputDevice();
     } catch (RtAudioError& e) {
-        qDebug() << "[TrtAudioOut] Cannot get default output device";
+        qDebug() << "[TRtAudioDevice] Cannot get default output device";
     }
   }
   return outNr;
 }
 
 
-int TrtAudioOut::rtCallBack(void* outBuffer, void*, unsigned int nBufferFrames, double, RtAudioStreamStatus status, void*) {
+int TRtAudioDevice::rtCallBack(void* outBuffer, void*, unsigned int nBufferFrames, double, RtAudioStreamStatus status, void*) {
   Q_UNUSED(status)
   unsigned int retVal = 0;
   m_instance->emitFeedAudio(static_cast<char*>(outBuffer), nBufferFrames, retVal);
@@ -107,7 +107,7 @@ int TrtAudioOut::rtCallBack(void* outBuffer, void*, unsigned int nBufferFrames, 
 
 
 
-TrtAudioOut::TrtAudioOut(QObject* parent) :
+TRtAudioDevice::TRtAudioDevice(QObject* parent) :
   TabstractAudioDevice(parent)
 {
   m_instance = this;
@@ -120,7 +120,7 @@ TrtAudioOut::TrtAudioOut(QObject* parent) :
 }
 
 
-TrtAudioOut::~TrtAudioOut()
+TRtAudioDevice::~TRtAudioDevice()
 {
   m_instance = nullptr;
   delete m_streamOptions;
@@ -128,7 +128,7 @@ TrtAudioOut::~TrtAudioOut()
 }
 
 
-QStringList TrtAudioOut::getAudioDevicesList() {
+QStringList TRtAudioDevice::getAudioDevicesList() {
   QStringList devList;
   createRtAudio();
   if (m_instance && getCurrentApi() == RtAudio::LINUX_ALSA)
@@ -151,7 +151,7 @@ QStringList TrtAudioOut::getAudioDevicesList() {
 }
 
 
-void TrtAudioOut::setAudioOutParams() {
+void TRtAudioDevice::setAudioOutParams() {
   closeStream();
 
   // preparing devices
@@ -179,7 +179,7 @@ void TrtAudioOut::setAudioOutParams() {
           getDeviceInfo(outInfo, static_cast<unsigned int>(outDevId));
           if (outDevId > -1) {
             if (outInfo.outputChannels <= 0) {
-              qDebug() << "[TrtAudioOut] wrong default output device";
+              qDebug() << "[TRtAudioDevice] wrong default output device";
               delete m_outParams;
               m_outParams = nullptr;
             }
@@ -194,7 +194,7 @@ void TrtAudioOut::setAudioOutParams() {
           outDevId = 0;
       }
   } else {
-      qDebug() << "[TrtAudioOut] No audio devices!";
+      qDebug() << "[TRtAudioDevice] No audio devices!";
       return;
   }
 
@@ -219,7 +219,7 @@ void TrtAudioOut::setAudioOutParams() {
 }
 
 
-void TrtAudioOut::setDeviceName(const QString& devName) {
+void TRtAudioDevice::setDeviceName(const QString& devName) {
   if (devName != m_outDevName) {
     m_outDevName = devName;
     setAudioOutParams();
@@ -227,7 +227,7 @@ void TrtAudioOut::setDeviceName(const QString& devName) {
 }
 
 
-void TrtAudioOut::startPlaying() {
+void TRtAudioDevice::startPlaying() {
   if (rtDevice()) {
     startStream();
     p_isPlaying = true;
@@ -235,7 +235,7 @@ void TrtAudioOut::startPlaying() {
 }
 
 
-void TrtAudioOut::stopPlaying() {
+void TRtAudioDevice::stopPlaying() {
   if (p_isPlaying) {
     if (getCurrentApi() == RtAudio::LINUX_PULSE) {
         abortStream();
@@ -252,7 +252,7 @@ void TrtAudioOut::stopPlaying() {
 //#################################################################################################
 
 bool m_devNameDbgMessage = true;
-bool TrtAudioOut::openStream() {
+bool TRtAudioDevice::openStream() {
   try {
     if (rtDevice()) {
       unsigned int m_bufferFrames = PREF_BUFF_FR; // reset when it was overridden by another rt API
@@ -279,14 +279,14 @@ bool TrtAudioOut::openStream() {
           return false;
     }
   } catch (RtAudioError& e) {
-      qDebug() << "[TrtAudioOut] can't open stream" << m_outDevName << "\n" << QString::fromStdString(e.getMessage());
+      qDebug() << "[TRtAudioDevice] can't open stream" << m_outDevName << "\n" << QString::fromStdString(e.getMessage());
       return false;
   }
   return true;
 }
 
 
-bool TrtAudioOut::isOpened() {
+bool TRtAudioDevice::isOpened() {
   if (rtDevice()) {
     try {
         return rtDevice()->isStreamOpen();
@@ -298,7 +298,7 @@ bool TrtAudioOut::isOpened() {
 }
 
 
-bool TrtAudioOut::startStream() {
+bool TRtAudioDevice::startStream() {
   if (!isOpened()) {
     if (!openStream())
       return false;
@@ -308,52 +308,52 @@ bool TrtAudioOut::startStream() {
         rtDevice()->startStream();
     }
   } catch (RtAudioError& e) {
-      qDebug() << "[TrtAudioOut] can't start stream";
+      qDebug() << "[TRtAudioDevice] can't start stream";
       return false;
   }
-  //   qDebug("[TrtAudioOut] stream started");
+  //   qDebug("[TRtAudioDevice] stream started");
   return true;
 }
 
 
-void TrtAudioOut::stopStream() {
+void TRtAudioDevice::stopStream() {
   try {
       if (rtDevice() && rtDevice()->isStreamRunning()) {
         rtDevice()->stopStream();
-        //       qDebug("[TrtAudioOut] stream stopped");
+        //       qDebug("[TRtAudioDevice] stream stopped");
       }
   } catch (RtAudioError& e) {
-      qDebug() << "[TrtAudioOut] can't stop stream";
+      qDebug() << "[TRtAudioDevice] can't stop stream";
   }
 }
 
 
-void TrtAudioOut::closeStream() {
+void TRtAudioDevice::closeStream() {
   try {
       stopStream();
       if (rtDevice() && rtDevice()->isStreamOpen()) {
       rtDevice()->closeStream();
-      //       qDebug("[TrtAudioOut] stream closed");
+      //       qDebug("[TRtAudioDevice] stream closed");
     }
   } catch (RtAudioError& e) {
-      qDebug() << "[TrtAudioOut] can't close stream";
+      qDebug() << "[TRtAudioDevice] can't close stream";
   }
 }
 
 
-void TrtAudioOut::abortStream() {
+void TRtAudioDevice::abortStream() {
   try {
       if (rtDevice() && rtDevice()->isStreamRunning()) {
         rtDevice()->abortStream();
-        //       qDebug("[TrtAudioOut] stream aborted");
+        //       qDebug("[TRtAudioDevice] stream aborted");
       }
   }catch (RtAudioError& e) {
-      qDebug() << "[TrtAudioOut] can't abort stream";
+      qDebug() << "[TRtAudioDevice] can't abort stream";
   }
 }
 
 
-quint32 TrtAudioOut::determineSampleRate(RtAudio::DeviceInfo& devInfo) {
+quint32 TRtAudioDevice::determineSampleRate(RtAudio::DeviceInfo& devInfo) {
 //   return devInfo.preferredSampleRate;
   static const quint32 srArr[4] = { 48000, 44100, 96000, 192000 };
   for (int s = 0; s < 4; ++s) {

@@ -6,7 +6,7 @@
 #include "tsound.h"
 #if defined (Q_OS_ANDROID)
 //  #include "tqtaudioout.h"
-  #include "toboeaudioout.h"
+  #include "toboedevice.h"
 #else
   #include "trtaudioout.h"
 #endif
@@ -38,7 +38,7 @@ QStringList Tsound::getAudioDevicesList() {
   return QStringList();
 //  return TqtAudioOut::getAudioDevicesList();
 #else
-  return TrtAudioOut::getAudioDevicesList();
+  return TRtAudioDevice::getAudioDevicesList();
 #endif
 }
 
@@ -127,9 +127,9 @@ void Tsound::init() {
   } else {
     #if defined (Q_OS_ANDROID)
 //      m_audioDevice = new TqtAudioOut(this);
-      m_audioDevice = new ToboeAudioOut(this);
+      m_audioDevice = new TOboeDevice(this);
     #else
-      m_audioDevice = new TrtAudioOut(this);
+      m_audioDevice = new TRtAudioDevice(this);
     #endif
       connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack, Qt::DirectConnection);
       auto dn = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();

@@ -3,7 +3,7 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
-#include "toboeaudioout.h"
+#include "toboedevice.h"
 
 #include <QtCore/qdebug.h>
 
@@ -11,7 +11,7 @@
 class ToboeCallBack : public oboe::AudioStreamDataCallback {
 
 public:
-  ToboeCallBack(ToboeAudioOut* outParent = nullptr) : oboe::AudioStreamDataCallback(), m_out(outParent) {}
+  ToboeCallBack(TOboeDevice* outParent = nullptr) : oboe::AudioStreamDataCallback(), m_out(outParent) {}
   oboe::DataCallbackResult onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames) {
       Q_UNUSED(audioStream)
       unsigned int retVal = 0;
@@ -20,20 +20,20 @@ public:
   }
 
 private:
-  ToboeAudioOut           *m_out;
+  TOboeDevice           *m_out;
 
 };
 
 
 
-ToboeAudioOut::ToboeAudioOut(QObject* parent ) :
+TOboeDevice::TOboeDevice(QObject* parent ) :
   TabstractAudioDevice(parent)
 {
   m_callBackClass = new ToboeCallBack();
 }
 
 
-ToboeAudioOut::~ToboeAudioOut()
+TOboeDevice::~TOboeDevice()
 {
   if (m_oboe) {
     m_stream->close();
@@ -45,30 +45,30 @@ ToboeAudioOut::~ToboeAudioOut()
 
 
 
-void ToboeAudioOut::startPlaying() {
+void TOboeDevice::startPlaying() {
   if (m_oboe)
     m_stream->requestStart();
 }
 
 
-void ToboeAudioOut::stopPlaying() {
+void TOboeDevice::stopPlaying() {
   if (m_oboe)
     m_stream->requestStop();
 }
 
 
-void ToboeAudioOut::setDeviceName(const QString& devName) {
+void TOboeDevice::setDeviceName(const QString& devName) {
   Q_UNUSED(devName)
   setAudioOutParams();
 }
 
 
-QString ToboeAudioOut::deviceName() const {
+QString TOboeDevice::deviceName() const {
   return QStringLiteral("anything");
 }
 
 
-void ToboeAudioOut::setAudioOutParams() {
+void TOboeDevice::setAudioOutParams() {
   if (!m_oboe) {
     m_callBackClass = new ToboeCallBack(this);
 
