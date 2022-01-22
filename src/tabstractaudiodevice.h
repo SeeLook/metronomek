@@ -1,23 +1,23 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2021-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TABSTRACTAUDIOOUTPUT_H
-#define TABSTRACTAUDIOOUTPUT_H
+#ifndef TABSTRACTAUDIODEVICE_H
+#define TABSTRACTAUDIODEVICE_H
 
 
 #include <QtCore/qobject.h>
 
 
 /**
- * @class TabstractAudioDevice is base class for audio output back-end.
+ * @class TabstractAudioDevice is base class for Metronomek audio routines.
  * Subclasses have to implement:
- * @p setAudioOutParams() - to create/initialize audio out
+ * @p setAudioOutParams() - to create/initialize audio
  *      and further change its parameters - like device name.
  * @p startPlaying() and @p stopPlaying() implements apparent functionality.
  *
  * @p feedAudio() signal is emitted when audio back-end wants data to play.
- * @p TaoudioOUT handles that and feed char* data stream with audio.
+ * @p Tsound handles that and feed char* data stream with audio.
  *
  * It is assumed that audio data is 16 bits (@p qint16) and stereo (2 channels)
  */
@@ -77,4 +77,4 @@ private:
 
 };
 
-#endif // TABSTRACTAUDIOOUTPUT_H
+#endif // TABSTRACTAUDIODEVICE_H

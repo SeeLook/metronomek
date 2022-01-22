@@ -6,7 +6,7 @@
 #define TOBOEAUDIOOUT_H
 
 
-#include "tabstractaudiooutput.h"
+#include "tabstractaudiodevice.h"
 #include <oboe/Oboe.h>
 
 

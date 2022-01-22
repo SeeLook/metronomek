@@ -23,7 +23,7 @@ set(METRONOMEK_SRC
     main.cpp
     tglob.cpp
     tsound.cpp
-    tabstractaudiooutput.cpp
+    tabstractaudiodevice.cpp
     tsounddata.cpp
     tnumeralspectrum.cpp
     trtaudioout.cpp

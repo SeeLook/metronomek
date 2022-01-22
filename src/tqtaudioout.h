@@ -5,7 +5,7 @@
 #ifndef TQTAUDIOOUT_H
 #define TQTAUDIOOUT_H
 
-#include "tabstractaudiooutput.h"
+#include "tabstractaudiodevice.h"
 #include <QtMultimedia/qaudio.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
 

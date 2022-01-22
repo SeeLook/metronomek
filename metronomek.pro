@@ -34,7 +34,7 @@ SOURCES += \
         src/main.cpp \
         src/tglob.cpp \
         src/tsound.cpp \
-        src/tabstractaudiooutput.cpp \
+        src/tabstractaudiodevice.cpp \
 #        src/tqtaudioout.cpp \
         src/toboeaudioout.cpp \
         src/tsounddata.cpp \
@@ -51,7 +51,7 @@ HEADERS += \
         src/tglob.h \
         src/taudiobuffer.h \
         src/tsound.h \
-        src/tabstractaudiooutput.h \
+        src/tabstractaudiodevice.h \
 #        src/tqtaudioout.h \
         src/toboeaudioout.h \
         src/tsounddata.h \

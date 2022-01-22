@@ -5,7 +5,7 @@
 
 #include "tcountingimport.h"
 #include "tsounddata.h"
-#include "tabstractaudiooutput.h"
+#include "tabstractaudiodevice.h"
 
 #if defined (WITH_SOUNDTOUCH)
   #include <soundtouch/SoundTouch.h>

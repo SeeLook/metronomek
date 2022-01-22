@@ -6,7 +6,7 @@
 #define TRTAUDIOOUT_H
 
 
-#include "tabstractaudiooutput.h"
+#include "tabstractaudiodevice.h"
 #include "rtaudio/RtAudio.h"
 
 
