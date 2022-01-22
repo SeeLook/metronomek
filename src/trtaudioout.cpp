@@ -108,7 +108,7 @@ int TrtAudioOut::rtCallBack(void* outBuffer, void*, unsigned int nBufferFrames, 
 
 
 TrtAudioOut::TrtAudioOut(QObject* parent) :
-  TabstractAudioOutput(parent)
+  TabstractAudioDevice(parent)
 {
   m_instance = this;
 

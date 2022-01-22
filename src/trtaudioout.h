@@ -13,7 +13,7 @@
 /**
  * @class TrtAudioOut is Linux/Mac/Windows back-end of Metronomek audio
  */
-class TrtAudioOut : public TabstractAudioOutput
+class TrtAudioOut : public TabstractAudioDevice
 {
 
   Q_OBJECT

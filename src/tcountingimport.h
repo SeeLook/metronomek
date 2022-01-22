@@ -10,7 +10,7 @@
 
 
 class TsoundData;
-class TabstractAudioOutput;
+class TabstractAudioDevice;
 
 
 /**
@@ -40,7 +40,7 @@ public:
 
 //   void importFromResources();
 
-  void initSettings(TabstractAudioOutput* audioDev);
+  void initSettings(TabstractAudioDevice* audioDev);
   void restoreSettings();
 
   Q_INVOKABLE void play(int numer);
@@ -64,7 +64,7 @@ private:
   QVector<TsoundData*>             *m_numerals = nullptr;
   bool                              m_doSquash = false;
   bool                              m_alignCounting = true;
-  TabstractAudioOutput             *m_audioDevice = nullptr;
+  TabstractAudioDevice             *m_audioDevice = nullptr;
   int                               m_currSample = 0;
   int                               m_playNum = 0;
 };

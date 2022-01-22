@@ -25,7 +25,7 @@ QStringList TqtAudioOut::getAudioDevicesList() {
 
 
 TqtAudioOut::TqtAudioOut(QObject* parent) :
-  TabstractAudioOutput(parent),
+  TabstractAudioDevice(parent),
   m_bufferFrames(256),
   m_sampleRate(48000)
 {

@@ -10,7 +10,7 @@
 
 
 /**
- * @class TabstractAudioOutput is base class for audio output back-end.
+ * @class TabstractAudioDevice is base class for audio output back-end.
  * Subclasses have to implement:
  * @p setAudioOutParams() - to create/initialize audio out
  *      and further change its parameters - like device name.
@@ -21,13 +21,13 @@
  *
  * It is assumed that audio data is 16 bits (@p qint16) and stereo (2 channels)
  */
-class TabstractAudioOutput : public QObject
+class TabstractAudioDevice : public QObject
 {
 
   Q_OBJECT
 
 public:
-  TabstractAudioOutput(QObject* parent = nullptr);
+  TabstractAudioDevice(QObject* parent = nullptr);
 
   virtual void setAudioOutParams() = 0;
 

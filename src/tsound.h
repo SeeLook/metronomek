@@ -10,7 +10,7 @@
 #include <QtCore/qobject.h>
 
 
-class TabstractAudioOutput;
+class TabstractAudioDevice;
 class TspeedHandler;
 class TcountingImport;
 
@@ -199,7 +199,7 @@ private:
   bool                   m_initialized = false;
   quint32                m_sampleRate;
   bool                   m_callBackIsBussy;
-  TabstractAudioOutput  *m_audioDevice;
+  TabstractAudioDevice  *m_audioDevice;
 
   TspeedHandler         *m_speedHandler = nullptr;
   int                    m_playingPart = 0;

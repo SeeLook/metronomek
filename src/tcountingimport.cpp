@@ -284,14 +284,14 @@ void TcountingImport::importFromTTS() {
 #endif
 
 
-void TcountingImport::initSettings(TabstractAudioOutput* audioDev) {
+void TcountingImport::initSettings(TabstractAudioDevice* audioDev) {
   m_audioDevice = audioDev;
-  connect(m_audioDevice, &TabstractAudioOutput::feedAudio, this, &TcountingImport::playCallBack, Qt::DirectConnection);
+  connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingImport::playCallBack, Qt::DirectConnection);
 }
 
 
 void TcountingImport::restoreSettings() {
-  disconnect(m_audioDevice, &TabstractAudioOutput::feedAudio, this, &TcountingImport::playCallBack);
+  disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingImport::playCallBack);
 }
 
 

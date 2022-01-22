@@ -16,7 +16,7 @@ class ToboeCallBack;
 /**
  * @todo write docs
  */
-class ToboeAudioOut : public TabstractAudioOutput
+class ToboeAudioOut : public TabstractAudioDevice
 {
 
   Q_OBJECT

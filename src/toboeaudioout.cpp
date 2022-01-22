@@ -27,7 +27,7 @@ private:
 
 
 ToboeAudioOut::ToboeAudioOut(QObject* parent ) :
-  TabstractAudioOutput(parent)
+  TabstractAudioDevice(parent)
 {
   m_callBackClass = new ToboeCallBack();
 }

@@ -5,13 +5,13 @@
 #include "tabstractaudiooutput.h"
 
 
-TabstractAudioOutput::TabstractAudioOutput(QObject* parent) :
+TabstractAudioDevice::TabstractAudioDevice(QObject* parent) :
   QObject(parent)
 {
 }
 
 
-void TabstractAudioOutput::setSamplaRate(quint32 sr) {
+void TabstractAudioDevice::setSamplaRate(quint32 sr) {
   if (sr != m_sampleRate) {
     m_sampleRate = sr;
     emit sampleRateChanged();

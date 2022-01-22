@@ -131,7 +131,7 @@ void Tsound::init() {
     #else
       m_audioDevice = new TrtAudioOut(this);
     #endif
-      connect(m_audioDevice, &TabstractAudioOutput::feedAudio, this, &Tsound::outCallBack, Qt::DirectConnection);
+      connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack, Qt::DirectConnection);
       auto dn = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();
       if (dn != QLatin1String("anything")) { // This is workaround for old device name handling
           setDeviceName(GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString());
@@ -484,14 +484,14 @@ void Tsound::importFromCommandline() {
 void Tsound::initCountingSettings() {
   if (!m_countImport)
     m_countImport = new TcountingImport(&m_numerals, this);
-  disconnect(m_audioDevice, &TabstractAudioOutput::feedAudio, this, &Tsound::outCallBack);
+  disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack);
   m_countImport->initSettings(m_audioDevice);
 }
 
 
 void Tsound::restoreAfterCountSettings() {
   m_countImport->restoreSettings();
-  connect(m_audioDevice, &TabstractAudioOutput::feedAudio, this, &Tsound::outCallBack, Qt::DirectConnection);
+  connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack, Qt::DirectConnection);
 }
 
 

@@ -17,7 +17,7 @@ class QAudioOutput;
 /**
  * @class TqtAudioOut is Android back-end of Metronomek audio
  */
-class TqtAudioOut : public TabstractAudioOutput
+class TqtAudioOut : public TabstractAudioDevice
 {
 
   Q_OBJECT
