@@ -15,6 +15,7 @@
 #include <QtCore/qfile.h>
 #include <QtCore/qdatastream.h>
 #include <QtCore/qendian.h>
+#include <QtCore/qtimer.h>
 #include <QtGui/qguiapplication.h>
 
 #include <QtCore/qdebug.h>
@@ -299,6 +300,8 @@ void TcountingImport::play(int numer) {
   m_playNum = numer;
   m_currSample = 0;
   m_audioDevice->startPlaying();
+  m_playing = true;
+  watchPlayingStopped();
 }
 
 
@@ -358,8 +361,18 @@ void TcountingImport::playCallBack(char* data, unsigned int maxLen, unsigned int
     *out++ = sample; // right channel
     m_currSample++;
   }
-  if (m_currSample < 36000)
-    wasRead = CALLBACK_CONTINUE;
+  if (m_currSample < 36000) {
+      wasRead = CALLBACK_CONTINUE;
+  } else {
+      wasRead = CALLBACK_STOP;
+      m_playing = false;;
+  }
+}
+
+
+void TcountingImport::watchPlayingStopped() {
+  if (m_playing)
+    QTimer::singleShot(20, this, [=]{ watchPlayingStopped(); });
   else
-    wasRead = CALLBACK_STOP;
+    m_audioDevice->stopPlaying();
 }

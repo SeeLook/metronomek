@@ -59,6 +59,15 @@ protected:
 
   void playCallBack(char* data, unsigned int maxLen, unsigned int& wasRead);
 
+      /**
+       * When playing (m_playing == true) starts timer every 20 ms
+       * to check is it stopped (m_playing == false) - playCallBack sets that.
+       * When finished - stops audio device.
+       * It avoids high CPU usage under PulseAudio
+       * and doesn't harm under other audio back-ends.
+       */
+  void watchPlayingStopped();
+
 private:
   bool                              m_finished = false;
   QVector<TsoundData*>             *m_numerals = nullptr;
@@ -67,6 +76,7 @@ private:
   TabstractAudioDevice             *m_audioDevice = nullptr;
   int                               m_currSample = 0;
   int                               m_playNum = 0;
+  bool                              m_playing = false;
 };
 
 #endif // TCOUNTINGIMPORT_H
