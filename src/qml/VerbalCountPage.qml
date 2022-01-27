@@ -20,6 +20,15 @@ Tdialog {
   // private
   property CountImport cntImport: SOUND.countImport()
 
+  Connections {
+    target: cntImport
+    onRecFinished: {
+      var it = stack.currentItem.itemAtIndex(nr)
+      it.spectrum.update()
+      it.message = tooLong ? qsTr("Too long!") : ""
+    }
+  }
+
   header: Column {
     Text {
       anchors.horizontalCenter: parent.horizontalCenter
@@ -64,6 +73,8 @@ Tdialog {
       spacing: 1
       delegate: Rectangle {
         id: bgRect
+        property alias spectrum: numSpec
+        property alias message: recText.text
         width: parent ? parent.width : 0; height: fm.height * 5
         color: index % 2 ? activPal.base : activPal.alternateBase
         Row {
@@ -92,6 +103,7 @@ Tdialog {
             }
           }
           NumeralSpectrum {
+            id: numSpec
             nr: index
             clip: true
             width: numList.width - playButt.width - recButt.width - 3 * fm.height; height: bgRect.height
@@ -101,11 +113,23 @@ Tdialog {
               color: activPal.highlight
               visible: playAnim.running
             }
+            Text {
+              id: recText
+              anchors.centerIn: parent
+              color: "red"; style: Text.Outline; styleColor: bgRect.color
+              font { pixelSize: parent.height / 3; bold: true }
+            }
             NumberAnimation {
               id: playAnim
               target: playTick; property: "x"
               duration: 750
               from: 0; to: parent.width
+            }
+            SequentialAnimation {
+              id: recAnim
+              ScriptAction { script: recText.text = qsTr("silence...") }
+              PauseAnimation { duration: 1000 }
+              ScriptAction { script: recText.text = qsTr("now say:") + " " + (index + 1) }
             }
           }
           AbstractButton {
@@ -118,6 +142,10 @@ Tdialog {
               text: "\u00c0"
               color: "red"; style: Text.Raised; styleColor: activPal.shadow
               font { family: "Metronomek"; pixelSize: recButt.height * 0.5 }
+            }
+            onClicked: {
+              recAnim.start()
+              cntImport.rec(index)
             }
           }
         }

@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2019-2021 by Tomasz Bojczuk (seelook@gmail.com)     *
+ * Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 import QtQuick 2.12
@@ -123,6 +123,15 @@ Tdialog {
         id: andSettLoader
         sourceComponent: GLOB.isAndroid() ? andSettComp : undefined
         anchors.horizontalCenter: parent.horizontalCenter
+      }
+
+      Button {
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: qsTranslate("MainDrawerContent", "Verbal count")
+        onClicked: {
+          Qt.createComponent("qrc:/VerbalCountPage.qml").createObject(mainWindow)
+//           settPage.close()
+        }
       }
 
     } // Column
