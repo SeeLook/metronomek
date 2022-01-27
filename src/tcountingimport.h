@@ -22,7 +22,8 @@ class TcountingImport : public QObject
   Q_OBJECT
 
 public:
-  TcountingImport(QVector<TsoundData*>* numList, QObject* parent = nullptr);
+  explicit TcountingImport(QVector<TsoundData*>* numList, QObject* parent = nullptr);
+  ~TcountingImport() override;
 
       /**
        * @p TRUE when import was done
@@ -44,9 +45,11 @@ public:
   void restoreSettings();
 
   Q_INVOKABLE void play(int numer);
+  Q_INVOKABLE void rec(int numer);
 
 signals:
   void finishedChanged();
+  void recFinished(int nr, bool tooLong);
 
 protected:
 #if defined (WITH_SOUNDTOUCH)
@@ -58,6 +61,7 @@ protected:
 #endif
 
   void playCallBack(char* data, unsigned int maxLen, unsigned int& wasRead);
+  void recCallBack(char* data, unsigned int maxLen, unsigned int& wasRead);
 
       /**
        * When playing (m_playing == true) starts timer every 20 ms
@@ -68,6 +72,8 @@ protected:
        */
   void watchPlayingStopped();
 
+  void watchRecordingStopped();
+
 private:
   bool                              m_finished = false;
   QVector<TsoundData*>             *m_numerals = nullptr;
@@ -75,8 +81,12 @@ private:
   bool                              m_alignCounting = true;
   TabstractAudioDevice             *m_audioDevice = nullptr;
   int                               m_currSample = 0;
-  int                               m_playNum = 0;
-  bool                              m_playing = false;
+  int                               m_playNum = 0, m_recNum = 0;
+  bool                              m_playing = false, m_recording = false;
+  qint16                           *m_inBuffer = nullptr;
+  quint32                           m_inSize = 0, m_inPos = 0, m_endPos = 0;
+  qint16                            m_inNoise = 0, m_inMax = 0;
+  bool                              m_inOnSet = false;
 };
 
 #endif // TCOUNTINGIMPORT_H

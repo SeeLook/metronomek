@@ -46,6 +46,13 @@ TcountingImport::TcountingImport(QVector<TsoundData*>* numList, QObject* parent)
 }
 
 
+TcountingImport::~TcountingImport()
+{
+  if (m_inBuffer)
+    delete[] m_inBuffer;
+}
+
+
 void TcountingImport::importFromCommandline() {
   int noiseThreshold = 400;
   QCommandLineParser cmd;
@@ -292,16 +299,42 @@ void TcountingImport::initSettings(TabstractAudioDevice* audioDev) {
 
 
 void TcountingImport::restoreSettings() {
-  disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingImport::playCallBack);
+  if (m_audioDevice->audioMode() == TabstractAudioDevice::Audio_Output)
+    disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingImport::playCallBack);
+  else
+    disconnect(m_audioDevice, &TabstractAudioDevice::takeAudio, this, &TcountingImport::recCallBack);
 }
 
 
 void TcountingImport::play(int numer) {
   m_playNum = numer;
   m_currSample = 0;
+  if (m_audioDevice->audioMode() != TabstractAudioDevice::Audio_Output) {
+    disconnect(m_audioDevice, &TabstractAudioDevice::takeAudio, this, &TcountingImport::recCallBack);
+    connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingImport::playCallBack, Qt::DirectConnection);
+  }
   m_audioDevice->startPlaying();
   m_playing = true;
   watchPlayingStopped();
+}
+
+
+void TcountingImport::rec(int numer) {
+  if (m_audioDevice->audioMode() != TabstractAudioDevice::Audio_Input) {
+    disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingImport::playCallBack);
+    connect(m_audioDevice, &TabstractAudioDevice::takeAudio, this, &TcountingImport::recCallBack, Qt::DirectConnection);
+  }
+  if (!m_inBuffer)
+    m_inBuffer = new qint16[48000]; // 1 sec. buffer is enough
+  m_recNum = numer;
+  m_inSize = 0;
+  m_inPos = 0;
+  m_endPos = 0;
+  m_inNoise = 400;
+  m_inOnSet = false;
+  m_recording = true;
+  m_audioDevice->startRecording();
+  watchRecordingStopped();
 }
 
 
@@ -370,9 +403,80 @@ void TcountingImport::playCallBack(char* data, unsigned int maxLen, unsigned int
 }
 
 
+void TcountingImport::recCallBack(char* data, unsigned int maxLen, unsigned int& wasRead) {
+  wasRead = m_recording ? CALLBACK_CONTINUE : CALLBACK_STOP;
+  if (!m_recording)
+    return;
+
+  auto in = reinterpret_cast<qint16*>(data);
+  qint16 sample = 0;
+  for (uint i = 0; i < maxLen; ++i) {
+    sample = in[i];
+    qint16 absData = qAbs(sample);
+    if (m_inPos < 24000) {
+        m_inNoise = qMax(m_inNoise, absData);
+    } else if (!m_inOnSet) {
+        if (absData > m_inNoise) {
+          m_inOnSet = true;
+          quint32 pos = i - 1;
+          // find 0-cross
+          while (pos > -1 && ((in[pos] >= 0 && in[pos - 1] >= 0) || (in[pos] < 0 && in[pos - 1] < 0)))
+            pos--;
+          // copy data from 0-cross position to current i
+          for (uint p = pos; p <= i; ++p)
+            m_inBuffer[p] = in[p];
+          m_inSize = i - pos + 1;
+          m_inMax = 0;
+        }
+    } else if (m_inOnSet) {
+        if (m_inSize < 48000) {
+            m_inBuffer[m_inSize] = in[i];
+            m_inSize++;
+        } else { // to long
+            wasRead = CALLBACK_STOP;
+            m_recording = false;
+            break;
+        }
+        qint16 prevSample = i == 0 ? m_inBuffer[m_inSize - 1] : in[i - 1];
+        if ((in[i] >= 0 && prevSample <= 0)) {
+            if (m_inMax < m_inNoise * 1.5) {
+                if (m_endPos) {
+                    if (m_inPos - m_endPos > 2400) { // saying numeral finished
+                      m_inSize = m_inSize - (m_inPos - m_endPos);
+                      wasRead = CALLBACK_STOP;
+                      m_recording = false;
+                      break;
+                    }
+                } else {
+                    m_endPos = m_inPos;
+                }
+            } else {
+                m_endPos = 0;
+            }
+            m_inMax = 0;
+        } else {
+            m_inMax = qMax(m_inMax, absData);
+        }
+    }
+    m_inPos++;
+  }
+}
+
+
 void TcountingImport::watchPlayingStopped() {
   if (m_playing)
     QTimer::singleShot(20, this, [=]{ watchPlayingStopped(); });
   else
-    m_audioDevice->stopPlaying();
+    m_audioDevice->stop();
+}
+
+
+void TcountingImport::watchRecordingStopped() {
+  if (m_recording)
+      QTimer::singleShot(20, this, [=]{ watchRecordingStopped(); });
+  else {
+      m_audioDevice->stop();
+      m_numerals->at(m_recNum)->copyData(m_inBuffer, m_inSize);
+      emit recFinished(m_recNum, m_inSize >= 48000);
+  }
 }
