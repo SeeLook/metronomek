@@ -50,7 +50,7 @@ void TqtAudioOut::startPlaying() {
 }
 
 
-void TqtAudioOut::stopPlaying() {
+void TqtAudioOut::stop() {
   m_audioOUT->stop();
 }
 

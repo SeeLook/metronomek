@@ -28,7 +28,7 @@ public:
 
   static QStringList getAudioDevicesList();
 
-  void stopPlaying() override;
+  void stop() override;
 
   void startPlaying() override;
 

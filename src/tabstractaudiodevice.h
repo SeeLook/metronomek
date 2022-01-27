@@ -43,12 +43,22 @@ public:
   virtual void setDeviceName(const QString& devName) = 0;
 
   virtual void startPlaying() = 0;
-  virtual void stopPlaying() = 0;
+  virtual void startRecording() = 0;
+  virtual void stop() = 0;
+
+  enum EaudioMode {
+    Audio_Output, Audio_Input
+  };
+  Q_ENUM(EaudioMode)
 
   bool isPlaying() const { return p_isPlaying; }
 
+  bool isRecording() const { return p_isRecording; }
+
   quint32 sampleRate() const { return m_sampleRate; }
   void setSamplaRate(quint32 sr);
+
+  EaudioMode audioMode() const { return m_audioMode; }
 
 signals:
 
@@ -67,13 +77,21 @@ signals:
        */
   void feedAudio(char*, unsigned int, unsigned int&);
 
+  void takeAudio(char*, unsigned int, unsigned int&);
+
   void sampleRateChanged();
+  void audioModeChanged();
 
 protected:
   bool                  p_isPlaying = false;
+  bool                  p_isRecording = false;
+
+protected:
+  void setAudioType(EaudioMode aMode);
 
 private:
   quint32               m_sampleRate = 48000;
+  EaudioMode            m_audioMode = Audio_Output;
 
 };
 

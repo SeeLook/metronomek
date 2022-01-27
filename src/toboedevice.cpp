@@ -4,6 +4,7 @@
 
 
 #include "toboedevice.h"
+#include <QtAndroidExtras/qandroidfunctions.h>
 
 #include <QtCore/qdebug.h>
 
@@ -11,16 +12,21 @@
 class ToboeCallBack : public oboe::AudioStreamDataCallback {
 
 public:
-  ToboeCallBack(TOboeDevice* outParent = nullptr) : oboe::AudioStreamDataCallback(), m_out(outParent) {}
+  ToboeCallBack(TOboeDevice* devParent = nullptr) : oboe::AudioStreamDataCallback(), m_device(devParent) {}
   oboe::DataCallbackResult onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames) {
       Q_UNUSED(audioStream)
+
       unsigned int retVal = 0;
-      emit m_out->feedAudio(static_cast<char*>(audioData), static_cast<unsigned int>(numFrames), retVal);
+      if (m_device->audioMode() == TabstractAudioDevice::Audio_Output)
+        emit m_device->feedAudio(static_cast<char*>(audioData), static_cast<unsigned int>(numFrames), retVal);
+      else
+        emit m_device->takeAudio(static_cast<char*>(audioData), static_cast<unsigned int>(numFrames), retVal);
+
       return retVal == 0 ? oboe::DataCallbackResult::Continue : oboe::DataCallbackResult::Stop;
   }
 
 private:
-  TOboeDevice           *m_out;
+  TOboeDevice           *m_device;
 
 };
 
@@ -46,12 +52,43 @@ TOboeDevice::~TOboeDevice()
 
 
 void TOboeDevice::startPlaying() {
-  if (m_oboe)
+  if (m_oboe){
+    if (audioMode() != Audio_Output) {
+      stop();
+      m_stream->close();
+      setAudioType(Audio_Output);
+      m_oboe->setDirection(oboe::Direction::Output);
+      m_oboe->setChannelCount(oboe::ChannelCount::Stereo);
+      resultMessage(m_oboe->openStream(m_stream));
+    }
     m_stream->requestStart();
+  }
 }
 
 
-void TOboeDevice::stopPlaying() {
+void TOboeDevice::startRecording() {
+  if (m_oboe) {
+    if (audioMode() != Audio_Input) {
+      stop();
+      m_stream->close();
+      if (QtAndroid::androidSdkVersion() >= 23) {
+          const QString allowRec("android.permission.RECORD_AUDIO");
+          if (QtAndroid::checkPermission(allowRec) != QtAndroid::PermissionResult::Granted) {
+            auto perms = QtAndroid::requestPermissionsSync(QStringList() << allowRec);
+            qDebug() << allowRec << (perms[allowRec] == QtAndroid::PermissionResult::Granted);
+          }
+        }
+      setAudioType(Audio_Input);
+      m_oboe->setDirection(oboe::Direction::Input);
+      m_oboe->setChannelCount(oboe::ChannelCount::Mono);
+      m_oboe->setInputPreset(oboe::InputPreset::Unprocessed);
+      resultMessage(m_oboe->openStream(m_stream));
+    }
+    m_stream->requestStart();
+  }
+}
+
+void TOboeDevice::stop() {
   if (m_oboe)
     m_stream->requestStop();
 }
@@ -81,9 +118,14 @@ void TOboeDevice::setAudioOutParams() {
     m_oboe->setSampleRate(sampleRate());
     m_oboe->setDataCallback(m_callBackClass);
 
-    auto result = m_oboe->openStream(m_stream);
-    if (result != oboe::Result::OK)
-      qDebug() << "[ToboeAudioOut] Failed to create Oboe stream. Error: %s" << oboe::convertToText(result);
+    resultMessage(m_oboe->openStream(m_stream));
   }
   // NOTE: to change Oboe params just close stream, set new parameters and open stream again
+}
+
+
+void TOboeDevice::resultMessage(const oboe::Result& result) {
+  if (result != oboe::Result::OK)
+    qDebug() << "[ToboeAudioOut] Failed to create Oboe" << (audioMode() == Audio_Input ? "INPUT" : "OUTPUT")
+             << "stream. Error:" << oboe::convertToText(result);
 }

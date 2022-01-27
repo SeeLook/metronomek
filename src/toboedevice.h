@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2021-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #ifndef TOBOEDEVICE_H
@@ -14,7 +14,7 @@ class ToboeCallBack;
 
 
 /**
- * @todo write docs
+ * Android audio back-end
  */
 class TOboeDevice : public TabstractAudioDevice
 {
@@ -26,12 +26,16 @@ public:
   ~TOboeDevice();
 
   void startPlaying() override;
-  void stopPlaying() override;
+  void startRecording() override;
+  void stop() override;
 
   void setDeviceName(const QString& devName) override;
   QString deviceName() const override;
 
   void setAudioOutParams() override;
+
+protected:
+  void resultMessage(const oboe::Result& result);
 
 private:
   oboe::AudioStreamBuilder               *m_oboe = nullptr;

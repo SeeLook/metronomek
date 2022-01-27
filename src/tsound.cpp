@@ -38,7 +38,7 @@ QStringList Tsound::getAudioDevicesList() {
   return QStringList();
 //  return TqtAudioOut::getAudioDevicesList();
 #else
-  return TRtAudioDevice::getAudioDevicesList();
+  return TRtAudioDevice::getAudioOutDevicesList();
 #endif
 }
 
@@ -320,7 +320,7 @@ void Tsound::playingFinishedSlot() {
       m_goingToStop = true;
       int delay = ((m_samplPerBeat - m_currSample) * 1000) / m_sampleRate + 50;
       QTimer::singleShot(qMax(100, delay), this, [=] {
-          m_audioDevice->stopPlaying();
+          m_audioDevice->stop();
           m_goingToStop = false;
       });
     }
