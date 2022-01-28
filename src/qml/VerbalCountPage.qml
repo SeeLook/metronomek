@@ -67,6 +67,7 @@ Tdialog {
     id: customComp
     ListView {
       id: numList
+      currentIndex: -1
       model: 12
 
       width: parent ? parent.width : 0; height: parent ? parent.height : 0
@@ -75,74 +76,79 @@ Tdialog {
         id: bgRect
         property alias spectrum: numSpec
         property alias message: recText.text
-        width: parent ? parent.width : 0; height: fm.height * 5
-        color: index % 2 ? activPal.base : activPal.alternateBase
-        Row {
-          anchors.verticalCenter: parent.verticalCenter
-          spacing: fm.height
-          x: fm.height / 2
-          AbstractButton {
-            id: playButt
-            anchors.verticalCenter: parent.verticalCenter
-            height: fm.height * 3; width: height
-            background: TipRect { radius: width / 2; raised: !parent.pressed }
-            indicator: Text {
-              x: (parent.width - width) / 2 + width / 8; y: (parent.height - height) / 2
-              text: "\u00bf"
-              color: "green"; style: Text.Raised; styleColor: activPal.shadow
-              font { family: "Metronomek"; pixelSize: playButt.height * 0.7 }
-              Text {
-                x: parent.height / 8; y: (parent.height - height) / 2
-                color: "white"; text: index + 1
-                font { pixelSize: parent.height * 0.3; bold: true }
-              }
-            }
+        width: parent ? parent.width : 0
+        height: fm.height * 5 + (numList.currentIndex === index ? buttonsRect.height + fm.height / 3 : 0)
+        Behavior on height { NumberAnimation {} }
+        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, numList.currentIndex === index ? 20 : 0))
+        NumeralSpectrum {
+          id: numSpec
+          nr: index
+          clip: true
+          width: parent.width; height: fm.height * 5
+          Text {
+            x: fm.height / 4; y: fm.height / 4
+            color: numList.currentIndex === index ? activPal.highlight : activPal.text
+            text: index + 1
+            style: Text.Outline; styleColor: numList.currentIndex === index ? activPal.text : bgRect.color
+            font { pixelSize: parent.height * 0.25; bold: true }
+          }
+          Rectangle {
+            id: playTick
+            width: fm.height / 4; height: parent.height
+            color: activPal.highlight
+            visible: playAnim.running
+          }
+          Text {
+            id: recText
+            anchors.centerIn: parent
+            color: "red"; style: Text.Outline; styleColor: bgRect.color
+            font { pixelSize: parent.height / 3; bold: true }
+          }
+          NumberAnimation {
+            id: playAnim
+            target: playTick; property: "x"
+            duration: 750
+            from: 0; to: numSpec.width
+          }
+          SequentialAnimation {
+            id: recAnim
+            ScriptAction { script: recText.text = qsTr("silence...") }
+            PauseAnimation { duration: 1000 }
+            ScriptAction { script: recText.text = qsTr("now say:") + " " + (index + 1) }
+          }
+          MouseArea {
+            anchors.fill: parent
+            onClicked: numList.currentIndex = index
+          }
+        }
+        Flow {
+          id: buttonsRect
+          scale: numList.currentIndex === index ? 1 : 0
+          transformOrigin: Item.Top
+          Behavior on scale { NumberAnimation {} }
+          anchors { top: spectrum.bottom }
+          spacing: bgRect.width * 0.01
+          CuteButton {
+            width: bgRect.width * 0.24; height: fm.height * 2
+            text: qsTranslate("QShortcut", "Play")
+            bgColor: Qt.tint(activPal.button, GLOB.alpha("green", 40))
             onClicked: {
               playAnim.start()
               cntImport.play(index)
             }
           }
-          NumeralSpectrum {
-            id: numSpec
-            nr: index
-            clip: true
-            width: numList.width - playButt.width - recButt.width - 3 * fm.height; height: bgRect.height
-            Rectangle {
-              id: playTick
-              width: fm.height / 4; height: parent.height
-              color: activPal.highlight
-              visible: playAnim.running
-            }
-            Text {
-              id: recText
-              anchors.centerIn: parent
-              color: "red"; style: Text.Outline; styleColor: bgRect.color
-              font { pixelSize: parent.height / 3; bold: true }
-            }
-            NumberAnimation {
-              id: playAnim
-              target: playTick; property: "x"
-              duration: 750
-              from: 0; to: parent.width
-            }
-            SequentialAnimation {
-              id: recAnim
-              ScriptAction { script: recText.text = qsTr("silence...") }
-              PauseAnimation { duration: 1000 }
-              ScriptAction { script: recText.text = qsTr("now say:") + " " + (index + 1) }
-            }
+          //CuteButton {
+            //width: bgRect.width * 0.24; height: fm.height * 2
+            //text: qsTr("Amplify")
+            //bgColor: Qt.tint(activPal.button, GLOB.alpha("blue", 40))
+          //}
+          Item {
+            width: bgRect.width * 0.49 /*0.24*/; height: fm.height * 2
           }
-          AbstractButton {
-            id: recButt
-            anchors.verticalCenter: parent.verticalCenter
-            height: fm.height * 3; width: height
-            background: TipRect { radius: width / 2; raised: !parent.pressed }
-            indicator: Text {
-              x: (parent.width - width) / 2; y: (parent.height - height) / 2
-              text: "\u00c0"
-              color: "red"; style: Text.Raised; styleColor: activPal.shadow
-              font { family: "Metronomek"; pixelSize: recButt.height * 0.5 }
-            }
+          CuteButton {
+            width: bgRect.width * 0.24; height: fm.height * 2
+            text: qsTr("Record")
+            bgColor: Qt.tint(activPal.button, GLOB.alpha("red", 40))
             onClicked: {
               recAnim.start()
               cntImport.rec(index)
@@ -162,12 +168,27 @@ Tdialog {
     }
   }
 
-  standardButtons: Dialog.Ok | Dialog.Cancel
+  standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Help
   Component.onCompleted: {
     //footer.standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "Save")
     SOUND.initCountingSettings()
+    footer.standardButton(Dialog.Help).text = qsTranslate("TempoPage", "Actions")
   }
   Component.onDestruction: {
     SOUND.restoreAfterCountSettings()
+  }
+
+  onHelpRequested: moreMenu.open()
+
+  Menu {
+    id: moreMenu
+    y: vCntPage.height - height - vCntPage.implicitFooterHeight - vCntPage.implicitHeaderHeight
+    MenuItem {
+      text: qsTr("Load from file")
+//       onClicked:
+    }
+    MenuItem {
+      text: qsTr("Align")
+    }
   }
 }
