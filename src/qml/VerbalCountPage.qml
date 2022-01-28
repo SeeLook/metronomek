@@ -24,7 +24,6 @@ Tdialog {
     target: cntMan
     onRecFinished: {
       var it = stack.currentItem.itemAtIndex(nr)
-      it.spectrum.update()
       it.message = tooLong ? qsTr("Too long!") : ""
     }
   }
@@ -120,6 +119,7 @@ Tdialog {
             anchors.fill: parent
             onClicked: numList.currentIndex = index
           }
+          Component.onCompleted: cntMan.addSpectrum(numSpec)
         }
         Flow {
           id: buttonsRect

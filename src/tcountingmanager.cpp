@@ -6,6 +6,7 @@
 #include "tcountingmanager.h"
 #include "tsounddata.h"
 #include "tabstractaudiodevice.h"
+#include "tnumeralspectrum.h"
 
 #if defined (WITH_SOUNDTOUCH)
   #include <soundtouch/SoundTouch.h>
@@ -88,11 +89,11 @@ void TcountingManager::importFromCommandline() {
 
 
 void TcountingManager::importFormFile(const QString& fileName, int noiseThreshold) {
-  qDebug() << "[TcountingImport] Importing from" << fileName << "threshold" << noiseThreshold;
+  qDebug() << "[TcountingManager] Importing from" << fileName << "threshold" << noiseThreshold;
 
   QFile audioF(fileName);
   if (!audioF.exists()) {
-    qDebug() << "[TcountingImport] File doesn't exist!" << fileName;
+    qDebug() << "[TcountingManager] File doesn't exist!" << fileName;
     return;
   }
 
@@ -143,7 +144,7 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
                   in >> bitsPerSample;
                   bitsPerSample = qFromBigEndian<quint16>(bitsPerSample);
                   if (bitsPerSample != 16) {
-                    qDebug() << "[TcountingImport] Only *.wav with 16 bit per sample are supported.";
+                    qDebug() << "[TcountingManager] Only *.wav with 16 bit per sample are supported.";
                     ok = false;
                   }
                   in >> headChunk;
@@ -164,11 +165,11 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
                   }
                   frames = audioDataSize / 2;
               } else {
-                  qDebug() << "[TcountingImport] Unsupported audio format in file:" << fileName;
+                  qDebug() << "[TcountingManager] Unsupported audio format in file:" << fileName;
                   ok = false;
               }
           } else {
-              qDebug() << "[TcountingImport] "<< fileName << "is not valid *,wav file";
+              qDebug() << "[TcountingManager] "<< fileName << "is not valid *,wav file";
               ok = false;
           }
       } else if (ext == QLatin1String("raw")) {
@@ -179,7 +180,7 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
       }
   } else {
       ok = false;
-      qDebug() << "[TcountingImport] Cannot open file" << fileName;
+      qDebug() << "[TcountingManager] Cannot open file" << fileName;
   }
 
   if (!data || !ok) {
@@ -303,10 +304,24 @@ void TcountingManager::restoreSettings() {
     disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingManager::playCallBack);
   else
     disconnect(m_audioDevice, &TabstractAudioDevice::takeAudio, this, &TcountingManager::recCallBack);
+  m_spectrums.clear();
+}
+
+
+void TcountingManager::addSpectrum(TnumeralSpectrum* spectItem) {
+  if (spectItem->nr() == m_spectrums.count())
+    m_spectrums << spectItem;
+  else if (spectItem->nr() < m_spectrums.count())
+    m_spectrums[spectItem->nr()] = spectItem;
+
+  spectItem->setNumeral(m_numerals->at(spectItem->nr()));
 }
 
 
 void TcountingManager::play(int numer) {
+  if (m_spectrums[numer]->numeral() == nullptr)
+    return;
+
   m_playNum = numer;
   m_currSample = 0;
   if (m_audioDevice->audioMode() != TabstractAudioDevice::Audio_Output) {
@@ -338,7 +353,7 @@ void TcountingManager::rec(int numer) {
 }
 
 
-// void TcountingImport::setFinished(bool finished)
+// void TcountingManager::setFinished(bool finished)
 // {
 //   if (m_finished != finished) {
 //     m_finished = finished;
@@ -386,7 +401,7 @@ void TcountingManager::squash(qint16* in, quint32 inLen, qint16*& out, quint32& 
 void TcountingManager::playCallBack(char* data, unsigned int maxLen, unsigned int& wasRead) {
   qint16 sample = 0;
   auto out = reinterpret_cast<qint16*>(data);
-  auto num = m_numerals->at(m_playNum);
+  auto num = m_spectrums[m_playNum]->numeral();
 
   for (unsigned int i = 0; i < maxLen; i++) {
     sample = num->sampleAt(m_currSample);
@@ -476,7 +491,9 @@ void TcountingManager::watchRecordingStopped() {
       QTimer::singleShot(20, this, [=]{ watchRecordingStopped(); });
   else {
       m_audioDevice->stop();
-      m_numerals->at(m_recNum)->copyData(m_inBuffer, m_inSize);
+      auto spectrum = m_spectrums[m_recNum];
+      spectrum->copyData(m_inBuffer, m_inSize);
+//       m_numerals->at(m_recNum)->copyData(m_inBuffer, m_inSize);
       emit recFinished(m_recNum, m_inSize >= 48000);
   }
 }

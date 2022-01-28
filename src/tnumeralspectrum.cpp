@@ -3,7 +3,6 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tnumeralspectrum.h"
-#include "tsound.h"
 #include "tsounddata.h"
 
 #include <QtGui/qpainter.h>
@@ -24,6 +23,7 @@ TnumeralSpectrum::TnumeralSpectrum(QQuickItem* parent) :
 
 TnumeralSpectrum::~TnumeralSpectrum()
 {
+  qDebug() << "[TnumeralSpectrum] deleted";
 }
 
 
@@ -31,11 +31,22 @@ void TnumeralSpectrum::setNr(int nr) {
   if (m_nr == nr)
       return;
 
-  if (SOUND->numerals() && nr >= 0 && nr < 12) {
-    m_numData = SOUND->numerals()->at(nr);
-  }
   m_nr = nr;
   emit nrChanged(m_nr);
+}
+
+
+void TnumeralSpectrum::setNumeral(TsoundData* numData) {
+  m_numData = numData;
+  update();
+}
+
+
+void TnumeralSpectrum::copyData(qint16* numData, int len) {
+  if (!m_numData)
+    m_numData = new TsoundData();
+  m_numData->copyData(numData, len);
+  update();
 }
 
 

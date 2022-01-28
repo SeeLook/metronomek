@@ -30,11 +30,16 @@ public:
 
   void paint(QPainter* painter) override;
 
+  TsoundData* numeral() { return m_numData; }
+  void setNumeral(TsoundData* numData = nullptr);
+
+  void copyData(qint16* numData, int len);
+
 signals:
   void nrChanged(int nr);
 
 private:
-  int               m_nr = -1;
+  int                m_nr = -1;
   TsoundData        *m_numData = nullptr;
 };
 

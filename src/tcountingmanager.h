@@ -11,6 +11,7 @@
 
 class TsoundData;
 class TabstractAudioDevice;
+class TnumeralSpectrum;
 
 
 /**
@@ -43,6 +44,15 @@ public:
 
   void initSettings(TabstractAudioDevice* audioDev);
   void restoreSettings();
+
+      /**
+       * It sets numeral audio data to given @p TnumeralSpectrum.
+       * This way the data doesn't vanish when @p NumeralSpectrum is deleted
+       * - it is delegate of QML ListView
+       * QML VerbalCountPage has to register every NumeralSpectrum item
+       * by calling this method.
+       */
+  Q_INVOKABLE void addSpectrum(TnumeralSpectrum* spectItem);
 
   Q_INVOKABLE void play(int numer);
   Q_INVOKABLE void rec(int numer);
@@ -77,6 +87,7 @@ protected:
 private:
   bool                              m_finished = false;
   QVector<TsoundData*>             *m_numerals = nullptr;
+  QVector<TnumeralSpectrum*>        m_spectrums;
   bool                              m_doSquash = false;
   bool                              m_alignCounting = true;
   TabstractAudioDevice             *m_audioDevice = nullptr;
