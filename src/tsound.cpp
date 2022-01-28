@@ -8,7 +8,7 @@
 //  #include "tqtaudioout.h"
   #include "toboedevice.h"
 #else
-  #include "trtaudioout.h"
+  #include "trtaudiodevice.h"
 #endif
 // #include "taudiobuffer.h"
 #include "ttempopart.h"
