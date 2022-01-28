@@ -12,7 +12,7 @@
 
 class TabstractAudioDevice;
 class TspeedHandler;
-class TcountingImport;
+class TcountingManager;
 
 
 #define SOUND (Tsound::instance())
@@ -111,7 +111,7 @@ public:
 
   QVector<TsoundData*>* numerals() { return &m_numerals; }
 
-  Q_INVOKABLE TcountingImport* countImport() { return m_countImport; }
+  Q_INVOKABLE TcountingManager* countManager() { return m_countManager; }
 
       /**
        * Initializes sound back-end state
@@ -210,7 +210,7 @@ private:
   int                    m_staticTempo;
   bool                   m_verbalCount = false;
   QVector<TsoundData*>   m_numerals;
-  TcountingImport        *m_countImport = nullptr;
+  TcountingManager      *m_countManager = nullptr;
 
   int                    m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */
   int                    m_currSample = 0;

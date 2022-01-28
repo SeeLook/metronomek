@@ -2,8 +2,8 @@
  * Copyright (C) 2022 by Tomasz Bojczuk (seelook@gmail.com)          *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TCOUNTINGIMPORT_H
-#define TCOUNTINGIMPORT_H
+#ifndef TCOUNTINGMANAGER_H
+#define TCOUNTINGMANAGER_H
 
 
 #include <QtCore/qobject.h>
@@ -16,14 +16,14 @@ class TabstractAudioDevice;
 /**
  * 
  */
-class TcountingImport : public QObject
+class TcountingManager : public QObject
 {
 
   Q_OBJECT
 
 public:
-  explicit TcountingImport(QVector<TsoundData*>* numList, QObject* parent = nullptr);
-  ~TcountingImport() override;
+  explicit TcountingManager(QVector<TsoundData*>* numList, QObject* parent = nullptr);
+  ~TcountingManager() override;
 
       /**
        * @p TRUE when import was done
@@ -89,4 +89,4 @@ private:
   bool                              m_inOnSet = false;
 };
 
-#endif // TCOUNTINGIMPORT_H
+#endif // TCOUNTINGMANAGER_H

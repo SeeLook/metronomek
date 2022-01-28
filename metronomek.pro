@@ -39,11 +39,11 @@ SOURCES += \
 #        src/tqtaudioout.cpp \
         src/tsounddata.cpp \
         src/tnumeralspectrum.cpp \
-        src/tcountingimport.cpp \
         src/tmetroshape.cpp \
         \
         src/tspeedhandler.cpp \
         src/ttempopart.cpp \
+        src/tcountingmanager.cpp \
         \
         src/android/tandroid.cpp \
 
@@ -56,11 +56,11 @@ HEADERS += \
 #        src/tqtaudioout.h \
         src/tsounddata.h \
         src/tnumeralspectrum.h \
-        src/tcountingimport.h \
         src/tmetroshape.h \
         \
         src/tspeedhandler.h \
         src/ttempopart.h \
+        src/tcountingmanager.h \
         \
         src/android/tandroid.h\
 

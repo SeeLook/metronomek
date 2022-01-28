@@ -3,7 +3,7 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
-#include "tcountingimport.h"
+#include "tcountingmanager.h"
 #include "tsounddata.h"
 #include "tabstractaudiodevice.h"
 
@@ -39,21 +39,21 @@ class Tmark
 };
 
 
-TcountingImport::TcountingImport(QVector<TsoundData*>* numList, QObject* parent) :
+TcountingManager::TcountingManager(QVector<TsoundData*>* numList, QObject* parent) :
   QObject(parent),
   m_numerals(numList)
 {
 }
 
 
-TcountingImport::~TcountingImport()
+TcountingManager::~TcountingManager()
 {
   if (m_inBuffer)
     delete[] m_inBuffer;
 }
 
 
-void TcountingImport::importFromCommandline() {
+void TcountingManager::importFromCommandline() {
   int noiseThreshold = 400;
   QCommandLineParser cmd;
   QCommandLineOption noiseThresholdOpt(QStringList() << QStringLiteral("noise-threshold") << QStringLiteral("t"),
@@ -87,7 +87,7 @@ void TcountingImport::importFromCommandline() {
 }
 
 
-void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold) {
+void TcountingManager::importFormFile(const QString& fileName, int noiseThreshold) {
   qDebug() << "[TcountingImport] Importing from" << fileName << "threshold" << noiseThreshold;
 
   QFile audioF(fileName);
@@ -286,32 +286,32 @@ void TcountingImport::importFormFile(const QString& fileName, int noiseThreshold
 
 
 #if defined (Q_OS_ANDROID)
-void TcountingImport::importFromTTS() {
+void TcountingManager::importFromTTS() {
 
 }
 #endif
 
 
-void TcountingImport::initSettings(TabstractAudioDevice* audioDev) {
+void TcountingManager::initSettings(TabstractAudioDevice* audioDev) {
   m_audioDevice = audioDev;
-  connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingImport::playCallBack, Qt::DirectConnection);
+  connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingManager::playCallBack, Qt::DirectConnection);
 }
 
 
-void TcountingImport::restoreSettings() {
+void TcountingManager::restoreSettings() {
   if (m_audioDevice->audioMode() == TabstractAudioDevice::Audio_Output)
-    disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingImport::playCallBack);
+    disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingManager::playCallBack);
   else
-    disconnect(m_audioDevice, &TabstractAudioDevice::takeAudio, this, &TcountingImport::recCallBack);
+    disconnect(m_audioDevice, &TabstractAudioDevice::takeAudio, this, &TcountingManager::recCallBack);
 }
 
 
-void TcountingImport::play(int numer) {
+void TcountingManager::play(int numer) {
   m_playNum = numer;
   m_currSample = 0;
   if (m_audioDevice->audioMode() != TabstractAudioDevice::Audio_Output) {
-    disconnect(m_audioDevice, &TabstractAudioDevice::takeAudio, this, &TcountingImport::recCallBack);
-    connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingImport::playCallBack, Qt::DirectConnection);
+    disconnect(m_audioDevice, &TabstractAudioDevice::takeAudio, this, &TcountingManager::recCallBack);
+    connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingManager::playCallBack, Qt::DirectConnection);
   }
   m_audioDevice->startPlaying();
   m_playing = true;
@@ -319,10 +319,10 @@ void TcountingImport::play(int numer) {
 }
 
 
-void TcountingImport::rec(int numer) {
+void TcountingManager::rec(int numer) {
   if (m_audioDevice->audioMode() != TabstractAudioDevice::Audio_Input) {
-    disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingImport::playCallBack);
-    connect(m_audioDevice, &TabstractAudioDevice::takeAudio, this, &TcountingImport::recCallBack, Qt::DirectConnection);
+    disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingManager::playCallBack);
+    connect(m_audioDevice, &TabstractAudioDevice::takeAudio, this, &TcountingManager::recCallBack, Qt::DirectConnection);
   }
   if (!m_inBuffer)
     m_inBuffer = new qint16[48000]; // 1 sec. buffer is enough
@@ -351,7 +351,7 @@ void TcountingImport::rec(int numer) {
 //#################################################################################################
 
 #if defined (WITH_SOUNDTOUCH)
-void TcountingImport::squash(qint16* in, quint32 inLen, qint16*& out, quint32& outLen) {
+void TcountingManager::squash(qint16* in, quint32 inLen, qint16*& out, quint32& outLen) {
   auto sTouch = new soundtouch::SoundTouch();
   sTouch->setChannels(1);
   sTouch->setSampleRate(48000);
@@ -383,7 +383,7 @@ void TcountingImport::squash(qint16* in, quint32 inLen, qint16*& out, quint32& o
 #define CALLBACK_CONTINUE (0)
 #define CALLBACK_STOP (2)
 
-void TcountingImport::playCallBack(char* data, unsigned int maxLen, unsigned int& wasRead) {
+void TcountingManager::playCallBack(char* data, unsigned int maxLen, unsigned int& wasRead) {
   qint16 sample = 0;
   auto out = reinterpret_cast<qint16*>(data);
   auto num = m_numerals->at(m_playNum);
@@ -403,7 +403,7 @@ void TcountingImport::playCallBack(char* data, unsigned int maxLen, unsigned int
 }
 
 
-void TcountingImport::recCallBack(char* data, unsigned int maxLen, unsigned int& wasRead) {
+void TcountingManager::recCallBack(char* data, unsigned int maxLen, unsigned int& wasRead) {
   wasRead = m_recording ? CALLBACK_CONTINUE : CALLBACK_STOP;
   if (!m_recording)
     return;
@@ -463,7 +463,7 @@ void TcountingImport::recCallBack(char* data, unsigned int maxLen, unsigned int&
 }
 
 
-void TcountingImport::watchPlayingStopped() {
+void TcountingManager::watchPlayingStopped() {
   if (m_playing)
     QTimer::singleShot(20, this, [=]{ watchPlayingStopped(); });
   else
@@ -471,7 +471,7 @@ void TcountingImport::watchPlayingStopped() {
 }
 
 
-void TcountingImport::watchRecordingStopped() {
+void TcountingManager::watchRecordingStopped() {
   if (m_recording)
       QTimer::singleShot(20, this, [=]{ watchRecordingStopped(); });
   else {

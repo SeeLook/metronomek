@@ -13,7 +13,7 @@
 // #include "taudiobuffer.h"
 #include "ttempopart.h"
 #include "tspeedhandler.h"
-#include "tcountingimport.h"
+#include "tcountingmanager.h"
 #include "tnumeralspectrum.h"
 #include "tglob.h"
 
@@ -77,7 +77,7 @@ Tsound::Tsound(QObject *parent) :
   qmlRegisterUncreatableType<TtempoPart>("Metronomek", 1, 0, "TempoPart", QStringLiteral("Creating TempoPart in QML not allowed!"));
   qmlRegisterUncreatableType<TspeedHandler>("Metronomek", 1, 0, "SpeedHandler", QStringLiteral("Creating SpeedHandler in QML not allowed!"));
   qmlRegisterUncreatableType<TrtmComposition>("Metronomek", 1, 0, "Composition", QStringLiteral("Creating Composition in QML not allowed!"));
-  qmlRegisterUncreatableType<TcountingImport>("Metronomek", 1, 0, "CountImport", QStringLiteral("Creating CountImport in QML not allowed!"));
+  qmlRegisterUncreatableType<TcountingManager>("Metronomek", 1, 0, "CountManager", QStringLiteral("Creating CountManager in QML not allowed!"));
   qmlRegisterType<TnumeralSpectrum>("Metronomek", 1, 0, "NumeralSpectrum");
 
   setTempo(qBound(40, GLOB->settings()->value(QStringLiteral("tempo"), 60).toInt(), 240));
@@ -450,7 +450,7 @@ void Tsound::setVerbalCount(bool vc) {
       for (int n = 0; n < 12; ++n) {
         m_numerals << new TsoundData(getRawFilePath(QString("counting/%1/%2").arg(vLang).arg(n + 1, 2, 'g', -1, '0')));
       }
-      m_countImport = new TcountingImport(&m_numerals, this);
+      m_countManager = new TcountingManager(&m_numerals, this);
     }
     emit verbalCountChanged();
   }
@@ -475,22 +475,22 @@ QString Tsound::getTempoNameById(int nameId) {
 
 
 void Tsound::importFromCommandline() {
-  if (!m_countImport)
-    m_countImport = new TcountingImport(&m_numerals, this);
-  m_countImport->importFromCommandline();
+  if (!m_countManager)
+    m_countManager = new TcountingManager(&m_numerals, this);
+  m_countManager->importFromCommandline();
 }
 
 
 void Tsound::initCountingSettings() {
-  if (!m_countImport)
-    m_countImport = new TcountingImport(&m_numerals, this);
+  if (!m_countManager)
+    m_countManager = new TcountingManager(&m_numerals, this);
   disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack);
-  m_countImport->initSettings(m_audioDevice);
+  m_countManager->initSettings(m_audioDevice);
 }
 
 
 void Tsound::restoreAfterCountSettings() {
-  m_countImport->restoreSettings();
+  m_countManager->restoreSettings();
   connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack, Qt::DirectConnection);
 }
 

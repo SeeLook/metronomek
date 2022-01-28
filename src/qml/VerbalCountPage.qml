@@ -18,10 +18,10 @@ Tdialog {
   ButtonGroup { id: soundsGr }
 
   // private
-  property CountImport cntImport: SOUND.countImport()
+  property CountManager cntMan: SOUND.countManager()
 
   Connections {
-    target: cntImport
+    target: cntMan
     onRecFinished: {
       var it = stack.currentItem.itemAtIndex(nr)
       it.spectrum.update()
@@ -134,7 +134,7 @@ Tdialog {
             bgColor: Qt.tint(activPal.button, GLOB.alpha("green", 40))
             onClicked: {
               playAnim.start()
-              cntImport.play(index)
+              cntMan.play(index)
             }
           }
           //CuteButton {
@@ -151,7 +151,7 @@ Tdialog {
             bgColor: Qt.tint(activPal.button, GLOB.alpha("red", 40))
             onClicked: {
               recAnim.start()
-              cntImport.rec(index)
+              cntMan.rec(index)
             }
           }
         }

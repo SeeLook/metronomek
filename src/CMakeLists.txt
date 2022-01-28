@@ -27,7 +27,7 @@ set(METRONOMEK_SRC
     tsounddata.cpp
     tnumeralspectrum.cpp
     trtaudioout.cpp
-    tcountingimport.cpp
+    tcountingmanager.cpp
     tmetroshape.cpp
     #taudiobuffer.h Android Qt Audio, TODO rather to remove
 
