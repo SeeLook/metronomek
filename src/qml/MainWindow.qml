@@ -212,23 +212,10 @@ Window {
       color: activPal.text; styleColor: activPal.varTempo
     }
 
-    AbstractButton {
+    CuteButton {
       id: tapButt
-      scale: pressed ? 0.9 : 1
-      Behavior on scale { NumberAnimation {} }
-      background: TipRect {
-        radius: height / 2; raised: !parent.pressed
-        border { color: activPal.varTempo; width: SOUND.variableTempo ? fm.height / 6 : 0 }
-        Text {
-          font.pixelSize: tapButt.height / 3
-          text: SOUND.variableTempo ? qsTr("Tempo changes") : qsTr("Tap tempo")
-          color: activPal.text
-          anchors.centerIn: parent
-          width: tapButt.width - GLOB.fontSize() * 2
-          wrapMode: Text.WordWrap
-          horizontalAlignment: Text.AlignHCenter
-        }
-      }
+      border { color: activPal.varTempo; width: SOUND.variableTempo ? fm.height / 6 : 0 }
+      text: SOUND.variableTempo ? qsTr("Tempo changes") : qsTr("Tap tempo")
       x: metro.width * 0.06; y: sb.y + sb.height + metro.height * 0.01
       height: metro.width * 0.13; width: height * 2.5
       onClicked: {
