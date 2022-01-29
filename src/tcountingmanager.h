@@ -32,7 +32,7 @@ public:
   bool finished() const { return m_finished; }
 //   void setFinished(bool finished);
 
-  void importFormFile(const QString& fileName, int noiseThreshold = 400);
+  Q_INVOKABLE void importFormFile(const QString& fileName, int noiseThreshold = 400);
 
   void importFromCommandline();
 

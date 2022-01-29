@@ -14,6 +14,7 @@
 
 #include <QtCore/qcommandlineparser.h>
 #include <QtCore/qfile.h>
+#include <QtCore/qdir.h>
 #include <QtCore/qdatastream.h>
 #include <QtCore/qendian.h>
 #include <QtCore/qtimer.h>
@@ -91,9 +92,12 @@ void TcountingManager::importFromCommandline() {
 void TcountingManager::importFormFile(const QString& fileName, int noiseThreshold) {
   qDebug() << "[TcountingManager] Importing from" << fileName << "threshold" << noiseThreshold;
 
-  QFile audioF(fileName);
+  const QUrl url(fileName);
+  auto fn = url.isLocalFile() ? QDir::toNativeSeparators(url.toLocalFile()) : fileName;
+
+  QFile audioF(fn);
   if (!audioF.exists()) {
-    qDebug() << "[TcountingManager] File doesn't exist!" << fileName;
+    qDebug() << "[TcountingManager] File doesn't exist!" << fn;
     return;
   }
 
@@ -107,7 +111,7 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
       QDataStream      in;
       quint16          channelsNr = 1;
 
-      auto ext = qApp->arguments().last().right(3).toLower();
+      auto ext = fileName.right(3).toLower();
       if (ext == QLatin1String("wav")) {
           in.setDevice(&audioF);
           qint32 headChunk;
@@ -184,6 +188,7 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
   }
 
   if (!data || !ok) {
+    qDebug() << "[TcountingManager] Something went wrong in" << fn << data << ok;
     if (data)
       delete[] data;
     return;
@@ -278,6 +283,10 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
     if (m_alignCounting) {
       for (int d = 0; d < qMin(numerals.size(), 12); ++d) {
         m_numerals->at(d)->setOffset(maxTopPos - m_numerals->at(d)->peakAt());
+      }
+      for (int d = 0; d < qMin(numerals.size(), 12); ++d) {
+        if (d < m_spectrums.count())
+          m_spectrums[d]->setNumeral(m_numerals->at(d));
       }
     }
   }
