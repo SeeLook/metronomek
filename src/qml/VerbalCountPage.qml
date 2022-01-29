@@ -20,14 +20,6 @@ Tdialog {
   // private
   property CountManager cntMan: SOUND.countManager()
 
-  Connections {
-    target: cntMan
-    onRecFinished: {
-      var it = stack.currentItem.itemAtIndex(nr)
-      it.message = tooLong ? qsTr("Too long!") : ""
-    }
-  }
-
   header: Column {
     Text {
       anchors.horizontalCenter: parent.horizontalCenter
@@ -74,7 +66,6 @@ Tdialog {
       delegate: Rectangle {
         id: bgRect
         property alias spectrum: numSpec
-        property alias message: recText.text
         width: parent ? parent.width : 0
         height: fm.height * 5 + (numList.currentIndex === index ? buttonsRect.height + fm.height / 3 : 0)
         Behavior on height { NumberAnimation {} }
@@ -98,7 +89,7 @@ Tdialog {
             visible: playAnim.running
           }
           Text {
-            id: recText
+            text: numSpec.recMessage
             anchors.centerIn: parent
             color: "red"; style: Text.Outline; styleColor: bgRect.color
             font { pixelSize: parent.height / 3; bold: true }
@@ -108,12 +99,6 @@ Tdialog {
             target: playTick; property: "x"
             duration: 750
             from: 0; to: numSpec.width
-          }
-          SequentialAnimation {
-            id: recAnim
-            ScriptAction { script: recText.text = qsTr("silence...") }
-            PauseAnimation { duration: 1000 }
-            ScriptAction { script: recText.text = qsTr("now say:") + " " + (index + 1) }
           }
           MouseArea {
             anchors.fill: parent
@@ -149,10 +134,7 @@ Tdialog {
             width: bgRect.width * 0.24; height: fm.height * 2
             text: qsTr("Record")
             bgColor: Qt.tint(activPal.button, GLOB.alpha("red", 40))
-            onClicked: {
-              recAnim.start()
-              cntMan.rec(index)
-            }
+            onClicked: cntMan.rec(index)
           }
         }
       }

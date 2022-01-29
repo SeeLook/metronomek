@@ -341,6 +341,7 @@ void TcountingManager::rec(int numer) {
   }
   if (!m_inBuffer)
     m_inBuffer = new qint16[48000]; // 1 sec. buffer is enough
+  m_spectrums[numer]->startRecording();
   m_recNum = numer;
   m_inSize = 0;
   m_inPos = 0;
@@ -494,6 +495,5 @@ void TcountingManager::watchRecordingStopped() {
       auto spectrum = m_spectrums[m_recNum];
       spectrum->copyData(m_inBuffer, m_inSize);
 //       m_numerals->at(m_recNum)->copyData(m_inBuffer, m_inSize);
-      emit recFinished(m_recNum, m_inSize >= 48000);
   }
 }

@@ -9,6 +9,7 @@
 #include <QtGui/qguiapplication.h>
 #include <QtGui/qpalette.h>
 #include <QtCore/qmath.h>
+#include <QtCore/qtimer.h>
 
 #include <QtCore/qdebug.h>
 
@@ -42,10 +43,24 @@ void TnumeralSpectrum::setNumeral(TsoundData* numData) {
 }
 
 
+void TnumeralSpectrum::startRecording() {
+  setRecMessage(tr("Silence..."));
+  QTimer::singleShot(1000, this, [=]{
+    setRecMessage(tr("Now say") + QString(": %1").arg(m_nr + 1));
+  });
+}
+
+
 void TnumeralSpectrum::copyData(qint16* numData, int len) {
   if (!m_numData)
     m_numData = new TsoundData();
   m_numData->copyData(numData, len);
+  if (len >= 48000) {
+      setRecMessage(tr("Too long!"));
+      QTimer::singleShot(3000, this, [=]{ setRecMessage(QString()); });
+  } else {
+      setRecMessage(QString());
+  }
   update();
 }
 
@@ -73,4 +88,10 @@ void TnumeralSpectrum::paint(QPainter* painter) {
     painter->setPen(qApp->palette().highlight().color());
     painter->drawLine(w2by3, 0, w2by3, height());
   }
+}
+
+
+void TnumeralSpectrum::setRecMessage(const QString& m) {
+  m_recMessage = m;
+  emit recMessageChanged();
 }

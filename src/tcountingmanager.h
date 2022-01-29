@@ -59,7 +59,6 @@ public:
 
 signals:
   void finishedChanged();
-  void recFinished(int nr, bool tooLong);
 
 protected:
 #if defined (WITH_SOUNDTOUCH)
