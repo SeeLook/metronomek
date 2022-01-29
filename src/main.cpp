@@ -5,7 +5,6 @@
 #include "tglob.h"
 #include "tsound.h"
 
-#include <QtGui/qguiapplication.h>
 #include <QtGui/qicon.h>
 #include <QtGui/qpalette.h>
 #include <QtQml/qqmlapplicationengine.h>
@@ -18,7 +17,10 @@
 #include <QtCore/qsettings.h>
 #include <QtCore/qdebug.h>
 
-#if !defined (Q_OS_ANDROID)
+#if defined (Q_OS_ANDROID)
+  #include <QtGui/qguiapplication.h>
+#else
+  #include <QtWidgets/qapplication.h>
   #include <QtCore/qcommandlineparser.h>
 #endif
 
@@ -34,8 +36,12 @@ int main(int argc, char *argv[])
   QElapsedTimer startElapsed;
   startElapsed.start();
 
+  #if defined (Q_OS_ANDROID)
   auto app = new QGuiApplication(argc, argv);
+#else
+  auto app = new QApplication(argc, argv);
   app->setWindowIcon(QIcon(QStringLiteral(":/metronomek.png")));
+#endif
 
   auto glob = new Tglob();
 

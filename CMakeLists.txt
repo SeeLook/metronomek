@@ -25,8 +25,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt5 COMPONENTS Core Gui Quick REQUIRED)
-find_package(Qt5 COMPONENTS Core Gui Quick REQUIRED)
+find_package(QT NAMES Qt5 COMPONENTS Core Gui Widgets Quick REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets Quick REQUIRED)
 
 if (Qt5Widgets_FOUND)
   if (Qt5Widgets_VERSION VERSION_LESS 5.12.0)
