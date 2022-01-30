@@ -77,6 +77,12 @@ public:
        */
   void copyData(qint16* other, int len);
 
+      /**
+       * Reads data from given @p in of @p QDataStream
+       * and length @p len into @p m_data
+       */
+  void readData(QDataStream& in, quint32 len);
+
   void deleteData();
 
       /**

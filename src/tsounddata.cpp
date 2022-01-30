@@ -67,6 +67,16 @@ void TsoundData::copyData(qint16* other, int len) {
 }
 
 
+void TsoundData::readData(QDataStream& in, quint32 len) {
+  deleteData();
+  m_size = len / 2;
+  m_data = new qint16[m_size];
+  auto read = in.readRawData(reinterpret_cast<char*>(m_data), len);
+  if (read != len)
+    qDebug() << "[TsoundData] Read error!";
+}
+
+
 int TsoundData::findPeakPos() {
   qint16 max = 0;
   qint16 sample;
