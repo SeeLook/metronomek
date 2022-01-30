@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
   QElapsedTimer startElapsed;
   startElapsed.start();
 
-  #if defined (Q_OS_ANDROID)
+#if defined (Q_OS_ANDROID)
   auto app = new QGuiApplication(argc, argv);
 #else
   auto app = new QApplication(argc, argv);

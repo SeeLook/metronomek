@@ -17,7 +17,7 @@ ANDROID_VERSION_CODE = "4"
 
 QMAKE_SUBSTITUTES += src/metronomek_conf.h.in
 
-QT += gui quick quickcontrols2 androidextras #multimedia
+QT += quick quickcontrols2 androidextras #multimedia
 
 CONFIG += c++17 # c++11 is fine Metronomek itself but Oboe wants c++17
 
