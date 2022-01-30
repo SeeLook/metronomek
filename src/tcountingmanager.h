@@ -14,6 +14,8 @@ class TabstractAudioDevice;
 class TnumeralSpectrum;
 
 
+#define COUNTING_VER_1 (static_cast<quint32>(0x97042301))
+
 /**
  * 
  */
@@ -68,6 +70,11 @@ public:
        * Does nothing under Android
        */
   Q_INVOKABLE void getSoundFile();
+
+  Q_INVOKABLE void storeCounting();
+
+  void writeCountToFile(const QString& cntFileName);
+  void readCountFromFile(const QString& cntFileName);
 
 signals:
   void finishedChanged();

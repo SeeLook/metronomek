@@ -29,6 +29,7 @@
 
 #include <QtCore/qdebug.h>
 
+#include <QLocale>
 
 class Tmark
 {
@@ -391,6 +392,77 @@ void TcountingManager::getSoundFile() {
   if (!fn.isEmpty())
     importFormFile(fn);
 #endif
+}
+
+
+void TcountingManager::storeCounting() {
+#if defined (Q_OS_ANDROID)
+  QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericConfigLocation).first();
+#else
+  QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation).first();
+#endif
+  if (dataPath.isEmpty()) {
+    // TODO: Find another path or give some debug
+  } else {
+      dataPath.append(QStringLiteral("/Metronomek"));
+      QDir d(dataPath);
+      if (!d.exists())
+        d.mkpath(QStringLiteral("."));
+      writeCountToFile(QString("%1/xx_lang.counting").arg(dataPath));
+  }
+}
+
+
+void TcountingManager::writeCountToFile(const QString& cntFileName) {
+  if (cntFileName.isEmpty())
+    return;
+
+  qDebug() << "[TcountingManager] Write counting data to" << cntFileName;
+  QFile cntFile(cntFileName);
+  if (cntFile.open(QIODevice::WriteOnly)) {
+    QDataStream out(&cntFile);
+    out << COUNTING_VER_1;
+    out.setVersion(QDataStream::Qt_5_12);
+    out << QString("<counting>XML</counting>");
+    for (int n = 0; n < m_numerals->size(); ++n) {
+      // write 4 bytes of numeral data size
+      auto num = m_numerals->at(n);
+      out << static_cast<quint32>(num->size() * 2);
+      // write numeral audio data
+      qint16 sample = 0;
+      for (int d = 0; d < num->size(); ++d) {
+        sample = num->sampleAt(d);
+        out.writeRawData(reinterpret_cast<char*>(&sample), 2);
+      }
+    }
+  }
+}
+
+
+void TcountingManager::readCountFromFile(const QString& cntFileName) {
+  if (cntFileName.isEmpty())
+    return;
+
+  QFile cntFile(cntFileName);
+  if (cntFile.open(QIODevice::ReadOnly)) {
+    QDataStream in(&cntFile);
+    quint32 header;
+    in >> header;
+    if (header != COUNTING_VER_1) {
+      qDebug() << "[TcountingManager] wrong or unsupported file" << cntFileName;
+      return;
+    }
+    in.setVersion(QDataStream::Qt_5_12);
+    QString xml;
+    in >> xml;
+    quint32 numSize;
+    int numCnt = 0;
+    while (numCnt < m_numerals->size() && !in.atEnd()) {
+      in >> numSize;
+      m_numerals->at(numCnt)->readData(in, numSize);
+      numCnt++;
+    }
+  }
 }
 
 
