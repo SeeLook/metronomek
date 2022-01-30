@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2020 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2020-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 
@@ -46,4 +46,18 @@ void Tandroid::disableRotation(bool disRot) {
 
 int Tandroid::getAPIlevelNr() {
   return  QtAndroid::androidSdkVersion();
+}
+
+
+bool Tandroid::askForReadPermission() {
+  bool allow = true;
+  if (QtAndroid::androidSdkVersion() >= 23) {
+    const QString allowRead("android.permission.READ_EXTERNAL_STORAGE");
+    if (QtAndroid::checkPermission(allowRead) != QtAndroid::PermissionResult::Granted) {
+      auto perms = QtAndroid::requestPermissionsSync(QStringList() << allowRead);
+      allow = perms[allowRead] == QtAndroid::PermissionResult::Granted;
+      qDebug() << allowRead << allow;
+    }
+  }
+  return allow;
 }
