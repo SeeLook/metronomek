@@ -57,7 +57,17 @@ public:
   Q_INVOKABLE void play(int numer);
   Q_INVOKABLE void rec(int numer);
 
+      /**
+       * Checks read permission under Android
+       * On desktop always returns @p TRUE
+       */
   Q_INVOKABLE bool checkReadPermission();
+
+      /**
+       * On desktop invokes file dialog to get sound (wav, raw) file.
+       * Does nothing under Android
+       */
+  Q_INVOKABLE void getSoundFile();
 
 signals:
   void finishedChanged();

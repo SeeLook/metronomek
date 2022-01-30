@@ -17,7 +17,6 @@
     <file>TempoPartDelegate.qml</file>
     <file>CompositionView.qml</file>
     <file>NextTempoPop.qml</file>
-    <file>BeatFileDialog.qml</file>
 
     <file>TipRect.qml</file>
     <file>TspinBox.qml</file>

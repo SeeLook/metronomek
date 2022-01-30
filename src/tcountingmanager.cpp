@@ -14,15 +14,18 @@
 
 #if defined (Q_OS_ANDROID)
   #include "android/tandroid.h"
+#else
+  #include <QtWidgets/qfiledialog.h>
+  #include <QtCore/qstandardpaths.h>
 #endif
 
+#include <QtGui/qguiapplication.h>
 #include <QtCore/qcommandlineparser.h>
 #include <QtCore/qfile.h>
 #include <QtCore/qdir.h>
 #include <QtCore/qdatastream.h>
 #include <QtCore/qendian.h>
 #include <QtCore/qtimer.h>
-#include <QtGui/qguiapplication.h>
 
 #include <QtCore/qdebug.h>
 
@@ -372,6 +375,22 @@ bool TcountingManager::checkReadPermission() {
   return Tandroid::askForReadPermission();
 #endif
   return true;
+}
+
+
+void TcountingManager::getSoundFile() {
+#if defined (Q_OS_ANDROID)
+  qDebug() << "[TcountingManager] Opening external file is not supported under Android!";
+#else
+  auto fn = QFileDialog::getOpenFileName(nullptr, QString(),
+                                         QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first(),
+                                         tr("Audio file (uncompressed)")
+                                         + QLatin1String(": *.wav *.raw *.raw48-16 (*.wav *.raw *.raw48-16);;")
+                                         + tr("Wav file") + QLatin1String(" (*.wav);;")
+                                         + tr("Raw audio") + QLatin1String(" (*.raw *.raw48-16)"));
+  if (!fn.isEmpty())
+    importFormFile(fn);
+#endif
 }
 
 

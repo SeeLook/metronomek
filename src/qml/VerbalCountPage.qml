@@ -165,17 +165,23 @@ Tdialog {
   Menu {
     id: moreMenu
     y: vCntPage.height - height - vCntPage.implicitFooterHeight - vCntPage.implicitHeaderHeight
+
+    MenuItem {
+      text: qsTr("Align")
+    }
+    Component.onCompleted: {
+      if (!GLOB.isAndroid())
+        moreMenu.insertItem(0, fromFileComp.createObject())
+    }
+  }
+
+  Component {
+    id: fromFileComp
     MenuItem {
       text: qsTr("Load from file")
       onTriggered: {
-        if (cntMan.checkReadPermission()) {
-          var fd = Qt.createComponent("qrc:/BeatFileDialog.qml").createObject(mainWindow)
-          fd.beatFile.connect(function(beatFile) { cntMan.importFormFile(beatFile) } )
-        }
+        cntMan.getSoundFile()
       }
-    }
-    MenuItem {
-      text: qsTr("Align")
     }
   }
 
