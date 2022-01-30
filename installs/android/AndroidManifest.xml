@@ -100,6 +100,17 @@
     </activity>
 
     <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
+      <provider
+        android:name="android.support.v4.content.FileProvider"
+        android:authorities="net.sf.metronomek.provider"
+        android:exported="false"
+        android:grantUriPermissions="true">
+      <!-- resource file to create -->
+        <meta-data
+          android:name="android.support.FILE_PROVIDER_PATHS"
+          android:resource="@xml/file_paths">
+        </meta-data>
+      </provider>
 
     </application>
 
