@@ -12,6 +12,10 @@
   #include <soundtouch/SoundTouch.h>
 #endif
 
+#if defined (Q_OS_ANDROID)
+  #include "android/tandroid.h"
+#endif
+
 #include <QtCore/qcommandlineparser.h>
 #include <QtCore/qfile.h>
 #include <QtCore/qdir.h>
@@ -111,7 +115,7 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
       QDataStream      in;
       quint16          channelsNr = 1;
 
-      auto ext = fileName.right(3).toLower();
+      auto ext = audioF.fileName().right(3).toLower();
       if (ext == QLatin1String("wav")) {
           in.setDevice(&audioF);
           qint32 headChunk;
@@ -188,7 +192,7 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
   }
 
   if (!data || !ok) {
-    qDebug() << "[TcountingManager] Something went wrong in" << fn << data << ok;
+    qDebug() << "[TcountingManager] Something went wrong in" << fn;
     if (data)
       delete[] data;
     return;
@@ -360,6 +364,14 @@ void TcountingManager::rec(int numer) {
   m_recording = true;
   m_audioDevice->startRecording();
   watchRecordingStopped();
+}
+
+
+bool TcountingManager::checkReadPermission() {
+#if defined (Q_OS_ANDROID)
+  return Tandroid::askForReadPermission();
+#endif
+  return true;
 }
 
 

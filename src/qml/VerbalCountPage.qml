@@ -5,7 +5,6 @@
 
 import QtQuick 2.12
 import QtQuick.Controls 2.12
-import QtQuick.Dialogs 1.2
 
 import Metronomek 1.0
 
@@ -169,8 +168,10 @@ Tdialog {
     MenuItem {
       text: qsTr("Load from file")
       onTriggered: {
-        var fd = Qt.createComponent("qrc:/BeatFileDialog.qml").createObject(mainWindow)
-        fd.beatFile.connect(function(beatFile) { cntMan.importFormFile(beatFile) } )
+        if (cntMan.checkReadPermission()) {
+          var fd = Qt.createComponent("qrc:/BeatFileDialog.qml").createObject(mainWindow)
+          fd.beatFile.connect(function(beatFile) { cntMan.importFormFile(beatFile) } )
+        }
       }
     }
     MenuItem {

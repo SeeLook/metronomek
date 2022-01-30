@@ -57,6 +57,8 @@ public:
   Q_INVOKABLE void play(int numer);
   Q_INVOKABLE void rec(int numer);
 
+  Q_INVOKABLE bool checkReadPermission();
+
 signals:
   void finishedChanged();
 
