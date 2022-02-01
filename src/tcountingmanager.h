@@ -117,6 +117,7 @@ private:
   quint32                           m_inSize = 0, m_inPos = 0, m_endPos = 0;
   qint16                            m_inNoise = 0, m_inMax = 0;
   bool                              m_inOnSet = false;
+  QStringList                       m_languagesModel;
 };
 
 #endif // TCOUNTINGMANAGER_H
