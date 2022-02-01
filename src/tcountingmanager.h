@@ -12,9 +12,8 @@
 class TsoundData;
 class TabstractAudioDevice;
 class TnumeralSpectrum;
+class TcntXML;
 
-
-#define COUNTING_VER_1 (static_cast<quint32>(0x97042301))
 
 /**
  * 
@@ -71,10 +70,12 @@ public:
        */
   Q_INVOKABLE void getSoundFile();
 
-  Q_INVOKABLE void storeCounting();
+  Q_INVOKABLE void storeCounting(int lang, const QString& name, bool askForFile = false);
 
-  void writeCountToFile(const QString& cntFileName);
-  void readCountFromFile(const QString& cntFileName);
+  Q_INVOKABLE QStringList languagesModel();
+  Q_INVOKABLE int currentLanguage();
+
+  void exportToWav(const QString& cntFileName, const TcntXML& xml);
 
 signals:
   void finishedChanged();

@@ -7,6 +7,7 @@
 #include "tsounddata.h"
 #include "tabstractaudiodevice.h"
 #include "tnumeralspectrum.h"
+#include "tglob.h"
 
 #if defined (WITH_SOUNDTOUCH)
   #include <soundtouch/SoundTouch.h>
@@ -16,7 +17,6 @@
   #include "android/tandroid.h"
 #else
   #include <QtWidgets/qfiledialog.h>
-  #include <QtCore/qstandardpaths.h>
 #endif
 
 #include <QtGui/qguiapplication.h>
@@ -24,12 +24,21 @@
 #include <QtCore/qfile.h>
 #include <QtCore/qdir.h>
 #include <QtCore/qdatastream.h>
+#include <QtCore/qxmlstream.h>
 #include <QtCore/qendian.h>
 #include <QtCore/qtimer.h>
+#include <QtCore/qlocale.h>
+#include <QtCore/qstandardpaths.h>
 
 #include <QtCore/qdebug.h>
 
-#include <QLocale>
+
+#define WAV_WAVE (1163280727) // 'WAVE'
+#define WAV_FMT  (544501094)  // 'fmt '
+#define WAV_DATA (1635017060) // 'data'
+#define WAV_IXML (0x4c4d5869) // 'iXML'
+#define WAV_BEXT (1954047330) // 'bext'
+
 
 class Tmark
 {
@@ -47,6 +56,74 @@ class Tmark
     quint32       m_from = 0;
     quint32       m_to = 0;
 };
+
+
+class TcntXML
+{
+  public:
+    TcntXML(int lang = 3, const QString& name = QString()) : m_lang(lang), m_name(name) {}
+
+    int language() const  { return m_lang; }
+    QString countName() const { return m_name; }
+    quint32 totalSize() const { return m_totalSize; }
+
+    void addNumeralSize(int nSize) {
+      m_numSizes << nSize;
+      m_totalSize += nSize;
+    }
+
+    int numCount() const { return m_numSizes.count(); }
+    int numSize(int nr) const { return m_numSizes[nr]; }
+
+    QString toXml() const {
+      QString out;
+      QXmlStreamWriter xml(&out);
+      xml.setCodec("UTF-16");
+      xml.writeStartDocument();
+      xml.writeStartElement(QLatin1String("verbalcount"));
+        xml.writeAttribute(QLatin1String("qtlang"), QString::number(m_lang));
+        xml.writeAttribute(QLatin1String("name"), m_name);
+        for (int n = 0; n < m_numSizes.size(); ++n)
+          xml.writeTextElement(QLatin1String("n"), QString::number(m_numSizes[n]));
+      xml.writeEndElement();
+      xml.writeEndDocument();
+      return out;
+    }
+
+    bool fromXml(QString& in) {
+      QXmlStreamReader xml(in);
+      bool ok = true;
+      while (xml.readNextStartElement()) {
+        if (xml.name() == QLatin1String("verbalcount")) {
+            m_lang = xml.attributes().value(QLatin1String("qtlang")).toInt();
+            m_name = xml.attributes().value(QLatin1String("name")).toString();
+            m_numSizes.clear();
+            while (xml.readNextStartElement()) {
+              if (xml.name() == QLatin1String("n"))
+                m_numSizes << xml.readElementText().toInt();
+              else
+                xml.skipCurrentElement();
+            }
+            xml.skipCurrentElement();
+        } else {
+            xml.skipCurrentElement();
+            ok = false;
+        }
+      }
+      return ok;
+    }
+
+  private:
+    int         m_lang = QLocale::English;
+    QString     m_name;
+    QList<int>  m_numSizes;
+    quint32     m_totalSize = 0;
+};
+
+
+//#################################################################################################
+//###################          TcountingManager        ############################################
+//#################################################################################################
 
 
 TcountingManager::TcountingManager(QVector<TsoundData*>* numList, QObject* parent) :
@@ -132,26 +209,31 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
           in >> headChunk;
           headChunk = qFromBigEndian<qint32>(headChunk);
 
-          if (headChunk == 1163280727) { // 1163280727 is 'value' of 'WAVE' text in valid WAV file
+          if (headChunk == WAV_WAVE) {
               in >> headChunk;
               headChunk = qFromBigEndian<qint32>(headChunk);
 
+              if (headChunk == WAV_BEXT) {
+                in >> chunkSize;
+                chunkSize = qFromBigEndian<quint32>(chunkSize);
+                in.skipRawData(chunkSize);
+                in >> headChunk;
+                headChunk = qFromBigEndian<qint32>(headChunk);
+              }
+
               in >> chunkSize;
+              chunkSize = qFromBigEndian<quint32>(chunkSize);
               quint16 audioFormat;
               in >> audioFormat;
               audioFormat = qFromBigEndian<quint16>(audioFormat);
-              // TODO: interpret audioFormat == 0 - another header
-              if (headChunk == 544501094 && audioFormat == 1) { // 544501094 is 'value' of 'fmt ' text in valid WAV file
+              if (headChunk == WAV_FMT && audioFormat == 1) {
                   in >> channelsNr;
                   channelsNr = qFromBigEndian<quint16>(channelsNr);
                   in >> sampleRate;
                   sampleRate = qFromBigEndian<quint32>(sampleRate);
-                  quint32 byteRate;
-                  in >> byteRate;
-                  byteRate = qFromBigEndian<quint32>(byteRate);
-                  quint16 blockAlign;
-                  in >> blockAlign;
-                  blockAlign = qFromBigEndian<quint16>(blockAlign);
+                  if (sampleRate != 48000)
+                    qDebug() << "[TcountingManager]" << sampleRate << "is not recommended!";
+                  in.skipRawData(6); // skip 'byte rate' and 'block align' values
                   quint16 bitsPerSample;
                   in >> bitsPerSample;
                   bitsPerSample = qFromBigEndian<quint16>(bitsPerSample);
@@ -176,6 +258,28 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
                     data[f] = qFromBigEndian<qint16>(channelSample);
                   }
                   frames = audioDataSize / 2;
+                  if (!in.atEnd()) {
+                    in >> headChunk;
+                    headChunk = qFromBigEndian<qint32>(headChunk);
+                    if (headChunk == WAV_IXML) {
+                      in >> chunkSize;
+                      chunkSize = qFromBigEndian<quint32>(chunkSize);
+                      QString xmlString;
+                      in >> xmlString;
+                      TcntXML xml;
+                      if (xml.fromXml(xmlString)) { // Found Metronomek specific data in iXML chunk
+                        quint32 sum = 0;
+                        for (int n = 0; n < xml.numCount(); ++n) {
+                          if (n < m_numerals->size() && sum + xml.numSize(n) <= frames) {
+                            m_numerals->at(n)->copyData(data + sum, xml.numSize(n));
+                            sum += xml.numSize(n);
+                          }
+                        }
+                        delete[] data;
+                        return;
+                      }
+                    }
+                  }
               } else {
                   qDebug() << "[TcountingManager] Unsupported audio format in file:" << fileName;
                   ok = false;
@@ -395,7 +499,7 @@ void TcountingManager::getSoundFile() {
 }
 
 
-void TcountingManager::storeCounting() {
+void TcountingManager::storeCounting(int lang, const QString& name, bool askForFile) {
 #if defined (Q_OS_ANDROID)
   QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericConfigLocation).first();
 #else
@@ -408,60 +512,104 @@ void TcountingManager::storeCounting() {
       QDir d(dataPath);
       if (!d.exists())
         d.mkpath(QStringLiteral("."));
-      writeCountToFile(QString("%1/xx_lang.counting").arg(dataPath));
+      TcntXML xml(lang, name);
+      for (int n = 0; n < m_numerals->size(); ++n)
+        xml.addNumeralSize(m_numerals->at(n)->size());
+      QLocale locale(static_cast<QLocale::Language>(lang));
+      exportToWav(QString("%1/%2-counting.wav").arg(dataPath).arg(locale.name()), xml);
   }
 }
 
 
-void TcountingManager::writeCountToFile(const QString& cntFileName) {
+QStringList TcountingManager::languagesModel() {
+  QList<QLocale> all = QLocale::matchingLocales(QLocale::AnyLanguage, QLocale::AnyScript, QLocale::AnyCountry);
+  int cnt = 0;
+  while (cnt < all.size()) {
+    QLocale& locale = all[cnt];
+    if (locale.language() < 2) { // skip 'default' and 'C' types
+      all.removeAt(cnt);
+      continue;
+    }
+    auto name = locale.nativeLanguageName();
+    int i = cnt + 1;
+    while (i < all.size()) {
+      if (name == all[i].nativeLanguageName())
+        all.removeAt(i);
+      else
+        i++;
+    }
+    cnt++;
+  }
+
+  QStringList langs;
+  for (int l = 2; l < all.size(); ++l) {
+    QLocale& locale = all[l];
+    if (!locale.nativeLanguageName().isEmpty())
+      langs << locale.languageToString(locale.language()) + " / " + locale.nativeLanguageName() + ";" + QString::number(locale.language());
+  }
+  langs.sort();
+  return langs;
+}
+
+
+int TcountingManager::currentLanguage() {
+#if defined (Q_OS_ANDROID)
+  QLocale loc(GLOB->lang().isEmpty() ? QLocale::system().language() : QLocale(GLOB->lang()).language());
+#elif defined (Q_OS_WIN)
+  QLocale loc(GLOB->lang().isEmpty() ? QLocale::system().uiLanguages().first() : GLOB->lang());
+#elif defined (Q_OS_MAC)
+  QLocale loc(GLOB->lang().isEmpty() ? QLocale::system().uiLanguages().first() : GLOB->lang());
+#else
+  QLocale loc(QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).language(),
+              QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).country());
+#endif
+  return static_cast<int>(loc.language());
+}
+
+
+/**
+ * Write to *.wav format, as simple as possible.
+ * Only 16 bytes 'fmt ' chunk, then counting data chunk
+ * and at the end extra 'iXML' chunk with information
+ * where every numeral sound data starts.
+ */
+void TcountingManager::exportToWav(const QString& cntFileName, const TcntXML& xml) {
   if (cntFileName.isEmpty())
     return;
 
-  qDebug() << "[TcountingManager] Write counting data to" << cntFileName;
   QFile cntFile(cntFileName);
   if (cntFile.open(QIODevice::WriteOnly)) {
+    auto xmlString = xml.toXml();
+
     QDataStream out(&cntFile);
-    out << COUNTING_VER_1;
-    out.setVersion(QDataStream::Qt_5_12);
-    out << QString("<counting>XML</counting>");
+    out << qToBigEndian<quint32>(1179011410); // header 'RIFF'
+    quint32 chunkSize = 4 + 4 + 4 + 16 + 4 + 4 + xml.totalSize() * 2 + 8 + xmlString.size() * 2 + 2;
+    out << qToBigEndian<quint32>(chunkSize);
+    out << qToBigEndian<quint32>(WAV_WAVE); // 'WAVE'     | 4
+    out << qToBigEndian<quint32>(WAV_FMT); // 'fmt '      | 4
+    out << qToBigEndian<quint32>(16); // chunk size         | 4
+    out << qToBigEndian<quint16>(1); // format = 1          |
+    out << qToBigEndian<quint16>(1); // channels = 1        |
+    out << qToBigEndian<quint32>(48000); // sample rate     |
+    out << qToBigEndian<quint32>(96000); // bytes per sec   | 16
+    out << qToBigEndian<quint16>(2); // block align         |
+    out << qToBigEndian<quint16>(16); // bits per sample    |
+    out << qToBigEndian<quint32>(WAV_DATA); // 'data'     | 4
+    out << qToBigEndian<quint32>(xml.totalSize() * 2); // 'data' chunk size | 4
+
     for (int n = 0; n < m_numerals->size(); ++n) {
-      // write 4 bytes of numeral data size
       auto num = m_numerals->at(n);
-      out << static_cast<quint32>(num->size() * 2);
-      // write numeral audio data
+      // write numeral audio data just one by one
       qint16 sample = 0;
       for (int d = 0; d < num->size(); ++d) {
         sample = num->sampleAt(d);
         out.writeRawData(reinterpret_cast<char*>(&sample), 2);
       }
     }
-  }
-}
-
-
-void TcountingManager::readCountFromFile(const QString& cntFileName) {
-  if (cntFileName.isEmpty())
-    return;
-
-  QFile cntFile(cntFileName);
-  if (cntFile.open(QIODevice::ReadOnly)) {
-    QDataStream in(&cntFile);
-    quint32 header;
-    in >> header;
-    if (header != COUNTING_VER_1) {
-      qDebug() << "[TcountingManager] wrong or unsupported file" << cntFileName;
-      return;
-    }
-    in.setVersion(QDataStream::Qt_5_12);
-    QString xml;
-    in >> xml;
-    quint32 numSize;
-    int numCnt = 0;
-    while (numCnt < m_numerals->size() && !in.atEnd()) {
-      in >> numSize;
-      m_numerals->at(numCnt)->readData(in, numSize);
-      numCnt++;
-    }
+    // at the *.wav end: iXML chunk with Metronomek specific data
+    out << qToBigEndian<quint32>(WAV_IXML); // 'iXML' with XML data
+    out << qToBigEndian<quint32>(xmlString.size() * 2 + 2); // chunk size
+    out << xmlString;
   }
 }
 
