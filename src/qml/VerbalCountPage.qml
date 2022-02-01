@@ -150,17 +150,21 @@ Tdialog {
     }
   }
 
-  standardButtons: Dialog.Ok | Dialog.Cancel | Dialog.Help
+  standardButtons: Dialog.RestoreDefaults | Dialog.Cancel | Dialog.Help
   Component.onCompleted: {
-    //footer.standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "Save")
-    SOUND.initCountingSettings()
+    footer.standardButton(Dialog.RestoreDefaults).text = qsTranslate("QPlatformTheme", "Save")
     footer.standardButton(Dialog.Help).text = qsTranslate("TempoPage", "Actions")
+    SOUND.initCountingSettings()
   }
   Component.onDestruction: {
     SOUND.restoreAfterCountSettings()
   }
 
   onHelpRequested: moreMenu.open()
+
+  onReset: {
+    Qt.createComponent("qrc:/CountingLangPop.qml").createObject(mainWindow)
+  }
 
   Menu {
     id: moreMenu
