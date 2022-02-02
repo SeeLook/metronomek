@@ -79,6 +79,12 @@ public:
   void setLangLoaded(bool ll) { m_langLoaded = ll; }
 
       /**
+       * Returns application/user accessible directory:
+       * i.e.: ~/.local/share/Metronomek under Linux
+       */
+  QString userLocalPath() const;
+
+      /**
        * Removes last 's' letter from @p plural string
        * but only if @p n is bigger than 1
        * and translator language was not loaded (is original English)

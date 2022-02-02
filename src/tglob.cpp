@@ -16,6 +16,8 @@
 #include <QtGui/qfont.h>
 #include <QtQml/qqmlengine.h>
 #include <QtCore/qrandom.h>
+#include <QtCore/qstandardpaths.h>
+#include <QtCore/qdir.h>
 
 #include "QtCore/qdebug.h"
 
@@ -97,6 +99,24 @@ void Tglob::setLang(const QString& l) {
     m_lang = l;
     emit langChanged();
   }
+}
+
+
+QString Tglob::userLocalPath() const {
+#if defined (Q_OS_ANDROID)
+  QString userPath = QStandardPaths::standardLocations(QStandardPaths::GenericConfigLocation).first();
+#else
+  QString userPath = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation).first();
+#endif
+  if (userPath.isEmpty()) {
+    // TODO: Find another path or give some debug
+  } else {
+      userPath.append(QStringLiteral("/Metronomek"));
+      QDir d(userPath);
+      if (!d.exists())
+        d.mkpath(QStringLiteral("."));
+  }
+  return userPath;
 }
 
 

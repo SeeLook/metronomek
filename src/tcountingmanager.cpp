@@ -21,6 +21,7 @@
 
 #include <QtGui/qguiapplication.h>
 #include <QtCore/qcommandlineparser.h>
+#include <QtCore/qstandardpaths.h>
 #include <QtCore/qfile.h>
 #include <QtCore/qdir.h>
 #include <QtCore/qdatastream.h>
@@ -28,7 +29,6 @@
 #include <QtCore/qendian.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qlocale.h>
-#include <QtCore/qstandardpaths.h>
 
 #include <QtCore/qdebug.h>
 
@@ -500,24 +500,11 @@ void TcountingManager::getSoundFile() {
 
 
 void TcountingManager::storeCounting(int lang, const QString& name, bool askForFile) {
-#if defined (Q_OS_ANDROID)
-  QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericConfigLocation).first();
-#else
-  QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation).first();
-#endif
-  if (dataPath.isEmpty()) {
-    // TODO: Find another path or give some debug
-  } else {
-      dataPath.append(QStringLiteral("/Metronomek"));
-      QDir d(dataPath);
-      if (!d.exists())
-        d.mkpath(QStringLiteral("."));
-      TcntXML xml(lang, name);
-      for (int n = 0; n < m_numerals->size(); ++n)
-        xml.addNumeralSize(m_numerals->at(n)->size());
-      QLocale locale(static_cast<QLocale::Language>(lang));
-      exportToWav(QString("%1/%2-counting.wav").arg(dataPath).arg(locale.name()), xml);
-  }
+  TcntXML xml(lang, name);
+  for (int n = 0; n < m_numerals->size(); ++n)
+    xml.addNumeralSize(m_numerals->at(n)->size());
+  QLocale locale(static_cast<QLocale::Language>(lang));
+  exportToWav(QString("%1/%2-counting.wav").arg(GLOB->userLocalPath()).arg(locale.name()), xml);
 }
 
 

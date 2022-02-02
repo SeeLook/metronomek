@@ -13,7 +13,6 @@
 #include <QtCore/qfileinfo.h>
 #include <QtCore/qsettings.h>
 #include <QtCore/qtimer.h>
-#include <QtCore/qstandardpaths.h>
 
 #include <QtCore/qdebug.h>
 
@@ -162,6 +161,7 @@ QString TspeedHandler::getTitle(int nr) const {
 }
 
 
+
 TspeedHandler::TspeedHandler(QObject* parent) :
   QObject(parent)
 {
@@ -218,32 +218,20 @@ TspeedHandler::~TspeedHandler()
 
 
 void TspeedHandler::saveCurrentComposition() {
-#if defined (Q_OS_ANDROID)
-  QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericConfigLocation).first();
-#else
-  QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation).first();
-#endif
-  if (dataPath.isEmpty()) {
-    // TODO: Find another path or give some debug
-  } else {
-      dataPath.append(QStringLiteral("/Metronomek"));
-      QDir d(dataPath);
-      if (!d.exists())
-        d.mkpath(QStringLiteral("."));
-      if (currComp()->xmlFileName().isEmpty()) {
-        auto fName = QString("%1/Rhythmic_Composition_%2.metronomek.xml").arg(dataPath).arg(m_current + 1, 2, 'g', -1, '0');
-        int it = 1;
-        while (QFileInfo::exists(fName)) {
-          fName = QString("%1/Rhythmic_Composition_%2.metronomek.xml").arg(dataPath).arg(it, 2, 'g', -1, '0');
-          it++;
-        }
-        currComp()->setXmlFileName(fName);
-      }
-      currComp()->saveToXMLFile();
-      m_fileNames.removeOne(currComp()->xmlFileName());
-      m_fileNames.prepend(currComp()->xmlFileName());
-      GLOB->settings()->setValue(QStringLiteral("rhytmicFiles"), m_fileNames);
+  auto dataPath = GLOB->userLocalPath();
+  if (currComp()->xmlFileName().isEmpty()) {
+    auto fName = QString("%1/Rhythmic_Composition_%2.metronomek.xml").arg(dataPath).arg(m_current + 1, 2, 'g', -1, '0');
+    int it = 1;
+    while (QFileInfo::exists(fName)) {
+      fName = QString("%1/Rhythmic_Composition_%2.metronomek.xml").arg(dataPath).arg(it, 2, 'g', -1, '0');
+      it++;
+    }
+    currComp()->setXmlFileName(fName);
   }
+  currComp()->saveToXMLFile();
+  m_fileNames.removeOne(currComp()->xmlFileName());
+  m_fileNames.prepend(currComp()->xmlFileName());
+  GLOB->settings()->setValue(QStringLiteral("rhytmicFiles"), m_fileNames);
 }
 
 
@@ -296,16 +284,9 @@ void TspeedHandler::removeComposition(bool alsoDeleteFile) {
   if (m_compositions.count() > 1) {
       delete m_compositions.takeAt(m_current);
       auto fileName = m_fileNames.takeAt(m_current);
-  #if defined (Q_OS_ANDROID)
-      QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericConfigLocation).first();
-  #else
-      QString dataPath = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation).first();
-  #endif
-      if (!dataPath.isEmpty()) {
-        dataPath.append("/Metronomek");
-        if (dataPath == QFileInfo(fileName).absolutePath())
-          alsoDeleteFile = true; // delete file anyway when hidden from user
-      }
+      auto userPath = GLOB->userLocalPath();
+      if (userPath == QFileInfo(fileName).absolutePath())
+        alsoDeleteFile = true; // delete file anyway when hidden from user
       if (alsoDeleteFile) {
         QFile(fileName).remove();
         qDebug() << "[TspeedHandler] Removed composition file" << fileName;
