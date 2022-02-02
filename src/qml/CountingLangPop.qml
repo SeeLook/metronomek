@@ -7,23 +7,15 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 
 
-Popup {
+SidePop {
   id: countPop
-  signal done()
 
   property var langModel: cntMan.languagesModel()
 
   visible: true
+  modal: true
 
-  padding: fm.height / 2
-
-  width: Math.min(mainWindow.width, fm.height * 60)
-  height: col.height + 4 * padding
-  x: (parent.width - width) / 2
-  y: parent.height + height
-  enter: Transition { NumberAnimation { duration: 300; property: "y"; to: mainWindow.height - height + fm.height }}
-  exit: Transition { NumberAnimation { duration: 300; property: "y"; to: parent.height + height }}
-  background: TipRect { color: Qt.tint(activPal.window, GLOB.alpha(activPal.highlight, 30)); radius: fm.height }
+  bgColor: Qt.tint(activPal.window, GLOB.alpha(activPal.highlight, 30))
 
   ListModel { id: langList }
 
@@ -87,10 +79,5 @@ Popup {
       if (currL == lang[1])
         langCombo.currentIndex = l
     }
-  }
-
-  onClosed: {
-    done()
-    destroy()
   }
 }

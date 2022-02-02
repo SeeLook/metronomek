@@ -8,6 +8,7 @@
     <file>MeterDrawer.qml</file>
     <file>MetroImage.qml</file>
     <file>CuteButton.qml</file>
+    <file>SidePop.qml</file>
 
     <file>InfoPage.qml</file>
     <file>SettingsPage.qml</file>

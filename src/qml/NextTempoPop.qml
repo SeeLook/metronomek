@@ -7,18 +7,8 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 
 
-Popup {
-  signal done()
-
-  padding: fm.height / 2
-
-  width: Math.min(mainWindow.width, fm.height * 60)
-  height: mainWindow.height * 0.2
-  x: (parent.width - width) / 2
-  y: parent.height + height
-  enter: Transition { NumberAnimation { duration: 300; property: "y"; to: mainWindow.height - height + fm.height }}
-  exit: Transition { NumberAnimation { duration: 300; property: "y"; to: parent.height + height }}
-  background: TipRect { color: activPal.varTempo; radius: fm.height }
+SidePop {
+  bgColor: activPal.varTempo
   focus: true // HACK for onPressed
 
   Text {
@@ -45,10 +35,5 @@ Popup {
     onClicked: close()
     focus: true // HACK for onPressed
     Keys.onPressed: close()
-  }
-
-  onClosed: {
-    done()
-    destroy()
   }
 }
