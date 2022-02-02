@@ -172,41 +172,28 @@ TspeedHandler::TspeedHandler(QObject* parent) :
       comp->add();
       m_compositions << comp;
   } else {
-      if (QFileInfo::exists(m_fileNames.first())) {
-          auto comp = new TrtmComposition(this);
-          comp->readFromXMLFile(m_fileNames.first());
-          m_compositions << comp;
-          if (comp->title().isEmpty())
-            comp->setTitle(getTitle(1));
-      } else
-          m_fileNames.removeFirst();
-
-      if (m_fileNames.size() > 1) {
-        QTimer::singleShot(200, this, [=]{
-            QStringList toRemove;
-            for (int f = 1; f < m_fileNames.size(); ++f) {
-              auto fName = m_fileNames[f];
-              if (QFileInfo::exists(fName)) {
-                  auto comp = new TrtmComposition(this);
-                  comp->readFromXMLFile(fName);
-                  m_compositions << comp;
-                  if (comp->title().isEmpty())
-                    comp->setTitle(getTitle(f + 1));
-              } else
-                  toRemove << fName;
-            }
-            if (!toRemove.isEmpty()) {
-              for (const QString& f : toRemove)
-                m_fileNames.removeOne(f);
-            }
-            if (m_compositions.isEmpty()) { // all compositions files disappeared - create default
-              auto comp = new TrtmComposition(this);
-              comp->add();
-              m_compositions << comp;
-            }
-            emit compositionsChanged();
-        });
+      QStringList toRemove;
+      for (int f = 0; f < m_fileNames.size(); ++f) {
+        auto fName = m_fileNames[f];
+        if (QFileInfo::exists(fName)) {
+            auto comp = new TrtmComposition(this);
+            comp->readFromXMLFile(fName);
+            m_compositions << comp;
+            if (comp->title().isEmpty())
+              comp->setTitle(getTitle(f + 1));
+        } else
+            toRemove << fName;
       }
+      if (!toRemove.isEmpty()) {
+        for (const QString& f : toRemove)
+          m_fileNames.removeOne(f);
+      }
+      if (m_compositions.isEmpty()) { // all compositions files disappeared - create default
+        auto comp = new TrtmComposition(this);
+        comp->add();
+        m_compositions << comp;
+      }
+      emit compositionsChanged();
   }
 }
 
