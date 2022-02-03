@@ -69,6 +69,7 @@ class TcntXML
     quint32 totalSize() const { return m_totalSize; }
     QString langName() const { return QLocale::languageToString(static_cast<QLocale::Language>(m_lang)); }
     QString langCode() const { return locale().name(); }
+    QString nativeLang() const { return locale().nativeLanguageName(); }
 
     void addNumeralSize(int nSize) {
       m_numSizes << nSize;
@@ -420,7 +421,6 @@ void TcountingManager::importFromTTS() {
 void TcountingManager::initSettings(TabstractAudioDevice* audioDev) {
   m_audioDevice = audioDev;
   connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingManager::playCallBack, Qt::DirectConnection);
-  qDebug() << lookupForWavs(GLOB->userLocalPath());
 }
 
 
@@ -559,6 +559,11 @@ int TcountingManager::currentLanguage() {
 }
 
 
+QStringList TcountingManager::countingModelLocal() {
+  return lookupForWavs(GLOB->userLocalPath());
+}
+
+
 /**
  * Write to *.wav format, as simple as possible.
  * Only 16 bytes 'fmt ' chunk, then counting data chunk
@@ -617,7 +622,8 @@ QStringList TcountingManager::lookupForWavs(const QString& wavDir) {
         TcntXML cnt;
         if (cnt.fromXml(xml)) {
           static const QString semicolon = QStringLiteral(";");
-          wavs << cnt.langCode() + semicolon + cnt.langName() + semicolon + cnt.countName();
+          wavs << cnt.langCode() + semicolon + cnt.langName() + QLatin1String(" / ") + cnt.nativeLang()
+                + semicolon + cnt.countName();
         }
       }
     }

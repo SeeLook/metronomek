@@ -75,6 +75,8 @@ public:
   Q_INVOKABLE QStringList languagesModel();
   Q_INVOKABLE int currentLanguage();
 
+  Q_INVOKABLE QStringList countingModelLocal();
+
   void exportToWav(const QString& cntFileName, const TcntXML& xml);
 
   QStringList lookupForWavs(const QString& wavDir);
