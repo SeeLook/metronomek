@@ -15,178 +15,158 @@ Tdialog {
   visible: true
   padding: GLOB.fontSize() / 2
 
-  ButtonGroup { id: soundsGr }
-
   // private
   property CountManager cntMan: SOUND.countManager()
 
-  header: Column {
-    Text {
-      anchors.horizontalCenter: parent.horizontalCenter
-      color: activPal.text
-      text: qsTr("sounds of counting")
-    }
-    Row {
-      spacing: fm.height
-      anchors.horizontalCenter: parent.horizontalCenter
-      RadioButton {
-        id: builtRadio
-        text: qsTr("built-in")
-        ButtonGroup.group: soundsGr
-        onToggled: stack.replace(builtComp)
-      }
-      RadioButton {
-        id: customRadio
-        checked: true
-        text: qsTr("custom")
-        ButtonGroup.group: soundsGr
-        onToggled: stack.replace(customComp)
-      }
-    }
-  }
+  ListModel { id: localCntsMod }
 
-  StackView {
-    id: stack
-    width: parent.width; height: parent.height
-    initialItem: customComp
-    replaceEnter: Transition { NumberAnimation { property: "x"; from: -width; to: 0 }}
-    replaceExit: Transition { NumberAnimation { property: "x"; from: 0; to: width }}
-    clip: true
-  }
-
-  Component {
-    id: customComp
+  Column {
+    spacing: GLOB.fontSize()
     ListView {
-      id: numList
-      currentIndex: -1
-      model: 12
-
-      width: parent ? parent.width : 0; height: parent ? parent.height : 0
+      id: wavList
+      width: vCntPage.width - GLOB.fontSize()
+      height: (vCntPage.height - vCntPage.implicitFooterHeight) / 2 - GLOB.fontSize() * 2
       spacing: 1
+      currentIndex: -1
+      model: localCntsMod
+      clip: true
+
+      header: Rectangle {
+        width: parent.width; height: fm.height * 1.5; color: activPal.text
+        Text {
+          anchors.centerIn: parent
+          color: activPal.base
+          text: qsTr("available sounds of counting")
+        }
+      }
+
+      ScrollBar.vertical: ScrollBar {}
+
       delegate: Rectangle {
         id: bgRect
-        property alias spectrum: numSpec
         width: parent ? parent.width : 0
-        height: fm.height * 5 + (numList.currentIndex === index ? buttonsRect.height + fm.height / 3 : 0)
-        Behavior on height { NumberAnimation {} }
-        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, numList.currentIndex === index ? 20 : 0))
-        NumeralSpectrum {
-          id: numSpec
-          nr: index
-          clip: true
-          width: parent.width; height: fm.height * 5
+        height: fm.height * 5
+        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, wavList.currentIndex === index ? 20 : 0))
+        Row {
+          //anchors.centerIn: parent
+          anchors.verticalCenter: parent.verticalCenter
+          spacing: fm.height
           Text {
-            x: fm.height / 4; y: fm.height / 4
-            color: numList.currentIndex === index ? activPal.highlight : activPal.text
-            text: index + 1
-            style: Text.Outline; styleColor: numList.currentIndex === index ? activPal.text : bgRect.color
-            font { pixelSize: parent.height * 0.25; bold: true }
+            anchors.verticalCenter: parent.verticalCenter
+            color: activPal.text
+            text: localCntsMod.get(index).langID
+            font { bold: true }
           }
-          Rectangle {
-            id: playTick
-            width: fm.height / 4; height: parent.height
-            color: activPal.highlight
-            visible: playAnim.running
-          }
-          Text {
-            text: numSpec.recMessage
-            anchors.centerIn: parent
-            color: "red"; style: Text.Outline; styleColor: bgRect.color
-            font { pixelSize: parent.height / 3; bold: true }
-          }
-          NumberAnimation {
-            id: playAnim
-            target: playTick; property: "x"
-            duration: 750
-            from: 0; to: numSpec.width
-          }
-          MouseArea {
-            anchors.fill: parent
-            onClicked: numList.currentIndex = index
-          }
-          Component.onCompleted: cntMan.addSpectrum(numSpec)
-        }
-        Flow {
-          id: buttonsRect
-          scale: numList.currentIndex === index ? 1 : 0
-          transformOrigin: Item.Top
-          Behavior on scale { NumberAnimation {} }
-          anchors { top: spectrum.bottom }
-          spacing: bgRect.width * 0.01
-          CuteButton {
-            width: bgRect.width * 0.24; height: fm.height * 2
-            text: qsTranslate("QShortcut", "Play")
-            bgColor: Qt.tint(activPal.button, GLOB.alpha("green", 40))
-            onClicked: {
-              playAnim.start()
-              cntMan.play(index)
+          Column {
+            spacing: fm.height / 4
+            anchors.verticalCenter: parent.verticalCenter
+            Text {
+              anchors.horizontalCenter: parent.horizontalCenter
+              color: activPal.text
+              text: localCntsMod.get(index).langName
+            }
+            Text {
+              anchors.horizontalCenter: parent.horizontalCenter
+              color: activPal.text
+              text: localCntsMod.get(index).cntName
+              font.pixelSize: fm.height * 1.2
             }
           }
-          //CuteButton {
-            //width: bgRect.width * 0.24; height: fm.height * 2
-            //text: qsTr("Amplify")
-            //bgColor: Qt.tint(activPal.button, GLOB.alpha("blue", 40))
-          //}
-          Item {
-            width: bgRect.width * 0.49 /*0.24*/; height: fm.height * 2
-          }
-          CuteButton {
-            width: bgRect.width * 0.24; height: fm.height * 2
-            text: qsTr("Record")
-            bgColor: Qt.tint(activPal.button, GLOB.alpha("red", 40))
-            onClicked: cntMan.rec(index)
+        }
+      }
+
+      Component.onCompleted: {
+        if (localCntsMod.count == 0) {
+          var wavMod = cntMan.countingModelLocal()
+          for (var w = 0; w < wavMod.length; ++w) {
+            var wav = wavMod[w].split(";")
+            localCntsMod.append({"langID": wav[0], "langName": wav[1], "cntName": wav[2]})
           }
         }
       }
     }
-  }
 
-  Component {
-    id: builtComp
-    Column {
-      RadioButton {
-        text: "something"
+    Button {
+      anchors.horizontalCenter: parent.horizontalCenter
+      width: vCntPage.width - GLOB.fontSize() * 4
+      text: qsTr("Create own verbal counting")
+      onClicked: Qt.createComponent("qrc:/VerbalCountEdit.qml").createObject(mainWindow)
+    }
+
+    ListModel {
+      id: onlineMod
+      ListElement { langID: "de_DE"; langName: "German / Deutch"; cntName: "Countdown"; size: "456" }
+    }
+
+    ListView {
+      id: onlineList
+      width: vCntPage.width - GLOB.fontSize()
+      height: (vCntPage.height - vCntPage.implicitFooterHeight) / 2 - GLOB.fontSize() * 2
+      spacing: 1
+      clip: true
+
+      currentIndex: -1
+      model: onlineMod
+
+      header: Rectangle {
+        width: parent.width; height: fm.height * 1.5; color: activPal.text
+        Row {
+          anchors.centerIn: parent
+          Text {
+            color: activPal.base
+            text: qsTr("sounds of counting to download")
+          }
+        }
       }
+
+      delegate: Rectangle {
+        id: bgRect
+        width: parent ? parent.width : 0
+        height: fm.height * 5
+        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, wavList.currentIndex === index ? 20 : 0))
+//         Row {
+          //anchors.centerIn: parent
+          //anchors.verticalCenter: parent.verticalCenter
+          //spacing: fm.height
+          Text {
+            //id: langIdText
+            anchors.verticalCenter: parent.verticalCenter
+            color: activPal.text
+            text: onlineMod.get(index).langID
+            font { bold: true }
+          }
+          Column {
+            spacing: fm.height / 4
+            anchors.centerIn: parent
+            Text {
+              anchors.horizontalCenter: parent.horizontalCenter
+              color: activPal.text
+              text: onlineMod.get(index).langName
+            }
+            Text {
+              anchors.horizontalCenter: parent.horizontalCenter
+              color: activPal.text
+              text: onlineMod.get(index).cntName
+              font.pixelSize: fm.height * 1.2
+            }
+          }
+          Button {
+            anchors { right: parent.right; verticalCenter: parent.verticalCenter }
+            text: qsTr("Download") +"\n" + onlineMod.get(index).size + " kB"
+          }
+        //}
+      }
+
+      ScrollBar.vertical: ScrollBar {}
     }
   }
 
-  standardButtons: Dialog.RestoreDefaults | Dialog.Cancel | Dialog.Help
+  standardButtons: Dialog.Ok
   Component.onCompleted: {
-    footer.standardButton(Dialog.RestoreDefaults).text = qsTranslate("QPlatformTheme", "Save")
-    footer.standardButton(Dialog.Help).text = qsTranslate("TempoPage", "Actions")
     SOUND.initCountingSettings()
   }
   Component.onDestruction: {
     SOUND.restoreAfterCountSettings()
-  }
-
-  onHelpRequested: moreMenu.open()
-
-  onReset: {
-    Qt.createComponent("qrc:/CountingLangPop.qml").createObject(mainWindow)
-  }
-
-  Menu {
-    id: moreMenu
-    y: vCntPage.height - height - vCntPage.implicitFooterHeight - vCntPage.implicitHeaderHeight
-
-    MenuItem {
-      text: qsTr("Align")
-    }
-    Component.onCompleted: {
-      if (!GLOB.isAndroid())
-        moreMenu.insertItem(0, fromFileComp.createObject())
-    }
-  }
-
-  Component {
-    id: fromFileComp
-    MenuItem {
-      text: qsTr("Load from file")
-      onTriggered: {
-        cntMan.getSoundFile()
-      }
-    }
   }
 
 }
