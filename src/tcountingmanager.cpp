@@ -64,8 +64,11 @@ class TcntXML
     TcntXML(int lang = 3, const QString& name = QString()) : m_lang(lang), m_name(name) {}
 
     int language() const  { return m_lang; }
+    QLocale locale() const { return static_cast<QLocale::Language>(m_lang); }
     QString countName() const { return m_name; }
     quint32 totalSize() const { return m_totalSize; }
+    QString langName() const { return QLocale::languageToString(static_cast<QLocale::Language>(m_lang)); }
+    QString langCode() const { return locale().name(); }
 
     void addNumeralSize(int nSize) {
       m_numSizes << nSize;
@@ -417,6 +420,7 @@ void TcountingManager::importFromTTS() {
 void TcountingManager::initSettings(TabstractAudioDevice* audioDev) {
   m_audioDevice = audioDev;
   connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &TcountingManager::playCallBack, Qt::DirectConnection);
+  qDebug() << lookupForWavs(GLOB->userLocalPath());
 }
 
 
@@ -599,6 +603,59 @@ void TcountingManager::exportToWav(const QString& cntFileName, const TcntXML& xm
     out << qToBigEndian<quint32>(xmlString.size() * 2 + 2); // chunk size
     out << xmlString;
   }
+}
+
+
+QStringList TcountingManager::lookupForWavs(const QString& wavDir) {
+  QStringList wavs;
+  QDir d(wavDir);
+  if (d.exists()) {
+    auto wavFiles = d.entryList(QStringList() << QStringLiteral("*.wav"), QDir::Files);
+    for (QString& wavFile : wavFiles) {
+      auto xml = dumpXmlFromWav(wavDir + QLatin1String("/") + wavFile);
+      if (!xml.isEmpty()) {
+        TcntXML cnt;
+        if (cnt.fromXml(xml)) {
+          static const QString semicolon = QStringLiteral(";");
+          wavs << cnt.langCode() + semicolon + cnt.langName() + semicolon + cnt.countName();
+        }
+      }
+    }
+  }
+  return wavs;
+}
+
+
+QString TcountingManager::dumpXmlFromWav(const QString& fileName) {
+  QFile f(fileName);
+  QString xml;
+  if (f.exists() && f.open(QFile::ReadOnly)) {
+    QDataStream in(&f);
+    quint32 header, chunkSize;
+    in.skipRawData(8);
+    in >> header;
+    header = qFromBigEndian<quint32>(header);
+    if (header == WAV_WAVE) {
+      in >> header;
+      header = qFromBigEndian<quint32>(header);
+      while (header != WAV_IXML) { // skip everything except iXML
+        in >> chunkSize;
+        chunkSize = qFromBigEndian<quint32>(chunkSize);
+        in.skipRawData(chunkSize);
+        if (in.atEnd()) {
+            return xml;
+        } else {
+            in >> header;
+            header = qFromBigEndian<quint32>(header);
+        }
+      }
+      if (!in.atEnd() && header == WAV_IXML) {
+        in.skipRawData(4); // iXML size
+        in >> xml;
+      }
+    }
+  }
+  return xml;
 }
 
 

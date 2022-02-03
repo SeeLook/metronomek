@@ -77,6 +77,10 @@ public:
 
   void exportToWav(const QString& cntFileName, const TcntXML& xml);
 
+  QStringList lookupForWavs(const QString& wavDir);
+
+  QString dumpXmlFromWav(const QString& fileName);
+
 signals:
   void finishedChanged();
 
