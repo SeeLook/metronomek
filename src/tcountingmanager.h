@@ -183,6 +183,9 @@ private:
   qint16                            m_inNoise = 0, m_inMax = 0;
   bool                              m_inOnSet = false;
   QStringList                       m_languagesModel;
+// local counting wav files
+  QStringList                       m_localCntModel;
+  QStringList                       m_localWavFiles;
 // downloading wav-es
   QStringList                       m_onlineModel;
   QStringList                       m_onlineURLs;

@@ -580,7 +580,11 @@ int TcountingManager::currentLanguage() {
 
 
 QStringList TcountingManager::countingModelLocal() {
-  return lookupForWavs(GLOB->userLocalPath());
+  if (m_localCntModel.isEmpty()) {
+    m_localCntModel << lookupForWavs(GLOB->soundsPath() + QLatin1String("counting"));
+    m_localCntModel << lookupForWavs(GLOB->userLocalPath());
+  }
+  return m_localCntModel;
 }
 
 
