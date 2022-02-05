@@ -13,6 +13,7 @@ class TsoundData;
 class TabstractAudioDevice;
 class TnumeralSpectrum;
 class TcntXML;
+class QDataStream;
 
 
 /**
@@ -23,10 +24,15 @@ class TcountingManager : public QObject
 
   Q_OBJECT
 
+  Q_PROPERTY(bool downloading READ downloading NOTIFY downloadingChanged)
+
 public:
   explicit TcountingManager(QVector<TsoundData*>* numList, QObject* parent = nullptr);
   ~TcountingManager() override;
 
+//===================================================
+// Methods for importing counting
+//===================================================
       /**
        * @p TRUE when import was done
        */
@@ -43,6 +49,9 @@ public:
 
 //   void importFromResources();
 
+//===================================================
+// Methods for custom counting preparation/recording
+//===================================================
   void initSettings(TabstractAudioDevice* audioDev);
   void restoreSettings();
 
@@ -75,16 +84,62 @@ public:
   Q_INVOKABLE QStringList languagesModel();
   Q_INVOKABLE int currentLanguage();
 
+//===================================================
+// Methods to handle locally stored *.wav files with counting
+//===================================================
+
   Q_INVOKABLE QStringList countingModelLocal();
 
-  void exportToWav(const QString& cntFileName, const TcntXML& xml);
-
   QStringList lookupForWavs(const QString& wavDir);
+  QString getModelEntryFromXml(const QString& xmlString);
+
+//===================================================
+// Methods for downloading a file
+//===================================================
+
+  bool downloading() const { return m_downloading; }
+
+  Q_INVOKABLE QStringList onlineModel();
+
+  Q_INVOKABLE void downloadCounting(int urlId);
+
+      /**
+       * Parses @p mdFile
+       * Creates @p QStringList model from given @p mdFilePath
+       * by parsing MarkDown table with counting files
+       */
+  QStringList convertMDtoModel(const QString& mdFileName);
+
+//===================================================
+// *.wav and iXML manipulating helpers
+//===================================================
+
+      /**
+       * Write to *.wav format, as simple as possible.
+       * Only 16 bytes 'fmt ' chunk, then counting data chunk
+       * and at the end extra 'iXML' chunk with information
+       * where every numeral sound data starts.
+       */
+  void writeWavFile(const QString& cntFileName, const TcntXML& xml);
 
   QString dumpXmlFromWav(const QString& fileName);
 
+      /**
+       * Returns @p QString with XML data from given
+       * @p QDataStream which should be wav file context.
+       */
+  QString dumpXmlFromDataStream(QDataStream& in);
+
+
 signals:
   void finishedChanged();
+  void downloadingChanged();
+
+      /**
+       * Emitted when wav file download was completed with success.
+       * @p modelEntry is for QML to consume
+       */
+  void appendToLocalModel(const QString& modelEntry);
 
 protected:
 #if defined (WITH_SOUNDTOUCH)
@@ -109,12 +164,16 @@ protected:
 
   void watchRecordingStopped();
 
+  QString getWavFileName(const QString& langPrefix);
+
 private:
   bool                              m_finished = false;
   QVector<TsoundData*>             *m_numerals = nullptr;
-  QVector<TnumeralSpectrum*>        m_spectrums;
+// importing
   bool                              m_doSquash = false;
   bool                              m_alignCounting = true;
+// preparation of counting
+  QVector<TnumeralSpectrum*>        m_spectrums;
   TabstractAudioDevice             *m_audioDevice = nullptr;
   int                               m_currSample = 0;
   int                               m_playNum = 0, m_recNum = 0;
@@ -124,6 +183,10 @@ private:
   qint16                            m_inNoise = 0, m_inMax = 0;
   bool                              m_inOnSet = false;
   QStringList                       m_languagesModel;
+// downloading wav-es
+  QStringList                       m_onlineModel;
+  QStringList                       m_onlineURLs;
+  bool                              m_downloading = false;
 };
 
 #endif // TCOUNTINGMANAGER_H

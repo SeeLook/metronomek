@@ -18,12 +18,20 @@ Tdialog {
   // private
   property CountManager cntMan: SOUND.countManager()
 
+  Connections {
+    target: cntMan
+    onAppendToLocalModel: {
+      appendToLocalModel(modelEntry)
+      localList.positionViewAtEnd()
+    }
+  }
+
   ListModel { id: localCntsMod }
 
   Column {
     spacing: GLOB.fontSize()
     ListView {
-      id: wavList
+      id: localList
       width: vCntPage.width - GLOB.fontSize()
       height: (vCntPage.height - vCntPage.implicitFooterHeight) / 2 - GLOB.fontSize() * 2
       spacing: 1
@@ -46,7 +54,7 @@ Tdialog {
         id: bgRect
         width: parent ? parent.width : 0
         height: fm.height * 5
-        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, wavList.currentIndex === index ? 20 : 0))
+        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, localList.currentIndex === index ? 20 : 0))
         Row {
           //anchors.centerIn: parent
           anchors.verticalCenter: parent.verticalCenter
@@ -78,25 +86,21 @@ Tdialog {
       Component.onCompleted: {
         if (localCntsMod.count == 0) {
           var wavMod = cntMan.countingModelLocal()
-          for (var w = 0; w < wavMod.length; ++w) {
-            var wav = wavMod[w].split(";")
-            localCntsMod.append({"langID": wav[0], "langName": wav[1], "cntName": wav[2]})
-          }
+          for (var w = 0; w < wavMod.length; ++w)
+            appendToLocalModel(wavMod[w])
         }
       }
     }
 
-    Button {
+    CuteButton {
       anchors.horizontalCenter: parent.horizontalCenter
-      width: vCntPage.width - GLOB.fontSize() * 4
-      text: qsTr("Create own verbal counting")
+      width: vCntPage.width - GLOB.fontSize() * 4; height: fm.height * 2.5
+      bgColor: Qt.tint(activPal.window, GLOB.alpha(activPal.highlight, 20))
+      text: qsTr("Prepare own verbal counting")
       onClicked: Qt.createComponent("qrc:/VerbalCountEdit.qml").createObject(mainWindow)
     }
 
-    ListModel {
-      id: onlineMod
-      ListElement { langID: "de_DE"; langName: "German / Deutch"; cntName: "Countdown"; size: "456" }
-    }
+    ListModel { id: onlineMod }
 
     ListView {
       id: onlineList
@@ -123,38 +127,38 @@ Tdialog {
         id: bgRect
         width: parent ? parent.width : 0
         height: fm.height * 5
-        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, wavList.currentIndex === index ? 20 : 0))
-//         Row {
-          //anchors.centerIn: parent
-          //anchors.verticalCenter: parent.verticalCenter
-          //spacing: fm.height
+        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, localList.currentIndex === index ? 20 : 0))
+        Text {
+          anchors.verticalCenter: parent.verticalCenter
+          color: activPal.text
+          text: onlineMod.get(index).langID
+          font { bold: true }
+        }
+        Column {
+          spacing: fm.height / 4
+          anchors.centerIn: parent
           Text {
-            //id: langIdText
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
             color: activPal.text
-            text: onlineMod.get(index).langID
-            font { bold: true }
+            text: onlineMod.get(index).langName
           }
-          Column {
-            spacing: fm.height / 4
-            anchors.centerIn: parent
-            Text {
-              anchors.horizontalCenter: parent.horizontalCenter
-              color: activPal.text
-              text: onlineMod.get(index).langName
-            }
-            Text {
-              anchors.horizontalCenter: parent.horizontalCenter
-              color: activPal.text
-              text: onlineMod.get(index).cntName
-              font.pixelSize: fm.height * 1.2
-            }
+        }
+        Button {
+          anchors { right: parent.right; verticalCenter: parent.verticalCenter }
+          enabled: !cntMan.downloading
+          text: qsTr("Download") +"\n" + onlineMod.get(index).size + " kB"
+          onClicked: cntMan.downloadCounting(index)
+        }
+      }
+
+      Component.onCompleted: {
+        if (localCntsMod.count == 0) {
+          var oMod = cntMan.onlineModel()
+          for (var w = 0; w < oMod.length; ++w) {
+            var wav = oMod[w].split(";")
+            onlineMod.append({ "langID": wav[0], "langName": wav[1] + " / " + wav[2], "size": wav[3] })
           }
-          Button {
-            anchors { right: parent.right; verticalCenter: parent.verticalCenter }
-            text: qsTr("Download") +"\n" + onlineMod.get(index).size + " kB"
-          }
-        //}
+        }
       }
 
       ScrollBar.vertical: ScrollBar {}
@@ -167,6 +171,11 @@ Tdialog {
   }
   Component.onDestruction: {
     SOUND.restoreAfterCountSettings()
+  }
+
+  function appendToLocalModel(modelEntry) {
+    var wav = modelEntry.split(";")
+    localCntsMod.append({"langID": wav[0], "langName": wav[1], "cntName": wav[2]})
   }
 
 }

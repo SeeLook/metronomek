@@ -7,6 +7,7 @@
 #include "tsounddata.h"
 #include "tabstractaudiodevice.h"
 #include "tnumeralspectrum.h"
+#include "tgetfile.h"
 #include "tglob.h"
 
 #if defined (WITH_SOUNDTOUCH)
@@ -40,6 +41,10 @@
 #define WAV_BEXT (1954047330) // 'bext'
 
 
+/**
+ * @p Simple class to keep start and stop positions in a data array.
+ * Usually it is single numeral word audio data.
+ */
 class Tmark
 {
   public:
@@ -58,9 +63,17 @@ class Tmark
 };
 
 
+/**
+ * @p TcntXML handles XML data structure of *.wav file with counting.
+ * It stores language code, and counting name.
+ * Also @p QList<int> stores lengths of every each numeral in the file
+ */
 class TcntXML
 {
   public:
+        /**
+         * Default constructor, lang 3 is @p QLocale::English
+         */
     TcntXML(int lang = 3, const QString& name = QString()) : m_lang(lang), m_name(name) {}
 
     int language() const  { return m_lang; }
@@ -94,7 +107,7 @@ class TcntXML
       return out;
     }
 
-    bool fromXml(QString& in) {
+    bool fromXml(const QString& in) {
       QXmlStreamReader xml(in);
       bool ok = true;
       while (xml.readNextStartElement()) {
@@ -417,6 +430,9 @@ void TcountingManager::importFromTTS() {
 }
 #endif
 
+//#################################################################################################
+//###################       Methods for custom counting preparation/recording    ##################
+//#################################################################################################
 
 void TcountingManager::initSettings(TabstractAudioDevice* audioDev) {
   m_audioDevice = audioDev;
@@ -508,9 +524,13 @@ void TcountingManager::storeCounting(int lang, const QString& name, bool askForF
   for (int n = 0; n < m_numerals->size(); ++n)
     xml.addNumeralSize(m_numerals->at(n)->size());
   QLocale locale(static_cast<QLocale::Language>(lang));
-  exportToWav(QString("%1/%2-counting.wav").arg(GLOB->userLocalPath()).arg(locale.name()), xml);
+  writeWavFile(QString("%1/%2-counting.wav").arg(GLOB->userLocalPath()).arg(locale.name()), xml);
 }
 
+
+//#################################################################################################
+//###############     Methods to handle locally stored *.wav files with counting      #############
+//#################################################################################################
 
 QStringList TcountingManager::languagesModel() {
   if (m_languagesModel.isEmpty()) {
@@ -564,13 +584,104 @@ QStringList TcountingManager::countingModelLocal() {
 }
 
 
-/**
- * Write to *.wav format, as simple as possible.
- * Only 16 bytes 'fmt ' chunk, then counting data chunk
- * and at the end extra 'iXML' chunk with information
- * where every numeral sound data starts.
- */
-void TcountingManager::exportToWav(const QString& cntFileName, const TcntXML& xml) {
+QStringList TcountingManager::lookupForWavs(const QString& wavDir) {
+  QStringList wavs;
+  QDir d(wavDir);
+  if (d.exists()) {
+    auto wavFiles = d.entryList(QStringList() << QStringLiteral("*.wav"), QDir::Files);
+    for (QString& wavFile : wavFiles) {
+      auto xml = dumpXmlFromWav(wavDir + QLatin1String("/") + wavFile);
+      if (!xml.isEmpty()) {
+        auto modelEntry = getModelEntryFromXml(xml);
+        if (!modelEntry.isEmpty())
+          wavs << modelEntry;
+      }
+    }
+  }
+  return wavs;
+}
+
+
+QString TcountingManager::getModelEntryFromXml(const QString& xmlString) {
+  if (!xmlString.isEmpty()) {
+    TcntXML cnt;
+    if (cnt.fromXml(xmlString)) {
+      static const QString semicolon = QStringLiteral(";");
+      return cnt.langCode() + semicolon + cnt.langName() + QLatin1String(" / ") + cnt.nativeLang()
+      + semicolon + cnt.countName();
+    }
+  }
+  return QString();
+}
+
+
+QStringList TcountingManager::onlineModel() {
+  if (m_onlineModel.isEmpty())
+    m_onlineModel = convertMDtoModel(QStringLiteral(":/COUNTING.md"));
+  return m_onlineModel;
+}
+
+
+void TcountingManager::downloadCounting(int urlId) {
+  if (urlId > -1 && urlId < m_onlineURLs.size()) {
+    m_downloading = true;
+    emit downloadingChanged();
+    auto getFile = new TgetFile(m_onlineURLs[urlId], this);
+    connect(getFile, &TgetFile::downloadFinished, this, [=](bool success) {
+      if (success) {
+        auto fName = getWavFileName(m_onlineURLs[urlId].right(18).left(5));
+        QFile wavFile(fName);
+        QString xml;
+        if (wavFile.open(QIODevice::WriteOnly)) {
+          QDataStream data(getFile->fileData());
+          xml = dumpXmlFromDataStream(data);
+          wavFile.write(getFile->fileData());
+          wavFile.close();
+          emit appendToLocalModel(getModelEntryFromXml(xml));
+        }
+        m_downloading = false;
+        emit downloadingChanged();
+      }
+      getFile->deleteLater();
+    });
+  }
+}
+
+QStringList TcountingManager::convertMDtoModel(const QString& mdFileName) {
+  QStringList mdWavModel;
+  QFile mdFile(mdFileName);
+  if(mdFile.open(QFile::ReadOnly | QFile::Text)) {
+    m_onlineURLs.clear();
+    QTextStream in(&mdFile);
+    in.setCodec("UTF-8");
+    auto mdText = in.readAll().split(QStringLiteral("\n"));
+    bool tableDetected = false;
+    static const QString bar = QStringLiteral("|");
+    for (QString& line : mdText) {
+      if (tableDetected) {
+        if (line.startsWith(bar)) {
+          line.replace(QLatin1String(" "), QString());
+          auto splitLine = line.mid(1, line.length() - 4).split(bar); // drop first '|' and the last 'kB|'
+          auto addr = splitLine.takeAt(3);
+          int startsAt = addr.indexOf(QLatin1String("](")) + 2;
+          int endsAt = addr.indexOf(QLatin1String(")"));
+          mdWavModel << splitLine.join(QLatin1String(";"));
+          m_onlineURLs << addr.mid(startsAt, endsAt - startsAt);
+        }
+      } else {
+        if (line.startsWith(QLatin1String("|---")))
+          tableDetected = true;
+      }
+    }
+  }
+  return mdWavModel;
+}
+
+//#################################################################################################
+//###############                *.wav and iXML manipulating helpers                  #############
+//#################################################################################################
+
+void TcountingManager::writeWavFile(const QString& cntFileName, const TcntXML& xml) {
   if (cntFileName.isEmpty())
     return;
 
@@ -611,59 +722,45 @@ void TcountingManager::exportToWav(const QString& cntFileName, const TcntXML& xm
 }
 
 
-QStringList TcountingManager::lookupForWavs(const QString& wavDir) {
-  QStringList wavs;
-  QDir d(wavDir);
-  if (d.exists()) {
-    auto wavFiles = d.entryList(QStringList() << QStringLiteral("*.wav"), QDir::Files);
-    for (QString& wavFile : wavFiles) {
-      auto xml = dumpXmlFromWav(wavDir + QLatin1String("/") + wavFile);
-      if (!xml.isEmpty()) {
-        TcntXML cnt;
-        if (cnt.fromXml(xml)) {
-          static const QString semicolon = QStringLiteral(";");
-          wavs << cnt.langCode() + semicolon + cnt.langName() + QLatin1String(" / ") + cnt.nativeLang()
-                + semicolon + cnt.countName();
-        }
-      }
-    }
-  }
-  return wavs;
-}
-
-
 QString TcountingManager::dumpXmlFromWav(const QString& fileName) {
   QFile f(fileName);
   QString xml;
   if (f.exists() && f.open(QFile::ReadOnly)) {
     QDataStream in(&f);
-    quint32 header, chunkSize;
-    in.skipRawData(8);
-    in >> header;
-    header = qFromBigEndian<quint32>(header);
-    if (header == WAV_WAVE) {
-      in >> header;
-      header = qFromBigEndian<quint32>(header);
-      while (header != WAV_IXML) { // skip everything except iXML
-        in >> chunkSize;
-        chunkSize = qFromBigEndian<quint32>(chunkSize);
-        in.skipRawData(chunkSize);
-        if (in.atEnd()) {
-            return xml;
-        } else {
-            in >> header;
-            header = qFromBigEndian<quint32>(header);
-        }
-      }
-      if (!in.atEnd() && header == WAV_IXML) {
-        in.skipRawData(4); // iXML size
-        in >> xml;
-      }
-    }
+    xml = dumpXmlFromDataStream(in);
+    f.close();
   }
   return xml;
 }
 
+
+QString TcountingManager::dumpXmlFromDataStream(QDataStream& in) {
+  QString xml;
+  quint32 header, chunkSize;
+  in.skipRawData(8);
+  in >> header;
+  header = qFromBigEndian<quint32>(header);
+  if (header == WAV_WAVE) {
+    in >> header;
+    header = qFromBigEndian<quint32>(header);
+    while (header != WAV_IXML) { // skip everything except iXML
+      in >> chunkSize;
+      chunkSize = qFromBigEndian<quint32>(chunkSize);
+      in.skipRawData(chunkSize);
+      if (in.atEnd()) {
+        return xml;
+      } else {
+        in >> header;
+        header = qFromBigEndian<quint32>(header);
+      }
+    }
+    if (!in.atEnd() && header == WAV_IXML) {
+      in.skipRawData(4); // iXML size
+      in >> xml;
+    }
+  }
+  return xml;
+}
 
 // void TcountingManager::setFinished(bool finished)
 // {
@@ -807,4 +904,16 @@ void TcountingManager::watchRecordingStopped() {
       spectrum->copyData(m_inBuffer, m_inSize);
 //       m_numerals->at(m_recNum)->copyData(m_inBuffer, m_inSize);
   }
+}
+
+
+QString TcountingManager::getWavFileName(const QString& langPrefix) {
+  auto dataPath = GLOB->userLocalPath();
+  auto fName = QString("%1/%2-counting.wav").arg(dataPath).arg(langPrefix);
+  int it = 1;
+  while (QFileInfo::exists(fName)) {
+    fName = QString("%1/%2-counting_%3.wav").arg(dataPath).arg(langPrefix).arg(it, 2, 'g', -1, '0');
+    it++;
+  }
+  return fName;
 }
