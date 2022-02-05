@@ -17,7 +17,7 @@ ANDROID_VERSION_CODE = "4"
 
 QMAKE_SUBSTITUTES += src/metronomek_conf.h.in
 
-QT += quick quickcontrols2 androidextras #multimedia
+QT += quick quickcontrols2 androidextras network #multimedia
 
 CONFIG += c++17 # c++11 is fine Metronomek itself but Oboe wants c++17
 
@@ -40,6 +40,7 @@ SOURCES += \
         src/tsounddata.cpp \
         src/tnumeralspectrum.cpp \
         src/tmetroshape.cpp \
+        src/tgetfile.cpp \
         \
         src/tspeedhandler.cpp \
         src/ttempopart.cpp \
@@ -57,6 +58,7 @@ HEADERS += \
         src/tsounddata.h \
         src/tnumeralspectrum.h \
         src/tmetroshape.h \
+        src/tgetfile.h \
         \
         src/tspeedhandler.h \
         src/ttempopart.h \

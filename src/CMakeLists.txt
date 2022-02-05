@@ -29,6 +29,7 @@ set(METRONOMEK_SRC
     trtaudiodevice.cpp
     tcountingmanager.cpp
     tmetroshape.cpp
+    tgetfile.cpp
     #taudiobuffer.h Android Qt Audio, TODO rather to remove
 
     tspeedhandler.cpp
@@ -122,7 +123,7 @@ target_compile_definitions(metronomek
 )
 
 target_link_libraries(metronomek PRIVATE
-  Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Quick
+  Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Quick Qt5::Network
   ${RtAudio_LIBRARIES}
   ${SOUNDTOUCH_LIBRARY}
 )
