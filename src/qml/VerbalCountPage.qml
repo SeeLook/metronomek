@@ -33,7 +33,7 @@ Tdialog {
     ListView {
       id: localList
       width: vCntPage.width - GLOB.fontSize()
-      height: (vCntPage.height - vCntPage.implicitFooterHeight) / 2 - GLOB.fontSize() * 2
+      height: Math.min(contentHeight, (vCntPage.height - vCntPage.implicitFooterHeight) / 2 - GLOB.fontSize() * 2)
       spacing: 1
       currentIndex: -1
       model: localCntsMod
@@ -52,11 +52,10 @@ Tdialog {
 
       delegate: Rectangle {
         id: bgRect
-        width: parent ? parent.width : 0
-        height: fm.height * 5
+        width: parent.width; height: fm.height * 4
         color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, localList.currentIndex === index ? 20 : 0))
         Row {
-          //anchors.centerIn: parent
+          x: fm.height / 2
           anchors.verticalCenter: parent.verticalCenter
           spacing: fm.height
           Text {
@@ -105,7 +104,7 @@ Tdialog {
     ListView {
       id: onlineList
       width: vCntPage.width - GLOB.fontSize()
-      height: (vCntPage.height - vCntPage.implicitFooterHeight) / 2 - GLOB.fontSize() * 2
+      height: vCntPage.height - vCntPage.implicitFooterHeight - localList.height - GLOB.fontSize() * 2
       spacing: 1
       clip: true
 
@@ -125,10 +124,10 @@ Tdialog {
 
       delegate: Rectangle {
         id: bgRect
-        width: parent ? parent.width : 0
-        height: fm.height * 5
+        width: parent.width; height: fm.height * 4
         color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, localList.currentIndex === index ? 20 : 0))
         Text {
+          x: fm.height / 2
           anchors.verticalCenter: parent.verticalCenter
           color: activPal.text
           text: onlineMod.get(index).langID
