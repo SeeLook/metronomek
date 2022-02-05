@@ -109,7 +109,7 @@ public:
 
   void importFromCommandline();
 
-  QVector<TsoundData*>* numerals() { return &m_numerals; }
+  QVector<TsoundData*>* numerals() { return m_numerals; }
 
   Q_INVOKABLE TcountingManager* countManager() { return m_countManager; }
 
@@ -209,7 +209,7 @@ private:
 
   int                    m_staticTempo;
   bool                   m_verbalCount = false;
-  QVector<TsoundData*>   m_numerals;
+  QVector<TsoundData*>  *m_numerals;
   TcountingManager      *m_countManager = nullptr;
 
   int                    m_samplPerBeat = 48000; /**< 1 sec - default for tempo 60 */

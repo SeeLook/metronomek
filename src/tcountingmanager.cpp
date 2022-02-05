@@ -143,10 +143,12 @@ class TcntXML
 //#################################################################################################
 
 
-TcountingManager::TcountingManager(QVector<TsoundData*>* numList, QObject* parent) :
-  QObject(parent),
-  m_numerals(numList)
+TcountingManager::TcountingManager(QObject* parent) :
+  QObject(parent)
 {
+  for (int n = 0; n < 12; ++n)
+    m_numerals << new TsoundData();
+  importFormFile(GLOB->soundsPath() + QLatin1String("counting/en_US-counting.wav"));
 }
 
 
@@ -154,6 +156,8 @@ TcountingManager::~TcountingManager()
 {
   if (m_inBuffer)
     delete[] m_inBuffer;
+  if (!m_numerals.isEmpty())
+    qDeleteAll(m_numerals);
 }
 
 
@@ -287,8 +291,8 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
                       if (xml.fromXml(xmlString)) { // Found Metronomek specific data in iXML chunk
                         quint32 sum = 0;
                         for (int n = 0; n < xml.numCount(); ++n) {
-                          if (n < m_numerals->size() && sum + xml.numSize(n) <= frames) {
-                            m_numerals->at(n)->copyData(data + sum, xml.numSize(n));
+                          if (n < m_numerals.size() && sum + xml.numSize(n) <= frames) {
+                            m_numerals.at(n)->copyData(data + sum, xml.numSize(n));
                             sum += xml.numSize(n);
                           }
                         }
@@ -382,7 +386,7 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
   if (!numerals.isEmpty()) {
     qDebug() << "Found" << numerals.size();
 
-    bool doCreate = m_numerals->isEmpty();
+    bool doCreate = m_numerals.isEmpty();
 
     int maxTopPos = 0;
     for (int d = 0; d < 12; ++d) {
@@ -401,21 +405,21 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
         }
 #endif
         if (doCreate)
-          m_numerals->append(new TsoundData(squashData, len));
+          m_numerals.append(new TsoundData(squashData, len));
         else
-          m_numerals->at(d)->copyData(squashData, len);
+          m_numerals.at(d)->copyData(squashData, len);
         if (doSquash)
           delete[] squashData;
-        maxTopPos = qMax(maxTopPos, m_numerals->at(d)->findPeakPos());
+        maxTopPos = qMax(maxTopPos, m_numerals.at(d)->findPeakPos());
       }
     }
     if (m_alignCounting) {
       for (int d = 0; d < qMin(numerals.size(), 12); ++d) {
-        m_numerals->at(d)->setOffset(maxTopPos - m_numerals->at(d)->peakAt());
+        m_numerals.at(d)->setOffset(maxTopPos - m_numerals.at(d)->peakAt());
       }
       for (int d = 0; d < qMin(numerals.size(), 12); ++d) {
         if (d < m_spectrums.count())
-          m_spectrums[d]->setNumeral(m_numerals->at(d));
+          m_spectrums[d]->setNumeral(m_numerals.at(d));
       }
     }
   }
@@ -455,7 +459,7 @@ void TcountingManager::addSpectrum(TnumeralSpectrum* spectItem) {
   else if (spectItem->nr() < m_spectrums.count())
     m_spectrums[spectItem->nr()] = spectItem;
 
-  spectItem->setNumeral(m_numerals->at(spectItem->nr()));
+  spectItem->setNumeral(m_numerals.at(spectItem->nr()));
 }
 
 
@@ -521,8 +525,8 @@ void TcountingManager::getSoundFile() {
 
 void TcountingManager::storeCounting(int lang, const QString& name, bool askForFile) {
   TcntXML xml(lang, name);
-  for (int n = 0; n < m_numerals->size(); ++n)
-    xml.addNumeralSize(m_numerals->at(n)->size());
+  for (int n = 0; n < m_numerals.size(); ++n)
+    xml.addNumeralSize(m_numerals.at(n)->size());
   QLocale locale(static_cast<QLocale::Language>(lang));
   writeWavFile(QString("%1/%2-counting.wav").arg(GLOB->userLocalPath()).arg(locale.name()), xml);
 }
@@ -709,8 +713,8 @@ void TcountingManager::writeWavFile(const QString& cntFileName, const TcntXML& x
     out << qToBigEndian<quint32>(WAV_DATA); // 'data'     | 4
     out << qToBigEndian<quint32>(xml.totalSize() * 2); // 'data' chunk size | 4
 
-    for (int n = 0; n < m_numerals->size(); ++n) {
-      auto num = m_numerals->at(n);
+    for (int n = 0; n < m_numerals.size(); ++n) {
+      auto num = m_numerals.at(n);
       // write numeral audio data just one by one
       qint16 sample = 0;
       for (int d = 0; d < num->size(); ++d) {
@@ -906,7 +910,6 @@ void TcountingManager::watchRecordingStopped() {
       m_audioDevice->stop();
       auto spectrum = m_spectrums[m_recNum];
       spectrum->copyData(m_inBuffer, m_inSize);
-//       m_numerals->at(m_recNum)->copyData(m_inBuffer, m_inSize);
   }
 }
 

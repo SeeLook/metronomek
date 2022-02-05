@@ -27,8 +27,10 @@ class TcountingManager : public QObject
   Q_PROPERTY(bool downloading READ downloading NOTIFY downloadingChanged)
 
 public:
-  explicit TcountingManager(QVector<TsoundData*>* numList, QObject* parent = nullptr);
+  explicit TcountingManager(QObject* parent = nullptr);
   ~TcountingManager() override;
+
+  QVector<TsoundData*>* numerals() { return &m_numerals; }
 
 //===================================================
 // Methods for importing counting
@@ -168,7 +170,7 @@ protected:
 
 private:
   bool                              m_finished = false;
-  QVector<TsoundData*>             *m_numerals = nullptr;
+  QVector<TsoundData*>              m_numerals;
 // importing
   bool                              m_doSquash = false;
   bool                              m_alignCounting = true;

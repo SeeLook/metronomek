@@ -100,9 +100,6 @@ Tsound::~Tsound()
   stopTicking();
   m_instance = nullptr;
 
-  if (!m_numerals.isEmpty())
-    qDeleteAll(m_numerals);
-
   if (m_audioDevice && m_audioDevice->deviceName() != QLatin1String("anything"))
     GLOB->settings()->setValue(QStringLiteral("outDevice"), m_audioDevice->deviceName());
   GLOB->settings()->setValue(QStringLiteral("beatType"), m_beatType);
@@ -186,8 +183,8 @@ void Tsound::startPlayingSlot() {
 
     if (m_verbalCount) {
       for (int n = 0; n < 12; ++n) {
-        m_numerals[n]->setStarted(n == 0);
-        m_numerals[n]->resetPos();
+        m_numerals->at(n)->setStarted(n == 0);
+        m_numerals->at(n)->resetPos();
       }
     }
     m_currSample = 0;
@@ -222,16 +219,16 @@ void Tsound::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRead)
 
   for (unsigned int i = 0; i < maxLen; i++) {
     if (m_verbalCount) {
-        if (m_numerals[verbCount]->hasNext())
-          sample = m_numerals[verbCount]->readSample();
+        if (m_numerals->at(verbCount)->hasNext())
+          sample = m_numerals->at(verbCount)->readSample();
         else
           sample = 0;
 
         int vCnt = verbCount > 0 ? verbCount - 1 : meterOfPart(m_playingPart) - 1;
-        while (m_numerals[vCnt]->started() && m_numerals[vCnt]->hasNext()) {
-          sample = mix(sample, m_numerals[vCnt]->readSample());
-          if (!m_numerals[vCnt]->hasNext())
-            m_numerals[vCnt]->setStarted(false);
+        while (m_numerals->at(vCnt)->started() && m_numerals->at(vCnt)->hasNext()) {
+          sample = mix(sample, m_numerals->at(vCnt)->readSample());
+          if (!m_numerals->at(vCnt)->hasNext())
+            m_numerals->at(vCnt)->setStarted(false);
           vCnt--;
           if (vCnt < 0)
             vCnt = meterOfPart(m_playingPart) - 1;
@@ -275,8 +272,8 @@ void Tsound::outCallBack(char* data, unsigned int maxLen, unsigned int& wasRead)
 
       if (m_verbalCount) {
         verbCount = qBound(0, (m_playingBeat - 1) % meterOfPart(m_playingPart), 11);
-        m_numerals[verbCount]->resetPos();
-        m_numerals[verbCount]->setStarted(true);
+        m_numerals->at(verbCount)->resetPos();
+        m_numerals->at(verbCount)->setStarted(true);
       }
 
       m_samplPerBeat = (m_sampleRate * 60) / t;
@@ -440,17 +437,11 @@ void Tsound::setTempo(int t) {
 void Tsound::setVerbalCount(bool vc) {
   if (vc != m_verbalCount) {
     m_verbalCount = vc;
-    if (m_verbalCount && m_numerals.isEmpty()) {
-      QString vLang;
-      if (GLOB->lang().isEmpty()) {
-        QLocale l;
-        vLang = l.name().left(2);
+    if (m_verbalCount) {
+      if (!m_countManager) {
+        m_countManager = new TcountingManager(this);
+        m_numerals = m_countManager->numerals();
       }
-      vLang = vLang != QLatin1String("pl") ? QStringLiteral("en") : QStringLiteral("pl");
-      for (int n = 0; n < 12; ++n) {
-        m_numerals << new TsoundData(getRawFilePath(QString("counting/%1/%2").arg(vLang).arg(n + 1, 2, 'g', -1, '0')));
-      }
-      m_countManager = new TcountingManager(&m_numerals, this);
     }
     emit verbalCountChanged();
   }
@@ -476,14 +467,14 @@ QString Tsound::getTempoNameById(int nameId) {
 
 void Tsound::importFromCommandline() {
   if (!m_countManager)
-    m_countManager = new TcountingManager(&m_numerals, this);
+    m_countManager = new TcountingManager(this);
   m_countManager->importFromCommandline();
 }
 
 
 void Tsound::initCountingSettings() {
   if (!m_countManager)
-    m_countManager = new TcountingManager(&m_numerals, this);
+    m_countManager = new TcountingManager(this);
   disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack);
   m_countManager->initSettings(m_audioDevice);
 }
