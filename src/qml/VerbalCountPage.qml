@@ -53,7 +53,7 @@ Tdialog {
       delegate: Rectangle {
         id: bgRect
         width: parent.width; height: fm.height * 4
-        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, localList.currentIndex === index ? 20 : 0))
+        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, cntMan.localModelId === index ? 20 : 0))
         Row {
           x: fm.height / 2
           anchors.verticalCenter: parent.verticalCenter
@@ -79,6 +79,10 @@ Tdialog {
               font.pixelSize: fm.height * 1.2
             }
           }
+        }
+        MouseArea {
+          anchors.fill: parent
+          onClicked: cntMan.localModelId = index
         }
       }
 

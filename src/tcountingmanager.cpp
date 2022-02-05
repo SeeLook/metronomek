@@ -30,6 +30,7 @@
 #include <QtCore/qendian.h>
 #include <QtCore/qtimer.h>
 #include <QtCore/qlocale.h>
+#include <QtCore/qsettings.h>
 
 #include <QtCore/qdebug.h>
 
@@ -148,12 +149,18 @@ TcountingManager::TcountingManager(QObject* parent) :
 {
   for (int n = 0; n < 12; ++n)
     m_numerals << new TsoundData();
-  importFormFile(GLOB->soundsPath() + QLatin1String("counting/en_US-counting.wav"));
+  m_defaultWav = GLOB->soundsPath() + QLatin1String("counting/en_US-counting.wav");
+  m_prevLocalWav = GLOB->settings()->value(QLatin1String("countingWav"), QString()).toString();
+  if (m_prevLocalWav.isEmpty() || !QFileInfo::exists(m_prevLocalWav))
+    m_prevLocalWav = m_defaultWav;
+  importFormFile(m_prevLocalWav);
 }
 
 
 TcountingManager::~TcountingManager()
 {
+  GLOB->settings()->setValue(QLatin1String("countingWav"),
+                m_localModelId > 0 && m_localModelId < m_localWavFiles.size() ? m_localWavFiles[m_localModelId] : QString());
   if (m_inBuffer)
     delete[] m_inBuffer;
   if (!m_numerals.isEmpty())
@@ -583,20 +590,51 @@ int TcountingManager::currentLanguage() {
 }
 
 
+void TcountingManager::setLocalModelId(int mId) {
+  if (mId != m_localModelId) {
+    m_localModelId = mId;
+    if (m_localModelId > -1 && m_localModelId < m_localWavFiles.size())
+      importFormFile(m_localWavFiles[m_localModelId]);
+    emit localModelIdChanged();
+  }
+}
+
+
 QStringList TcountingManager::countingModelLocal() {
   if (m_localCntModel.isEmpty()) {
+    m_localWavFiles.clear();
     m_localCntModel << lookupForWavs(GLOB->soundsPath() + QLatin1String("counting"));
-    m_localCntModel << lookupForWavs(GLOB->userLocalPath());
+    m_localWavFiles << m_defaultWav;
+    QDir d(GLOB->userLocalPath());
+    auto wavFiles = d.entryList(QStringList() << QStringLiteral("*.wav"), QDir::Files);
+    int cntF = 1;
+    for (QString& wavFile : wavFiles) {
+      auto fileName = GLOB->userLocalPath() + QLatin1String("/") + wavFile;
+      auto xml = dumpXmlFromWav(fileName);
+      if (!xml.isEmpty()) {
+        auto modelEntry = getModelEntryFromXml(xml);
+        if (!modelEntry.isEmpty()) {
+          m_localCntModel << modelEntry;
+          m_localWavFiles << fileName;
+          if (m_prevLocalWav == fileName)
+            setLocalModelId(cntF);
+          cntF++;
+        }
+      }
+    }
+    qDebug() << m_localCntModel << "\n" << m_localWavFiles;
   }
   return m_localCntModel;
 }
 
 
-QStringList TcountingManager::lookupForWavs(const QString& wavDir) {
+QStringList TcountingManager::lookupForWavs(const QString& wavDir, QStringList* wavFilesList) {
   QStringList wavs;
   QDir d(wavDir);
   if (d.exists()) {
     auto wavFiles = d.entryList(QStringList() << QStringLiteral("*.wav"), QDir::Files);
+    if (wavFilesList)
+      *wavFilesList << wavFiles;
     for (QString& wavFile : wavFiles) {
       auto xml = dumpXmlFromWav(wavDir + QLatin1String("/") + wavFile);
       if (!xml.isEmpty()) {
@@ -645,6 +683,7 @@ void TcountingManager::downloadCounting(int urlId) {
           xml = dumpXmlFromDataStream(data);
           wavFile.write(getFile->fileData());
           wavFile.close();
+          m_localWavFiles << fName;
           emit appendToLocalModel(getModelEntryFromXml(xml));
         }
         m_downloading = false;

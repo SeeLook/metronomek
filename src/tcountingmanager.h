@@ -25,6 +25,7 @@ class TcountingManager : public QObject
   Q_OBJECT
 
   Q_PROPERTY(bool downloading READ downloading NOTIFY downloadingChanged)
+  Q_PROPERTY(int localModelId READ localModelId WRITE setLocalModelId NOTIFY localModelIdChanged)
 
 public:
   explicit TcountingManager(QObject* parent = nullptr);
@@ -90,9 +91,12 @@ public:
 // Methods to handle locally stored *.wav files with counting
 //===================================================
 
+  int localModelId() const { return m_localModelId; }
+  void setLocalModelId(int mId);
+
   Q_INVOKABLE QStringList countingModelLocal();
 
-  QStringList lookupForWavs(const QString& wavDir);
+  QStringList lookupForWavs(const QString& wavDir, QStringList* wavFilesList = nullptr);
   QString getModelEntryFromXml(const QString& xmlString);
 
 //===================================================
@@ -136,6 +140,7 @@ public:
 signals:
   void finishedChanged();
   void downloadingChanged();
+  void localModelIdChanged();
 
       /**
        * Emitted when wav file download was completed with success.
@@ -186,8 +191,10 @@ private:
   bool                              m_inOnSet = false;
   QStringList                       m_languagesModel;
 // local counting wav files
+  int                               m_localModelId = 0;
   QStringList                       m_localCntModel;
   QStringList                       m_localWavFiles;
+  QString                           m_prevLocalWav, m_defaultWav;
 // downloading wav-es
   QStringList                       m_onlineModel;
   QStringList                       m_onlineURLs;
