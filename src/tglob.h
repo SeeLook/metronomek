@@ -84,6 +84,8 @@ public:
        */
   QString userLocalPath() const;
 
+  QString soundsPath() const;
+
       /**
        * Removes last 's' letter from @p plural string
        * but only if @p n is bigger than 1

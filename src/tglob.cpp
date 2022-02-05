@@ -120,6 +120,19 @@ QString Tglob::userLocalPath() const {
 }
 
 
+QString Tglob::soundsPath() const {
+#if defined (Q_OS_ANDROID)
+  return QStringLiteral("assets:/sounds/");
+#elif defined (Q_OS_WIN)
+  return qApp->applicationDirPath() + QLatin1String("/sounds/");
+#elif defined (Q_OS_MAC)
+  return qApp->applicationDirPath() + QLatin1String("/../Resources/sounds/");
+#else
+  return qApp->applicationDirPath() + QLatin1String("/../share/metronomek/sounds/");
+#endif
+}
+
+
 QString Tglob::chopS(const QString& plural, int n) {
   if (!m_langLoaded && n == 1)
     return plural.chopped(1);

@@ -551,16 +551,7 @@ int Tsound::meterOfPart(int partId) {
 //###################                PROTECTED         ############################################
 //#################################################################################################
 QString Tsound::getRawFilePath(const QString& fName) {
-#if defined (Q_OS_ANDROID)
-  QString rawFilePath = QStringLiteral("assets:/sounds/");
-#elif defined (Q_OS_WIN)
-  QString rawFilePath = qApp->applicationDirPath() + QLatin1String("/sounds/");
-#elif defined (Q_OS_MAC)
-  QString rawFilePath = qApp->applicationDirPath() + QLatin1String("/../Resources/sounds/");
-#else
-  QString rawFilePath = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/sounds/");
-#endif
-  return rawFilePath + fName +  QLatin1String(".raw48-16");
+  return GLOB->soundsPath() + fName +  QLatin1String(".raw48-16");
 }
 
 
