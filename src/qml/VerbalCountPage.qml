@@ -50,10 +50,14 @@ Tdialog {
 
       ScrollBar.vertical: ScrollBar {}
 
-      delegate: Rectangle {
+      delegate: DragDelegate {
         id: bgRect
+        border { width: cntMan.localModelId == index ? 1 : 0; color: activPal.highlight }
+        dragEnabled: index > 0
         width: parent.width; height: fm.height * 4
-        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, cntMan.localModelId === index ? 20 : 0))
+        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase,
+                       GLOB.alpha(toDel ? "red" : activPal.highlight,
+                                  pressed || containsMouse ? 50 : (cntMan.localModelId === index ? 20 : 0)))
         Row {
           x: fm.height / 2
           anchors.verticalCenter: parent.verticalCenter
@@ -80,10 +84,8 @@ Tdialog {
             }
           }
         }
-        MouseArea {
-          anchors.fill: parent
-          onClicked: cntMan.localModelId = index
-        }
+        onClicked: cntMan.localModelId = index
+        onRemoved: console.log("removed", index)
       }
 
       Component.onCompleted: {
@@ -166,6 +168,12 @@ Tdialog {
 
       ScrollBar.vertical: ScrollBar {}
     }
+  }
+
+  BusyIndicator {
+    running: cntMan.downloading
+    anchors.centerIn: parent
+    width: fm.height * 7; height: width
   }
 
   standardButtons: Dialog.Ok

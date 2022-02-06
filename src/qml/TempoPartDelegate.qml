@@ -4,24 +4,20 @@
 
 
 import QtQuick 2.12
-import QtQuick.Controls 2.12
 
 import Metronomek 1.0
 
 
-Rectangle {
+DragDelegate {
   id: tpDelegate
 
+  dragEnabled: tempoModel.count > 1
   width: parent ? parent.width : 0; height: tCol ? tCol.height : 0
-  color: ma.pressed || ma.containsMouse ? Qt.tint(activPal.base, GLOB.alpha(toDel ? "red": activPal.highlight, 50))
-                                        : (nr % 2 ? activPal.base : activPal.alternateBase)
+  color: pressed || containsMouse ? Qt.tint(activPal.base, GLOB.alpha(toDel ? "red": activPal.highlight, 50))
+                                  : (nr % 2 ? activPal.base : activPal.alternateBase)
 
   property TempoPart tp: null
   property int nr: tp ? tp.nr + 1 : -1
-  property bool toDel: Math.abs(x) > delText.width
-  property alias rmAnim: rmAnim
-
-  signal clicked()
 
   Column {
     id: tCol
@@ -50,51 +46,5 @@ Rectangle {
     }
   }
 
-  Text {
-    id: delText
-    visible: toDel
-    parent: tpDelegate.parent
-    text: qsTranslate("QLineEdit", "Delete")
-    y: tpDelegate.y + (tpDelegate.height - height) / 2
-    x: tpDelegate.x > delText.width ? fm.height : tpDelegate.width - fm.height - width
-    color: "red"; font.bold: true
-  }
-
-  // private
-  property bool wasDragged: false
-  MouseArea {
-    id: ma
-    anchors.fill: parent
-    hoverEnabled: !GLOB.isAndroid()
-    drag.axis: Drag.XAxis
-    drag.minimumX: -width / 3; drag.maximumX: width / 3
-    drag.target: tempoModel.count > 1 ? parent : null
-    onPressed: wasDragged = false
-    onPositionChanged: {
-      if (Math.abs(tpDelegate.x) > fm.height)
-        wasDragged = true
-    }
-    onReleased: {
-      if (Math.abs(tpDelegate.x) > delText.width + fm.height) {
-          rmAnim.to = tpDelegate.x > 0 ? tpDelegate.width : -tpDelegate.width
-          rmAnim.start()
-      } else {
-          backAnim.start()
-          if (!wasDragged && Math.abs(tpDelegate.x) < fm.height)
-            tpDelegate.clicked()
-      }
-    }
-  }
-
-  NumberAnimation {
-    id: backAnim
-    target: tpDelegate; property: "x"
-    to: 0
-  }
-
-  NumberAnimation {
-    id: rmAnim
-    target: tpDelegate; property: "x"
-    onFinished: speedHandler.removeTempo(tp.nr - 1)
-  }
+  onRemoved: speedHandler.removeTempo(tp.nr - 1)
 }
