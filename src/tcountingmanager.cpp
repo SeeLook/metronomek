@@ -670,6 +670,9 @@ void TcountingManager::removeLocalWav(int cntId) {
   }
 }
 
+//#################################################################################################
+//###############              Methods for downloading a wav file                     #############
+//#################################################################################################
 
 QStringList TcountingManager::onlineModel() {
   if (m_onlineModel.isEmpty())
@@ -691,10 +694,13 @@ void TcountingManager::downloadCounting(int urlId) {
         if (wavFile.open(QIODevice::WriteOnly)) {
           QDataStream data(getFile->fileData());
           xml = dumpXmlFromDataStream(data);
-          wavFile.write(getFile->fileData());
-          wavFile.close();
-          m_localWavFiles << fName;
-          emit appendToLocalModel(getModelEntryFromXml(xml));
+          if (!xml.isEmpty()) {
+            wavFile.write(getFile->fileData());
+            wavFile.close();
+            m_localCntModel << getModelEntryFromXml(xml);
+            m_localWavFiles << fName;
+            emit appendToLocalModel(getModelEntryFromXml(xml));
+          }
         }
         m_downloading = false;
         emit downloadingChanged();
