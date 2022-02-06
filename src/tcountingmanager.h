@@ -99,6 +99,8 @@ public:
   QStringList lookupForWavs(const QString& wavDir, QStringList* wavFilesList = nullptr);
   QString getModelEntryFromXml(const QString& xmlString);
 
+  Q_INVOKABLE void removeLocalWav(int cntId);
+
 //===================================================
 // Methods for downloading a file
 //===================================================

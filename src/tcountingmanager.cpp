@@ -661,6 +661,16 @@ QString TcountingManager::getModelEntryFromXml(const QString& xmlString) {
 }
 
 
+void TcountingManager::removeLocalWav(int cntId) {
+  if (cntId > 0 && cntId < m_localCntModel.size()) {
+    m_localCntModel.removeAt(cntId);
+    QFile::remove(m_localWavFiles.takeAt(cntId));
+    if (cntId == m_localModelId)
+      setLocalModelId(0);
+  }
+}
+
+
 QStringList TcountingManager::onlineModel() {
   if (m_onlineModel.isEmpty())
     m_onlineModel = convertMDtoModel(QStringLiteral(":/COUNTING.md"));

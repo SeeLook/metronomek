@@ -54,10 +54,11 @@ Tdialog {
         id: bgRect
         border { width: cntMan.localModelId == index ? 1 : 0; color: activPal.highlight }
         dragEnabled: index > 0
-        width: parent.width; height: fm.height * 4
+        width: parent ? parent.width : 0; height: fm.height * 4
         color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase,
                        GLOB.alpha(toDel ? "red" : activPal.highlight,
                                   pressed || containsMouse ? 50 : (cntMan.localModelId === index ? 20 : 0)))
+        property var modelData: localCntsMod.get(index)
         Row {
           x: fm.height / 2
           anchors.verticalCenter: parent.verticalCenter
@@ -65,7 +66,7 @@ Tdialog {
           Text {
             anchors.verticalCenter: parent.verticalCenter
             color: activPal.text
-            text: localCntsMod.get(index).langID
+            text: modelData ? modelData.langID : ""
             font { bold: true }
           }
           Column {
@@ -74,18 +75,21 @@ Tdialog {
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
               color: activPal.text
-              text: localCntsMod.get(index).langName
+              text: modelData ? modelData.langName : ""
             }
             Text {
               anchors.horizontalCenter: parent.horizontalCenter
               color: activPal.text
-              text: localCntsMod.get(index).cntName
+              text: modelData ? modelData.cntName : ""
               font.pixelSize: fm.height * 1.2
             }
           }
         }
         onClicked: cntMan.localModelId = index
-        onRemoved: console.log("removed", index)
+        onRemoved: {
+          cntMan.removeLocalWav(index)
+          localCntsMod.remove(index)
+        }
       }
 
       Component.onCompleted: {
