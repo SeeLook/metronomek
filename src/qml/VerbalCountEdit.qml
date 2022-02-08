@@ -85,13 +85,15 @@ Tdialog {
             cntMan.play(index)
           }
         }
-        //CuteButton {
-          //width: bgRect.width * 0.24; height: fm.height * 2
-          //text: qsTr("Amplify")
-          //bgColor: Qt.tint(activPal.button, GLOB.alpha("blue", 40))
-        //}
+        CuteButton {
+          visible: !GLOB.isAndroid()
+          width: bgRect.width * 0.24; height: fm.height * 2
+          text: qsTr("Import")
+          bgColor: Qt.tint(activPal.button, GLOB.alpha("blue", 40))
+          onClicked: cntMan.getSingleWordFromFile(index)
+        }
         Item {
-          width: bgRect.width * 0.49 /*0.24*/; height: fm.height * 2
+          width: bgRect.width * (GLOB.isAndroid() ? 0.49 : 0.24); height: fm.height * 2
         }
         CuteButton {
           width: bgRect.width * 0.24; height: fm.height * 2

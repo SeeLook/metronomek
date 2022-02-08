@@ -80,6 +80,8 @@ public:
   Q_INVOKABLE QStringList languagesModel();
   Q_INVOKABLE int currentLanguage();
 
+  Q_INVOKABLE void getSingleWordFromFile(int numId);
+
 //===================================================
 // Methods to handle locally stored *.wav files with counting
 //===================================================
@@ -182,6 +184,8 @@ protected:
   void watchRecordingStopped();
 
   QString getWavFileName(const QString& langPrefix);
+
+  QString soundFileDialog();
 
 private:
   QVector<TsoundData*>              m_numerals;

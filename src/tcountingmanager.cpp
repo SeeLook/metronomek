@@ -322,12 +322,7 @@ void TcountingManager::getSoundFile() {
 #if defined (Q_OS_ANDROID)
   qDebug() << "[TcountingManager] Opening external file is not supported under Android!";
 #else
-  auto fn = QFileDialog::getOpenFileName(nullptr, QString(),
-                                         QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first(),
-                                         tr("Audio file (uncompressed)")
-                                         + QLatin1String(": *.wav *.raw *.raw48-16 (*.wav *.raw *.raw48-16);;")
-                                         + tr("Wav file") + QLatin1String(" (*.wav);;")
-                                         + tr("Raw audio") + QLatin1String(" (*.raw *.raw48-16)"));
+  auto fn = soundFileDialog();
   if (!fn.isEmpty())
     importFormFile(fn);
 #endif
@@ -391,6 +386,28 @@ int TcountingManager::currentLanguage() {
               QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).country());
 #endif
   return static_cast<int>(loc.language());
+}
+
+
+void TcountingManager::getSingleWordFromFile(int numId) {
+#if !defined (Q_OS_ANDROID)
+  if (numId < 0 || numId >= m_spectrums.size())
+    return;
+
+  auto fn = soundFileDialog();
+  if (!fn.isEmpty()) {
+    qint16* data = nullptr;
+    int frames;
+    TcntXML dummyXML;
+    QFile aFile(fn);
+    getDataFromAudioFile(&aFile, data, frames, dummyXML);
+    if (data && frames)
+      m_spectrums[numId]->copyData(data, frames);
+    if (data)
+      delete[] data;
+
+  }
+#endif
 }
 
 
@@ -638,8 +655,8 @@ void TcountingManager::getDataFromAudioFile(QFile* audioFile, qint16*& data, int
     QDataStream      in(audioFile);
     quint16          channelsNr = 1;
 
-    auto ext = audioFile->fileName().right(3).toLower();
-    if (ext == QLatin1String("wav")) {
+    auto ext = audioFile->fileName().right(4).toLower();
+    if (ext == QLatin1String(".wav")) {
         in.skipRawData(8); // Ignore RIFF and all file size
         qint32 headChunk;
         quint32 chunkSize;
@@ -699,10 +716,10 @@ void TcountingManager::getDataFromAudioFile(QFile* audioFile, qint16*& data, int
               }
             }
         } else {
-            qDebug() << "[TcountingManager] "<< audioFile->fileName() << "is not valid *,wav file";
+            qDebug() << "[TcountingManager] "<< audioFile->fileName() << "is not valid *.wav file";
             ok = false;
         }
-    } else if (ext == QLatin1String("raw")) {
+    } else if (ext == QLatin1String(".raw") || ext == QLatin1String("8-16")) { // *.raw48-16
         frames = static_cast<int>(audioFile->size() / 2);
         data = new qint16[frames];
         in.readRawData(reinterpret_cast<char*>(data), frames * 2);
@@ -954,4 +971,14 @@ QString TcountingManager::getWavFileName(const QString& langPrefix) {
     it++;
   }
   return fName;
+}
+
+
+QString TcountingManager::soundFileDialog() {
+  return QFileDialog::getOpenFileName(nullptr, QString(),
+                                      QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first(),
+                                      tr("Audio file (uncompressed)")
+                                      + QLatin1String(": *.wav *.raw *.raw48-16 (*.wav *.raw *.raw48-16);;")
+                                      + tr("Wav file") + QLatin1String(" (*.wav);;")
+                                      + tr("Raw audio") + QLatin1String(" (*.raw *.raw48-16)"));
 }
