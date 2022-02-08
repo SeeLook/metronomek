@@ -29,7 +29,5 @@
 
     <file>qtquickcontrols2.conf</file>
     <file>+android/qtquickcontrols2.conf</file>
-
-    <file alias="COUNTING.md">counting/README.md</file>
   </qresource>
 </RCC>
