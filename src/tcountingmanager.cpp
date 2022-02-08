@@ -214,224 +214,28 @@ void TcountingManager::importFormFile(const QString& fileName, int noiseThreshol
     return;
   }
 
-  quint32          sampleRate = 48000;
-  int              frames;
+  int              frames = 0;
   qint16*          data = nullptr;
-  bool             ok = true;
+  TcntXML xml;
 
-// Read audio data from file into data array
-  if (audioF.open(QIODevice::ReadOnly)) {
-      QDataStream      in;
-      quint16          channelsNr = 1;
+  getDataFromAudioFile(&audioF, data, frames, xml);
 
-      auto ext = audioF.fileName().right(3).toLower();
-      if (ext == QLatin1String("wav")) {
-          in.setDevice(&audioF);
-          qint32 headChunk;
-          in >> headChunk;
-          headChunk = qFromBigEndian<qint32>(headChunk);
-
-          quint32 chunkSize;
-          in >> chunkSize;
-          chunkSize = qFromBigEndian<quint32>(chunkSize);
-          in >> headChunk;
-          headChunk = qFromBigEndian<qint32>(headChunk);
-
-          if (headChunk == WAV_WAVE) {
-              in >> headChunk;
-              headChunk = qFromBigEndian<qint32>(headChunk);
-
-              if (headChunk == WAV_BEXT) {
-                in >> chunkSize;
-                chunkSize = qFromBigEndian<quint32>(chunkSize);
-                in.skipRawData(chunkSize);
-                in >> headChunk;
-                headChunk = qFromBigEndian<qint32>(headChunk);
-              }
-
-              in >> chunkSize;
-              chunkSize = qFromBigEndian<quint32>(chunkSize);
-              quint16 audioFormat;
-              in >> audioFormat;
-              audioFormat = qFromBigEndian<quint16>(audioFormat);
-              if (headChunk == WAV_FMT && audioFormat == 1) {
-                  in >> channelsNr;
-                  channelsNr = qFromBigEndian<quint16>(channelsNr);
-                  in >> sampleRate;
-                  sampleRate = qFromBigEndian<quint32>(sampleRate);
-                  if (sampleRate != 48000)
-                    qDebug() << "[TcountingManager]" << sampleRate << "is not recommended!";
-                  in.skipRawData(6); // skip 'byte rate' and 'block align' values
-                  quint16 bitsPerSample;
-                  in >> bitsPerSample;
-                  bitsPerSample = qFromBigEndian<quint16>(bitsPerSample);
-                  if (bitsPerSample != 16) {
-                    qDebug() << "[TcountingManager] Only *.wav with 16 bit per sample are supported.";
-                    ok = false;
-                  }
-                  in >> headChunk;
-                  headChunk = qFromBigEndian<qint32>(headChunk);
-
-                  quint32 audioDataSize;
-                  in >> audioDataSize;
-                  audioDataSize = qFromBigEndian<quint32>(audioDataSize);
-
-                  frames = audioDataSize / (channelsNr * 2);
-                  data = new qint16[audioDataSize / 2];
-                  qint16 channelSample;
-                  for (int f = 0; f < frames; ++f) {
-                    in >> channelSample;
-                    if (channelsNr == 2) // prefer right channel when stereo
-                      in >> channelSample;
-                    data[f] = qFromBigEndian<qint16>(channelSample);
-                  }
-                  frames = audioDataSize / 2;
-                  if (!in.atEnd()) {
-                    in >> headChunk;
-                    headChunk = qFromBigEndian<qint32>(headChunk);
-                    if (headChunk == WAV_IXML) {
-                      in >> chunkSize;
-                      chunkSize = qFromBigEndian<quint32>(chunkSize);
-                      QString xmlString;
-                      in >> xmlString;
-                      TcntXML xml;
-                      if (xml.fromXml(xmlString)) { // Found Metronomek specific data in iXML chunk
-                        quint32 sum = 0;
-                        for (int n = 0; n < xml.numCount(); ++n) {
-                          if (n < m_numerals.size() && sum + xml.numSize(n) <= frames) {
-                            m_numerals.at(n)->copyData(data + sum, xml.numSize(n));
-                            sum += xml.numSize(n);
-                          }
-                        }
-                        delete[] data;
-                        return;
-                      }
-                    }
-                  }
-              } else {
-                  qDebug() << "[TcountingManager] Unsupported audio format in file:" << fileName;
-                  ok = false;
-              }
-          } else {
-              qDebug() << "[TcountingManager] "<< fileName << "is not valid *,wav file";
-              ok = false;
+  if (data && frames) {
+    if (xml.numCount()) {
+        quint32 sum = 0;
+        for (int n = 0; n < xml.numCount(); ++n) {
+          if (n < m_numerals.size() && sum + xml.numSize(n) <= frames) {
+            m_numerals.at(n)->copyData(data + sum, xml.numSize(n));
+            sum += xml.numSize(n);
           }
-      } else if (ext == QLatin1String("raw")) {
-          frames = static_cast<int>(audioF.size() / 2);
-          data = new qint16[frames];
-          QDataStream stream(&audioF);
-          stream.readRawData(reinterpret_cast<char*>(data), frames * 2);
-      }
-  } else {
-      ok = false;
-      qDebug() << "[TcountingManager] Cannot open file" << fileName;
+        }
+    } else
+        detectNumerals(data, frames, m_numerals, noiseThreshold);
   }
-
-  if (!data || !ok) {
+  if (data)
+    delete[] data;
+  else
     qDebug() << "[TcountingManager] Something went wrong in" << fn;
-    if (data)
-      delete[] data;
-    return;
-  }
-
-// determine noise level
-  qint16 noiseLevel = 10;
-  for (int f = 0; f < 48000; ++f) {
-    noiseLevel = qMax(noiseLevel, qAbs(data[f]));
-  }
-  qDebug() << "Noise level is" << noiseLevel;
-
-// find numerals data and mark them: point.x = start, point.y = end
-  qint16 max = 0;
-  bool onSetFound = false;
-  int onSetAt = 0;
-  int onEndAt = 0;
-  int silCnt = 0;
-  QVector<Tmark> numerals;
-
-  for (int f = 48001; f < frames; ++f) {
-    qint16 absData = qAbs(data[f]);
-    if (onSetFound) {
-        if (max && ((data[f] >= 0 && data[f - 1] <= 0))) {
-          if (max > noiseLevel) {
-              silCnt = 0;
-          } else {
-              if (f - onSetAt > 9000) { // 187.5 ms at least
-                silCnt++;
-                if (silCnt > 30) {
-                    onSetFound = false;
-                    onEndAt = f;
-                    silCnt = 0;
-                    numerals << Tmark(onSetAt, onEndAt);
-                    qDebug() << "finished" << onEndAt << (onEndAt / 48000.0) << "dur:" << (onEndAt - onSetAt) << ((onEndAt - onSetAt) / 48000.0);
-                }
-              } else if (f - onSetAt > 2000) { // 55 ms
-                  silCnt++;
-                  if (silCnt > 30) {
-                    onSetFound = false;
-                    silCnt = 0;
-                  }
-              }
-          }
-          max = 0;
-        }
-        max = qMax(max, absData);
-    } else {
-        if (absData > noiseThreshold) {
-          onSetFound = true;
-          int pos = f - 1;
-          while ((data[pos] >= 0 && data[pos - 1] >= 0) || (data[pos] < 0 && data[pos - 1] < 0))
-            pos--;
-          onSetAt = pos;
-          qDebug() << numerals.count() + 1 << "\non set at" << pos << (pos / 48000.0);
-          max = 0;
-        }
-    }
-  }
-
-// copy numerals samples into TaudioOut
-  if (!numerals.isEmpty()) {
-    qDebug() << "Found" << numerals.size();
-
-    bool doCreate = m_numerals.isEmpty();
-
-    int maxTopPos = 0;
-    for (int d = 0; d < 12; ++d) {
-      if (d < numerals.size()) {
-        Tmark* marks = &numerals[d];
-#if defined (WITH_SOUNDTOUCH)
-        bool doSquash = m_doSquash && marks->length() > 17500;
-#else
-        bool doSquash = false;
-#endif
-        quint32 len = doSquash ? 0 : marks->length();
-        qint16* squashData = doSquash ? nullptr : data + marks->from();
-#if defined (WITH_SOUNDTOUCH)
-        if (doSquash) {
-          squash(data + marks->from(), marks->length(), squashData, len);
-        }
-#endif
-        if (doCreate)
-          m_numerals.append(new TsoundData(squashData, len));
-        else
-          m_numerals.at(d)->copyData(squashData, len);
-        if (doSquash)
-          delete[] squashData;
-        maxTopPos = qMax(maxTopPos, m_numerals.at(d)->findPeakPos());
-      }
-    }
-    if (m_alignCounting) {
-      for (int d = 0; d < qMin(numerals.size(), 12); ++d) {
-        m_numerals.at(d)->setOffset(maxTopPos - m_numerals.at(d)->peakAt());
-      }
-      for (int d = 0; d < qMin(numerals.size(), 12); ++d) {
-        if (d < m_spectrums.count())
-          m_spectrums[d]->setNumeral(m_numerals.at(d));
-      }
-    }
-  }
-
-  delete[] data;
 }
 
 
@@ -800,7 +604,7 @@ QString TcountingManager::dumpXmlFromWav(const QString& fileName) {
 QString TcountingManager::dumpXmlFromDataStream(QDataStream& in) {
   QString xml;
   quint32 header, chunkSize;
-  in.skipRawData(8);
+  in.skipRawData(8); // Ignore RIFF and all file size
   in >> header;
   header = qFromBigEndian<quint32>(header);
   if (header == WAV_WAVE) {
@@ -811,10 +615,10 @@ QString TcountingManager::dumpXmlFromDataStream(QDataStream& in) {
       chunkSize = qFromBigEndian<quint32>(chunkSize);
       in.skipRawData(chunkSize);
       if (in.atEnd()) {
-        return xml;
+          return xml;
       } else {
-        in >> header;
-        header = qFromBigEndian<quint32>(header);
+          in >> header;
+          header = qFromBigEndian<quint32>(header);
       }
     }
     if (!in.atEnd() && header == WAV_IXML) {
@@ -825,13 +629,185 @@ QString TcountingManager::dumpXmlFromDataStream(QDataStream& in) {
   return xml;
 }
 
-// void TcountingManager::setFinished(bool finished)
-// {
-//   if (m_finished != finished) {
-//     m_finished = finished;
-//     emit finishedChanged();
-//   }
-// }
+
+void TcountingManager::getDataFromAudioFile(QFile* audioFile, qint16*& data, int& frames, TcntXML& xml) {
+  quint32             sampleRate = 48000;
+  bool                ok = true;
+
+  if (audioFile->open(QIODevice::ReadOnly)) {
+    QDataStream      in(audioFile);
+    quint16          channelsNr = 1;
+
+    auto ext = audioFile->fileName().right(3).toLower();
+    if (ext == QLatin1String("wav")) {
+        in.skipRawData(8); // Ignore RIFF and all file size
+        qint32 headChunk;
+        quint32 chunkSize;
+        in >> headChunk;
+        headChunk = qFromBigEndian<qint32>(headChunk);
+        if (headChunk == WAV_WAVE) {
+            while (ok && !in.atEnd()) {
+              in >> headChunk;
+              headChunk = qFromBigEndian<qint32>(headChunk);
+              in >> chunkSize;
+              chunkSize = qFromBigEndian<quint32>(chunkSize);
+              if (headChunk == WAV_FMT) {
+                  quint16 audioFormat;
+                  in >> audioFormat;
+                  audioFormat = qFromBigEndian<quint16>(audioFormat);
+                  if (audioFormat != 1) {
+                    qDebug() << "[TcountingManager] Unsupported audio format in file:" << audioFile->fileName();
+                    ok = false;
+                    break;
+                  }
+                  in >> channelsNr;
+                  channelsNr = qFromBigEndian<quint16>(channelsNr);
+                  in >> sampleRate;
+                  sampleRate = qFromBigEndian<quint32>(sampleRate);
+                  if (sampleRate != 48000)
+                    qDebug() << "[TcountingManager]" << sampleRate << "is not recommended!";
+                  in.skipRawData(6); // skip 'byte rate' and 'block align' values
+                  quint16 bitsPerSample;
+                  in >> bitsPerSample;
+                  bitsPerSample = qFromBigEndian<quint16>(bitsPerSample);
+                  if (bitsPerSample != 16) {
+                    qDebug() << "[TcountingManager] Only *.wav with 16 bit per sample are supported.";
+                    ok = false;
+                  }
+                  if (chunkSize > 16) {
+                    in.skipRawData(chunkSize - 16);
+                    qDebug() << "[TcountingManager] Ignore rest of bigger 'fmt ' chunk data.";
+                  }
+              } else if (headChunk == WAV_DATA) {
+                  frames = chunkSize / (channelsNr * 2);
+                  data = new qint16[chunkSize / 2];
+                  qint16 channelSample;
+                  for (int f = 0; f < frames; ++f) {
+                    in >> channelSample;
+                    if (channelsNr == 2) // prefer right channel when stereo
+                      in >> channelSample;
+                    data[f] = qFromBigEndian<qint16>(channelSample);
+                  }
+                  frames = chunkSize / 2;
+              } else if (headChunk == WAV_IXML) {
+                  QString xmlString;
+                  in >> xmlString;
+                  xml.fromXml(xmlString);
+              } else {
+                  // just skip data from other chunks
+                  in.skipRawData(chunkSize);
+              }
+            }
+        } else {
+            qDebug() << "[TcountingManager] "<< audioFile->fileName() << "is not valid *,wav file";
+            ok = false;
+        }
+    } else if (ext == QLatin1String("raw")) {
+        frames = static_cast<int>(audioFile->size() / 2);
+        data = new qint16[frames];
+        in.readRawData(reinterpret_cast<char*>(data), frames * 2);
+    }
+    audioFile->close();
+  }
+}
+
+
+void TcountingManager::detectNumerals(qint16* data, int frames, QVector<TsoundData*>& numList, int noiseThreshold) {
+// determine noise level
+  qint16 noiseLevel = 10;
+  for (int f = 0; f < 48000; ++f)
+    noiseLevel = qMax(noiseLevel, qAbs(data[f]));
+//   qDebug() << "Noise level is" << noiseLevel;
+
+  // find numerals data and mark them: point.x = start, point.y = end
+  qint16 max = 0;
+  bool onSetFound = false;
+  int onSetAt = 0;
+  int onEndAt = 0;
+  int silCnt = 0;
+  QVector<Tmark> numMarks;
+
+  for (int f = 48001; f < frames; ++f) {
+    qint16 absData = qAbs(data[f]);
+    if (onSetFound) {
+        if (max && ((data[f] >= 0 && data[f - 1] <= 0))) {
+          if (max > noiseLevel) {
+              silCnt = 0;
+          } else {
+              if (f - onSetAt > 9000) { // 187.5 ms at least
+                  silCnt++;
+                  if (silCnt > 30) {
+                    onSetFound = false;
+                    onEndAt = f;
+                    silCnt = 0;
+                    numMarks << Tmark(onSetAt, onEndAt);
+//                     qDebug() << "finished" << onEndAt << (onEndAt / 48000.0) << "dur:" << (onEndAt - onSetAt) << ((onEndAt - onSetAt) / 48000.0);
+                  }
+              } else if (f - onSetAt > 2000) { // 55 ms
+                  silCnt++;
+                  if (silCnt > 30) {
+                    onSetFound = false;
+                    silCnt = 0;
+                  }
+              }
+            }
+            max = 0;
+        }
+        max = qMax(max, absData);
+    } else {
+        if (absData > noiseThreshold) {
+          onSetFound = true;
+          int pos = f - 1;
+          while ((data[pos] >= 0 && data[pos - 1] >= 0) || (data[pos] < 0 && data[pos - 1] < 0))
+            pos--;
+          onSetAt = pos;
+//           qDebug() << numMarks.count() + 1 << "\non set at" << pos << (pos / 48000.0);
+          max = 0;
+        }
+    }
+  }
+
+// copy numerals samples into TsoundData list
+  if (!numMarks.isEmpty()) {
+    qDebug() << "Found" << numMarks.size();
+
+    bool doCreate = numList.isEmpty();
+    int maxTopPos = 0;
+    for (int d = 0; d < 12; ++d) {
+      if (d < numMarks.size()) {
+        Tmark* marks = &numMarks[d];
+        #if defined (WITH_SOUNDTOUCH)
+        bool doSquash = m_doSquash && marks->length() > 17500;
+        #else
+        bool doSquash = false;
+        #endif
+        quint32 len = doSquash ? 0 : marks->length();
+        qint16* squashData = doSquash ? nullptr : data + marks->from();
+        #if defined (WITH_SOUNDTOUCH)
+        if (doSquash) {
+          squash(data + marks->from(), marks->length(), squashData, len);
+        }
+        #endif
+        if (doCreate)
+          numList.append(new TsoundData(squashData, len));
+        else
+          numList.at(d)->copyData(squashData, len);
+        if (doSquash)
+          delete[] squashData;
+        maxTopPos = qMax(maxTopPos, numList.at(d)->findPeakPos());
+      }
+    }
+    if (m_alignCounting) {
+      for (int d = 0; d < qMin(numMarks.size(), 12); ++d) {
+        numList.at(d)->setOffset(maxTopPos - numList.at(d)->peakAt());
+      }
+      for (int d = 0; d < qMin(numMarks.size(), 12); ++d) {
+        if (d < m_spectrums.count())
+          m_spectrums[d]->setNumeral(numList.at(d));
+      }
+    }
+  }
+}
 
 //#################################################################################################
 //###################                PROTECTED         ############################################

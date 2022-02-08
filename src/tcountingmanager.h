@@ -14,6 +14,7 @@ class TabstractAudioDevice;
 class TnumeralSpectrum;
 class TcntXML;
 class QDataStream;
+class QFile;
 
 
 /**
@@ -36,12 +37,6 @@ public:
 //===================================================
 // Methods for importing counting
 //===================================================
-      /**
-       * @p TRUE when import was done
-       */
-  bool finished() const { return m_finished; }
-//   void setFinished(bool finished);
-
   Q_INVOKABLE void importFormFile(const QString& fileName, int noiseThreshold = 400);
 
   void importFromCommandline();
@@ -49,8 +44,6 @@ public:
 #if defined (Q_OS_ANDROID)
   void importFromTTS();
 #endif
-
-//   void importFromResources();
 
 //===================================================
 // Methods for custom counting preparation/recording
@@ -138,9 +131,24 @@ public:
        */
   QString dumpXmlFromDataStream(QDataStream& in);
 
+      /**
+       * Parses @p audioFile which has to be *.wav or *.raw format (16/48000),
+       * for uncompressed PCM data
+       * which is then written into @p data of @p frames number
+       * and if given wav file contains iXML, to @p xml class reference.
+       * NOTICE: The caller method is responsible for data deletion!
+       */
+  void getDataFromAudioFile(QFile* audioFile, qint16*& data, int& frames, TcntXML& xml);
+
+      /**
+       * Looks up into @p data of @p frames number
+       * and writes detected saying of numeral into @p numList.
+       * Numeral begins when PCM data is above @p noiseThreshold
+       */
+  void detectNumerals(qint16* data, int frames, QVector<TsoundData*>& numList, int noiseThreshold = 400);
+
 
 signals:
-  void finishedChanged();
   void downloadingChanged();
   void localModelIdChanged();
 
@@ -176,7 +184,6 @@ protected:
   QString getWavFileName(const QString& langPrefix);
 
 private:
-  bool                              m_finished = false;
   QVector<TsoundData*>              m_numerals;
 // importing
   bool                              m_doSquash = false;
