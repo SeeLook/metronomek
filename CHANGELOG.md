@@ -1,3 +1,13 @@
+## 0.6.7 devel
+  #### Verbal counting
+    - Metronomek can tick with real words (numerals usually)
+    - user may prepare its own audio file (wav) with counting and import it to the app
+    - or record the words directly in the program
+    - also verbal counting files in a few languages are available online
+    - and can be downloaded from the application
+
+------------------------------------------------------------
+
 ## 0.6.0
 
   #### Added programmable speed up & slow down (_accelerando_ and _rallentando_)
