@@ -48,6 +48,8 @@ SidePop {
         model: langList
         textRole: "langName"
         valueRole: "langID"
+        popup.width: GLOB.isAndroid() ? countPop.width - fm.height * 4 : langCombo.width
+        popup.x: -fm.height * 4
       }
     }
     Text {
