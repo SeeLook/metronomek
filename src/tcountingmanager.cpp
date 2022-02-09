@@ -203,7 +203,7 @@ void TcountingManager::importFromCommandline() {
 
 
 void TcountingManager::importFormFile(const QString& fileName, int noiseThreshold) {
-  qDebug() << "[TcountingManager] Importing from" << fileName << "threshold" << noiseThreshold;
+//   qDebug() << "[TcountingManager] Importing from" << fileName << "threshold" << noiseThreshold;
 
   const QUrl url(fileName);
   auto fn = url.isLocalFile() ? QDir::toNativeSeparators(url.toLocalFile()) : fileName;
@@ -443,7 +443,6 @@ QStringList TcountingManager::countingModelLocal() {
         }
       }
     }
-    qDebug() << m_localCntModel << "\n" << m_localWavFiles;
   }
   return m_localCntModel;
 }
@@ -975,10 +974,14 @@ QString TcountingManager::getWavFileName(const QString& langPrefix) {
 
 
 QString TcountingManager::soundFileDialog() {
+#ifndef Q_OS_ANDROID
   return QFileDialog::getOpenFileName(nullptr, QString(),
                                       QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first(),
                                       tr("Audio file (uncompressed)")
                                       + QLatin1String(": *.wav *.raw *.raw48-16 (*.wav *.raw *.raw48-16);;")
                                       + tr("Wav file") + QLatin1String(" (*.wav);;")
                                       + tr("Raw audio") + QLatin1String(" (*.raw *.raw48-16)"));
+#else
+  return QString();
+#endif
 }
