@@ -17,6 +17,8 @@ SidePop {
 
   bgColor: Qt.tint(activPal.window, GLOB.alpha(activPal.highlight, 30))
 
+  height: col.height + fm.height * 2
+
   ListModel { id: langList }
 
   Column {
