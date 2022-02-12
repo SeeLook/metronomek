@@ -106,9 +106,9 @@ Tdialog {
 
   Connections {
     target: speedHandler
-    onAppendTempoChange: tempoModel.append( {"tempoPart": tp} )
-    onRemoveTempoChange: tempoModel.remove(tpId)
-    onClearAllChanges: tempoModel.clear()
+    function onAppendTempoChange(tp) { tempoModel.append( {"tempoPart": tp} ) }
+    function onRemoveTempoChange(tpId) { tempoModel.remove(tpId) }
+    function onClearAllChanges() { tempoModel.clear() }
   }
 
   Menu {

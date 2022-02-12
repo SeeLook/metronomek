@@ -29,10 +29,6 @@ int main(int argc, char *argv[])
 {
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-// It mutes QML warnings about connections syntax introduced in Qt 5.15
-// TODO when Qt version requirements will rise to 5.15 or above, change syntax and remove that
-  QLoggingCategory::setFilterRules(QStringLiteral("qt.qml.connections=false"));
-
   QElapsedTimer startElapsed;
   startElapsed.start();
 

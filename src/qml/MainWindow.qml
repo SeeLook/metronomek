@@ -395,7 +395,7 @@ Window {
 
   Connections {
     target: SOUND
-    onVariableTempoChanged: varTempoSlot()
+    function onVariableTempoChanged() { varTempoSlot() }
   }
 
   property var compView: null

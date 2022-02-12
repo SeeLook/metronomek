@@ -20,9 +20,10 @@ Tdialog {
 
   Connections {
     target: cntMan
-    onAppendToLocalModel: {
+     function onAppendToLocalModel(modelEntry) {
       appendToLocalModel(modelEntry)
       localList.positionViewAtEnd()
+      console.log(modelEntry)
     }
   }
 
@@ -175,7 +176,7 @@ Tdialog {
   }
 
   BusyIndicator {
-    running: cntMan.downloading
+    running: cntMan && cntMan.downloading
     anchors.centerIn: parent
     width: fm.height * 7; height: width
   }
