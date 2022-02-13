@@ -28,10 +28,12 @@ Item {
 
   DropShadow {
     id: shadow
-    anchors.fill: bg
-    horizontalOffset: raised ? height / 50 : 0
+    layer.enabled: true // HACK: cache it to avoid sluggish animations on mobile
+    width: bg.width + parent.height / 10 + horizontalOffset // extend size for proper caching
+    height: bg.height + parent.height / 10 + verticalOffset
+    horizontalOffset: raised ? bg.height / 50 : 0
     verticalOffset: horizontalOffset
-    radius: raised ? parent.height / 10 : 0
+    radius: raised ? bg.height / 10 : 0
     samples: 1 + radius * 2
     color: activPal.shadow
     source: bg
