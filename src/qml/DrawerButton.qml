@@ -13,8 +13,12 @@ AbstractButton {
 
   property color bgColor: activPal.window
 
+  onPressed: pressAnim.start()
+  property bool innerPress: pressAnim.running || pressed
+  PauseAnimation { id: pressAnim }
+
   background: Rectangle {
-    color: pressed ? activPal.highlight : activPal.window //Qt.tint(activPal.window, GLOB.alpha(bgColor, 40))
+    color: innerPress ? activPal.highlight : activPal.window
 
     Text {
       width: parent.width - (dButt.checkable ? chLoader.item.width : 0)
@@ -25,7 +29,7 @@ AbstractButton {
       minimumPixelSize: fm.height / 2; fontSizeMode: Text.Fit
       textFormat: Text.StyledText
       elide: Text.ElideRight
-      color: pressed ? activPal.highlightedText : activPal.text
+      color: innerPress ? activPal.highlightedText : activPal.text
     }
 
     Loader {
@@ -36,7 +40,7 @@ AbstractButton {
         id: chB
         checkable: true
         checked: dButt.checked
-        scale: pressed ? 0.8 : 1
+        scale: innerPress ? 0.8 : 1
         Behavior on scale { NumberAnimation {} }
         indicator: TipRect {
           color: bgColor
