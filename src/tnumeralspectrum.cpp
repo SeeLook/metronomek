@@ -24,7 +24,6 @@ TnumeralSpectrum::TnumeralSpectrum(QQuickItem* parent) :
 
 TnumeralSpectrum::~TnumeralSpectrum()
 {
-  qDebug() << "[TnumeralSpectrum] deleted";
 }
 
 

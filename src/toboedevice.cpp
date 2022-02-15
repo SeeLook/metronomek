@@ -72,12 +72,12 @@ void TOboeDevice::startRecording() {
       stop();
       m_stream->close();
       if (QtAndroid::androidSdkVersion() >= 23) {
-          const QString allowRec("android.permission.RECORD_AUDIO");
-          if (QtAndroid::checkPermission(allowRec) != QtAndroid::PermissionResult::Granted) {
-            auto perms = QtAndroid::requestPermissionsSync(QStringList() << allowRec);
-            qDebug() << allowRec << (perms[allowRec] == QtAndroid::PermissionResult::Granted);
-          }
+        const QString allowRec("android.permission.RECORD_AUDIO");
+        if (QtAndroid::checkPermission(allowRec) != QtAndroid::PermissionResult::Granted) {
+          auto perms = QtAndroid::requestPermissionsSync(QStringList() << allowRec);
+          qDebug() << allowRec << (perms[allowRec] == QtAndroid::PermissionResult::Granted);
         }
+      }
       setAudioType(Audio_Input);
       m_oboe->setDirection(oboe::Direction::Input);
       m_oboe->setChannelCount(oboe::ChannelCount::Mono);
