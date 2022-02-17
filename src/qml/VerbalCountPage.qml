@@ -73,16 +73,20 @@ Tdialog {
           Column {
             spacing: fm.height / 4
             anchors.verticalCenter: parent.verticalCenter
+            width: bgRect.width - fm.height * 5
             Text {
-              anchors.horizontalCenter: parent.horizontalCenter
+              width: parent.width; horizontalAlignment: Text.AlignHCenter
               color: activPal.text
               text: modelData ? modelData.langName : ""
+              font.pixelSize: fm.height; minimumPixelSize: fm.height / 2
+              fontSizeMode: Text.HorizontalFit; elide: Text.ElideRight
             }
             Text {
-              anchors.horizontalCenter: parent.horizontalCenter
+              width: parent.width; horizontalAlignment: Text.AlignHCenter
               color: activPal.text
               text: modelData ? modelData.cntName : ""
-              font.pixelSize: fm.height * 1.2
+              font.pixelSize: fm.height * 1.2; minimumPixelSize: fm.height * 0.7
+              fontSizeMode: Text.HorizontalFit; elide: Text.ElideRight
             }
           }
         }
