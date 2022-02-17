@@ -28,12 +28,13 @@ Item {
 
   DropShadow {
     id: shadow
+    width: bg.width + 2 * shadowRadius; height: bg.height + 2 * shadowRadius
+    x: -shadowRadius; y: -shadowRadius
     layer.enabled: true // HACK: cache it to avoid sluggish animations on mobile
-    width: bg.width + parent.height / 10 + horizontalOffset // extend size for proper caching
-    height: bg.height + parent.height / 10 + verticalOffset
-    horizontalOffset: raised ? bg.height / 50 : 0
+    layer.sourceRect: Qt.rect(-shadowRadius, -shadowRadius, width, height)
+    horizontalOffset: bg.height / 50
     verticalOffset: horizontalOffset
-    radius: raised ? bg.height / 10 : 0
+    radius: bg.height / 10
     samples: 1 + radius * 2
     color: activPal.shadow
     source: bg
