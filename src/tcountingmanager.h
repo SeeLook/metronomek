@@ -123,7 +123,7 @@ public:
        * and at the end extra 'iXML' chunk with information
        * where every numeral sound data starts.
        */
-  void writeWavFile(const QString& cntFileName, const TcntXML& xml);
+  bool writeWavFile(const QString& cntFileName, const TcntXML& xml);
 
   QString dumpXmlFromWav(const QString& fileName);
 

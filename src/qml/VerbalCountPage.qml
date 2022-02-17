@@ -23,7 +23,6 @@ Tdialog {
      function onAppendToLocalModel(modelEntry) {
       appendToLocalModel(modelEntry)
       localList.positionViewAtEnd()
-      console.log(modelEntry)
     }
   }
 
