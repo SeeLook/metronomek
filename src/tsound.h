@@ -114,6 +114,14 @@ public:
   Q_INVOKABLE TcountingManager* countManager() { return m_countManager; }
 
       /**
+       * Creates an instance of @p TcountingManager if it doesn't exist.
+       * It happens that on Android, when counting settings are triggered,
+       * it can be not yet ready when just QML calls @p initCountingSettings(),
+       * so better call this method before @p VerbalCountPage.qml is created
+       */
+  Q_INVOKABLE void createCountingManager();
+
+      /**
        * Initializes sound back-end state
        * for verbal counting setting routines.
        * It will be:

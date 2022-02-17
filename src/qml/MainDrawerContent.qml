@@ -29,6 +29,7 @@ Flickable {
           + (SOUND.verbalCount ? qsTr("Verbal count") : SOUND.getBeatName(SOUND.beatType)) + "</b>"
       onClicked: beatMenu.popup()
       onPressAndHold: {
+        SOUND.createCountingManager()
         Qt.createComponent("qrc:/VerbalCountPage.qml").createObject(mainWindow)
         drawer.close()
       }

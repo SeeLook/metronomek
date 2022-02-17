@@ -125,10 +125,12 @@ Tdialog {
         anchors.horizontalCenter: parent.horizontalCenter
       }
 
-      Button {
+      CuteButton {
+        width: settPage.width * 0.6; height: fm.height * 2.5
         anchors.horizontalCenter: parent.horizontalCenter
         text: qsTranslate("MainDrawerContent", "Verbal count")
         onClicked: {
+          SOUND.createCountingManager() // create it, if it doesn't exist
           Qt.createComponent("qrc:/VerbalCountPage.qml").createObject(mainWindow)
 //           settPage.close()
         }

@@ -437,12 +437,8 @@ void Tsound::setTempo(int t) {
 void Tsound::setVerbalCount(bool vc) {
   if (vc != m_verbalCount) {
     m_verbalCount = vc;
-    if (m_verbalCount) {
-      if (!m_countManager) {
-        m_countManager = new TcountingManager(this);
-        m_numerals = m_countManager->numerals();
-      }
-    }
+    if (m_verbalCount)
+      createCountingManager();
     emit verbalCountChanged();
   }
 }
@@ -466,15 +462,22 @@ QString Tsound::getTempoNameById(int nameId) {
 
 
 void Tsound::importFromCommandline() {
-  if (!m_countManager)
-    m_countManager = new TcountingManager(this);
+  createCountingManager();
   m_countManager->importFromCommandline();
 }
 
 
-void Tsound::initCountingSettings() {
-  if (!m_countManager)
+void Tsound::createCountingManager() {
+  if (!m_countManager) {
     m_countManager = new TcountingManager(this);
+    m_numerals = m_countManager->numerals();
+  }
+}
+
+
+
+void Tsound::initCountingSettings() {
+  createCountingManager();
   disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack);
   m_countManager->initSettings(m_audioDevice);
 }
