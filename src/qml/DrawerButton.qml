@@ -15,7 +15,9 @@ AbstractButton {
 
   onPressed: pressAnim.start()
   property bool innerPress: pressAnim.running || pressed
-  PauseAnimation { id: pressAnim }
+  PauseAnimation { id: pressAnim; duration: 100 }
+
+  focusPolicy: Qt.NoFocus
 
   background: Rectangle {
     color: innerPress ? activPal.highlight : activPal.window

@@ -185,9 +185,12 @@ Window {
     }
 
     AbstractButton {
-      scale: pressed ? 0.9 : 1
+      onPressed: pressAnim.start()
+      property bool innerPress: pressAnim.running || pressed
+      PauseAnimation { id: pressAnim; duration: 100 }
+      scale: innerPress ? 0.9 : 1
       Behavior on scale { NumberAnimation {} }
-      background: TipRect { radius: width / 2; raised: !parent.pressed }
+      background: TipRect { radius: width / 2; raised: !parent.innerPress }
       x: sb.x + (sb.width - width) / 2; y: sb.y + sb.height + metro.height * 0.01
       width: metro.width * 0.13; height: width
       onClicked: {

@@ -12,12 +12,18 @@ AbstractButton {
   property alias border: bgRect.border
   property alias bgColor: bgRect.color
 
-  scale: pressed ? 0.9 : 1
+  scale: innerPress ? 0.9 : 1
   Behavior on scale { NumberAnimation {} }
+
+  onPressed: pressAnim.start()
+  property bool innerPress: pressAnim.running || pressed
+  PauseAnimation { id: pressAnim; duration: 100 }
+
+  focusPolicy: Qt.NoFocus
 
   background: TipRect {
     id: bgRect
-    radius: height / 2; raised: !butt.pressed
+    radius: height / 2; raised: !innerPress
     Text {
       font.pixelSize: butt.height / 3
       text: butt.text
