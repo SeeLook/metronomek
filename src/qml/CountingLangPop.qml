@@ -65,6 +65,7 @@ SidePop {
         text: GLOB.TR("QPlatformTheme", "Save")
         onClicked: {
           cntMan.storeCounting(langList.get(langCombo.currentIndex).langID, cntName.text)
+          vCntEdit.close()
           close()
         }
       }
