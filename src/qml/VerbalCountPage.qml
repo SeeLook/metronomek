@@ -164,7 +164,7 @@ Tdialog {
           Text {
             anchors.bottom: parent.bottom
             color: activPal.text
-            text: modelEntry.size + " KiB "
+            text: qsTranslate("QFileSystemModel", "%1 KB").arg(modelEntry.size) + " "
           }
           Text {
             color: activPal.highlight
@@ -202,12 +202,6 @@ Tdialog {
   }
 
   standardButtons: Dialog.Ok
-  Component.onCompleted: {
-    SOUND.initCountingSettings()
-  }
-  Component.onDestruction: {
-    SOUND.restoreAfterCountSettings()
-  }
 
   function appendToLocalModel(modelEntry) {
     var wav = modelEntry.split(";")

@@ -108,12 +108,12 @@ Tdialog {
   standardButtons: Dialog.RestoreDefaults | Dialog.Cancel | Dialog.Help
   Component.onCompleted: {
     footer.standardButton(Dialog.RestoreDefaults).text = qsTranslate("QPlatformTheme", "Save")
-    footer.standardButton(Dialog.Help).text = qsTranslate("TempoPage", "Actions")
-//     SOUND.initCountingSettings()
+    footer.standardButton(Dialog.Help).text = GLOB.TR("TempoPage", "Actions")
+    SOUND.initCountingSettings()
   }
-  //Component.onDestruction: {
-    //SOUND.restoreAfterCountSettings()
-  //}
+  Component.onDestruction: {
+    SOUND.restoreAfterCountSettings()
+  }
 
   onHelpRequested: moreMenu.open()
 
