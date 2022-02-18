@@ -199,28 +199,43 @@ Tdialog {
     footer.standardButton(Dialog.Help).text = GLOB.TR("TempoPage", "Actions")
   }
 
-  onHelpRequested: actionsMenu.open()
+  onHelpRequested: actMenuComp.createObject(mainWindow)
 
-  Menu {
-    id: actionsMenu
-    y: vCntPage.height - height - vCntPage.implicitFooterHeight
-    x: (vCntPage.width - width) / 2
+  Component {
+    id: actMenuComp
+    Menu {
+      id: actionsMenu
+      visible: true
+      y: vCntPage.height - height - vCntPage.implicitFooterHeight
+      x: (vCntPage.width - width) / 2
 
-    MenuItem {
-      text: qsTr("Prepare own verbal counting")
-      onTriggered: Qt.createComponent("qrc:/VerbalCountEdit.qml").createObject(mainWindow)
-    }
-    MenuItem {
-      text: qsTr("Update online counting list")
-    }
-    MenuItem {
-      text: qsTranslate("QShortcut", "Help")
-    }
-    Component.onCompleted: {
-      var maxW = 0
-      for (var m = 0; m < actionsMenu.count; ++m)
-        maxW = Math.max(maxW, itemAt(m).width)
-      width = Math.min(vCntPage.width - fm.height * 3, maxW + 2 * fm.height)
+      MenuItem {
+        text: qsTr("Prepare own verbal counting")
+        onTriggered: Qt.createComponent("qrc:/VerbalCountEdit.qml").createObject(mainWindow)
+      }
+      MenuItem {
+        text: qsTr("Update online counting list")
+      }
+      MenuItem {
+        text: qsTranslate("QShortcut", "Help")
+        onTriggered: {
+          Qt.createComponent("qrc:/HelpPop.qml").createObject(mainWindow, {
+            visible: true,
+            helpText: qsTr("Matronomek is installed with verbal counting only in English language.")
+                    + "<br>" + qsTr("But counting for other languages can be easy obtained:")
+                    + "<ul><li>" + qsTr("by downloading files available online (for free)")
+                    + "</li><li>" + qsTr("or by recording own counting.")
+                    + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">"
+                    + qsTr("Read more online.") + "</a>"
+          })
+        }
+      }
+      Component.onCompleted: {
+        var maxW = 0
+        for (var m = 0; m < actionsMenu.count; ++m)
+          maxW = Math.max(maxW, itemAt(m).width)
+        width = Math.min(vCntPage.width - fm.height * 3, maxW + 2 * fm.height)
+      }
     }
   }
 
