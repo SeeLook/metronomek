@@ -13,7 +13,7 @@ Tdialog {
   id: vCntPage
 
   visible: true
-  padding: GLOB.fontSize() / 2
+  padding: GLOB.fontSize() / 4
 
   // private
   property CountManager cntMan: SOUND.countManager()
@@ -29,7 +29,7 @@ Tdialog {
   ListModel { id: localCntsMod }
 
   Column {
-    spacing: GLOB.fontSize()
+    spacing: GLOB.fontSize() / 4
     ListView {
       id: localList
       width: vCntPage.width - GLOB.fontSize()
@@ -54,7 +54,7 @@ Tdialog {
         id: bgRect
         border { width: cntMan.localModelId == index ? 1 : 0; color: activPal.highlight }
         dragEnabled: index > 0
-        width: parent ? parent.width : 0; height: fm.height * 4
+        width: parent ? parent.width : 0; height: fm.height * 3
         color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase,
                        GLOB.alpha(toDel ? "red" : activPal.highlight,
                                   pressed || containsMouse ? 50 : (cntMan.localModelId === index ? 20 : 0)))
@@ -70,7 +70,7 @@ Tdialog {
             font { bold: true }
           }
           Column {
-            spacing: fm.height / 4
+            //spacing: fm.height / 8
             anchors.verticalCenter: parent.verticalCenter
             width: bgRect.width - fm.height * 5
             Text {
@@ -84,7 +84,7 @@ Tdialog {
               width: parent.width; horizontalAlignment: Text.AlignHCenter
               color: activPal.text
               text: modelData ? modelData.cntName : ""
-              font.pixelSize: fm.height * 1.2; minimumPixelSize: fm.height * 0.7
+              font.pixelSize: fm.height * 1.1; minimumPixelSize: fm.height * 0.7
               fontSizeMode: Text.HorizontalFit; elide: Text.ElideRight
             }
           }
@@ -101,13 +101,14 @@ Tdialog {
           var wavMod = cntMan.countingModelLocal()
           for (var w = 0; w < wavMod.length; ++w)
             appendToLocalModel(wavMod[w])
+          localList.positionViewAtIndex(cntMan.localModelId, ListView.Contain)
         }
       }
     }
 
     CuteButton {
       anchors.horizontalCenter: parent.horizontalCenter
-      width: vCntPage.width - GLOB.fontSize() * 4; height: fm.height * 2.5
+      width: vCntPage.width - GLOB.fontSize() * 4; height: fm.height * 2
       bgColor: Qt.tint(activPal.window, GLOB.alpha(activPal.highlight, 20))
       text: qsTr("Prepare own verbal counting")
       onClicked: Qt.createComponent("qrc:/VerbalCountEdit.qml").createObject(mainWindow)
@@ -118,7 +119,7 @@ Tdialog {
     ListView {
       id: onlineList
       width: vCntPage.width - GLOB.fontSize()
-      height: vCntPage.height - vCntPage.implicitFooterHeight - localList.height - GLOB.fontSize() * 2
+      height: vCntPage.height - vCntPage.implicitFooterHeight - localList.height - fm.height * 3
       spacing: 1
       clip: true
 
@@ -138,28 +139,43 @@ Tdialog {
 
       delegate: Rectangle {
         id: bgRect
-        width: parent.width; height: fm.height * 4
-        color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, localList.currentIndex === index ? 20 : 0))
+        width: parent.width; height: fm.height * 2.5
+        color: ma.pressed || ma.containsMouse ? Qt.tint(activPal.base, GLOB.alpha(activPal.highlight, 50))
+                                              : (index % 2 ? activPal.base : activPal.alternateBase)
+        property var modelEntry: onlineMod.get(index)
         Text {
           x: fm.height / 2
           anchors.verticalCenter: parent.verticalCenter
           color: activPal.text
-          text: onlineMod.get(index).langID
+          text: modelEntry.langID
           font { bold: true }
         }
-        Column {
-          spacing: fm.height / 4
-          anchors.centerIn: parent
+        Text {
+          x: fm.height * 3.5
+          width: bgRect.width - fm.height * 9
+          horizontalAlignment: Text.AlignHCenter
+          wrapMode: Text.WordWrap
+          anchors.verticalCenter: parent.verticalCenter
+          color: activPal.text
+          text: modelEntry.langName
+        }
+        Row {
+          anchors { right: parent.right; verticalCenter: parent.verticalCenter; rightMargin: fm.height / 4 }
           Text {
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
             color: activPal.text
-            text: onlineMod.get(index).langName
+            text: modelEntry.size + " KiB "
+          }
+          Text {
+            color: activPal.highlight
+            text: "\u00c1"; font { family: "Metronomek"; pixelSize: fm.height * 1.7 }
           }
         }
-        Button {
-          anchors { right: parent.right; verticalCenter: parent.verticalCenter }
+        MouseArea {
+          id: ma
           enabled: !cntMan.downloading
-          text: qsTr("Download") +"\n" + onlineMod.get(index).size + " kB"
+          anchors.fill: parent
+          hoverEnabled: !GLOB.isAndroid()
           onClicked: cntMan.downloadCounting(index)
         }
       }
@@ -179,6 +195,7 @@ Tdialog {
   }
 
   BusyIndicator {
+    visible: running
     running: cntMan && cntMan.downloading
     anchors.centerIn: parent
     width: fm.height * 7; height: width
