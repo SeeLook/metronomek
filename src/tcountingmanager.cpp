@@ -406,7 +406,6 @@ int TcountingManager::currentLanguage() {
 
 
 void TcountingManager::getSingleWordFromFile(int numId) {
-#if !defined (Q_OS_ANDROID)
   if (numId < 0 || numId >= m_spectrums.size())
     return;
 
@@ -423,7 +422,6 @@ void TcountingManager::getSingleWordFromFile(int numId) {
       delete[] data;
 
   }
-#endif
 }
 
 
@@ -557,7 +555,7 @@ QStringList TcountingManager::convertMDtoModel(const QString& mdFileName) {
       if (tableDetected) {
         if (line.startsWith(bar)) {
           line.replace(QLatin1String(" "), QString());
-          auto splitLine = line.mid(1, line.length() - 4).split(bar); // drop first '|' and the last 'kB|'
+          auto splitLine = line.mid(1, line.length() - 5).split(bar); // drop first '|' and the last 'KiB|'
           auto addr = splitLine.takeAt(3);
           int startsAt = addr.indexOf(QLatin1String("](")) + 2;
           int endsAt = addr.indexOf(QLatin1String(")"));
