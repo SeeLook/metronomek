@@ -29,7 +29,6 @@ Tdialog {
   ListModel { id: localCntsMod }
 
   Column {
-    spacing: GLOB.fontSize() / 4
     ListView {
       id: localList
       width: vCntPage.width - GLOB.fontSize()
@@ -106,20 +105,14 @@ Tdialog {
       }
     }
 
-    CuteButton {
-      anchors.horizontalCenter: parent.horizontalCenter
-      width: vCntPage.width - GLOB.fontSize() * 4; height: fm.height * 2
-      bgColor: Qt.tint(activPal.window, GLOB.alpha(activPal.highlight, 20))
-      text: qsTr("Prepare own verbal counting")
-      onClicked: Qt.createComponent("qrc:/VerbalCountEdit.qml").createObject(mainWindow)
-    }
+    Rectangle { width: vCntPage.width - GLOB.fontSize(); height: fm.height / 2; color: activPal.text }
 
     ListModel { id: onlineMod }
 
     ListView {
       id: onlineList
       width: vCntPage.width - GLOB.fontSize()
-      height: vCntPage.height - vCntPage.implicitFooterHeight - localList.height - fm.height * 3
+      height: vCntPage.height - vCntPage.implicitFooterHeight - localList.height - fm.height
       spacing: 1
       clip: true
 
@@ -127,11 +120,11 @@ Tdialog {
       model: onlineMod
 
       header: Rectangle {
-        width: parent.width; height: fm.height * 1.5; color: activPal.text
+        width: parent.width; height: fm.height * 1.5; color: activPal.highlight
         Row {
           anchors.centerIn: parent
           Text {
-            color: activPal.base
+            color: activPal.highlightedText
             text: qsTr("sounds of counting to download")
           }
         }
@@ -201,7 +194,35 @@ Tdialog {
     width: fm.height * 7; height: width
   }
 
-  standardButtons: Dialog.Ok
+  standardButtons: Dialog.Ok | Dialog.Help
+  Component.onCompleted: {
+    footer.standardButton(Dialog.Help).text = GLOB.TR("TempoPage", "Actions")
+  }
+
+  onHelpRequested: actionsMenu.open()
+
+  Menu {
+    id: actionsMenu
+    y: vCntPage.height - height - vCntPage.implicitFooterHeight
+    x: (vCntPage.width - width) / 2
+
+    MenuItem {
+      text: qsTr("Prepare own verbal counting")
+      onTriggered: Qt.createComponent("qrc:/VerbalCountEdit.qml").createObject(mainWindow)
+    }
+    MenuItem {
+      text: qsTr("Update online counting list")
+    }
+    MenuItem {
+      text: qsTranslate("QShortcut", "Help")
+    }
+    Component.onCompleted: {
+      var maxW = 0
+      for (var m = 0; m < actionsMenu.count; ++m)
+        maxW = Math.max(maxW, itemAt(m).width)
+      width = Math.min(vCntPage.width - fm.height * 3, maxW + 2 * fm.height)
+    }
+  }
 
   function appendToLocalModel(modelEntry) {
     var wav = modelEntry.split(";")
