@@ -7,9 +7,6 @@
     <file>DrawerButton.qml</file>
     <file>MeterDrawer.qml</file>
     <file>MetroImage.qml</file>
-    <file>CuteButton.qml</file>
-    <file>SidePop.qml</file>
-    <file>DragDelegate.qml</file>
 
     <file>InfoPage.qml</file>
     <file>SettingsPage.qml</file>
@@ -18,14 +15,18 @@
     <file>VerbalCountEdit.qml</file>
     <file>TempoEdit.qml</file>
     <file>TempoPartDelegate.qml</file>
+    <file>DragDelegate.qml</file>
     <file>CompositionView.qml</file>
     <file>NextTempoPop.qml</file>
     <file>CountingLangPop.qml</file>
 
     <file>TipRect.qml</file>
+    <file>CuteButton.qml</file>
     <file>TspinBox.qml</file>
     <file>Tdialog.qml</file>
     <file>LinkText.qml</file>
+    <file>SidePop.qml</file>
+    <file>HelpPop.qml</file>
 
     <file>qtquickcontrols2.conf</file>
     <file>+android/qtquickcontrols2.conf</file>
