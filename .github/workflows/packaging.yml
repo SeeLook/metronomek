@@ -30,7 +30,7 @@ jobs:
           host: 'windows'
           target: 'desktop'
           arch: 'win32_mingw81'
-          tools: 'tools_mingw,8.1.0-1-202004170606,qt.tools.win32_mingw810'
+          tools: 'tools_mingw,8.1.0-1-202004170606,qt.tools.win32_mingw810 tools_openssl,1.1.1-1,qt.tools.openssl.win_x86'
 
       - name: Variables and Qt 5 environment configuration
         shell: pwsh
@@ -46,7 +46,7 @@ jobs:
           ./installs/Windows/build_installer.ps1
           echo ("METRO_VERSION=" + $((Get-Content .\build\VERSION.txt))) >> $env:GITHUB_ENV
 
-      - name: move installer, propare to upload
+      - name: move installer, prepare to upload
         shell: pwsh
         run: |
           echo "Metronomek-${{ env.METRO_VERSION }}-b${{ env.METRO_COM_CNT }}-Windows-Installer.exe"
