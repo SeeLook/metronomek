@@ -24,6 +24,14 @@ Tdialog {
       appendToLocalModel(modelEntry)
       localList.positionViewAtEnd()
     }
+    function onDownProgress(prog) {
+      progBar.indeterminate = false
+      progBar.value = prog
+      if (prog >= 1)
+        progBar.destroy(1000)
+      else if (prog < 0)
+        progBar.destroy()
+    }
   }
 
   ListModel { id: localCntsMod }
@@ -169,7 +177,10 @@ Tdialog {
           enabled: !cntMan.downloading
           anchors.fill: parent
           hoverEnabled: !GLOB.isAndroid()
-          onClicked: cntMan.downloadCounting(index)
+          onClicked: {
+            cntMan.downloadCounting(index)
+            progBar = progBarComp.createObject(bgRect)
+          }
         }
       }
 
@@ -187,11 +198,14 @@ Tdialog {
     }
   }
 
-  BusyIndicator {
-    visible: running
-    running: cntMan && cntMan.downloading
-    anchors.centerIn: parent
-    width: fm.height * 7; height: width
+  property var progBar: null
+  Component {
+    id: progBarComp
+    ProgressBar {
+      width: parent.width - fm.height; height: fm.height / 3
+      anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter }
+      indeterminate: true
+    }
   }
 
   standardButtons: Dialog.Ok | Dialog.Help
