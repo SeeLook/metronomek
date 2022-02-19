@@ -516,7 +516,9 @@ void TcountingManager::downloadCounting(int urlId) {
   if (urlId > -1 && urlId < m_onlineURLs.size()) {
     m_downloading = true;
     emit downloadingChanged();
-    auto getFile = new TgetFile(m_onlineURLs[urlId], this);
+    qint64 expSize = m_onlineModel[urlId].split(QLatin1String(";")).last().toLongLong() * 1024L;
+    auto getFile = new TgetFile(m_onlineURLs[urlId], expSize, this);
+    connect(getFile, &TgetFile::progress, this, &TcountingManager::downProgress);
     connect(getFile, &TgetFile::downloadFinished, this, [=](bool success) {
       if (success) {
         auto fName = getWavFileName(m_onlineURLs[urlId].right(18).left(5));
@@ -533,13 +535,14 @@ void TcountingManager::downloadCounting(int urlId) {
             emit appendToLocalModel(getModelEntryFromXml(xml));
           }
         }
-        m_downloading = false;
-        emit downloadingChanged();
       }
+      m_downloading = false;
+      emit downloadingChanged();
       getFile->deleteLater();
     });
   }
 }
+
 
 QStringList TcountingManager::convertMDtoModel(const QString& mdFileName) {
   QStringList mdWavModel;
