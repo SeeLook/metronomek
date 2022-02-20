@@ -222,13 +222,16 @@ Tdialog {
     footer.standardButton(Dialog.Help).text = GLOB.TR("TempoPage", "Actions")
   }
 
-  onHelpRequested: actMenuComp.createObject(mainWindow)
+  property var actionsMenu: null
+  onHelpRequested: {
+    if (!actionsMenu)
+      actionsMenu = actMenuComp.createObject(mainWindow)
+    actionsMenu.open()
+  }
 
   Component {
     id: actMenuComp
     Menu {
-      id: actionsMenu
-      visible: true
       y: vCntPage.height - height - vCntPage.implicitFooterHeight
       x: (vCntPage.width - width) / 2
 
@@ -253,9 +256,10 @@ Tdialog {
           })
         }
       }
+
       Component.onCompleted: {
         var maxW = 0
-        for (var m = 0; m < actionsMenu.count; ++m)
+        for (var m = 0; m < count; ++m)
           maxW = Math.max(maxW, itemAt(m).width)
         width = Math.min(vCntPage.width - fm.height * 3, maxW + 2 * fm.height)
       }
