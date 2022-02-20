@@ -78,8 +78,6 @@ if (WIN32)
     if (COPY_GCC_LIBS)
       get_filename_component(MAKE_DIR "${CMAKE_RC_COMPILER}" DIRECTORY)
       install(FILES "${MAKE_DIR}/libgcc_s_dw2-1.dll" "${MAKE_DIR}/libstdc++-6.dll" "${MAKE_DIR}/libwinpthread-1.dll" DESTINATION "${INS_PREF}")
-      file(GLOB SSL_DLLS "${MAKE_DIR}/../../OpenSSL/Win_x86/bin/*.dll")
-      install(FILES ${SSL_DLLS} DESTINATION "${INS_PREF}")
     endif()
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/installs/Windows/definitions.nsh.in
