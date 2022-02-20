@@ -113,6 +113,16 @@ public:
        */
   QStringList convertMDtoModel(const QString& mdFileName);
 
+      /**
+       * Downloads README.md from sourcforge server,
+       * which contains list of counting files available there.
+       * When download is successful, file is saved as COUNTING.md,
+       * and it is used instead of this built-one list file.
+       * Also models @p m_onlineModel and @p m_onlineURLs are updated
+       * and @p onlineModelUpdated() signal is emitted.
+       */
+  Q_INVOKABLE void downloadOnlineList();
+
 //===================================================
 // *.wav and iXML manipulating helpers
 //===================================================
@@ -161,6 +171,12 @@ signals:
        * @p modelEntry is for QML to consume
        */
   void appendToLocalModel(const QString& modelEntry);
+
+      /**
+       * Emitted when online list was successfully obtained.
+       * QML has dedicated function/slot for that
+       */
+  void onlineModelUpdated();
 
 protected:
 #if defined (WITH_SOUNDTOUCH)

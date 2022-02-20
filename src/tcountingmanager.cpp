@@ -506,8 +506,10 @@ void TcountingManager::removeLocalWav(int cntId) {
 //#################################################################################################
 
 QStringList TcountingManager::onlineModel() {
-  if (m_onlineModel.isEmpty())
-    m_onlineModel = convertMDtoModel(QStringLiteral(":/COUNTING.md"));
+  if (m_onlineModel.isEmpty()) {
+    QFile localMd(GLOB->userLocalPath() + QLatin1String("/COUNTING.md"));
+    m_onlineModel = convertMDtoModel(localMd.exists() ? localMd.fileName() : QStringLiteral(":/COUNTING.md"));
+  }
   return m_onlineModel;
 }
 
@@ -557,23 +559,51 @@ QStringList TcountingManager::convertMDtoModel(const QString& mdFileName) {
     static const QString bar = QStringLiteral("|");
     for (QString& line : mdText) {
       if (tableDetected) {
-        if (line.startsWith(bar)) {
-          line.replace(QLatin1String(" "), QString());
-          auto splitLine = line.mid(1, line.length() - 5).split(bar); // drop first '|' and the last 'KiB|'
-          auto addr = splitLine.takeAt(3);
-          int startsAt = addr.indexOf(QLatin1String("](")) + 2;
-          int endsAt = addr.indexOf(QLatin1String(")"));
-          mdWavModel << splitLine.join(QLatin1String(";"));
-          m_onlineURLs << addr.mid(startsAt, endsAt - startsAt);
-        }
+          if (line.startsWith(bar)) {
+            line.replace(QLatin1String(" "), QString());
+            auto splitLine = line.mid(1, line.length() - 5).split(bar); // drop first '|' and the last 'KiB|'
+            auto addr = splitLine.takeAt(3);
+            int startsAt = addr.indexOf(QLatin1String("](")) + 2;
+            int endsAt = addr.indexOf(QLatin1String(")"));
+            mdWavModel << splitLine.join(QLatin1String(";"));
+            m_onlineURLs << addr.mid(startsAt, endsAt - startsAt);
+          }
       } else {
-        if (line.startsWith(QLatin1String("|---")))
-          tableDetected = true;
+          if (line.startsWith(QLatin1String("|---")))
+            tableDetected = true;
       }
     }
   }
   return mdWavModel;
 }
+
+
+void TcountingManager::downloadOnlineList() {
+  if (m_downloading)
+    return;
+
+  m_downloading = true;
+  emit downloadingChanged();
+  static const QString mdAddr = QStringLiteral("https://sourceforge.net/projects/metronomek/files/counting/README.md");
+  auto getFile = new TgetFile(mdAddr, 0, this);
+  connect(getFile, &TgetFile::downloadFinished, this, [=](bool success) {
+    if (success) {
+      auto fName = GLOB->userLocalPath() + QLatin1String("/COUNTING.md");
+      QFile mdFile(fName);
+      if (mdFile.open(QIODevice::WriteOnly)) {
+        mdFile.write(getFile->fileData());
+        mdFile.close();
+        m_onlineModel.clear();
+        m_onlineModel = convertMDtoModel(fName);
+        emit onlineModelUpdated();
+      }
+    }
+    m_downloading = false;
+    emit downloadingChanged();
+    getFile->deleteLater();
+  });
+}
+
 
 //#################################################################################################
 //###############                *.wav and iXML manipulating helpers                  #############

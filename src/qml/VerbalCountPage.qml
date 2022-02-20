@@ -20,7 +20,7 @@ Tdialog {
 
   Connections {
     target: cntMan
-     function onAppendToLocalModel(modelEntry) {
+    function onAppendToLocalModel(modelEntry) {
       appendToLocalModel(modelEntry)
       localList.positionViewAtEnd()
     }
@@ -31,6 +31,13 @@ Tdialog {
         progBar.destroy(1000)
       else if (prog < 0)
         progBar.destroy()
+    }
+    function onOnlineModelUpdated() {
+      onlineList.model = null
+      onlineMod.clear()
+      updateOnlineModel()
+      onlineList.model = onlineMod
+      progBar.destroy()
     }
   }
 
@@ -186,13 +193,8 @@ Tdialog {
       }
 
       Component.onCompleted: {
-        if (localCntsMod.count == 0) {
-          var oMod = cntMan.onlineModel()
-          for (var w = 0; w < oMod.length; ++w) {
-            var wav = oMod[w].split(";")
-            onlineMod.append({ "langID": wav[0], "langName": wav[1] + " / " + wav[2], "size": wav[3] })
-          }
-        }
+        if (onlineMod.count == 0)
+          updateOnlineModel()
       }
 
       ScrollBar.vertical: ScrollBar {}
@@ -241,6 +243,10 @@ Tdialog {
       }
       MenuItem {
         text: qsTr("Update online counting list")
+        onTriggered: {
+          cntMan.downloadOnlineList()
+          progBar = progBarComp.createObject(vCntPage.contentItem)
+        }
       }
       MenuItem {
         text: qsTranslate("QShortcut", "Help")
@@ -269,6 +275,14 @@ Tdialog {
   function appendToLocalModel(modelEntry) {
     var wav = modelEntry.split(";")
     localCntsMod.append({"langID": wav[0], "langName": wav[1], "cntName": wav[2]})
+  }
+
+  function updateOnlineModel() {
+    var oMod = cntMan.onlineModel()
+    for (var w = 0; w < oMod.length; ++w) {
+      var wav = oMod[w].split(";")
+      onlineMod.append({ "langID": wav[0], "langName": wav[1] + " / " + wav[2], "size": wav[3] })
+    }
   }
 
 }
