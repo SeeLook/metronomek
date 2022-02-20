@@ -59,7 +59,6 @@ Tdialog {
 
       delegate: DragDelegate {
         id: bgRect
-        border { width: cntMan.localModelId == index ? 1 : 0; color: activPal.highlight }
         dragEnabled: index > 0
         width: parent ? parent.width : 0; height: fm.height * 3
         color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase,
@@ -67,17 +66,19 @@ Tdialog {
                                   pressed || containsMouse ? 50 : (cntMan.localModelId === index ? 20 : 0)))
         property var modelData: localCntsMod.get(index)
         Row {
-          x: fm.height / 2
           anchors.verticalCenter: parent.verticalCenter
-          spacing: fm.height
-          Text {
-            anchors.verticalCenter: parent.verticalCenter
-            color: activPal.text
-            text: modelData ? modelData.langID : ""
-            font { bold: true }
+          spacing: fm.height / 2
+          Rectangle {
+            width: fm.height * 4.5; height: bgRect.height
+            color: cntMan.localModelId == index ? activPal.highlight : "transparent"
+            Text {
+              anchors.centerIn: parent
+              color: cntMan.localModelId == index ? activPal.highlightedText : activPal.text
+              text: modelData ? modelData.langID : ""
+              font { bold: true }
+            }
           }
           Column {
-            //spacing: fm.height / 8
             anchors.verticalCenter: parent.verticalCenter
             width: bgRect.width - fm.height * 5
             Text {
@@ -205,6 +206,14 @@ Tdialog {
       width: parent.width - fm.height; height: fm.height / 3
       anchors { bottom: parent.bottom; horizontalCenter: parent.horizontalCenter }
       indeterminate: true
+      CuteButton {
+        visible: cntMan.downloading
+        width: fm.height * 5; height: fm.height * 2
+        x: parent.width - fm.height * 5; y: -fm.height * 2
+        text: qsTranslate("QPlatformTheme", "Abort")
+        bgColor: Qt.tint(activPal.button, GLOB.alpha("red", 40))
+        onClicked: cntMan.abortDownload()
+      }
     }
   }
 

@@ -35,20 +35,27 @@ TgetFile::TgetFile(const QString& fileAddr, qint64 expSize, QObject* parent) :
   request.setSslConfiguration(conf);
 #endif
 
-  auto reply = m_netMan.get(request);
-  connect(reply, &QNetworkReply::errorOccurred, this, [=](QNetworkReply::NetworkError e){
-      qDebug() << "[TgetFile]" << e << reply->errorString();
+  m_reply = m_netMan.get(request);
+  connect(m_reply, &QNetworkReply::errorOccurred, this, [=](QNetworkReply::NetworkError e){
+      qDebug() << "[TgetFile]" << e << m_reply->errorString();
       if (m_expectedSize > 0)
         emit progress(-1.0); // hide progress bar immediately
       emit downloadFinished(false);
   });
   if (m_expectedSize > 0)
-    connect(reply, &QNetworkReply::downloadProgress, this, &TgetFile::progressSlot);
+    connect(m_reply, &QNetworkReply::downloadProgress, this, &TgetFile::progressSlot);
 }
 
 
-TgetFile::~TgetFile()
-{
+TgetFile::~TgetFile() {}
+
+
+void TgetFile::abort() {
+  if (!m_aborted) {
+    m_aborted = true;
+    if (m_reply)
+      m_reply->abort();
+  }
 }
 
 
@@ -60,17 +67,19 @@ void TgetFile::progressSlot(qint64 bRead, qint16 bTotal) {
 
 
 void TgetFile::downSlot(QNetworkReply* reply) {
-  if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 301 || reply->rawHeaderList().contains("Location")) {
-    QNetworkRequest req(reply->header(QNetworkRequest::LocationHeader).toString());
-    auto r = m_netMan.get(req);
-    if (m_expectedSize > 0)
-      connect(r, &QNetworkReply::downloadProgress, this, &TgetFile::progressSlot);
-    reply->deleteLater();
-    return;
+  if (!m_aborted) {
+    if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 301 || reply->rawHeaderList().contains("Location")) {
+      QNetworkRequest req(reply->header(QNetworkRequest::LocationHeader).toString());
+      auto r = m_netMan.get(req);
+      if (m_expectedSize > 0)
+        connect(r, &QNetworkReply::downloadProgress, this, &TgetFile::progressSlot);
+      reply->deleteLater();
+      return;
+    }
   }
   qDebug() << reply->error();
   bool success = false;
-  if (reply->size()) {
+  if (!m_aborted && reply->size()) {
       m_fileData = reply->readAll();
       success = true;
   }

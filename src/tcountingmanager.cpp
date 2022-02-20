@@ -519,6 +519,7 @@ void TcountingManager::downloadCounting(int urlId) {
     qint64 expSize = m_onlineModel[urlId].split(QLatin1String(";")).last().toLongLong() * 1024L;
     auto getFile = new TgetFile(m_onlineURLs[urlId], expSize, this);
     connect(getFile, &TgetFile::progress, this, &TcountingManager::downProgress);
+    connect(this, &TcountingManager::abortDownload, getFile, &TgetFile::abort);
     connect(getFile, &TgetFile::downloadFinished, this, [=](bool success) {
       if (success) {
         auto fName = getWavFileName(m_onlineURLs[urlId].right(18).left(5));

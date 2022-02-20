@@ -30,6 +30,8 @@ public:
 
   QByteArray& fileData() { return m_fileData; }
 
+  void abort();
+
 signals:
       /**
        * When emitted value is in range [0.0 - 1.0]
@@ -48,7 +50,8 @@ private:
   QNetworkAccessManager               m_netMan;
   QByteArray                          m_fileData;
   qint64                              m_expectedSize = 0;
-
+  QNetworkReply                      *m_reply = nullptr;
+  bool                                m_aborted = false;
 };
 
 #endif // TGETFILE_H

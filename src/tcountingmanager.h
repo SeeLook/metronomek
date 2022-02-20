@@ -153,6 +153,7 @@ public:
 signals:
   void downloadingChanged();
   void downProgress(qreal progress);
+  void abortDownload();
   void localModelIdChanged();
 
       /**
