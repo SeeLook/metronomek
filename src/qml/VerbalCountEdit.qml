@@ -124,13 +124,36 @@ Tdialog {
   Menu {
     id: moreMenu
     y: vCntEdit.height - height - vCntEdit.implicitFooterHeight - vCntEdit.implicitHeaderHeight
+    x: (vCntPage.width - width) / 2
 
     MenuItem {
       text: qsTr("Align")
     }
+    MenuItem {
+      text: qsTranslate("QShortcut", "Help")
+      onTriggered: {
+        Qt.createComponent("qrc:/HelpPop.qml").createObject(mainWindow, {
+          visible: true,
+          helpText: "<b>" + GLOB.TR("VerbalCountPage", "Prepare own verbal counting") + ":</b>"
+          + "<ul><li>" + qsTr("record every single numeral")
+          + "</li><li>" + qsTr("or import wav file with it prepared in other software")
+          + "</li><li>" + qsTr("or import wav file with all 12 numerals (Actions -> Load from file)")
+          + "</li></ul><br><b>" + qsTr("CLUES") + ":</b>"
+          + "<ul><li>" + qsTr("pronounce words quickly, not longer than 300 ms")
+          + "</li><li>" + qsTr("accent one of the word syllables")
+          + "</li><li>" + qsTr("imported wav files has to be 48000 Hz / 16 bit")
+          + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">"
+          + qsTr("Read more online.") + "</a>"
+        })
+      }
+    }
     Component.onCompleted: {
       if (!GLOB.isAndroid())
         moreMenu.insertItem(0, fromFileComp.createObject())
+      var maxW = 0
+      for (var m = 0; m < count; ++m)
+        maxW = Math.max(maxW, itemAt(m).width)
+      width = Math.min(vCntEdit.width - fm.height * 3, maxW + 2 * fm.height)
     }
   }
 
