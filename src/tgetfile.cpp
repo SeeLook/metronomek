@@ -77,7 +77,6 @@ void TgetFile::downSlot(QNetworkReply* reply) {
       return;
     }
   }
-  qDebug() << reply->error();
   bool success = false;
   if (!m_aborted && reply->size()) {
       m_fileData = reply->readAll();

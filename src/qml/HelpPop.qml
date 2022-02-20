@@ -11,6 +11,7 @@ SidePop {
   id: hPop
 
   property alias helpText: hText.text
+  modal: true
 
   bgColor: Qt.tint(activPal.base, GLOB.alpha(activPal.highlight, 50))
   height: hFlick.height + 2 * padding
