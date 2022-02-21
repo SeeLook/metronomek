@@ -7,7 +7,7 @@
     <file>flags/pl.png</file>
     <file>flags/us.png</file>
 
-    <file alias="metronomek.otf">../fonts/metronomek.otf</file>
+    <file>metronomek.otf</file>
 
     <file alias="COUNTING.md">../sounds/counting/README.md</file>
 

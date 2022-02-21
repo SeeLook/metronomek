@@ -36,7 +36,7 @@ set(METRONOMEK_SRC
     ttempopart.cpp
 
     qml/metronomek_qml.qrc
-    ${CMAKE_SOURCE_DIR}/images/metronomek_images.qrc
+    ${CMAKE_SOURCE_DIR}/resources/metronomek_res.qrc
 )
 
 

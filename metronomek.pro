@@ -66,7 +66,7 @@ HEADERS += \
         \
         src/android/tandroid.h\
 
-RESOURCES += src/qml/metronomek_qml.qrc images/metronomek_images.qrc
+RESOURCES += src/qml/metronomek_qml.qrc resources/metronomek_res.qrc
 
 sounds.path = /assets/sounds
 translations.path = /assets/translations
