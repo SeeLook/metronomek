@@ -267,7 +267,7 @@ Tdialog {
         var maxW = 0
         for (var m = 0; m < count; ++m)
           maxW = Math.max(maxW, itemAt(m).width)
-        width = Math.min(vCntPage.width - fm.height * 3, maxW + 2 * fm.height)
+        width = Math.min(vCntPage.width - fm.height, maxW + fm.height * 2)
       }
     }
   }

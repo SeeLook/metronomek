@@ -40,6 +40,11 @@ Window {
   property bool leanEnough: false // pendulum is leaned out enough to start playing
   property alias counterPressed: countArea.containsPress
 
+  // PauseAnimation {
+  //   duration: 500; running: true
+  //   onFinished: Qt.createComponent("qrc:/VerbalCountPage.qml").createObject(mainWindow)
+  // }
+
   MetroImage {
     id: metro
     anchors.centerIn: parent

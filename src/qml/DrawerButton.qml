@@ -13,6 +13,7 @@ AbstractButton {
 
   property color bgColor: activPal.window
 
+
   onPressed: pressAnim.start()
   property bool innerPress: pressAnim.running || pressed
   PauseAnimation { id: pressAnim; duration: 100 }
@@ -23,7 +24,7 @@ AbstractButton {
     color: innerPress ? activPal.highlight : activPal.window
 
     Text {
-      width: parent.width - (dButt.checkable ? chLoader.item.width : 0)
+      width: parent.width - (dButt.checkable ? (chLoader.item ? chLoader.item.width : 0) : 0)
       anchors.verticalCenter: parent.verticalCenter
       leftPadding: fm.height
       text: dButt.text
@@ -46,7 +47,8 @@ AbstractButton {
         Behavior on scale { NumberAnimation {} }
         indicator: TipRect {
           color: bgColor
-          x: chB.leftPadding; y: (parent.height - height) / 2
+          x: -width / 10
+          y: (parent.height - height) / 2
           width: fm.height * 1.6; height: width
           Rectangle {
             anchors.centerIn: parent
