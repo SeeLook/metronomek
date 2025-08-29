@@ -157,7 +157,7 @@ void TrtmComposition::notSavedSlot() {
 
 QString TspeedHandler::getTitle(int nr) const {
   return GLOB->TR(QStringLiteral("TempoPage"),
-                  QStringLiteral("Rhythmic Composition")) + QString(" #%1").arg(nr, 2, 'g', -1, '0');
+                  QStringLiteral("Rhythmic Composition")) + QString(" #%1").arg(static_cast<qreal>(nr), 2, 'g', -1, '0');
 }
 
 
@@ -207,10 +207,10 @@ TspeedHandler::~TspeedHandler()
 void TspeedHandler::saveCurrentComposition() {
   auto dataPath = GLOB->userLocalPath();
   if (currComp()->xmlFileName().isEmpty()) {
-    auto fName = QString("%1/Rhythmic_Composition_%2.metronomek.xml").arg(dataPath).arg(m_current + 1, 2, 'g', -1, '0');
+    auto fName = QString("%1/Rhythmic_Composition_%2.metronomek.xml").arg(dataPath).arg(static_cast<qreal>(m_current + 1), 2, 'g', -1, '0');
     int it = 1;
     while (QFileInfo::exists(fName)) {
-      fName = QString("%1/Rhythmic_Composition_%2.metronomek.xml").arg(dataPath).arg(it, 2, 'g', -1, '0');
+      fName = QString("%1/Rhythmic_Composition_%2.metronomek.xml").arg(dataPath).arg(static_cast<qreal>(it), 2, 'g', -1, '0');
       it++;
     }
     currComp()->setXmlFileName(fName);

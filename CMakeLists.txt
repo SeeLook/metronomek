@@ -4,11 +4,15 @@
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)            #
 ##############################################################################
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.16)
 
 set(METRONOMEK_VER "0.6.7-devel")
 #WARNING Keep above line exactly as 9th line of this file.
 #        Needed for CD/CI to obtain version
+
+if (POLICY CMP0071)
+  cmake_policy(SET CMP0071 NEW)
+endif()
 
 if (WIN32)
   # GitHub actions use this file to get version number
@@ -22,17 +26,17 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt5 COMPONENTS Core Gui Widgets Quick Network REQUIRED)
-find_package(Qt5 COMPONENTS Core Gui Widgets Quick Network REQUIRED)
-
-if (Qt5Widgets_FOUND)
-  if (Qt5Widgets_VERSION VERSION_LESS 5.12.0)
-    message(FATAL_ERROR "Minimum supported Qt version is 5.12.0")
-  endif()
+if(ANDROID)
+    find_package(QT NAMES Qt6 COMPONENTS Core Gui Quick LinguistTools REQUIRED)
+    find_package(Qt6 COMPONENTS Core Gui Quick REQUIRED)
+else()
+    find_package(QT NAMES Qt6 COMPONENTS Core Widgets Quick LinguistTools REQUIRED)
+    find_package(Qt6 COMPONENTS Core Widgets Quick REQUIRED)
 endif()
+qt_standard_project_setup(REQUIRES 6.8)
 
 configure_file(${CMAKE_SOURCE_DIR}/src/metronomek_conf_cmake.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/metronomek_conf.h)
 
@@ -141,7 +145,7 @@ endif()
 #         (Mac Os & Windows)                                                 #
 ##############################################################################
 
-get_target_property(QtCore_location_Release Qt5::Core LOCATION_Release)
+get_target_property(QtCore_location_Release Qt6::Core LOCATION_Release)
 get_filename_component(QT_BINARY_DIR "${QtCore_location_Release}" DIRECTORY)
 
 if (APPLE)

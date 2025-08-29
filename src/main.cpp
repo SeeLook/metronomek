@@ -27,8 +27,7 @@
 
 int main(int argc, char *argv[])
 {
-  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-
+  // qputenv("QT_QUICK_CONTROLS_STYLE", "Basic"); // reset style environment var - other styles can cause crashes
   QElapsedTimer startElapsed;
   startElapsed.start();
 
@@ -78,7 +77,7 @@ int main(int argc, char *argv[])
   QString p = qApp->applicationDirPath() + QLatin1String("/../Resources/translations/");
 #else
   QLocale loc(QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).language(),
-              QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).country());
+              QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).territory());
   QString p = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/translations/");
 #endif
   QLocale::setDefault(loc);
@@ -87,8 +86,7 @@ int main(int argc, char *argv[])
   if (mTranslator.load(loc, QStringLiteral("metronomek_"), QString(), p))
     GLOB->setLangLoaded(app->installTranslator(&mTranslator));
 
-  QFontDatabase fd;
-  int fid = fd.addApplicationFont(QStringLiteral(":/metronomek.otf"));
+  int fid = QFontDatabase::addApplicationFont(QStringLiteral(":/metronomek.otf"));
   if (fid == -1) {
     qDebug() << "Can not load MetronomeK fonts!\n";
     return 111;

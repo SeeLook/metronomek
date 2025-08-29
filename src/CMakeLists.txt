@@ -122,11 +122,19 @@ target_compile_definitions(metronomek
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
 )
 
-target_link_libraries(metronomek PRIVATE
-  Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Quick Qt5::Network
-  ${RtAudio_LIBRARIES}
-  ${SOUNDTOUCH_LIBRARY}
-)
+if(ANDROID)
+    target_link_libraries(metronomek PRIVATE
+        Qt6::Core Qt6::Quick
+        ${RtAudio_LIBRARIES}
+        ${SOUNDTOUCH_LIBRARY}
+    )
+else()
+    target_link_libraries(metronomek PRIVATE
+        Qt6::Core Qt6::Quick Qt6::Widgets
+        ${RtAudio_LIBRARIES}
+        ${SOUNDTOUCH_LIBRARY}
+    )
+endif()
 
 if (APPLE) # info.plist
   find_program(GIT_CMD git)

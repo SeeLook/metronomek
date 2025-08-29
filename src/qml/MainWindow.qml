@@ -116,13 +116,13 @@ Window {
         enabled: !SOUND.playing
         width: parent.width * 3; height: parent.height; x: -parent.width
         cursorShape: dragged ? Qt.DragMoveCursor : Qt.ArrowCursor
-        onPositionChanged: {
+        onPositionChanged: (mouse) => {
           dragged = true
           var dev = mouse.x - width / 2
           pendulum.rotation = (Math.atan(dev / height) * 180) / Math.PI
           leanEnough = Math.abs(dev) > height * 0.2
         }
-        onReleased: {
+        onReleased: (mouse) => {
           leanEnough = false
           dragged = false
           if (Math.abs(mouse.x - width / 2) > height * 0.2)

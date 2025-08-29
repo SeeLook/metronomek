@@ -96,7 +96,7 @@ class TcntXML
     QString toXml() const {
       QString out;
       QXmlStreamWriter xml(&out);
-      xml.setCodec("UTF-16");
+      // xml.setCodec("UTF-16");
       xml.writeStartDocument();
       xml.writeStartElement(QLatin1String("verbalcount"));
         xml.writeAttribute(QLatin1String("qtlang"), QString::number(m_lang));
@@ -127,6 +127,23 @@ class TcntXML
             xml.skipCurrentElement();
             ok = false;
         }
+        qDebug() << "qt5Lang" << m_lang;
+        // Convert Qt5 Lang to Qt6 one
+        // if (qt5Lang > -1) {
+        //   switch (qt5Lang) {
+        //     case 30: m_lang = QLocale::Dutch; break;
+        //     case 31: m_lang = QLocale::English; break;
+        //     case 37: m_lang = QLocale::French; break;
+        //     case 42: m_lang = QLocale::German; break;
+        //     case 49: m_lang = QLocale::Hindi; break;
+        //     case 58: m_lang = QLocale::Italian; break;
+        //     case 90: m_lang = QLocale::Polish; break;
+        //     case 95: m_lang = QLocale::Romanian; break;
+        //     case 96: m_lang = QLocale::Russian; break;
+        //     case 129: m_lang = QLocale::Ukrainian; break;
+        //     default: m_lang = qt5Lang; break;
+        //     }
+        //   }
       }
       return ok;
     }
@@ -399,7 +416,7 @@ int TcountingManager::currentLanguage() {
   QLocale loc(GLOB->lang().isEmpty() ? QLocale::system().uiLanguages().first() : GLOB->lang());
 #else
   QLocale loc(QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).language(),
-              QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).country());
+              QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).territory());
 #endif
   return static_cast<int>(loc.language());
 }
@@ -553,7 +570,7 @@ QStringList TcountingManager::convertMDtoModel(const QString& mdFileName) {
   if(mdFile.open(QFile::ReadOnly | QFile::Text)) {
     m_onlineURLs.clear();
     QTextStream in(&mdFile);
-    in.setCodec("UTF-8");
+    // in.setCodec("UTF-8");
     auto mdText = in.readAll().split(QStringLiteral("\n"));
     bool tableDetected = false;
     static const QString bar = QStringLiteral("|");
@@ -1016,7 +1033,7 @@ QString TcountingManager::getWavFileName(const QString& langPrefix) {
   auto fName = QString("%1/%2-counting.wav").arg(dataPath).arg(langPrefix);
   int it = 1;
   while (QFileInfo::exists(fName)) {
-    fName = QString("%1/%2-counting_%3.wav").arg(dataPath).arg(langPrefix).arg(it, 2, 'g', -1, '0');
+    fName = QString("%1/%2-counting_%3.wav").arg(dataPath).arg(langPrefix).arg(static_cast<qreal>(it), 2, 'g', -1, '0');
     it++;
   }
   return fName;
