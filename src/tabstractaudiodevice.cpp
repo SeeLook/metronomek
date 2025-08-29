@@ -5,27 +5,27 @@
 #include "tabstractaudiodevice.h"
 #include <QtCore/qdebug.h>
 
-
-TabstractAudioDevice::TabstractAudioDevice(QObject* parent) :
-  QObject(parent)
+TabstractAudioDevice::TabstractAudioDevice(QObject *parent)
+    : QObject(parent)
 {
 }
 
-
-void TabstractAudioDevice::setSamplaRate(quint32 sr) {
-  if (sr != m_sampleRate) {
-    m_sampleRate = sr;
-    emit sampleRateChanged();
-  }
+void TabstractAudioDevice::setSamplaRate(quint32 sr)
+{
+    if (sr != m_sampleRate) {
+        m_sampleRate = sr;
+        emit sampleRateChanged();
+    }
 }
 
-//#################################################################################################
-//###################                PROTECTED         ############################################
-//#################################################################################################
+// #################################################################################################
+// ###################                PROTECTED         ############################################
+// #################################################################################################
 
-void TabstractAudioDevice::setAudioType(TabstractAudioDevice::EaudioMode aMode) {
-  if (m_audioMode != aMode) {
-    m_audioMode = aMode;
-    emit audioModeChanged();
-  }
+void TabstractAudioDevice::setAudioType(TabstractAudioDevice::EaudioMode aMode)
+{
+    if (m_audioMode != aMode) {
+        m_audioMode = aMode;
+        emit audioModeChanged();
+    }
 }

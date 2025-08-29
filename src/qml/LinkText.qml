@@ -6,14 +6,17 @@ import QtQuick 2.12
 
 Text {
     id: txt
+
     onLinkActivated: (link) => {
         Qt.openUrlExternally(link);
     }
     color: activPal.text
 
-    MouseArea { // make hand cursor over link text
+    // make hand cursor over link text
+    MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.NoButton
         cursorShape: txt.hoveredLink ? Qt.PointingHandCursor : Qt.ArrowCursor
     }
+
 }

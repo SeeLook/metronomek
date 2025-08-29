@@ -5,52 +5,48 @@
 #ifndef TNUMERALSPECTRUM_H
 #define TNUMERALSPECTRUM_H
 
-
 #include <QtQuick/qquickpainteditem.h>
 
-
 class TsoundData;
-
 
 /**
  *
  */
 class TnumeralSpectrum : public QQuickPaintedItem
 {
-
-  Q_OBJECT
-  Q_PROPERTY(int nr READ nr WRITE setNr NOTIFY nrChanged)
-  Q_PROPERTY(QString recMessage READ recMessage NOTIFY recMessageChanged)
+    Q_OBJECT
+    Q_PROPERTY(int nr READ nr WRITE setNr NOTIFY nrChanged)
+    Q_PROPERTY(QString recMessage READ recMessage NOTIFY recMessageChanged)
 
 public:
-  explicit TnumeralSpectrum(QQuickItem* parent = nullptr);
-  ~TnumeralSpectrum() override;
+    explicit TnumeralSpectrum(QQuickItem *parent = nullptr);
+    ~TnumeralSpectrum() override;
 
-  int nr() const { return m_nr; }
-  void setNr(int nr);
+    int nr() const { return m_nr; }
+    void setNr(int nr);
 
-  QString recMessage() const { return m_recMessage; }
+    QString recMessage() const { return m_recMessage; }
 
-  void paint(QPainter* painter) override;
+    void paint(QPainter *painter) override;
 
-  TsoundData* numeral() { return m_numData; }
-  void setNumeral(TsoundData* numData = nullptr);
+    TsoundData *numeral() { return m_numData; }
+    void setNumeral(TsoundData *numData = nullptr);
 
-  void copyData(qint16* numData, int len);
+    void copyData(qint16 *numData, int len);
 
-  void startRecording();
+    void startRecording();
 
 signals:
-  void nrChanged(int nr);
-  void recMessageChanged();
+    void nrChanged(int nr);
+    void recMessageChanged();
 
 protected:
-  void setRecMessage(const QString& m);
+    void setRecMessage(const QString &m);
 
 private:
-  int                m_nr = -1;
-  TsoundData        *m_numData = nullptr;
-  QString            m_recMessage;
+    int m_nr = -1;
+    TsoundData *m_numData = nullptr;
+    QString m_recMessage;
 };
 
 #endif // TNUMERALSPECTRUM_H

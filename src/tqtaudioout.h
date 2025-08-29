@@ -9,48 +9,44 @@
 #include <QtMultimedia/qaudio.h>
 #include <QtMultimedia/qaudiodeviceinfo.h>
 
-
 class TaudioBuffer;
 class QAudioOutput;
-
 
 /**
  * @class TqtAudioOut is Android back-end of Metronomek audio
  */
 class TqtAudioOut : public TabstractAudioDevice
 {
-
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  TqtAudioOut(QObject* parent = nullptr);
-  ~TqtAudioOut();
+    TqtAudioOut(QObject *parent = nullptr);
+    ~TqtAudioOut();
 
-  static QStringList getAudioDevicesList();
+    static QStringList getAudioDevicesList();
 
-  void stop() override;
+    void stop() override;
 
-  void startPlaying() override;
+    void startPlaying() override;
 
-  void setDeviceName(const QString& devName) override;
+    void setDeviceName(const QString &devName) override;
 
-  QString deviceName() const override;
+    QString deviceName() const override;
 
-  void setAudioOutParams() override;
+    void setAudioOutParams() override;
 
 protected:
-  void createOutputDevice();
+    void createOutputDevice();
 
-  void qtCallBack(char* data, qint64 maxLen, qint64& wasRead);
+    void qtCallBack(char *data, qint64 maxLen, qint64 &wasRead);
 
 private:
-  static TqtAudioOut           *m_instance;
-  static QString                m_devName;
-  QAudioOutput                 *m_audioOUT = nullptr;
-  TaudioBuffer                 *m_buffer;
-  QAudioDeviceInfo              m_deviceInfo;
-  int                           m_bufferFrames, m_sampleRate;
-
+    static TqtAudioOut *m_instance;
+    static QString m_devName;
+    QAudioOutput *m_audioOUT = nullptr;
+    TaudioBuffer *m_buffer;
+    QAudioDeviceInfo m_deviceInfo;
+    int m_bufferFrames, m_sampleRate;
 };
 
 #endif // TQTAUDIOOUT_H

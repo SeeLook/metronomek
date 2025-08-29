@@ -2,16 +2,12 @@
  * Copyright (C) 2020 by Tomasz Bojczuk (seelook@gmail.com)          *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-
 #ifndef TMETROSHAPE_H
 #define TMETROSHAPE_H
 
-
 #include <QtQuick/qquickpainteditem.h>
 
-
 class QPainter;
-
 
 /**
  * HACK
@@ -24,16 +20,13 @@ class QPainter;
  */
 class TmetroShape : public QQuickPaintedItem
 {
-
-  Q_OBJECT
+    Q_OBJECT
 
 public:
+    TmetroShape(QQuickItem *parent = nullptr);
+    ~TmetroShape() override { }
 
-  TmetroShape(QQuickItem* parent = nullptr);
-  ~TmetroShape() override {}
-
-  void paint(QPainter* painter) override;
-
+    void paint(QPainter *painter) override;
 };
 
 #endif // TMETROSHAPE_H
