@@ -77,3 +77,8 @@ Thumbs.db
 
 # CMake
 *.txt.user*
+.clang-format
+*.clangd
+
+# QML
+*.qmlls.ini
