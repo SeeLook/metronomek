@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2021-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #ifndef TTEMPOPART_H
@@ -7,6 +7,7 @@
 
 #include <QtCore/qeasingcurve.h>
 #include <QtCore/qobject.h>
+#include <QtQml/qqmlregistration.h>
 
 class QXmlStreamWriter;
 class QXmlStreamReader;
@@ -20,6 +21,8 @@ class QXmlStreamReader;
 class TtempoPart : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(TempoPart)
+    QML_UNCREATABLE("")
 
     Q_PROPERTY(int nr READ nr NOTIFY nrChanged)
     Q_PROPERTY(int targetTempo READ targetTempo WRITE setTargetTempo NOTIFY targetTempoChanged)

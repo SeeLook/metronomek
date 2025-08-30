@@ -4,19 +4,21 @@
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)            #
 ##############################################################################
 
+add_executable(metronomek WIN32)
+
 if (APPLE) # Mac RPath
-  set(CMAKE_MACOSX_RPATH 1)
-  set(CMAKE_INSTALL_RPATH "@loader_path/../Frameworks")
-  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    set(CMAKE_MACOSX_RPATH 1)
+    set(CMAKE_INSTALL_RPATH "@loader_path/../Frameworks")
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif (APPLE)
 
 option(USE_SOUNDTOUCH "Use SoundTouch library to squash verbal counting audio data" OFF)
 if (${USE_SOUNDTOUCH})
-  add_compile_definitions(WITH_SOUNDTOUCH)
+    add_compile_definitions(WITH_SOUNDTOUCH)
 endif()
 
 if (NOT ANDROID)
-  add_subdirectory(rtaudio)
+    add_subdirectory(rtaudio)
 endif()
 
 set(METRONOMEK_SRC
@@ -27,18 +29,58 @@ set(METRONOMEK_SRC
     tsounddata.cpp
     tnumeralspectrum.cpp
     trtaudiodevice.cpp
-    tcountingmanager.cpp
-    tmetroshape.cpp
     tgetfile.cpp
     #taudiobuffer.h Android Qt Audio, TODO rather to remove
-
-    tspeedhandler.cpp
-    ttempopart.cpp
 
     qml/metronomek_qml.qrc
     ${CMAKE_SOURCE_DIR}/resources/metronomek_res.qrc
 )
 
+qt_add_qml_module(metronomek
+    URI "Metronomek.Core"
+    QML_FILES
+        qml/MainWindow.qml
+        qml/Logo.qml
+        qml/MainMenuButton.qml
+        qml/MainDrawerContent.qml
+        qml/DrawerButton.qml
+        qml/MeterDrawer.qml
+        qml/MetroImage.qml
+
+        qml/InfoPage.qml
+        qml/SettingsPage.qml
+        qml/TempoPage.qml
+        qml/VerbalCountPage.qml
+        qml/VerbalCountEdit.qml
+        qml/TempoEdit.qml
+        qml/TempoPartDelegate.qml
+        qml/DragDelegate.qml
+        qml/CompositionView.qml
+        qml/NextTempoPop.qml
+        qml/CountingLangPop.qml
+
+        qml/TipRect.qml
+        qml/CuteButton.qml
+        qml/TspinBox.qml
+        qml/Tdialog.qml
+        qml/LinkText.qml
+        qml/SidePop.qml
+        qml/HelpPop.qml
+
+    SOURCES
+        tmetroshape.cpp
+        tmetroshape.h
+        ttempopart.cpp
+        ttempopart.h
+        tspeedhandler.cpp
+        tspeedhandler.h
+        tcountingmanager.cpp
+        tcountingmanager.h
+
+    DEPENDENCIES
+        QtCore
+        QtQuick
+)
 
 if (ANDROID)
     list(APPEND METRONOMEK_SRC android/tandroid.cpp)
@@ -60,8 +102,6 @@ else()
     endif()
     list(APPEND METRONOMEK_SRC rtaudio/RtAudio.cpp)
 endif()
-
-add_executable(metronomek WIN32 ${APP_ICON_RESOURCE_WINDOWS} ${METRONOMEK_SRC})
 
 if (ANDROID)
     set_target_properties(metronomek
@@ -122,6 +162,11 @@ target_compile_definitions(metronomek
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
 )
 
+target_sources(metronomek PUBLIC
+    ${METRONOMEK_SRC}
+    ${APP_ICON_RESOURCE_WINDOWS}
+)
+
 if(ANDROID)
     target_link_libraries(metronomek PRIVATE
         Qt6::Core Qt6::Quick
@@ -137,15 +182,15 @@ else()
 endif()
 
 if (APPLE) # info.plist
-  find_program(GIT_CMD git)
-  if (GIT_CMD)
-    execute_process(COMMAND ${GIT_CMD} -C ${CMAKE_SOURCE_DIR} rev-list HEAD --count OUTPUT_VARIABLE MAC_BUNDLE_VER OUTPUT_STRIP_TRAILING_WHITESPACE)
-  else()
-    message(NOTICE "!! Missing git command - cannot obtain MACOSX_BUNDLE_BUNDLE_VERSION !!")
-  endif()
+    find_program(GIT_CMD git)
+    if (GIT_CMD)
+        execute_process(COMMAND ${GIT_CMD} -C ${CMAKE_SOURCE_DIR} rev-list HEAD --count OUTPUT_VARIABLE MAC_BUNDLE_VER OUTPUT_STRIP_TRAILING_WHITESPACE)
+    else()
+        message(NOTICE "!! Missing git command - cannot obtain MACOSX_BUNDLE_BUNDLE_VERSION !!")
+    endif()
 
-  configure_file(${CMAKE_SOURCE_DIR}/installs/Mac/info.plist.in ${CMAKE_BINARY_DIR}/info.plist)
-  install(FILES "${CMAKE_BINARY_DIR}/info.plist" DESTINATION "${CMAKE_INSTALL_PREFIX}/metronomek.app/Contents")
+    configure_file(${CMAKE_SOURCE_DIR}/installs/Mac/info.plist.in ${CMAKE_BINARY_DIR}/info.plist)
+    install(FILES "${CMAKE_BINARY_DIR}/info.plist" DESTINATION "${CMAKE_INSTALL_PREFIX}/metronomek.app/Contents")
 
 endif()
 

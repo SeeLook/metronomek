@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import Metronomek
 
 Drawer {
     id: mDrawer
@@ -26,7 +27,7 @@ Drawer {
             model: 12
 
             Button {
-                width: parent.contentWidth
+                width: mDrawer.width
                 height: (mainWindow.height - countText.height) / 12
                 font.pixelSize: index > 0 ? height * 0.6 : height * 0.3
                 flat: true

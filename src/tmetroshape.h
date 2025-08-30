@@ -1,10 +1,11 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2020 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2020-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #ifndef TMETROSHAPE_H
 #define TMETROSHAPE_H
 
+#include <QtQml/qqmlregistration.h>
 #include <QtQuick/qquickpainteditem.h>
 
 class QPainter;
@@ -21,6 +22,7 @@ class QPainter;
 class TmetroShape : public QQuickPaintedItem
 {
     Q_OBJECT
+    QML_ELEMENT
 
 public:
     TmetroShape(QQuickItem *parent = nullptr);

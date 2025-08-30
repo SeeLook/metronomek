@@ -3,8 +3,11 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 import Metronomek
+import Metronomek.Core
 import QtQuick
 import QtQuick.Controls
+
+// pragma ComponentBehavior: Bound
 
 Tdialog {
     id: vCntPage
@@ -49,12 +52,13 @@ Tdialog {
     }
 
     Connections {
-        function onAppendToLocalModel(modelEntry) {
+        target: cntMan
+        function onAppendToLocalModel(modelEntry: string): void {
             appendToLocalModel(modelEntry);
             localList.positionViewAtEnd();
         }
 
-        function onDownProgress(prog) {
+        function onDownProgress(prog: real): void {
             progBar.indeterminate = false;
             progBar.value = prog;
             if (prog >= 1)
@@ -70,8 +74,6 @@ Tdialog {
             onlineList.model = onlineMod;
             progBar.destroy();
         }
-
-        target: cntMan
     }
 
     ListModel {
@@ -120,7 +122,7 @@ Tdialog {
                 dragEnabled: index > 0
                 width: parent ? parent.width : 0
                 height: fm.height * 3
-                color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(toDel ? "red" : activPal.highlight, pressed || containsMouse ? 50 : (cntMan.localModelId === index ? 20 : 0)))
+                color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(toDel ? "red" : activPal.highlight, pressed || containsMouse ? 50 : (cntMan?.localModelId === index ? 20 : 0)))
                 onClicked: cntMan.localModelId = index
                 onRemoved: {
                     cntMan.removeLocalWav(index);
@@ -134,11 +136,11 @@ Tdialog {
                     Rectangle {
                         width: fm.height * 4.5
                         height: bgRect.height
-                        color: cntMan.localModelId == index ? activPal.highlight : "transparent"
+                        color: cntMan?.localModelId == index ? activPal.highlight : "transparent"
 
                         Text {
                             anchors.centerIn: parent
-                            color: cntMan.localModelId == index ? activPal.highlightedText : activPal.text
+                            color: cntMan?.localModelId == index ? activPal.highlightedText : activPal.text
                             text: modelData ? modelData.langID : ""
 
                             font {
@@ -285,7 +287,7 @@ Tdialog {
                 MouseArea {
                     id: ma
 
-                    enabled: !cntMan.downloading
+                    enabled: !cntMan?.downloading
                     anchors.fill: parent
                     hoverEnabled: !GLOB.isAndroid()
                     onClicked: {
@@ -309,6 +311,7 @@ Tdialog {
         ProgressBar {
             width: parent.width - fm.height
             height: fm.height / 3
+            z: 50000
             indeterminate: true
 
             anchors {
@@ -335,6 +338,7 @@ Tdialog {
         id: actMenuComp
 
         Menu {
+            id: actMenu
             y: vCntPage.height - height - vCntPage.implicitFooterHeight
             x: (vCntPage.width - width) / 2
             Component.onCompleted: {
@@ -345,7 +349,7 @@ Tdialog {
 
             MenuItem {
                 text: qsTr("Prepare own verbal counting")
-                onTriggered: Qt.createComponent("qrc:/VerbalCountEdit.qml").createObject(mainWindow)
+                onTriggered: Qt.createComponent("Metronomek.Core", "VerbalCountEdit").createObject(mainWindow)
             }
 
             MenuItem {
@@ -359,15 +363,14 @@ Tdialog {
             MenuItem {
                 text: qsTranslate("QShortcut", "Help")
                 onTriggered: {
-                    Qt.createComponent("qrc:/HelpPop.qml").createObject(mainWindow, {
-                        "visible": true,
+                    let hPop = Qt.createComponent("Metronomek.Core", "HelpPop").createObject(mainWindow, {
                         "helpText": qsTr("Matronomek is installed with verbal counting only in English language.") + "<br>" + qsTr("But counting for other languages can be easy obtained:") + "<ul><li>" + qsTr("by downloading files available online (for free)") + "</li><li>" + qsTr("or by recording own counting.") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
                     });
+                    hPop.open();
                 }
             }
 
         }
 
     }
-
 }

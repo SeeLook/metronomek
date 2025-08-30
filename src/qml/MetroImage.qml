@@ -3,6 +3,7 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 import Metronomek
+import Metronomek.Core
 import QtQuick
 
 Item {

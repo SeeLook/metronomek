@@ -20,6 +20,8 @@ Popup {
     height: mainWindow.height * 0.2
     x: (parent.width - width) / 2
     y: parent.height + height
+    z: 50000
+
     onClosed: {
         done();
         destroy();

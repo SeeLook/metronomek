@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import Metronomek
 
 Tdialog {
     id: settPage
@@ -210,7 +211,7 @@ Tdialog {
                 text: qsTranslate("MainDrawerContent", "Verbal count")
                 onClicked: {
                     SOUND.createCountingManager(); // create it, if it doesn't exist
-                    Qt.createComponent("qrc:/VerbalCountPage.qml").createObject(mainWindow);
+                    Qt.createComponent("Metronomek.Core", "VerbalCountPage").createObject(mainWindow);
                 }
             }
 

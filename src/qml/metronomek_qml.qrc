@@ -1,6 +1,6 @@
 <RCC>
   <qresource prefix="/">
-    <file>MainWindow.qml</file>
+<!--    <file>MainWindow.qml</file>
     <file>Logo.qml</file>
     <file>MainMenuButton.qml</file>
     <file>MainDrawerContent.qml</file>
@@ -26,7 +26,7 @@
     <file>Tdialog.qml</file>
     <file>LinkText.qml</file>
     <file>SidePop.qml</file>
-    <file>HelpPop.qml</file>
+    <file>HelpPop.qml</file>-->
 
     <file>qtquickcontrols2.conf</file>
     <file>+android/qtquickcontrols2.conf</file>

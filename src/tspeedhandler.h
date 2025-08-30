@@ -5,7 +5,9 @@
 #ifndef TSPEEDHANDLER_H
 #define TSPEEDHANDLER_H
 
+#include "ttempopart.h"
 #include <QtCore/qobject.h>
+#include <QtQml/qqmlregistration.h>
 
 class TtempoPart;
 
@@ -17,6 +19,8 @@ class TtempoPart;
 class TrtmComposition : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(Composition)
+    QML_UNCREATABLE("")
 
     Q_PROPERTY(QString title READ title WRITE setTitle NOTIFY titleChanged)
     Q_PROPERTY(QList<TtempoPart *> parts READ parts NOTIFY partsChanged)
@@ -81,6 +85,8 @@ private:
 class TspeedHandler : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(SpeedHandler)
+    QML_UNCREATABLE("")
 
     Q_PROPERTY(QList<TrtmComposition *> compositions READ compositions NOTIFY compositionsChanged)
     Q_PROPERTY(TrtmComposition *currComp READ currComp NOTIFY currCompChanged)

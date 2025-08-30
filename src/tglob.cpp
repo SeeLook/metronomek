@@ -54,8 +54,6 @@ Tglob::Tglob(QObject *parent)
     m_stationary = m_settings->value(QStringLiteral("pendulumStationary"), false).toBool();
     m_lang = m_settings->value(QStringLiteral("language"), QString()).toString();
 
-    qmlRegisterType<TmetroShape>("Metronomek", 1, 0, "TmetroShape");
-
     qRegisterMetaType<Ttempo>();
     createTempoList();
 }

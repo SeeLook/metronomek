@@ -5,6 +5,7 @@
 #ifndef TNUMERALSPECTRUM_H
 #define TNUMERALSPECTRUM_H
 
+#include <QtQml/qqmlregistration.h>
 #include <QtQuick/qquickpainteditem.h>
 
 class TsoundData;
@@ -15,6 +16,8 @@ class TsoundData;
 class TnumeralSpectrum : public QQuickPaintedItem
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(NumeralSpectrum)
+
     Q_PROPERTY(int nr READ nr WRITE setNr NOTIFY nrChanged)
     Q_PROPERTY(QString recMessage READ recMessage NOTIFY recMessageChanged)
 
@@ -42,6 +45,7 @@ signals:
 
 protected:
     void setRecMessage(const QString &m);
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
     int m_nr = -1;

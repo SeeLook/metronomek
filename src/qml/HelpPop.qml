@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import Metronomek
 
 SidePop {
     id: hPop
@@ -33,8 +34,7 @@ SidePop {
             wrapMode: Text.WordWrap
         }
 
-        ScrollBar.vertical: ScrollBar {
-        }
+        ScrollBar.vertical: ScrollBar {}
 
     }
 

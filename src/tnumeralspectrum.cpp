@@ -17,9 +17,7 @@ TnumeralSpectrum::TnumeralSpectrum(QQuickItem *parent)
     : QQuickPaintedItem(parent)
 {
     setAntialiasing(true);
-    connect(qApp, &QGuiApplication::paletteChanged, this, [=] {
-        update();
-    });
+    qApp->installEventFilter(this);
 }
 
 TnumeralSpectrum::~TnumeralSpectrum()
@@ -95,4 +93,12 @@ void TnumeralSpectrum::setRecMessage(const QString &m)
 {
     m_recMessage = m;
     emit recMessageChanged();
+}
+
+bool TnumeralSpectrum::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == qApp && event->type() == QEvent::ApplicationPaletteChange) {
+        update();
+    }
+    return QObject::eventFilter(watched, event);
 }

@@ -3,7 +3,7 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 import QtQuick
-import QtQuick.Controls
+import Metronomek
 
 Rectangle {
     id: dragDel

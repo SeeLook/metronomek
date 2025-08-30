@@ -5,7 +5,9 @@
 #ifndef TCOUNTINGMANAGER_H
 #define TCOUNTINGMANAGER_H
 
+#include "tnumeralspectrum.h"
 #include <QtCore/qobject.h>
+#include <QtQml/qqmlregistration.h>
 
 class TsoundData;
 class TabstractAudioDevice;
@@ -20,6 +22,8 @@ class QFile;
 class TcountingManager : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(CountManager)
+    QML_UNCREATABLE("")
 
     Q_PROPERTY(bool downloading READ downloading NOTIFY downloadingChanged)
     Q_PROPERTY(int localModelId READ localModelId WRITE setLocalModelId NOTIFY localModelIdChanged)

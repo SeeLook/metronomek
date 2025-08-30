@@ -3,6 +3,7 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 import Metronomek
+import Metronomek.Core
 import QtQuick
 import QtQuick.Controls
 
@@ -25,7 +26,7 @@ Tdialog {
     }
     onHelpRequested: moreMenu.open()
     onReset: {
-        Qt.createComponent("qrc:/CountingLangPop.qml").createObject(mainWindow);
+        Qt.createComponent("Metronomek.Core", "CountingLangPop").createObject(mainWindow);
     }
 
     ListView {
@@ -193,7 +194,7 @@ Tdialog {
         MenuItem {
             text: qsTranslate("QShortcut", "Help")
             onTriggered: {
-                Qt.createComponent("qrc:/HelpPop.qml").createObject(mainWindow, {
+                Qt.createComponent("Metronomek.Core", "HelpPop").createObject(mainWindow, {
                     "visible": true,
                     "helpText": "<b>" + GLOB.TR("VerbalCountPage", "Prepare own verbal counting") + ":</b>" + "<ul><li>" + qsTr("record every single numeral") + "</li><li>" + qsTr("or import wav file with it prepared in other software") + "</li><li>" + qsTr("or import wav file with all 12 numerals (Actions -> Load from file)") + "</li></ul><br><b>" + qsTr("CLUES") + ":</b>" + "<ul><li>" + qsTr("pronounce words quickly, not longer than 300 ms") + "</li><li>" + qsTr("accent one of the word syllables") + "</li><li>" + qsTr("imported wav files has to be 48000 Hz / 16 bit") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
                 });

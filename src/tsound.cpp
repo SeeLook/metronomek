@@ -12,7 +12,6 @@
 // #include "taudiobuffer.h"
 #include "tcountingmanager.h"
 #include "tglob.h"
-#include "tnumeralspectrum.h"
 #include "tspeedhandler.h"
 #include "ttempopart.h"
 
@@ -69,12 +68,6 @@ Tsound::Tsound(QObject *parent)
         return;
     }
     m_instance = this;
-
-    qmlRegisterUncreatableType<TtempoPart>("Metronomek", 1, 0, "TempoPart", QStringLiteral("Creating TempoPart in QML not allowed!"));
-    qmlRegisterUncreatableType<TspeedHandler>("Metronomek", 1, 0, "SpeedHandler", QStringLiteral("Creating SpeedHandler in QML not allowed!"));
-    qmlRegisterUncreatableType<TrtmComposition>("Metronomek", 1, 0, "Composition", QStringLiteral("Creating Composition in QML not allowed!"));
-    qmlRegisterUncreatableType<TcountingManager>("Metronomek", 1, 0, "CountManager", QStringLiteral("Creating CountManager in QML not allowed!"));
-    qmlRegisterType<TnumeralSpectrum>("Metronomek", 1, 0, "NumeralSpectrum");
 
     setTempo(qBound(40, GLOB->settings()->value(QStringLiteral("tempo"), 60).toInt(), 240));
     m_staticTempo = m_tempo;

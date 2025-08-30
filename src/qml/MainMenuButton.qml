@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import Metronomek
 
 AbstractButton {
     id: menuButt
@@ -19,13 +20,13 @@ AbstractButton {
     Drawer {
         id: drawer
 
+        parent: mainWindow.contentItem
         width: Math.min(mainWindow.width * 0.7, fm.height * 20)
         height: mainWindow.height
         onAboutToShow: {
             mainWindow.stopMetronome();
             if (!drawerContent)
-                drawerContent = Qt.createComponent("qrc:/MainDrawerContent.qml").createObject(drawer.contentItem);
-
+                drawerContent = Qt.createComponent("Metronomek.Core", "MainDrawerContent").createObject(drawer.contentItem);
         }
     }
 

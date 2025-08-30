@@ -3,11 +3,12 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 import Metronomek
+import Metronomek.Core
 import QtQuick
 
 Item {
     property Composition currComp: SOUND.speedHandler().currComp
-    property var tp: currComp.getPart(partId)
+    property var tp: mainWindow && currComp ? currComp.getPart(partId) : null
     property bool rall: tp && tp.initTempo > tp.targetTempo
 
     width: metro.width
@@ -49,7 +50,7 @@ Item {
         x: parent.width - metro.width / 25
         width: metro.width / 30
         height: mainWindow.height * 0.7
-        model: currComp.partsCount
+        model: currComp?.partsCount
         currentIndex: partId
         contentY: currentItem ? currentItem.y + (currentItem.tp.infinite ? currentItem.height / 2 : (beatNr - 1) * currentItem.factor) - height / 4 : 0
         cacheBuffer: height

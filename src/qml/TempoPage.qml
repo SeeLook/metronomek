@@ -3,6 +3,7 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 import Metronomek
+import Metronomek.Core
 import QtQuick
 import QtQuick.Controls
 
@@ -52,7 +53,7 @@ Tdialog {
             model: speedHandler ? speedHandler.compositions : null
             textRole: "title"
             Component.onCompleted: combo = this
-            onActivated: {
+            onActivated: (index) => {
                 speedHandler.setComposition(index);
                 displayText = currentText;
             }
@@ -191,7 +192,6 @@ Tdialog {
         property TempoPart tp: null
         property real extraH: topPadding + bottomPadding + implicitFooterHeight + implicitHeaderHeight
 
-        scale: 0
         height: Math.min(extraH + tCol.height, tempoPage.height)
         width: tCol.width + leftPadding + rightPadding
         title: pop.tp ? pop.tp.tempoText : ""
@@ -222,7 +222,7 @@ Tdialog {
 
                         text: qsTr("initial tempo").replace(" ", "<br>")
                         tempo: pop.tp ? pop.tp.initTempo : 40
-                        onTempoModified: {
+                        onTempoModified: (t) => {
                             if (pop.tp) {
                                 pop.tp.initTempo = t;
                             }
@@ -234,7 +234,7 @@ Tdialog {
 
                         text: qsTr("target tempo").replace(" ", "<br>")
                         tempo: pop.tp ? pop.tp.targetTempo : 40
-                        onTempoModified: {
+                        onTempoModified: (t) => {
                             if (pop.tp) {
                                 pop.tp.targetTempo = t;
                             }
@@ -369,6 +369,7 @@ Tdialog {
         enter: Transition {
             NumberAnimation {
                 property: "scale"
+                from: 0
                 to: 1
             }
 

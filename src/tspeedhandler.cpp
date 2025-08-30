@@ -5,7 +5,6 @@
 #include "tspeedhandler.h"
 #include "tglob.h"
 #include "tsound.h"
-#include "ttempopart.h"
 
 #include <QtCore/qdir.h>
 #include <QtCore/qfile.h>

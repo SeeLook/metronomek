@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Controls
+import Metronomek
 
 AbstractButton {
     id: butt

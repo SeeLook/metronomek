@@ -5,11 +5,13 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Window
+import Metronomek
 
 Window {
     // PauseAnimation {
-    //   duration: 500; running: true
-    //   onFinished: Qt.createComponent("qrc:/VerbalCountPage.qml").createObject(mainWindow)
+    //     duration: 500
+    //     running: true
+    //     onFinished: Qt.createComponent("Metronomek.Core", "TempoPage").createObject(mainWindow)
     // }
 
     id: mainWindow
@@ -55,7 +57,7 @@ Window {
     }
 
     function nextTempoPop() {
-        var ntp = Qt.createComponent("qrc:/NextTempoPop.qml").createObject(mainWindow);
+        var ntp = Qt.createComponent("Metronomek.Core", "NextTempoPop").createObject(mainWindow);
         ntp.open();
         ntp.done.connect(function() {
             SOUND.switchInfinitePart();
@@ -73,7 +75,7 @@ Window {
     function varTempoSlot() {
         if (SOUND.variableTempo) {
             if (!compView)
-                compView = Qt.createComponent("qrc:/CompositionView.qml").createObject(mainWindow.contentItem);
+                compView = Qt.createComponent("Metronomek.Core", "CompositionView").createObject(mainWindow.contentItem);
 
         } else {
             if (compView)
@@ -418,7 +420,7 @@ Window {
             onClicked: {
                 if (SOUND.variableTempo) {
                     stopMetronome();
-                    Qt.createComponent("qrc:/TempoPage.qml").createObject(mainWindow);
+                    Qt.createComponent("Metronomek.Core", "TempoPage").createObject(mainWindow);
                 } else {
                     tapTempo();
                 }
@@ -452,7 +454,7 @@ Window {
         visible: !meterDrewer || !meterDrewer.visible
         onClicked: {
             if (!meterDrewer)
-                meterDrewer = Qt.createComponent("qrc:/MeterDrawer.qml").createObject(mainWindow);
+                meterDrewer = Qt.createComponent("Metronomek.Core", "MeterDrawer").createObject(mainWindow.contentItem);
 
             meterDrewer.open();
         }

@@ -24,6 +24,8 @@
 #include <QtWidgets/qapplication.h>
 #endif
 
+using namespace Qt::Literals::StringLiterals;
+
 int main(int argc, char *argv[])
 {
     // qputenv("QT_QUICK_CONTROLS_STYLE", "Basic"); // reset style environment var - other styles can cause crashes
@@ -93,20 +95,30 @@ int main(int argc, char *argv[])
     auto sound = new Tsound();
 
     auto engine = new QQmlApplicationEngine();
-    const QUrl url(QStringLiteral("qrc:/MainWindow.qml"));
-    QObject::connect(
-        engine,
-        &QQmlApplicationEngine::objectCreated,
-        app,
-        [url](QObject *obj, const QUrl &objUrl) {
-            if (!obj && url == objUrl)
-                QCoreApplication::exit(-1);
-        },
-        Qt::QueuedConnection);
+    // const QUrl url(QStringLiteral("qrc:/MainWindow.qml"));
+    // QObject::connect(
+    //     engine,
+    //     &QQmlApplicationEngine::objectCreated,
+    //     app,
+    //     [url](QObject *obj, const QUrl &objUrl) {
+    //         if (!obj && url == objUrl)
+    //             QCoreApplication::exit(-1);
+    //     },
+    //     Qt::QueuedConnection);
 
-    engine->rootContext()->setContextProperty(QStringLiteral("GLOB"), glob);
-    engine->rootContext()->setContextProperty(QStringLiteral("SOUND"), sound);
-    engine->load(url);
+    qmlRegisterSingletonType<Tglob>("Metronomek", 1, 0, "GLOB", [&](QQmlEngine *, QJSEngine *) -> QObject * {
+        return glob;
+    });
+
+    qmlRegisterSingletonType<Tglob>("Metronomek", 1, 0, "SOUND", [&](QQmlEngine *, QJSEngine *) -> QObject * {
+        return sound;
+    });
+
+    engine->loadFromModule("Metronomek.Core", u"MainWindow"_s);
+    if (engine->rootObjects().isEmpty()) {
+        return -1;
+    }
+    // engine->load(url);
 
     qDebug() << "==== METRONOMEK LAUNCH TIME" << startElapsed.nsecsElapsed() / 1000000.0 << "[ms] ====";
 
@@ -142,7 +154,6 @@ int main(int argc, char *argv[])
 
     int execCode = app->exec();
 
-    delete engine;
     delete sound;
     delete glob;
     delete app;

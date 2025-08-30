@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2021-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "ttempopart.h"
@@ -139,11 +139,11 @@ QString TtempoPart::tempoText() const
             speedUpOrDown = tr("accelerando", "This is official, glob wide music term, so it shouldn't be translated.");
         else
             speedUpOrDown = tr("rallentando", "This is official, glob wide music term, so it shouldn't be translated.");
-        speedUpOrDown.prepend(QLatin1String("  <i>("));
-        speedUpOrDown.append(QLatin1String(")</i>"));
+        speedUpOrDown.prepend(QLatin1String("  ("));
+        speedUpOrDown.append(QLatin1String(")"));
     }
-    return QString("<b><font size=\"5\">%1. </b></font>    ").arg(m_nr) + tr("Tempo")
-        + QString(": <b>%1%2</b>").arg(m_initTempo).arg(ch ? QString(" -> %1").arg(m_targetTempo) : QString()) + speedUpOrDown;
+    return QString("%1. ").arg(m_nr) + tr("Tempo") + QString(": %1%2").arg(m_initTempo).arg(ch ? QString(" -> %1").arg(m_targetTempo) : QString())
+        + speedUpOrDown;
 }
 
 void TtempoPart::writeToXML(QXmlStreamWriter &xml)

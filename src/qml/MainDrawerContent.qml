@@ -4,6 +4,8 @@
 
 import QtQuick
 import QtQuick.Controls
+import Metronomek
+import Metronomek.Core
 
 Flickable {
     // Column
@@ -43,7 +45,7 @@ Flickable {
             onClicked: beatMenu.popup()
             onPressAndHold: {
                 SOUND.createCountingManager();
-                Qt.createComponent("qrc:/VerbalCountPage.qml").createObject(mainWindow);
+                Qt.createComponent("Metronomek.Core", "VerbalCountPage").createObject(mainWindow);
                 drawer.close();
             }
 
@@ -132,7 +134,7 @@ Flickable {
             onToggled: {
                 SOUND.variableTempo = checked;
                 if (checked) {
-                    Qt.createComponent("qrc:/TempoPage.qml").createObject(mainWindow);
+                    Qt.createComponent("Metronomek.Core", "TempoPage").createObject(mainWindow);
                     drawer.close();
                 }
             }
@@ -141,7 +143,7 @@ Flickable {
         DrawerButton {
             text: qsTr("settings")
             onClicked: {
-                Qt.createComponent("qrc:/SettingsPage.qml").createObject(mainWindow);
+                Qt.createComponent("Metronomek.Core", "SettingsPage").createObject(mainWindow);
                 drawer.close();
             }
         }
@@ -152,7 +154,7 @@ Flickable {
             text: qsTr("about the app")
             onClicked: {
                 if (!infoPage)
-                    infoPage = Qt.createComponent("qrc:/InfoPage.qml").createObject(mainWindow);
+                    infoPage = Qt.createComponent("Metronomek.Core", "InfoPage").createObject(mainWindow);
 
                 infoPage.open();
                 drawer.close();

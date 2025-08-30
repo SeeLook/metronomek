@@ -4,6 +4,7 @@
 
 import QtQuick
 import QtQuick.Shapes
+import Metronomek
 
 Rectangle {
     id: logo
