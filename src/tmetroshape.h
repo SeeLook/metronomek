@@ -29,6 +29,9 @@ public:
     ~TmetroShape() override { }
 
     void paint(QPainter *painter) override;
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
 };
 
 #endif // TMETROSHAPE_H

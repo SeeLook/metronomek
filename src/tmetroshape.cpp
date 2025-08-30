@@ -12,9 +12,7 @@ TmetroShape::TmetroShape(QQuickItem *parent)
     : QQuickPaintedItem(parent)
 {
     setAntialiasing(true);
-    connect(qApp, &QGuiApplication::paletteChanged, this, [=] {
-        update();
-    });
+    qApp->installEventFilter(this);
 }
 
 void TmetroShape::paint(QPainter *painter)
@@ -25,4 +23,12 @@ void TmetroShape::paint(QPainter *painter)
     painter->setFont(f);
     painter->setPen(qApp->palette().text().color());
     painter->drawText(QRect(0, 0, static_cast<int>(width()), static_cast<int>(height())), Qt::AlignLeft, QStringLiteral("\u00A3"));
+}
+
+bool TmetroShape::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == qApp && event->type() == QEvent::ApplicationPaletteChange) {
+        update();
+    }
+    return QObject::eventFilter(watched, event);
 }
