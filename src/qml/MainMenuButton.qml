@@ -20,12 +20,12 @@ AbstractButton {
         id: drawer
 
         parent: mainWindow.contentItem
-        width: Math.min(mainWindow.width * 0.7, fm.height * 20)
+        width: Math.min(mainWindow.width * 0.7, FM.height * 20)
         height: mainWindow.height
         onAboutToShow: {
             mainWindow.stopMetronome();
-            if (!drawerContent)
-                drawerContent = Qt.createComponent("Metronomek.Core", "MainDrawerContent").createObject(drawer.contentItem);
+            if (!menuButt.drawerContent)
+                menuButt.drawerContent = Qt.createComponent("Metronomek.Core", "MainDrawerContent").createObject(drawer.contentItem);
         }
     }
 

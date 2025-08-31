@@ -34,7 +34,7 @@ Item {
 
     Rectangle {
         z: 10
-        x: partList.x - fm.height * 0.5
+        x: partList.x - FM.height * 0.5
         y: partList.height / 4 - height
         visible: inMotion
         color: ActivPalette.text
@@ -57,8 +57,8 @@ Item {
         delegate: Rectangle {
             property TempoPart tp: currComp.getPart(index)
             property real factor: {
-                if (tp && tp.beats * GLOB.fontSize() < fm.height * 4)
-                    return (fm.height * 4) / tp.beats;
+                if (tp && tp.beats * GLOB.fontSize() < FM.height * 4)
+                    return (FM.height * 4) / tp.beats;
                 else if (tp && tp.beats * GLOB.fontSize() > partList.height * 0.9)
                     return (partList.height * 0.9) / tp.beats;
                 else
@@ -82,7 +82,7 @@ Item {
                 color: ActivPalette.text
                 text: tp && tp.initTempo > tp.targetTempo ? "rall." : "accel."
                 x: -width - GLOB.fontSize() / 2
-                y: fm.height * 2
+                y: FM.height * 2
                 transformOrigin: Item.Right
                 scale: visible && SOUND.playing && index == partId && beatNr < 6 ? 3 : 1
 
@@ -106,12 +106,12 @@ Item {
 
     TipRect {
         parent: mainWindow.contentItem
-        y: inMotion && tp && tp.initTempo !== tp.targetTempo ? -fm.height / 2 : -height - fm.height
-        width: Math.min(mainWindow.width, fm.height * 60)
+        y: inMotion && tp && tp.initTempo !== tp.targetTempo ? -FM.height / 2 : -height - FM.height
+        width: Math.min(mainWindow.width, FM.height * 60)
         height: mainWindow.height * 0.06
         x: (parent.width - width) / 2
         color: ActivPalette.varTempo
-        radius: fm.height
+        radius: FM.height
 
         Text {
             x: (parent.width - width) / 2

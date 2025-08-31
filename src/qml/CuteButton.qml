@@ -32,7 +32,7 @@ AbstractButton {
         id: bgRect
 
         radius: height / 2
-        raised: !innerPress
+        raised: !butt.innerPress
 
         Text {
             font.pixelSize: butt.height / 3

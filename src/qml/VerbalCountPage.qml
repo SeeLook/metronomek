@@ -99,7 +99,7 @@ Tdialog {
 
             header: Rectangle {
                 width: parent.width
-                height: fm.height * 1.5
+                height: FM.height * 1.5
                 color: ActivPalette.text
 
                 Text {
@@ -120,7 +120,7 @@ Tdialog {
 
                 dragEnabled: index > 0
                 width: parent ? parent.width : 0
-                height: fm.height * 3
+                height: FM.height * 3
                 color: Qt.tint(index % 2 ? ActivPalette.base : ActivPalette.alternateBase, GLOB.alpha(toDel ? "red" : ActivPalette.highlight, pressed || containsMouse ? 50 : (cntMan?.localModelId === index ? 20 : 0)))
                 onClicked: cntMan.localModelId = index
                 onRemoved: {
@@ -130,10 +130,10 @@ Tdialog {
 
                 Row {
                     anchors.verticalCenter: parent.verticalCenter
-                    spacing: fm.height / 2
+                    spacing: FM.height / 2
 
                     Rectangle {
-                        width: fm.height * 4.5
+                        width: FM.height * 4.5
                         height: bgRect.height
                         color: cntMan?.localModelId == index ? ActivPalette.highlight : "transparent"
 
@@ -152,15 +152,15 @@ Tdialog {
 
                     Column {
                         anchors.verticalCenter: parent.verticalCenter
-                        width: bgRect.width - fm.height * 5
+                        width: bgRect.width - FM.height * 5
 
                         Text {
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
                             color: ActivPalette.text
                             text: modelData ? modelData.langName : ""
-                            font.pixelSize: fm.height
-                            minimumPixelSize: fm.height / 2
+                            font.pixelSize: FM.height
+                            minimumPixelSize: FM.height / 2
                             fontSizeMode: Text.HorizontalFit
                             elide: Text.ElideRight
                         }
@@ -170,8 +170,8 @@ Tdialog {
                             horizontalAlignment: Text.AlignHCenter
                             color: ActivPalette.text
                             text: modelData ? modelData.cntName : ""
-                            font.pixelSize: fm.height * 1.1
-                            minimumPixelSize: fm.height * 0.7
+                            font.pixelSize: FM.height * 1.1
+                            minimumPixelSize: FM.height * 0.7
                             fontSizeMode: Text.HorizontalFit
                             elide: Text.ElideRight
                         }
@@ -186,7 +186,7 @@ Tdialog {
 
         Rectangle {
             width: vCntPage.width - GLOB.fontSize()
-            height: fm.height / 2
+            height: FM.height / 2
             color: ActivPalette.text
         }
 
@@ -198,7 +198,7 @@ Tdialog {
             id: onlineList
 
             width: vCntPage.width - GLOB.fontSize()
-            height: vCntPage.height - vCntPage.implicitFooterHeight - localList.height - fm.height
+            height: vCntPage.height - vCntPage.implicitFooterHeight - localList.height - FM.height
             spacing: 1
             clip: true
             currentIndex: -1
@@ -211,7 +211,7 @@ Tdialog {
 
             header: Rectangle {
                 width: parent.width
-                height: fm.height * 1.5
+                height: FM.height * 1.5
                 color: ActivPalette.highlight
 
                 Row {
@@ -232,11 +232,11 @@ Tdialog {
                 property var modelEntry: onlineMod.get(index)
 
                 width: parent.width
-                height: fm.height * 2.5
+                height: FM.height * 2.5
                 color: ma.pressed || ma.containsMouse ? Qt.tint(ActivPalette.base, GLOB.alpha(ActivPalette.highlight, 50)) : (index % 2 ? ActivPalette.base : ActivPalette.alternateBase)
 
                 Text {
-                    x: fm.height / 2
+                    x: FM.height / 2
                     anchors.verticalCenter: parent.verticalCenter
                     color: ActivPalette.text
                     text: modelEntry.langID
@@ -248,8 +248,8 @@ Tdialog {
                 }
 
                 Text {
-                    x: fm.height * 3.5
-                    width: bgRect.width - fm.height * 9
+                    x: FM.height * 3.5
+                    width: bgRect.width - FM.height * 9
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap
                     anchors.verticalCenter: parent.verticalCenter
@@ -261,7 +261,7 @@ Tdialog {
                     anchors {
                         right: parent.right
                         verticalCenter: parent.verticalCenter
-                        rightMargin: fm.height / 4
+                        rightMargin: FM.height / 4
                     }
 
                     Text {
@@ -276,7 +276,7 @@ Tdialog {
 
                         font {
                             family: "Metronomek"
-                            pixelSize: fm.height * 1.7
+                            pixelSize: FM.height * 1.7
                         }
 
                     }
@@ -308,8 +308,8 @@ Tdialog {
         id: progBarComp
 
         ProgressBar {
-            width: parent.width - fm.height
-            height: fm.height / 3
+            width: parent.width - FM.height
+            height: FM.height / 3
             z: 50000
             indeterminate: true
 
@@ -320,10 +320,10 @@ Tdialog {
 
             CuteButton {
                 visible: cntMan.downloading
-                width: fm.height * 5
-                height: fm.height * 2
-                x: parent.width - fm.height * 5
-                y: -fm.height * 2
+                width: FM.height * 5
+                height: FM.height * 2
+                x: parent.width - FM.height * 5
+                y: -FM.height * 2
                 text: qsTranslate("QPlatformTheme", "Abort")
                 bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("red", 40))
                 onClicked: cntMan.abortDownload()
@@ -343,7 +343,7 @@ Tdialog {
             Component.onCompleted: {
                 var maxW = 0;
                 for (var m = 0; m < count; ++m) maxW = Math.max(maxW, itemAt(m).width)
-                width = Math.min(vCntPage.width - fm.height, maxW + fm.height * 2);
+                width = Math.min(vCntPage.width - FM.height, maxW + FM.height * 2);
             }
 
             MenuItem {

@@ -29,7 +29,7 @@ Flickable {
         }
 
         Rectangle {
-            width: parent.width - fm.height / 2
+            width: parent.width - FM.height / 2
             height: 1
             color: ActivPalette.text
 
@@ -52,7 +52,7 @@ Flickable {
                 id: beatMenu
 
                 parent: mainWindow.contentItem
-                width: Math.min(drawCol.width, fm.height * 20)
+                width: Math.min(drawCol.width, FM.height * 20)
 
                 Repeater {
                     model: SOUND.beatTypeCount() + 1
@@ -83,7 +83,7 @@ Flickable {
                 id: ringMenu
 
                 parent: mainWindow.contentItem
-                width: Math.min(drawCol.width, fm.height * 20)
+                width: Math.min(drawCol.width, FM.height * 20)
 
                 Repeater {
                     model: SOUND.ringTypeCount()

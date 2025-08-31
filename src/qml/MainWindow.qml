@@ -105,10 +105,6 @@ Window {
         }
     }
 
-    FontMetrics {
-        id: fm
-    }
-
     MetroImage {
         id: metro
 
@@ -416,7 +412,7 @@ Window {
 
             border {
                 color: ActivPalette.varTempo
-                width: SOUND.variableTempo ? fm.height / 6 : 0
+                width: SOUND.variableTempo ? FM.height / 6 : 0
             }
 
         }
@@ -437,7 +433,7 @@ Window {
         scale: (parent.height * 0.05) / height
         transformOrigin: Item.Right
         width: height * 3
-        height: fm.height * 2
+        height: FM.height * 2
         visible: !meterDrewer || !meterDrewer.visible
         onClicked: {
             if (!meterDrewer)
@@ -452,7 +448,7 @@ Window {
 
             Row {
                 anchors.centerIn: parent
-                spacing: fm.height / 2
+                spacing: FM.height / 2
 
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
@@ -467,7 +463,7 @@ Window {
                     color: ActivPalette.text
 
                     font {
-                        pixelSize: fm.height * 1.4
+                        pixelSize: FM.height * 1.4
                         bold: true
                     }
 

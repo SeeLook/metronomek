@@ -12,7 +12,7 @@ AbstractButton {
     property bool innerPress: pressAnim.running || pressed
 
     implicitWidth: parent.width
-    implicitHeight: fm.height * 2.4
+    implicitHeight: FM.height * 2.4
     onPressed: pressAnim.start()
     focusPolicy: Qt.NoFocus
 
@@ -28,10 +28,10 @@ AbstractButton {
         Text {
             width: parent.width - (dButt.checkable ? (chLoader.item ? chLoader.item.width : 0) : 0)
             anchors.verticalCenter: parent.verticalCenter
-            leftPadding: fm.height
+            leftPadding: FM.height
             text: dButt.text
-            font.pixelSize: fm.height * 0.9
-            minimumPixelSize: fm.height / 2
+            font.pixelSize: FM.height * 0.9
+            minimumPixelSize: FM.height / 2
             fontSizeMode: Text.Fit
             textFormat: Text.StyledText
             elide: Text.ElideRight
@@ -69,7 +69,7 @@ AbstractButton {
                     color: bgColor
                     x: -width / 10
                     y: (parent.height - height) / 2
-                    width: fm.height * 1.6
+                    width: FM.height * 1.6
                     height: width
 
                     Rectangle {
@@ -99,7 +99,7 @@ AbstractButton {
         }
 
         Rectangle {
-            width: parent.width - fm.height / 2
+            width: parent.width - FM.height / 2
             height: 1
             color: ActivPalette.text
 

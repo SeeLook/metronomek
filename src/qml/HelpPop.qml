@@ -22,13 +22,13 @@ SidePop {
         height: Math.min(contentHeight, mainWindow.height * 0.75)
         x: (hPop.width - width) / 2
         contentWidth: width
-        contentHeight: hText.height + fm.height
+        contentHeight: hText.height + FM.height
 
         LinkText {
             id: hText
 
-            x: fm.height / 2
-            width: parent.width - fm.height
+            x: FM.height / 2
+            width: parent.width - FM.height
             color: ActivPalette.text
             wrapMode: Text.WordWrap
         }

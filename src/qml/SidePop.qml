@@ -15,8 +15,8 @@ Popup {
 
     signal done()
 
-    padding: fm.height / 2
-    width: Math.min(mainWindow.width, fm.height * 60)
+    padding: FM.height / 2
+    width: Math.min(mainWindow.width, FM.height * 60)
     height: mainWindow.height * 0.2
     x: (parent.width - width) / 2
     y: parent.height + height
@@ -31,7 +31,7 @@ Popup {
         NumberAnimation {
             duration: 300
             property: "y"
-            to: mainWindow.height - height + fm.height
+            to: mainWindow.height - height + FM.height
         }
 
     }
@@ -49,7 +49,7 @@ Popup {
         id: bg
 
         color: ActivPalette.varTempo
-        radius: fm.height
+        radius: FM.height
     }
 
 }

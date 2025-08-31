@@ -13,7 +13,7 @@ SidePop {
         id: nextText
 
         x: (parent.width - width) / 2
-        scale: (metro.width - fm.height * 4) / width
+        scale: (metro.width - FM.height * 4) / width
         transformOrigin: Item.Top
         color: ActivPalette.text
         text: qsTr("Next tempo")

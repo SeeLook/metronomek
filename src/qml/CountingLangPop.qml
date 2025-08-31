@@ -13,7 +13,7 @@ SidePop {
     visible: true
     modal: true
     bgColor: Qt.tint(ActivPalette.window, GLOB.alpha(ActivPalette.highlight, 30))
-    height: col.height + fm.height * 2
+    height: col.height + FM.height * 2
     Component.onCompleted: {
         var currL = cntMan.currentLanguage();
         for (var l = 0; l < langModel.length; ++l) {
@@ -36,20 +36,20 @@ SidePop {
         id: col
 
         x: (parent.width - width) / 2
-        spacing: fm.height / 2
+        spacing: FM.height / 2
 
         TextField {
             id: cntName
 
             anchors.horizontalCenter: parent.horizontalCenter
-            width: countPop.width - fm.height * 4
+            width: countPop.width - FM.height * 4
             placeholderText: qsTranslate("QDirModel", "Name")
             horizontalAlignment: TextInput.AlignHCenter
         }
 
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: fm.height
+            spacing: FM.height
 
             Text {
                 id: lt
@@ -62,18 +62,18 @@ SidePop {
             ComboBox {
                 id: langCombo
 
-                width: countPop.width - fm.height * 4 - lt.width
+                width: countPop.width - FM.height * 4 - lt.width
                 model: langList
                 textRole: "langName"
                 valueRole: "langID"
-                popup.width: GLOB.isAndroid() ? countPop.width - fm.height * 4 : langCombo.width
-                popup.x: -fm.height * 4
+                popup.width: GLOB.isAndroid() ? countPop.width - FM.height * 4 : langCombo.width
+                popup.x: -FM.height * 4
             }
 
         }
 
         Text {
-            width: countPop.width - 6 * fm.height
+            width: countPop.width - 6 * FM.height
             color: ActivPalette.text
             wrapMode: Text.WordWrap
             text: qsTr("Consider to share this counting audio data.")
@@ -81,7 +81,7 @@ SidePop {
 
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: fm.height
+            spacing: FM.height
 
             Button {
                 text: GLOB.TR("QPlatformTheme", "Save")

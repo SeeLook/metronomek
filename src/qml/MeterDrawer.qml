@@ -9,7 +9,7 @@ Drawer {
     id: mDrawer
 
     edge: Qt.RightEdge
-    width: fm.height * (GLOB.isAndroid() ? 4 : 5)
+    width: FM.height * (GLOB.isAndroid() ? 4 : 5)
     height: mainWindow.height
 
     Column {

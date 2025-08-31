@@ -38,7 +38,7 @@ Column {
             tDial.lastTime = currTime;
         }
 
-        width: Math.min(mainWindow.width, fm.height * 40) * 0.35
+        width: Math.min(mainWindow.width, FM.height * 40) * 0.35
         height: width
         anchors.horizontalCenter: parent.horizontalCenter
         from: 40
@@ -157,9 +157,9 @@ Column {
             color: ActivPalette.highlight
             x: (tDial.width - width) / 2
             y: tDial.height
-            width: tapText.width + fm.height / 2
-            height: tapText.height + fm.height / 2
-            radius: fm.height / 4
+            width: tapText.width + FM.height / 2
+            height: tapText.height + FM.height / 2
+            radius: FM.height / 4
 
             Text {
                 id: tapText

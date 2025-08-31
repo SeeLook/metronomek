@@ -36,6 +36,7 @@ set(METRONOMEK_SRC
 set(MERTONOMEK_QML_SINGLETONS
     qml/ActivPalette.qml
     qml/DisblPalette.qml
+    qml/FM.qml
 )
 
 set_source_files_properties(${MERTONOMEK_QML_SINGLETONS}

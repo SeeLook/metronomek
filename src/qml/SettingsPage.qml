@@ -205,7 +205,7 @@ Tdialog {
                 //           settPage.close()
 
                 width: settPage.width * 0.6
-                height: fm.height * 2.5
+                height: FM.height * 2.5
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTranslate("MainDrawerContent", "Verbal count")
                 onClicked: {

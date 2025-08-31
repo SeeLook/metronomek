@@ -28,7 +28,7 @@ Rectangle {
         parent: dragDel.parent
         text: qsTranslate("QLineEdit", "Delete")
         y: dragDel.y + (dragDel.height - height) / 2
-        x: dragDel.x > delText.width ? fm.height : dragDel.width - fm.height - width
+        x: dragDel.x > delText.width ? FM.height : dragDel.width - FM.height - width
         color: "red"
         font.bold: true
     }
@@ -44,17 +44,17 @@ Rectangle {
         drag.target: dragEnabled ? parent : null
         onPressed: wasDragged = false
         onPositionChanged: {
-            if (Math.abs(dragDel.x) > fm.height)
+            if (Math.abs(dragDel.x) > FM.height)
                 wasDragged = true;
 
         }
         onReleased: {
-            if (Math.abs(dragDel.x) > delText.width + fm.height) {
+            if (Math.abs(dragDel.x) > delText.width + FM.height) {
                 rmAnim.to = dragDel.x > 0 ? dragDel.width : -dragDel.width;
                 rmAnim.start();
             } else {
                 backAnim.start();
-                if (!wasDragged && Math.abs(dragDel.x) < fm.height)
+                if (!wasDragged && Math.abs(dragDel.x) < FM.height)
                     dragDel.clicked();
 
             }

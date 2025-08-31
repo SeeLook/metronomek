@@ -48,10 +48,10 @@ Tdialog {
             id: col
 
             width: parent.width
-            spacing: fm.height / 2
+            spacing: FM.height / 2
 
             LinkText {
-                width: parent.width - fm.height
+                width: parent.width - FM.height
                 wrapMode: Text.WordWrap
                 anchors.horizontalCenter: parent.horizontalCenter
                 textFormat: Text.StyledText
@@ -63,7 +63,7 @@ Tdialog {
             }
 
             LinkText {
-                width: parent.width - fm.height
+                width: parent.width - FM.height
                 wrapMode: Text.WordWrap
                 text: GLOB.aboutQt() + "<br><b><a href=\"https://qt.io\">https://qt.io</a></b><br>"
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -71,7 +71,7 @@ Tdialog {
             }
 
             LinkText {
-                width: parent.width - fm.height
+                width: parent.width - FM.height
                 wrapMode: Text.WordWrap
                 text: qsTr("Metronomek ticks and rings through<br><b>%1</b> library.").arg(GLOB.isAndroid() ? "<a href=\"https://github.com/google/oboe\">Oboe</a>" : "<a href=\"https://www.music.mcgill.ca/~gary/rtaudio/index.html\">RtAudio</a>")
                 anchors.horizontalCenter: parent.horizontalCenter

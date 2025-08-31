@@ -43,7 +43,7 @@ Tdialog {
             property alias spectrum: numSpec
 
             width: parent ? parent.width : 0
-            height: fm.height * 5 + (numList.currentIndex === index ? buttonsRect.height + fm.height / 3 : 0)
+            height: FM.height * 5 + (numList.currentIndex === index ? buttonsRect.height + FM.height / 3 : 0)
             color: Qt.tint(index % 2 ? ActivPalette.base : ActivPalette.alternateBase, GLOB.alpha(ActivPalette.highlight, numList.currentIndex === index ? 20 : 0))
 
             NumeralSpectrum {
@@ -52,12 +52,12 @@ Tdialog {
                 nr: index
                 clip: true
                 width: parent.width
-                height: fm.height * 5
+                height: FM.height * 5
                 Component.onCompleted: cntMan.addSpectrum(numSpec)
 
                 Text {
-                    x: fm.height / 4
-                    y: fm.height / 4
+                    x: FM.height / 4
+                    y: FM.height / 4
                     color: numList.currentIndex === index ? ActivPalette.highlight : ActivPalette.text
                     text: index + 1
                     style: Text.Outline
@@ -73,7 +73,7 @@ Tdialog {
                 Rectangle {
                     id: playTick
 
-                    width: fm.height / 4
+                    width: FM.height / 4
                     height: parent.height
                     color: ActivPalette.highlight
                     visible: playAnim.running
@@ -123,7 +123,7 @@ Tdialog {
 
                 CuteButton {
                     width: bgRect.width * 0.24
-                    height: fm.height * 2
+                    height: FM.height * 2
                     text: qsTranslate("QShortcut", "Play")
                     bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("green", 40))
                     onClicked: {
@@ -135,7 +135,7 @@ Tdialog {
                 CuteButton {
                     visible: !GLOB.isAndroid()
                     width: bgRect.width * 0.24
-                    height: fm.height * 2
+                    height: FM.height * 2
                     text: qsTr("Import")
                     bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("blue", 40))
                     onClicked: cntMan.getSingleWordFromFile(index)
@@ -143,12 +143,12 @@ Tdialog {
 
                 Item {
                     width: bgRect.width * (GLOB.isAndroid() ? 0.49 : 0.24)
-                    height: fm.height * 2
+                    height: FM.height * 2
                 }
 
                 CuteButton {
                     width: bgRect.width * 0.24
-                    height: fm.height * 2
+                    height: FM.height * 2
                     text: qsTr("Record")
                     bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("red", 40))
                     onClicked: cntMan.rec(index)
@@ -183,7 +183,7 @@ Tdialog {
 
             var maxW = 0;
             for (var m = 0; m < count; ++m) maxW = Math.max(maxW, itemAt(m).width)
-            width = Math.min(vCntEdit.width - fm.height * 3, maxW + 2 * fm.height);
+            width = Math.min(vCntEdit.width - FM.height * 3, maxW + 2 * FM.height);
         }
 
         MenuItem {
