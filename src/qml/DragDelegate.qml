@@ -3,7 +3,6 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 import QtQuick
-import Metronomek
 
 Rectangle {
     id: dragDel

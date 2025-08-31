@@ -4,6 +4,7 @@
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)            #
 ##############################################################################
 
+set(QT_QML_GENERATE_QMLLS_INI ON)
 add_executable(metronomek WIN32)
 
 if (APPLE) # Mac RPath
@@ -23,14 +24,10 @@ endif()
 
 set(METRONOMEK_SRC
     main.cpp
-    tglob.cpp
-    tsound.cpp
     tabstractaudiodevice.cpp
     tsounddata.cpp
-    tnumeralspectrum.cpp
     trtaudiodevice.cpp
     tgetfile.cpp
-    #taudiobuffer.h Android Qt Audio, TODO rather to remove
 
     qml/metronomek_qml.qrc
     ${CMAKE_SOURCE_DIR}/resources/metronomek_res.qrc
@@ -68,6 +65,11 @@ qt_add_qml_module(metronomek
         qml/HelpPop.qml
 
     SOURCES
+        tglob.cpp
+        tglob.h
+        tsound.cpp
+        tsound.h
+
         tmetroshape.cpp
         tmetroshape.h
         ttempopart.cpp
@@ -76,6 +78,8 @@ qt_add_qml_module(metronomek
         tspeedhandler.h
         tcountingmanager.cpp
         tcountingmanager.h
+        tnumeralspectrum.cpp
+        tnumeralspectrum.h
 
     DEPENDENCIES
         QtCore

@@ -15,6 +15,7 @@
 #include <QtCore/qrandom.h>
 #include <QtCore/qsettings.h>
 #include <QtCore/qstandardpaths.h>
+#include <QtCore/qtranslator.h>
 #include <QtGui/qfont.h>
 #include <QtGui/qguiapplication.h>
 #include <QtQml/qqmlengine.h>
@@ -56,6 +57,25 @@ Tglob::Tglob(QObject *parent)
 
     qRegisterMetaType<Ttempo>();
     createTempoList();
+
+#if defined(Q_OS_ANDROID)
+    QLocale loc(m_lang.isEmpty() ? QLocale::system().language() : QLocale(m_lang).language());
+    QString p = QStringLiteral("assets:/translations/");
+#elif defined(Q_OS_WIN)
+    QLocale loc(m_lang.isEmpty() ? QLocale::system().uiLanguages().first() : m_lang);
+    QString p = qApp->applicationDirPath() + QLatin1String("/translations/");
+#elif defined(Q_OS_MAC)
+    QLocale loc(m_lang.isEmpty() ? QLocale::system().uiLanguages().first() : m_lang);
+    QString p = qApp->applicationDirPath() + QLatin1String("/../Resources/translations/");
+#else
+    QLocale loc(QLocale(m_lang.isEmpty() ? qgetenv("LANG") : m_lang).language(), QLocale(m_lang.isEmpty() ? qgetenv("LANG") : m_lang).territory());
+    QString p = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/translations/");
+#endif
+    QLocale::setDefault(loc);
+
+    auto mTranslator = new QTranslator(this);
+    if (mTranslator->load(loc, QStringLiteral("metronomek_"), QString(), p))
+        GLOB->setLangLoaded(qApp->installTranslator(mTranslator));
 }
 
 Tglob::~Tglob()

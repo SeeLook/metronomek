@@ -5,7 +5,9 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Window
-import Metronomek
+// import Metronomek.Core
+
+pragma ComponentBehavior: Bound
 
 Window {
     // PauseAnimation {
@@ -57,9 +59,9 @@ Window {
     }
 
     function nextTempoPop() {
-        var ntp = Qt.createComponent("Metronomek.Core", "NextTempoPop").createObject(mainWindow);
-        ntp.open();
-        ntp.done.connect(function() {
+        let ntp = Qt.createComponent("Metronomek.Core", "NextTempoPop").createObject(mainWindow);
+        (ntp as NextTempoPop).open();
+        (ntp as NextTempoPop).done.connect(function() {
             SOUND.switchInfinitePart();
         });
     }
@@ -84,7 +86,7 @@ Window {
         }
     }
 
-    visibility: GLOB.isAndroid() && GLOB.fullScreen() ? "FullScreen" : "AutomaticVisibility"
+    visibility: GLOB.isAndroid() && GLOB.fullScreen() ? Window.FullScreen : Window.AutomaticVisibility
     visible: true
     width: GLOB.geometry.width
     height: GLOB.geometry.height
@@ -92,6 +94,7 @@ Window {
     y: GLOB.geometry.y
     title: qsTr("MetronomeK")
     color: activPal.base
+
     Component.onCompleted: {
         varTempoSlot();
     }
@@ -165,6 +168,7 @@ Window {
             model: GLOB.temposCount()
 
             Text {
+                required property int index
                 z: mainWindow.counterPressed && index === SOUND.nameTempoId ? 10 : 1
                 scale: mainWindow.counterPressed && index === SOUND.nameTempoId ? 3.5 : 1
                 x: Math.max(0, tLabel.x + (index % 2 ? (mainWindow.counterPressed && index === SOUND.nameTempoId ? -width : tLabel.width / 30) : (mainWindow.counterPressed && index === SOUND.nameTempoId ? tLabel.width : tLabel.width * 0.967 - width)))
@@ -211,14 +215,14 @@ Window {
             enabled: SOUND.playing
             width: parent.width
             height: parent.height * 0.5
-            onDoubleClicked: stopMetronome()
+            onDoubleClicked: mainWindow.stopMetronome()
         }
 
         Rectangle {
             id: pendulum
 
             z: 5
-            color: leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? activPal.base : GLOB.valueColor(activPal.text, GLOB.stationary ? 40 : 0)))
+            color: mainWindow.leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? activPal.base : GLOB.valueColor(activPal.text, GLOB.stationary ? 40 : 0)))
             width: parent.width / 20
             height: parent.height * 0.6
             x: parent.width * 0.3969
@@ -241,15 +245,15 @@ Window {
                     dragged = true;
                     var dev = mouse.x - width / 2;
                     pendulum.rotation = (Math.atan(dev / height) * 180) / Math.PI;
-                    leanEnough = Math.abs(dev) > height * 0.2;
+                    mainWindow.leanEnough = Math.abs(dev) > height * 0.2;
                 }
                 onReleased: (mouse) => {
-                    leanEnough = false;
+                    mainWindow.leanEnough = false;
                     dragged = false;
                     if (Math.abs(mouse.x - width / 2) > height * 0.2)
-                        startMetronome();
+                        mainWindow.startMetronome();
                     else
-                        stopMetronome();
+                        mainWindow.stopMetronome();
                 }
             }
 
@@ -282,8 +286,8 @@ Window {
                 }
 
                 Text {
-                    visible: GLOB.countVisible && meterCount && inMotion
-                    text: meterCount
+                    visible: GLOB.countVisible && mainWindow.meterCount && mainWindow.inMotion
+                    text: mainWindow.meterCount
                     y: parent.height * 0.15
                     anchors.horizontalCenter: parent.horizontalCenter
                     color: activPal.highlightedText
@@ -361,9 +365,9 @@ Window {
             height: width
             onClicked: {
                 if (SOUND.playing)
-                    stopMetronome();
+                    mainWindow.stopMetronome();
                 else
-                    startMetronome();
+                    mainWindow.startMetronome();
             }
 
             PauseAnimation {
@@ -419,10 +423,10 @@ Window {
             width: height * 2.5
             onClicked: {
                 if (SOUND.variableTempo) {
-                    stopMetronome();
+                    mainWindow.stopMetronome();
                     Qt.createComponent("Metronomek.Core", "TempoPage").createObject(mainWindow);
                 } else {
-                    tapTempo();
+                    mainWindow.tapTempo();
                 }
             }
             focus: true
@@ -505,9 +509,9 @@ Window {
 
         target: pendulum
         property: "rotation"
-        onStarted: inMotion = true
+        onStarted: mainWindow.inMotion = true
         onStopped: {
-            nextTempo = SOUND.getTempoForBeat(partId, beatNr);
+            mainWindow.nextTempo = SOUND.getTempoForBeat(mainWindow.partId, mainWindow.beatNr);
             timer.interval = 2; // delay to allow the timer react on starting sound signal
             SOUND.playing = true;
         }
@@ -521,7 +525,7 @@ Window {
         to: 0
         onStopped: {
             countAnim.duration = 150;
-            inMotion = false;
+            mainWindow.inMotion = false;
         }
     }
 
@@ -550,31 +554,31 @@ Window {
             }
             elap = currTime;
             if (GLOB.countVisible)
-                meterCount = ((beatNr - 1) % SOUND.meterOfPart(partId)) + 1;
+                mainWindow.meterCount = ((mainWindow.beatNr - 1) % SOUND.meterOfPart(mainWindow.partId)) + 1;
 
-            interval = Math.max((60000 / nextTempo) - lag, 1);
-            SOUND.tempo = nextTempo;
+            interval = Math.max((60000 / mainWindow.nextTempo) - lag, 1);
+            SOUND.tempo = mainWindow.nextTempo;
             lag = 0;
             toLeft = !toLeft;
-            beatNr++;
-            nextTempo = SOUND.getTempoForBeat(partId, beatNr);
-            if (nextTempo == 0) {
-                partId++;
-                beatNr = 1;
-                nextTempo = SOUND.getTempoForBeat(partId, beatNr);
-                if (nextTempo == 0) {
+            mainWindow.beatNr++;
+            nextTempo = SOUND.getTempoForBeat(mainWindow.partId, mainWindow.beatNr);
+            if (mainWindow.nextTempo == 0) {
+                mainWindow.partId++;
+                mainWindow.beatNr = 1;
+                mainWindow.nextTempo = SOUND.getTempoForBeat(mainWindow.partId, mainWindow.beatNr);
+                if (mainWindow.nextTempo == 0) {
                     timer.stop();
-                    stopMetronome();
+                    mainWindow.stopMetronome();
                     return ;
                 } else {
-                    if (SOUND.isPartInfinite(partId))
-                        nextTempoPop();
+                    if (SOUND.isPartInfinite(mainWindow.partId))
+                        mainWindow.nextTempoPop();
 
                 }
             }
             if (SOUND.variableTempo) {
                 countAnim.duration = interval;
-                countW.tempo = nextTempo;
+                countW.tempo = mainWindow.nextTempo;
             }
             pendAnim.start();
         }
@@ -585,12 +589,12 @@ Window {
 
         sequence: " "
         enabled: !SOUND.variableTempo
-        onActivated: tapTempo()
+        onActivated: mainWindow.tapTempo()
     }
 
     Connections {
         function onVariableTempoChanged() {
-            varTempoSlot();
+            mainWindow.varTempoSlot();
         }
 
         target: SOUND

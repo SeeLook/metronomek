@@ -4,7 +4,6 @@
 
 import QtQuick
 import QtQuick.Controls
-import Metronomek
 
 Tdialog {
     id: settPage

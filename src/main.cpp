@@ -8,9 +8,7 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qelapsedtimer.h>
 #include <QtCore/qloggingcategory.h>
-#include <QtCore/qsettings.h>
 #include <QtCore/qtimer.h>
-#include <QtCore/qtranslator.h>
 #include <QtGui/qfontdatabase.h>
 #include <QtGui/qicon.h>
 #include <QtGui/qpalette.h>
@@ -39,7 +37,7 @@ int main(int argc, char *argv[])
     app->setWindowIcon(QIcon(QStringLiteral(":/metronomek.png")));
 #endif
 
-    auto glob = new Tglob();
+    // auto glob = new Tglob();
 
 #if defined(Q_OS_ANDROID)
     auto pal = qApp->palette();
@@ -66,67 +64,27 @@ int main(int argc, char *argv[])
     }
 #endif
 
-#if defined(Q_OS_ANDROID)
-    QLocale loc(GLOB->lang().isEmpty() ? QLocale::system().language() : QLocale(GLOB->lang()).language());
-    QString p = QStringLiteral("assets:/translations/");
-#elif defined(Q_OS_WIN)
-    QLocale loc(GLOB->lang().isEmpty() ? QLocale::system().uiLanguages().first() : GLOB->lang());
-    QString p = qApp->applicationDirPath() + QLatin1String("/translations/");
-#elif defined(Q_OS_MAC)
-    QLocale loc(GLOB->lang().isEmpty() ? QLocale::system().uiLanguages().first() : GLOB->lang());
-    QString p = qApp->applicationDirPath() + QLatin1String("/../Resources/translations/");
-#else
-    QLocale loc(QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).language(),
-                QLocale(GLOB->lang().isEmpty() ? qgetenv("LANG") : GLOB->lang()).territory());
-    QString p = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/translations/");
-#endif
-    QLocale::setDefault(loc);
-
-    QTranslator mTranslator;
-    if (mTranslator.load(loc, QStringLiteral("metronomek_"), QString(), p))
-        GLOB->setLangLoaded(app->installTranslator(&mTranslator));
-
     int fid = QFontDatabase::addApplicationFont(QStringLiteral(":/metronomek.otf"));
     if (fid == -1) {
         qDebug() << "Can not load MetronomeK fonts!\n";
         return 111;
     }
 
-    auto sound = new Tsound();
-
     auto engine = new QQmlApplicationEngine();
-    // const QUrl url(QStringLiteral("qrc:/MainWindow.qml"));
-    // QObject::connect(
-    //     engine,
-    //     &QQmlApplicationEngine::objectCreated,
-    //     app,
-    //     [url](QObject *obj, const QUrl &objUrl) {
-    //         if (!obj && url == objUrl)
-    //             QCoreApplication::exit(-1);
-    //     },
-    //     Qt::QueuedConnection);
-
-    qmlRegisterSingletonType<Tglob>("Metronomek", 1, 0, "GLOB", [&](QQmlEngine *, QJSEngine *) -> QObject * {
-        return glob;
-    });
-
-    qmlRegisterSingletonType<Tglob>("Metronomek", 1, 0, "SOUND", [&](QQmlEngine *, QJSEngine *) -> QObject * {
-        return sound;
-    });
 
     engine->loadFromModule("Metronomek.Core", u"MainWindow"_s);
-    if (engine->rootObjects().isEmpty()) {
+    if (engine->rootObjects().isEmpty())
         return -1;
-    }
-    // engine->load(url);
 
     qDebug() << "==== METRONOMEK LAUNCH TIME" << startElapsed.nsecsElapsed() / 1000000.0 << "[ms] ====";
+
+    SOUND->init();
 
 #if !defined(Q_OS_ANDROID)
     if (argc > 1) {
         auto ext = app->arguments().last().right(4).toLower();
         if (ext == QLatin1String(".wav") || ext == QLatin1String(".raw")) {
-            sound->importFromCommandline();
+            SOUND->importFromCommandline();
         } else {
             QCommandLineParser cmd;
             auto helpOpt = cmd.addHelpOption();
@@ -154,8 +112,8 @@ int main(int argc, char *argv[])
 
     int execCode = app->exec();
 
-    delete sound;
-    delete glob;
+    delete SOUND;
+    delete GLOB;
     delete app;
 
     return execCode;

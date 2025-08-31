@@ -5,12 +5,12 @@
 #ifndef TSOUND_H
 #define TSOUND_H
 
+#include "tcountingmanager.h"
 #include "tsounddata.h"
+#include "tspeedhandler.h"
 #include <QtCore/qobject.h>
-
-class TabstractAudioDevice;
-class TspeedHandler;
-class TcountingManager;
+#include <QtCore/qvariant.h>
+#include <QtQml/qqmlregistration.h>
 
 #define SOUND (Tsound::instance())
 
@@ -20,6 +20,8 @@ class TcountingManager;
 class Tsound : public QObject
 {
     Q_OBJECT
+    QML_NAMED_ELEMENT(SOUND)
+    QML_SINGLETON
 
     Q_PROPERTY(bool playing READ playing WRITE setPlaying NOTIFY playingChanged)
     Q_PROPERTY(int beatType READ beatType WRITE setBeatType NOTIFY beatTypeChanged)
@@ -121,7 +123,7 @@ public:
 
     QVector<TsoundData *> *numerals() { return m_numerals; }
 
-    Q_INVOKABLE TcountingManager *countManager() { return m_countManager; }
+    Q_INVOKABLE QVariant countManager() { return QVariant::fromValue(m_countManager); }
 
     /**
      * Creates an instance of @p TcountingManager if it doesn't exist.
@@ -206,7 +208,7 @@ protected:
     void changeSampleRate(quint32 sr);
 
 private slots:
-    void outCallBack(char *data, unsigned int maxLen, unsigned int &wasRead);
+    void outCallBack(char *data, unsigned int maxLen, unsigned int *wasRead);
     void playingFinishedSlot();
     void startPlayingSlot();
 
@@ -215,7 +217,7 @@ private:
     bool m_initialized = false;
     quint32 m_sampleRate;
     bool m_callBackIsBussy;
-    TabstractAudioDevice *m_audioDevice;
+    TabstractAudioDevice *m_audioDevice = nullptr;
 
     TspeedHandler *m_speedHandler = nullptr;
     int m_playingPart = 0;

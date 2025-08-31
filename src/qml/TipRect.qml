@@ -4,7 +4,6 @@
 
 import QtQuick
 import QtQuick.Effects
-import Metronomek
 
 Item {
     id: tip

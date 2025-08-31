@@ -4,7 +4,7 @@
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)            #
 ##############################################################################
 
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.19)
 
 set(METRONOMEK_VER "0.7.7-devel")
 #WARNING Keep above line exactly as 9th line of this file.
@@ -28,6 +28,8 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(QT_QML_GENERATE_QMLLS_INI ON)
 
 if(ANDROID)
     find_package(QT NAMES Qt6 COMPONENTS Core Gui Quick LinguistTools REQUIRED)

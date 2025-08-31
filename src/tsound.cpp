@@ -4,15 +4,11 @@
 
 #include "tsound.h"
 #if defined(Q_OS_ANDROID)
-//  #include "tqtaudioout.h"
 #include "toboedevice.h"
 #else
 #include "trtaudiodevice.h"
 #endif
-// #include "taudiobuffer.h"
-#include "tcountingmanager.h"
 #include "tglob.h"
-#include "tspeedhandler.h"
 #include "ttempopart.h"
 
 #include <QtCore/qdatastream.h>
@@ -34,7 +30,6 @@ QStringList Tsound::getAudioDevicesList()
 {
 #if defined(Q_OS_ANDROID)
     return QStringList();
-//  return TqtAudioOut::getAudioDevicesList();
 #else
     return TRtAudioDevice::getAudioOutDevicesList();
 #endif
@@ -69,20 +64,7 @@ Tsound::Tsound(QObject *parent)
     }
     m_instance = this;
 
-    setTempo(qBound(40, GLOB->settings()->value(QStringLiteral("tempo"), 60).toInt(), 240));
-    m_staticTempo = m_tempo;
-    setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), beatTypeCount() - 1));
-    setMeter(qBound(0, GLOB->settings()->value(QStringLiteral("meter"), 4).toInt(), 12));
-    setRingType(qBound(0, GLOB->settings()->value(QStringLiteral("ringType"), 0).toInt(), ringTypeCount() - 1));
-    setRing(GLOB->settings()->value(QStringLiteral("doRing"), false).toBool());
-    setVariableTempo(GLOB->settings()->value(QStringLiteral("variableTempo"), false).toBool());
-    setVerbalCount(GLOB->settings()->value(QStringLiteral("verbalCount"), false).toBool());
-
     connect(this, &Tsound::finishSignal, this, &Tsound::playingFinishedSlot);
-
-    QTimer::singleShot(500, this, [=] {
-        init();
-    });
 }
 
 Tsound::~Tsound()
@@ -103,6 +85,7 @@ Tsound::~Tsound()
 
 QString Tsound::outputName()
 {
+    return QString();
     return m_instance && m_instance->m_audioDevice ? m_instance->m_audioDevice->deviceName() : QString();
 }
 
@@ -111,25 +94,32 @@ void Tsound::init()
     if (m_initialized) {
         qDebug() << "[Tsound] has been initialized already! Skipping.";
         return;
-    } else {
-#if defined(Q_OS_ANDROID)
-        //      m_audioDevice = new TqtAudioOut(this);
-        m_audioDevice = new TOboeDevice(this);
-#else
-        m_audioDevice = new TRtAudioDevice(this);
-#endif
-        connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack, Qt::DirectConnection);
-        auto dn = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();
-        if (dn != QLatin1String("anything")) { // This is workaround for old device name handling
-            setDeviceName(GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString());
-            changeSampleRate(m_audioDevice->sampleRate());
-        } else {
-            setAudioOutParams();
-        }
-        if (m_variableTempo && !m_speedHandler)
-            speedHandler();
-        m_initialized = true;
     }
+
+    setTempo(qBound(40, GLOB->settings()->value(QStringLiteral("tempo"), 60).toInt(), 240));
+    m_staticTempo = m_tempo;
+    setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), beatTypeCount() - 1));
+    setMeter(qBound(0, GLOB->settings()->value(QStringLiteral("meter"), 4).toInt(), 12));
+    setRingType(qBound(0, GLOB->settings()->value(QStringLiteral("ringType"), 0).toInt(), ringTypeCount() - 1));
+    setRing(GLOB->settings()->value(QStringLiteral("doRing"), false).toBool());
+    setVariableTempo(GLOB->settings()->value(QStringLiteral("variableTempo"), false).toBool());
+    setVerbalCount(GLOB->settings()->value(QStringLiteral("verbalCount"), false).toBool());
+#if defined(Q_OS_ANDROID)
+    m_audioDevice = new TOboeDevice(this);
+#else
+    m_audioDevice = new TRtAudioDevice(this);
+#endif
+    connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack, Qt::DirectConnection);
+    auto dn = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();
+    if (dn != QLatin1String("anything")) { // This is workaround for old device name handling
+        setDeviceName(GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString());
+        changeSampleRate(m_audioDevice->sampleRate());
+    } else {
+        setAudioOutParams();
+    }
+    if (m_variableTempo && !m_speedHandler)
+        speedHandler();
+    m_initialized = true;
 }
 
 void Tsound::setDeviceName(const QString &devName)
@@ -199,7 +189,7 @@ void Tsound::startPlayingSlot()
  * To avoid that @p m_missingSampleNr adds single sample length to @p m_samplPerBeat
  * every whole integer summed with @p m_offsetSample
  */
-void Tsound::outCallBack(char *data, unsigned int maxLen, unsigned int &wasRead)
+void Tsound::outCallBack(char *data, unsigned int maxLen, unsigned int *wasRead)
 {
     qint16 sample = 0;
     auto out = reinterpret_cast<qint16 *>(data);
@@ -232,7 +222,7 @@ void Tsound::outCallBack(char *data, unsigned int maxLen, unsigned int &wasRead)
         if (m_currSample >= m_samplPerBeat + m_missingSampleNr) {
             if (m_goingToStop) {
                 m_goingToStop = false;
-                wasRead = CALLBACK_STOP;
+                *wasRead = CALLBACK_STOP;
                 return;
             }
 
@@ -243,7 +233,7 @@ void Tsound::outCallBack(char *data, unsigned int maxLen, unsigned int &wasRead)
                 m_playingBeat = 1;
                 t = m_variableTempo && m_speedHandler ? m_speedHandler->getTempoForBeat(m_playingPart, m_playingBeat) : m_tempo;
                 if (t == 0) {
-                    wasRead = CALLBACK_STOP;
+                    *wasRead = CALLBACK_STOP;
                     return;
                 }
             }
@@ -294,8 +284,7 @@ void Tsound::outCallBack(char *data, unsigned int maxLen, unsigned int &wasRead)
             *out++ = sample; // right channel
         }
     }
-    //   wasRead = maxLen; // DEPRECATED This is valid only with Android Qt Audio
-    wasRead = CALLBACK_CONTINUE;
+    *wasRead = CALLBACK_CONTINUE;
 }
 
 void Tsound::playingFinishedSlot()
