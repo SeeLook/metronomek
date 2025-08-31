@@ -11,29 +11,30 @@ Tdialog {
     padding: GLOB.fontSize() / 2
     visible: true
     standardButtons: Dialog.Cancel | Dialog.Apply
+
     onApplied: {
         GLOB.lang = langTumb.currentIndex === 0 ? "" : langModel.get(langTumb.currentIndex).flag;
         if (outCombo.count > 1)
             SOUND.setDeviceName(outCombo.currentText);
 
         if (GLOB.isAndroid()) {
-            GLOB.keepScreenOn(andSettLoader.item.scrOn);
-            GLOB.setDisableRotation(andSettLoader.item.noRotation);
-            mainWindow.visibility = andSettLoader.item.fullScr ? "FullScreen" : "AutomaticVisibility";
-            GLOB.setFullScreen(andSettLoader.item.fullScr);
+            GLOB.keepScreenOn((andSettLoader.item as AndroidOptions).scrOn);
+            GLOB.setDisableRotation((andSettLoader.item as AndroidOptions).noRotation);
+            mainWindow.visibility = (andSettLoader.item as AndroidOptions).fullScr ? "FullScreen" : "AutomaticVisibility";
+            GLOB.setFullScreen((andSettLoader.item as AndroidOptions).fullScr);
         }
         close();
     }
     Component.onCompleted: {
-        mainWindow.dialogItem = settPage;
+        GLOB.dialogItem = settPage;
         for (var i = 0; i < langModel.count; ++i) {
             if (langModel.get(i).flag === GLOB.lang || (i == 0 && GLOB.lang === "")) {
                 langTumb.currentIndex = i;
                 break;
             }
         }
-        footer.standardButton(Dialog.Cancel).text = qsTranslate("QPlatformTheme", "Cancel");
-        footer.standardButton(Dialog.Apply).text = qsTranslate("QPlatformTheme", "Apply");
+        (footer as DialogButtonBox).standardButton(Dialog.Cancel).text = qsTranslate("QPlatformTheme", "Cancel");
+        (footer as DialogButtonBox).standardButton(Dialog.Apply).text = qsTranslate("QPlatformTheme", "Apply");
     }
 
     Flickable {
@@ -94,40 +95,40 @@ Tdialog {
                         radius: width / 12
                     }
 
-                    delegate: Component {
-                        Column {
-                            spacing: GLOB.fontSize() / 4
-                            opacity: 1 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
-                            scale: 1.7 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
-                            z: 1
+                    delegate: Column {
+                        id: tumbDlg
+                        required property string flag
+                        required property string lang
+                        required property int index
 
-                            Image {
-                                source: "qrc:flags/" + flag + ".png"
-                                height: langTumb.height * 0.375
-                                width: height * (sourceSize.height / sourceSize.width)
-                                anchors.horizontalCenter: parent.horizontalCenter
+                        spacing: GLOB.fontSize() / 4
+                        opacity: 1 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
+                        scale: 1.7 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
+                        z: 1
 
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: langTumb.currentIndex = index
-                                }
+                        Image {
+                            source: "qrc:flags/" + tumbDlg.flag + ".png"
+                            height: Tumbler.tumbler.height * 0.375
+                            width: height * (sourceSize.height / sourceSize.width)
+                            anchors.horizontalCenter: parent.horizontalCenter
 
-                            }
-
-                            Text {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                text: flag === "default" ? qsTr(lang) : lang
-                                color: ActivPalette.text
-
-                                font {
-                                    bold: langTumb.currentIndex === index
-                                    pixelSize: langTumb.height * 0.1
-                                }
-
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: Tumbler.tumbler.currentIndex = tumbDlg.index
                             }
 
                         }
 
+                        Text {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            text: tumbDlg.flag === "default" ? qsTr(tumbDlg.lang) : tumbDlg.lang
+                            color: ActivPalette.text
+
+                            font {
+                                bold: Tumbler.tumbler.currentIndex === tumbDlg.index
+                                pixelSize: Tumbler.tumbler.height * 0.1
+                            }
+                        }
                     }
 
                     contentItem: PathView {
@@ -202,8 +203,6 @@ Tdialog {
             }
 
             CuteButton {
-                //           settPage.close()
-
                 width: settPage.width * 0.6
                 height: FM.height * 2.5
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -213,21 +212,16 @@ Tdialog {
                     Qt.createComponent("Metronomek.Core", "VerbalCountPage").createObject(mainWindow);
                 }
             }
-
         }
-        // Flickable
 
         ScrollBar.vertical: ScrollBar {
             active: true
             visible: true
         }
-
     }
 
-    Component {
-        id: andSettComp
 
-        Column {
+    component  AndroidOptions :  Column {
             property alias scrOn: screenOnChB.checked
             property alias noRotation: disRotatChB.checked
             property alias fullScr: fullScrChB.checked
@@ -257,6 +251,9 @@ Tdialog {
 
         }
 
-    }
+        Component {
+            id: andSettComp
+            AndroidOptions {}
+        }
 
 }

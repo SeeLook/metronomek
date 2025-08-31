@@ -13,14 +13,16 @@ Tdialog {
     topPadding: 0
     bottomPadding: GLOB.fontSize() / 2
     standardButtons: Dialog.Ok
+
     Component.onCompleted: {
-        mainWindow.dialogItem = infoPage;
-        footer.standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK");
+        GLOB.dialogItem = infoPage;
+        (footer as DialogButtonBox).standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK");
     }
 
     Logo {
         id: logo
 
+        spaceFactor: 0.4
         pauseDuration: 0
         anim.running: parent.visible
         anim.loops: 4
@@ -55,9 +57,9 @@ Tdialog {
                 wrapMode: Text.WordWrap
                 anchors.horizontalCenter: parent.horizontalCenter
                 textFormat: Text.StyledText
-                text: "<br><a href=\"https://metronomek.sourceforge.io\">metronomek.sf.net</a>
+                text: `<br><a href="https://metronomek.sourceforge.io">metronomek.sf.net</a>
         <br>Copyright © 2019-2022 Tomasz Bojczuk<br>
-        <a href=\"mailto:seelook.gmail.com\">seelook@gmail.com</a><br><br>"
+        <a href=\"mailto:seelook.gmail.com\">seelook@gmail.com</a><br><br>`
                 font.bold: true
                 horizontalAlignment: Text.AlignHCenter
             }
@@ -83,7 +85,7 @@ Tdialog {
                 wrapMode: Text.WordWrap
                 anchors.horizontalCenter: parent.horizontalCenter
                 textFormat: Text.StyledText
-                text: "<br><br>" + qsTr("This program is free software; you can redistribute it and/or modify
+                text: "<br><br>" + qsTr(`This program is free software; you can redistribute it and/or modify
           it under the terms of the GNU General Public License as published by
           the Free Software Foundation; either version 3 of the License, or
           (at your option) any later version.<br><br>
@@ -95,7 +97,7 @@ Tdialog {
 
           You should have received a copy of the GNU General Public License
           along with this program; if not, write to the Free Software Foundation,
-          Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA" + "<br><br><a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">https://www.gnu.org/licenses/gpl-3.0.html</a><br><br>")
+          Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA` + "<br><br><a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">https://www.gnu.org/licenses/gpl-3.0.html</a><br><br>")
                 horizontalAlignment: Text.AlignJustify
             }
 

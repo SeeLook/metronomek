@@ -116,6 +116,12 @@ void Tglob::setLang(const QString &l)
     }
 }
 
+void Tglob::setDialogItem(QVariant dgIt)
+{
+    m_dialogItem = dgIt;
+    emit dialogItemChanged();
+}
+
 QString Tglob::userLocalPath() const
 {
 #if defined(Q_OS_ANDROID)
@@ -214,12 +220,12 @@ QString Tglob::version() const
         return QString(METRONOMEK_VERSION);
 }
 
-#if defined(Q_OS_ANDROID)
-
 void Tglob::setDisableRotation(bool disRot)
 {
     if (disRot != m_disableRotation) {
+#if defined(Q_OS_ANDROID)
         Tandroid::disableRotation(disRot);
+#endif
         m_disableRotation = disRot;
     }
 }
@@ -227,12 +233,12 @@ void Tglob::setDisableRotation(bool disRot)
 void Tglob::keepScreenOn(bool on)
 {
     if (on != m_keepScreenOn) {
+#if defined(Q_OS_ANDROID)
         Tandroid::keepScreenOn(on);
+#endif
         m_keepScreenOn = on;
     }
 }
-
-#endif
 
 void Tglob::createTempoList()
 {

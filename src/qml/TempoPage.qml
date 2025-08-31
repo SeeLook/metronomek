@@ -22,7 +22,7 @@ Tdialog {
     bottomPadding: GLOB.fontSize() / 2
     standardButtons: Dialog.Ok | Dialog.Help
     Component.onCompleted: {
-        mainWindow.dialogItem = tempoPage;
+        GLOB.dialogItem = tempoPage;
         (footer as DialogButtonBox).standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK");
         (footer as DialogButtonBox).standardButton(Dialog.Help).text = qsTr("Actions");
         speedHandler = SOUND.speedHandler();

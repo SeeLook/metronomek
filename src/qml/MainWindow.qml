@@ -23,7 +23,6 @@ Window {
     property int nextTempo: 0
     property int meterCount: 0
     property bool inMotion: false //*< state of pendulum
-    property var dialogItem: null
     property bool leanEnough: false // pendulum is leaned out enough to start playing
     property alias counterPressed: countArea.containsPress
     property real lastTime: new Date().getTime()
@@ -99,9 +98,9 @@ Window {
     }
     onClosing: {
         GLOB.geometry = Qt.rect(x, y, width, height);
-        if (GLOB.isAndroid() && dialogItem) {
+        if (GLOB.isAndroid() && GLOB.dialogItem) {
             close.accepted = false;
-            dialogItem.destroy();
+            GLOB.dialogItem.destroy();
         }
     }
 

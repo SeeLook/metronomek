@@ -7,6 +7,7 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qrect.h>
+#include <QtCore/qvariant.h>
 #include <QtGui/qcolor.h>
 #include <QtQml/qqmlregistration.h>
 
@@ -57,6 +58,7 @@ class Tglob : public QObject
     Q_PROPERTY(bool countVisible READ countVisible WRITE setCountVisible NOTIFY countVisibleChanged)
     Q_PROPERTY(bool stationary READ stationary WRITE setStationary NOTIFY stationaryChanged)
     Q_PROPERTY(QString lang READ lang WRITE setLang NOTIFY langChanged)
+    Q_PROPERTY(QVariant dialogItem READ dialogItem WRITE setDialogItem NOTIFY dialogItemChanged)
 
 public:
     explicit Tglob(QObject *parent = nullptr);
@@ -80,6 +82,9 @@ public:
 
     bool langLoaded() const { return m_langLoaded; }
     void setLangLoaded(bool ll) { m_langLoaded = ll; }
+
+    QVariant dialogItem() const { return m_dialogItem; }
+    void setDialogItem(QVariant dgIt);
 
     /**
      * Returns application/user accessible directory:
@@ -139,18 +144,17 @@ public:
 #endif
     }
 
-#if defined(Q_OS_ANDROID)
     Q_INVOKABLE void keepScreenOn(bool on);
-    Q_INVOKABLE void setDisableRotation(bool disRot);
     Q_INVOKABLE bool isKeepScreenOn() { return m_keepScreenOn; }
+    Q_INVOKABLE void setDisableRotation(bool disRot);
     Q_INVOKABLE bool disableRotation() { return m_disableRotation; }
-#endif
 
 signals:
     void dummySignal();
     void countVisibleChanged();
     void stationaryChanged();
     void langChanged();
+    void dialogItemChanged();
 
 private:
     void createTempoList();
@@ -164,11 +168,10 @@ private:
     QString m_lang;
     bool m_langLoaded = false;
     bool m_fullScreen = false;
-#if defined(Q_OS_ANDROID)
     bool m_keepScreenOn;
-    bool m_disableRotation;
-#endif
+    bool m_disableRotation = false;
     QList<Ttempo> m_tempoList;
+    QVariant m_dialogItem;
 };
 
 #endif // TGLOB_H
