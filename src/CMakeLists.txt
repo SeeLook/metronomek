@@ -33,6 +33,15 @@ set(METRONOMEK_SRC
     ${CMAKE_SOURCE_DIR}/resources/metronomek_res.qrc
 )
 
+set(MERTONOMEK_QML_SINGLETONS
+    qml/ActivPalette.qml
+    qml/DisblPalette.qml
+)
+
+set_source_files_properties(${MERTONOMEK_QML_SINGLETONS}
+    PROPERTIES QT_QML_SINGLETON_TYPE TRUE
+)
+
 qt_add_qml_module(metronomek
     URI "Metronomek.Core"
     QML_FILES
@@ -63,6 +72,8 @@ qt_add_qml_module(metronomek
         qml/LinkText.qml
         qml/SidePop.qml
         qml/HelpPop.qml
+
+        ${MERTONOMEK_QML_SINGLETONS}
 
     SOURCES
         tglob.cpp

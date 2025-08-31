@@ -90,7 +90,7 @@ Tdialog {
                         height: parent.height * 0.98
                         x: (parent.width - width) / 2
                         y: -parent.height * 0.01
-                        color: GLOB.alpha(activPal.highlight, 100)
+                        color: GLOB.alpha(ActivPalette.highlight, 100)
                         radius: width / 12
                     }
 
@@ -117,7 +117,7 @@ Tdialog {
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
                                 text: flag === "default" ? qsTr(lang) : lang
-                                color: activPal.text
+                                color: ActivPalette.text
 
                                 font {
                                     bold: langTumb.currentIndex === index

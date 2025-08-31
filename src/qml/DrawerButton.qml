@@ -8,7 +8,7 @@ import QtQuick.Controls
 AbstractButton {
     id: dButt
 
-    property color bgColor: activPal.window
+    property color bgColor: ActivPalette.window
     property bool innerPress: pressAnim.running || pressed
 
     implicitWidth: parent.width
@@ -23,7 +23,7 @@ AbstractButton {
     }
 
     background: Rectangle {
-        color: innerPress ? activPal.highlight : activPal.window
+        color: innerPress ? ActivPalette.highlight : ActivPalette.window
 
         Text {
             width: parent.width - (dButt.checkable ? (chLoader.item ? chLoader.item.width : 0) : 0)
@@ -35,7 +35,7 @@ AbstractButton {
             fontSizeMode: Text.Fit
             textFormat: Text.StyledText
             elide: Text.ElideRight
-            color: innerPress ? activPal.highlightedText : activPal.text
+            color: innerPress ? ActivPalette.highlightedText : ActivPalette.text
         }
 
         Loader {
@@ -77,7 +77,7 @@ AbstractButton {
                         width: parent.width * 0.6
                         height: width
                         radius: width / 8
-                        color: chB.checked ? bgColor : activPal.base
+                        color: chB.checked ? bgColor : ActivPalette.base
 
                         border {
                             width: chB.checked ? 0 : 1
@@ -101,7 +101,7 @@ AbstractButton {
         Rectangle {
             width: parent.width - fm.height / 2
             height: 1
-            color: activPal.text
+            color: ActivPalette.text
 
             anchors {
                 bottom: parent.bottom

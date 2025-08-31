@@ -21,7 +21,7 @@ Item {
         id: bg
 
         anchors.fill: parent
-        color: activPal.base
+        color: ActivPalette.base
         radius: GLOB.fontSize() / 2
         visible: false
         clip: true
@@ -33,7 +33,7 @@ Item {
         source: bg
         anchors.fill: bg
         shadowEnabled: true
-        shadowColor: activPal.shadow
+        shadowColor: ActivPalette.shadow
         // blur: tip.shadowRadius / 64.0
         shadowHorizontalOffset: raised ? GLOB.fontSize() / 2 : 0
         shadowVerticalOffset: raised ? GLOB.fontSize() / 2 : 0

@@ -6,7 +6,7 @@ import QtQuick
 import QtQuick.Controls
 
 SidePop {
-    bgColor: activPal.varTempo
+    bgColor: ActivPalette.varTempo
     focus: true // HACK for onPressed
 
     Text {
@@ -15,7 +15,7 @@ SidePop {
         x: (parent.width - width) / 2
         scale: (metro.width - fm.height * 4) / width
         transformOrigin: Item.Top
-        color: activPal.text
+        color: ActivPalette.text
         text: qsTr("Next tempo")
     }
 
@@ -25,7 +25,7 @@ SidePop {
         width: nextText.width * nextText.scale
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
-        color: activPal.text
+        color: ActivPalette.text
         text: qsTr("Tap, click or press any key.")
     }
 

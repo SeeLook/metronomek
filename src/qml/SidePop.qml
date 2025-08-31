@@ -48,7 +48,7 @@ Popup {
     background: TipRect {
         id: bg
 
-        color: activPal.varTempo
+        color: ActivPalette.varTempo
         radius: fm.height
     }
 

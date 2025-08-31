@@ -11,7 +11,7 @@ SidePop {
     property alias helpText: hText.text
 
     modal: true
-    bgColor: Qt.tint(activPal.base, GLOB.alpha(activPal.highlight, 50))
+    bgColor: Qt.tint(ActivPalette.base, GLOB.alpha(ActivPalette.highlight, 50))
     height: hFlick.height + 2 * padding
 
     Flickable {
@@ -29,7 +29,7 @@ SidePop {
 
             x: fm.height / 2
             width: parent.width - fm.height
-            color: activPal.text
+            color: ActivPalette.text
             wrapMode: Text.WordWrap
         }
 

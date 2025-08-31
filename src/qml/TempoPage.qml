@@ -65,8 +65,8 @@ Tdialog {
                 width: parent.width
                 placeholderText: qsTr("Rhythmic Composition")
                 text: comboEdit.displayText
-                selectedTextColor: activPal.highlightedText
-                selectionColor: activPal.highlight
+                selectedTextColor: ActivPalette.highlightedText
+                selectionColor: ActivPalette.highlight
                 selectByMouse: true
             }
 
@@ -101,7 +101,7 @@ Tdialog {
             Text {
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
-                color: activPal.text
+                color: ActivPalette.text
                 wrapMode: Text.WordWrap
                 text: qsTr("Tap or click to edit tempo change.") + "<br><font color=\"red\">" + qsTr("Drag the item left or right to remove it.")
             }
@@ -249,7 +249,7 @@ Tdialog {
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Meter")
-                        color: activPal.text
+                        color: ActivPalette.text
                     }
 
                     SpinBox {
@@ -270,7 +270,7 @@ Tdialog {
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Duration")
-                        color: activPal.text
+                        color: ActivPalette.text
                         font.bold: true
                     }
 
@@ -309,7 +309,7 @@ Tdialog {
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
                             text: GLOB.chopS(qsTr("bars", "", barsSpin.value), barsSpin.value)
-                            color: enabled ? activPal.text : disblPal.text
+                            color: enabled ? ActivPalette.text : DisblPalette.text
                         }
 
                     }
@@ -331,7 +331,7 @@ Tdialog {
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
                             text: GLOB.chopS(qsTr("beats", "", beatsSpin.value), beatsSpin.value)
-                            color: enabled ? activPal.text : disblPal.text
+                            color: enabled ? ActivPalette.text : DisblPalette.text
                         }
 
                     }
@@ -353,7 +353,7 @@ Tdialog {
                         Text {
                             anchors.horizontalCenter: parent.horizontalCenter
                             text: GLOB.chopS(qsTr("seconds", "", secSpin.value), secSpin.value)
-                            color: enabled ? activPal.text : disblPal.text
+                            color: enabled ? ActivPalette.text : DisblPalette.text
                         }
 
                     }

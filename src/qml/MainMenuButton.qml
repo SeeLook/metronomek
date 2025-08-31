@@ -30,7 +30,7 @@ AbstractButton {
     }
 
     background: Rectangle {
-        color: GLOB.alpha(activPal.text, pressed ? 120 : 30)
+        color: GLOB.alpha(ActivPalette.text, pressed ? 120 : 30)
         radius: width / 4
     }
 
@@ -44,7 +44,7 @@ AbstractButton {
             height: width
             radius: width / 4
             anchors.horizontalCenter: parent.horizontalCenter
-            color: SOUND.ring ? "red" : activPal.text
+            color: SOUND.ring ? "red" : ActivPalette.text
         }
 
         Rectangle {
@@ -52,7 +52,7 @@ AbstractButton {
             height: width
             radius: width / 4
             anchors.horizontalCenter: parent.horizontalCenter
-            color: GLOB.countVisible ? "yellow" : activPal.text
+            color: GLOB.countVisible ? "yellow" : ActivPalette.text
         }
 
         Rectangle {
@@ -60,7 +60,7 @@ AbstractButton {
             height: width
             radius: width / 4
             anchors.horizontalCenter: parent.horizontalCenter
-            color: GLOB.stationary ? activPal.text : "lime"
+            color: GLOB.stationary ? ActivPalette.text : "lime"
         }
 
     }

@@ -16,7 +16,7 @@ Rectangle {
 
     width: parent.width
     height: width * 0.25
-    color: activPal.window
+    color: ActivPalette.window
     clip: true
     Component.onCompleted: initFontS = logo.height * 0.4
 
@@ -33,7 +33,7 @@ Rectangle {
                 rotation: -35 + index * (70 / 9)
                 color: GLOB.randomColor()
                 style: Text.Raised
-                styleColor: activPal.shadow
+                styleColor: ActivPalette.shadow
                 text: modelData
                 Component.onCompleted: textW += width
 
@@ -50,7 +50,7 @@ Rectangle {
 
     Text {
         text: GLOB.version()
-        color: activPal.text
+        color: ActivPalette.text
         horizontalAlignment: Text.AlignHCenter
 
         anchors {
@@ -68,7 +68,7 @@ Rectangle {
 
     Text {
         text: qsTr("The rhythmic<br>perfection")
-        color: activPal.text
+        color: ActivPalette.text
         horizontalAlignment: Text.AlignHCenter
 
         anchors {
@@ -85,7 +85,7 @@ Rectangle {
     Rectangle {
         id: pendulum
 
-        color: activPal.highlight
+        color: ActivPalette.highlight
         width: logo.height * 0.1
         height: logo.height * 3
         radius: width / 2
@@ -101,8 +101,8 @@ Rectangle {
 
             ShapePath {
                 strokeWidth: pendulum.width / 3
-                strokeColor: activPal.highlight
-                fillColor: activPal.highlight
+                strokeColor: ActivPalette.highlight
+                fillColor: ActivPalette.highlight
                 capStyle: ShapePath.RoundCap
                 joinStyle: ShapePath.RoundJoin
                 startX: 0

@@ -100,11 +100,11 @@ Tdialog {
             header: Rectangle {
                 width: parent.width
                 height: fm.height * 1.5
-                color: activPal.text
+                color: ActivPalette.text
 
                 Text {
                     anchors.centerIn: parent
-                    color: activPal.base
+                    color: ActivPalette.base
                     text: qsTr("available sounds of counting")
                 }
 
@@ -121,7 +121,7 @@ Tdialog {
                 dragEnabled: index > 0
                 width: parent ? parent.width : 0
                 height: fm.height * 3
-                color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(toDel ? "red" : activPal.highlight, pressed || containsMouse ? 50 : (cntMan?.localModelId === index ? 20 : 0)))
+                color: Qt.tint(index % 2 ? ActivPalette.base : ActivPalette.alternateBase, GLOB.alpha(toDel ? "red" : ActivPalette.highlight, pressed || containsMouse ? 50 : (cntMan?.localModelId === index ? 20 : 0)))
                 onClicked: cntMan.localModelId = index
                 onRemoved: {
                     cntMan.removeLocalWav(index);
@@ -135,11 +135,11 @@ Tdialog {
                     Rectangle {
                         width: fm.height * 4.5
                         height: bgRect.height
-                        color: cntMan?.localModelId == index ? activPal.highlight : "transparent"
+                        color: cntMan?.localModelId == index ? ActivPalette.highlight : "transparent"
 
                         Text {
                             anchors.centerIn: parent
-                            color: cntMan?.localModelId == index ? activPal.highlightedText : activPal.text
+                            color: cntMan?.localModelId == index ? ActivPalette.highlightedText : ActivPalette.text
                             text: modelData ? modelData.langID : ""
 
                             font {
@@ -157,7 +157,7 @@ Tdialog {
                         Text {
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
-                            color: activPal.text
+                            color: ActivPalette.text
                             text: modelData ? modelData.langName : ""
                             font.pixelSize: fm.height
                             minimumPixelSize: fm.height / 2
@@ -168,7 +168,7 @@ Tdialog {
                         Text {
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
-                            color: activPal.text
+                            color: ActivPalette.text
                             text: modelData ? modelData.cntName : ""
                             font.pixelSize: fm.height * 1.1
                             minimumPixelSize: fm.height * 0.7
@@ -187,7 +187,7 @@ Tdialog {
         Rectangle {
             width: vCntPage.width - GLOB.fontSize()
             height: fm.height / 2
-            color: activPal.text
+            color: ActivPalette.text
         }
 
         ListModel {
@@ -212,13 +212,13 @@ Tdialog {
             header: Rectangle {
                 width: parent.width
                 height: fm.height * 1.5
-                color: activPal.highlight
+                color: ActivPalette.highlight
 
                 Row {
                     anchors.centerIn: parent
 
                     Text {
-                        color: activPal.highlightedText
+                        color: ActivPalette.highlightedText
                         text: qsTr("sounds of counting to download")
                     }
 
@@ -233,12 +233,12 @@ Tdialog {
 
                 width: parent.width
                 height: fm.height * 2.5
-                color: ma.pressed || ma.containsMouse ? Qt.tint(activPal.base, GLOB.alpha(activPal.highlight, 50)) : (index % 2 ? activPal.base : activPal.alternateBase)
+                color: ma.pressed || ma.containsMouse ? Qt.tint(ActivPalette.base, GLOB.alpha(ActivPalette.highlight, 50)) : (index % 2 ? ActivPalette.base : ActivPalette.alternateBase)
 
                 Text {
                     x: fm.height / 2
                     anchors.verticalCenter: parent.verticalCenter
-                    color: activPal.text
+                    color: ActivPalette.text
                     text: modelEntry.langID
 
                     font {
@@ -253,7 +253,7 @@ Tdialog {
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap
                     anchors.verticalCenter: parent.verticalCenter
-                    color: activPal.text
+                    color: ActivPalette.text
                     text: modelEntry.langName
                 }
 
@@ -266,12 +266,12 @@ Tdialog {
 
                     Text {
                         anchors.bottom: parent.bottom
-                        color: activPal.text
+                        color: ActivPalette.text
                         text: qsTranslate("QFileSystemModel", "%1 KB").arg(modelEntry.size) + " "
                     }
 
                     Text {
-                        color: activPal.highlight
+                        color: ActivPalette.highlight
                         text: "\u00c1"
 
                         font {
@@ -325,7 +325,7 @@ Tdialog {
                 x: parent.width - fm.height * 5
                 y: -fm.height * 2
                 text: qsTranslate("QPlatformTheme", "Abort")
-                bgColor: Qt.tint(activPal.button, GLOB.alpha("red", 40))
+                bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("red", 40))
                 onClicked: cntMan.abortDownload()
             }
 

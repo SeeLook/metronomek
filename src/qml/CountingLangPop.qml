@@ -12,7 +12,7 @@ SidePop {
 
     visible: true
     modal: true
-    bgColor: Qt.tint(activPal.window, GLOB.alpha(activPal.highlight, 30))
+    bgColor: Qt.tint(ActivPalette.window, GLOB.alpha(ActivPalette.highlight, 30))
     height: col.height + fm.height * 2
     Component.onCompleted: {
         var currL = cntMan.currentLanguage();
@@ -56,7 +56,7 @@ SidePop {
 
                 anchors.verticalCenter: parent.verticalCenter
                 text: qsTr("language") + ":"
-                color: activPal.text
+                color: ActivPalette.text
             }
 
             ComboBox {
@@ -74,7 +74,7 @@ SidePop {
 
         Text {
             width: countPop.width - 6 * fm.height
-            color: activPal.text
+            color: ActivPalette.text
             wrapMode: Text.WordWrap
             text: qsTr("Consider to share this counting audio data.")
         }

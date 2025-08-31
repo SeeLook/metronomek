@@ -19,7 +19,7 @@ Rectangle {
     signal clicked()
     signal removed()
 
-    color: ma.pressed || ma.containsMouse ? Qt.tint(activPal.base, GLOB.alpha(toDel ? "red" : activPal.highlight, 50)) : (nr % 2 ? activPal.base : activPal.alternateBase)
+    color: ma.pressed || ma.containsMouse ? Qt.tint(ActivPalette.base, GLOB.alpha(toDel ? "red" : ActivPalette.highlight, 50)) : (nr % 2 ? ActivPalette.base : ActivPalette.alternateBase)
 
     Text {
         id: delText

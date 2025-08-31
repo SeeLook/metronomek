@@ -21,7 +21,7 @@ Column {
 
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        color: activPal.text
+        color: ActivPalette.text
     }
 
     Dial {
@@ -57,12 +57,12 @@ Column {
             width: parent.width * 0.55
             height: parent.height * 0.55
             radius: width / 2
-            color: Qt.lighter(activPal.button, tDial.pressed || tapRect.lighter || tapArea.pressed ? 1.2 : 1)
+            color: Qt.lighter(ActivPalette.button, tDial.pressed || tapRect.lighter || tapArea.pressed ? 1.2 : 1)
             raised: !tapArea.pressed
 
             Text {
                 anchors.centerIn: parent
-                color: activPal.buttonText
+                color: ActivPalette.buttonText
                 text: tempo
 
                 font {
@@ -99,7 +99,7 @@ Column {
                     width: parent.width / 2
                     height: parent.height / 15
                     y: parent.height * 0.48
-                    color: activPal.text
+                    color: ActivPalette.text
                 }
 
                 Rectangle {
@@ -107,7 +107,7 @@ Column {
                     width: parent.width / 2
                     height: parent.height / 15
                     y: parent.height * 0.48
-                    color: activPal.text
+                    color: ActivPalette.text
                     rotation: 90
                 }
 
@@ -139,7 +139,7 @@ Column {
                     width: parent.width / 2
                     height: parent.height / 15
                     y: parent.height * 0.48
-                    color: activPal.text
+                    color: ActivPalette.text
                 }
 
                 Behavior on scale {
@@ -154,7 +154,7 @@ Column {
 
         Rectangle {
             scale: tDial.showHint ? 1 : 0
-            color: activPal.highlight
+            color: ActivPalette.highlight
             x: (tDial.width - width) / 2
             y: tDial.height
             width: tapText.width + fm.height / 2
@@ -166,7 +166,7 @@ Column {
 
                 anchors.centerIn: parent
                 horizontalAlignment: Text.AlignHCenter
-                color: activPal.highlightedText
+                color: ActivPalette.highlightedText
                 text: qsTr("Tap tempo<br>or drag<br>a handle")
             }
 

@@ -37,7 +37,7 @@ AbstractButton {
         Text {
             font.pixelSize: butt.height / 3
             text: butt.text
-            color: activPal.text
+            color: ActivPalette.text
             anchors.centerIn: parent
             width: butt.width - GLOB.fontSize() * 2
             wrapMode: Text.WordWrap

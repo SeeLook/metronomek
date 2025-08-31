@@ -5,7 +5,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Window
-// import Metronomek.Core
 
 pragma ComponentBehavior: Bound
 
@@ -93,7 +92,7 @@ Window {
     x: GLOB.geometry.x
     y: GLOB.geometry.y
     title: qsTr("MetronomeK")
-    color: activPal.base
+    color: ActivPalette.base
 
     Component.onCompleted: {
         varTempoSlot();
@@ -104,20 +103,6 @@ Window {
             close.accepted = false;
             dialogItem.destroy();
         }
-    }
-
-    SystemPalette {
-        id: activPal
-
-        property color varTempo: "skyblue"
-
-        colorGroup: SystemPalette.Active
-    }
-
-    SystemPalette {
-        id: disblPal
-
-        colorGroup: SystemPalette.Disabled
     }
 
     FontMetrics {
@@ -139,19 +124,19 @@ Window {
             y: parent.height * 0.099
             width: parent.width * 0.26
             height: parent.height * 0.58
-            color: GLOB.valueColor(activPal.text, 90)
+            color: GLOB.valueColor(ActivPalette.text, 90)
             radius: width / 15
             clip: true
 
             border {
                 width: tLabel.width / 40
-                color: activPal.button
+                color: ActivPalette.button
             }
 
             // pendulum shadow
             Rectangle {
                 z: 4
-                color: GLOB.alpha(activPal.text, 40)
+                color: GLOB.alpha(ActivPalette.text, 40)
                 width: pendulum.width
                 height: pendulum.height
                 x: pendulum.x - tLabel.x + pendulum.width / 3
@@ -175,12 +160,12 @@ Window {
                 y: tLabel.y + (GLOB.tempoName(index).mid / 200) * tLabel.height * 0.85 - tLabel.height * 0.11 - height / 2
                 text: GLOB.tempoName(index).name
                 style: Text.Raised
-                styleColor: activPal.shadow
+                styleColor: ActivPalette.shadow
                 width: tLabel.width / 2 - parent.width / 80
                 horizontalAlignment: index % 2 ? Text.AlignLeft : Text.AlignRight
                 fontSizeMode: Text.HorizontalFit
                 minimumPixelSize: tLabel.height / 60
-                color: GLOB.valueColor(activPal.base, index === SOUND.nameTempoId ? 30 : 0)
+                color: GLOB.valueColor(ActivPalette.base, index === SOUND.nameTempoId ? 30 : 0)
 
                 font {
                     pixelSize: tLabel.height / 35
@@ -222,7 +207,7 @@ Window {
             id: pendulum
 
             z: 5
-            color: mainWindow.leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? activPal.base : GLOB.valueColor(activPal.text, GLOB.stationary ? 40 : 0)))
+            color: mainWindow.leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? ActivPalette.base : GLOB.valueColor(ActivPalette.text, GLOB.stationary ? 40 : 0)))
             width: parent.width / 20
             height: parent.height * 0.6
             x: parent.width * 0.3969
@@ -263,7 +248,7 @@ Window {
                 property int tempo: SOUND.tempo
 
                 z: 15
-                color: countArea.containsPress ? GLOB.valueColor(activPal.text, 20) : (SOUND.variableTempo ? activPal.varTempo : activPal.highlight)
+                color: countArea.containsPress ? GLOB.valueColor(ActivPalette.text, 20) : (SOUND.variableTempo ? ActivPalette.varTempo : ActivPalette.highlight)
                 text: "\u00A4"
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: pendulum.height * 0.65 * ((countW.tempo - 40) / 200)
@@ -274,7 +259,7 @@ Window {
                 }
 
                 Text {
-                    color: SOUND.variableTempo ? activPal.varTempo : activPal.highlight
+                    color: SOUND.variableTempo ? ActivPalette.varTempo : ActivPalette.highlight
                     text: "\u00A4"
                     anchors.centerIn: parent
 
@@ -290,7 +275,7 @@ Window {
                     text: mainWindow.meterCount
                     y: parent.height * 0.15
                     anchors.horizontalCenter: parent.horizontalCenter
-                    color: activPal.highlightedText
+                    color: ActivPalette.highlightedText
 
                     font {
                         pixelSize: parent.height * 0.5
@@ -328,7 +313,7 @@ Window {
 
         // cover for lover pendulum end
         Rectangle {
-            color: activPal.text
+            color: ActivPalette.text
             z: 20 // over pendulum
             width: parent.width * 0.2
             height: parent.width / 27
@@ -355,6 +340,7 @@ Window {
         }
 
         AbstractButton {
+            id: playButt
             property bool innerPress: pressAnim.running || pressed
 
             onPressed: pressAnim.start()
@@ -383,17 +369,14 @@ Window {
                 radius: SOUND.playing ? 0 : width / 2
                 color: SOUND.playing ? "red" : "green"
             }
-            // MetroImage
 
             Behavior on scale {
-                NumberAnimation {
-                }
-
+                NumberAnimation {}
             }
 
             background: TipRect {
                 radius: width / 2
-                raised: !parent.innerPress
+                raised: !playButt.innerPress
             }
 
         }
@@ -403,8 +386,8 @@ Window {
             y: sb.y + (sb.height - height) / 2
             text: SOUND.getTempoNameById(SOUND.nameTempoId)
             style: SOUND.variableTempo ? Text.Outline : Text.Normal
-            color: activPal.text
-            styleColor: activPal.varTempo
+            color: ActivPalette.text
+            styleColor: ActivPalette.varTempo
 
             font {
                 pixelSize: metro.height / 40
@@ -432,7 +415,7 @@ Window {
             focus: true
 
             border {
-                color: activPal.varTempo
+                color: ActivPalette.varTempo
                 width: SOUND.variableTempo ? fm.height / 6 : 0
             }
 
@@ -464,7 +447,7 @@ Window {
         }
 
         background: Rectangle {
-            color: cntButt.pressed ? activPal.button : "transparent"
+            color: cntButt.pressed ? ActivPalette.button : "transparent"
             radius: height / 6
 
             Row {
@@ -474,14 +457,14 @@ Window {
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     text: qsTr("count to") + ":"
-                    color: activPal.text
+                    color: ActivPalette.text
                 }
 
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     text: SOUND.meter > 1 ? SOUND.meter : "--"
                     textFormat: Text.StyledText
-                    color: activPal.text
+                    color: ActivPalette.text
 
                     font {
                         pixelSize: fm.height * 1.4
@@ -561,7 +544,7 @@ Window {
             lag = 0;
             toLeft = !toLeft;
             mainWindow.beatNr++;
-            nextTempo = SOUND.getTempoForBeat(mainWindow.partId, mainWindow.beatNr);
+            mainWindow.nextTempo = SOUND.getTempoForBeat(mainWindow.partId, mainWindow.beatNr);
             if (mainWindow.nextTempo == 0) {
                 mainWindow.partId++;
                 mainWindow.beatNr = 1;

@@ -31,7 +31,7 @@ Flickable {
         Rectangle {
             width: parent.width - fm.height / 2
             height: 1
-            color: activPal.text
+            color: ActivPalette.text
 
             anchors {
                 horizontalCenter: parent.horizontalCenter
@@ -127,7 +127,7 @@ Flickable {
 
         DrawerButton {
             text: GLOB.TR("MainWindow", "Tempo changes").toLowerCase()
-            bgColor: activPal.varTempo
+            bgColor: ActivPalette.varTempo
             checkable: true
             checked: SOUND.variableTempo
             onToggled: {

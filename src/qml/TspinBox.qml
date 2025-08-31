@@ -16,7 +16,7 @@ SpinBox {
     }
 
     background: TipRect {
-        color: activPal.base
+        color: ActivPalette.base
         width: sb.width - 2 * sb.height
         height: sb.height
         x: sb.height
@@ -24,7 +24,7 @@ SpinBox {
         Text {
             text: sb.textFromValue(sb.value, sb.locale)
             anchors.centerIn: parent
-            color: activPal.text
+            color: ActivPalette.text
 
             font {
                 pixelSize: sb.height * 0.6
@@ -56,7 +56,7 @@ SpinBox {
             width: parent.width / 2
             height: parent.height / 15
             y: parent.height * 0.48
-            color: activPal.text
+            color: ActivPalette.text
         }
 
         Rectangle {
@@ -64,7 +64,7 @@ SpinBox {
             width: parent.width / 2
             height: parent.height / 15
             y: parent.height * 0.48
-            color: activPal.text
+            color: ActivPalette.text
             rotation: 90
         }
 
@@ -88,7 +88,7 @@ SpinBox {
             width: parent.width / 2
             height: parent.height / 15
             y: parent.height * 0.48
-            color: activPal.text
+            color: ActivPalette.text
         }
 
         Behavior on scale {

@@ -22,7 +22,7 @@ Item {
         transformOrigin: Item.Center
         y: tp && visible ? parent.height * 0.65 * ((tp.targetTempo - 40) / 200) + (rall ? height / 2 : parent.height * 0.18 - height / 2) : 0
         text: "\u00Be"
-        color: activPal.varTempo
+        color: ActivPalette.varTempo
         visible: inMotion && tp && tp.initTempo !== tp.targetTempo
 
         font {
@@ -37,7 +37,7 @@ Item {
         x: partList.x - fm.height * 0.5
         y: partList.height / 4 - height
         visible: inMotion
-        color: activPal.text
+        color: ActivPalette.text
         width: partList.width * 2
         height: parent.height * 0.01
         radius: height / 2
@@ -68,10 +68,10 @@ Item {
             width: metro.width / 30
             height: (tp ? tp.beats : 1) * factor
             radius: width / 3
-            color: Qt.lighter(activPal.varTempo, index % 2 ? 0.8 : 1.2)
+            color: Qt.lighter(ActivPalette.varTempo, index % 2 ? 0.8 : 1.2)
 
             Text {
-                color: activPal.text
+                color: ActivPalette.text
                 text: tp ? tp.initTempo : ""
                 x: -width - GLOB.fontSize() / 2
                 y: tp && tp.initTempo !== tp.targetTempo ? 0 : (parent.height - height) / 2
@@ -79,7 +79,7 @@ Item {
 
             Text {
                 visible: tp && tp.initTempo !== tp.targetTempo
-                color: activPal.text
+                color: ActivPalette.text
                 text: tp && tp.initTempo > tp.targetTempo ? "rall." : "accel."
                 x: -width - GLOB.fontSize() / 2
                 y: fm.height * 2
@@ -110,14 +110,14 @@ Item {
         width: Math.min(mainWindow.width, fm.height * 60)
         height: mainWindow.height * 0.06
         x: (parent.width - width) / 2
-        color: activPal.varTempo
+        color: ActivPalette.varTempo
         radius: fm.height
 
         Text {
             x: (parent.width - width) / 2
             y: parent.height * 0.2
             transformOrigin: Item.Top
-            color: activPal.text
+            color: ActivPalette.text
             text: GLOB.TR("TtempoPart", rall ? "rallentando" : "accelerando")
 
             font {

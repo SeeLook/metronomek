@@ -13,7 +13,7 @@ DragDelegate {
     dragEnabled: tempoModel.count > 1
     width: parent ? parent.width : 0
     height: tCol ? tCol.height : 0
-    color: pressed || containsMouse ? Qt.tint(activPal.base, GLOB.alpha(toDel ? "red" : activPal.highlight, 50)) : (nr % 2 ? activPal.base : activPal.alternateBase)
+    color: pressed || containsMouse ? Qt.tint(ActivPalette.base, GLOB.alpha(toDel ? "red" : ActivPalette.highlight, 50)) : (nr % 2 ? ActivPalette.base : ActivPalette.alternateBase)
     onRemoved: speedHandler.removeTempo(tp.nr - 1)
 
     Column {
@@ -26,17 +26,17 @@ DragDelegate {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: tp ? tp.tempoText : ""
-            color: activPal.text
+            color: ActivPalette.text
         }
 
         Text {
             text: GLOB.TR("TempoPage", "Meter") + " (" + GLOB.TR("MainWindow", "count to") + "): " + "<b>" + (tp ? tp.meter : 4) + "</b>"
-            color: activPal.text
+            color: ActivPalette.text
         }
 
         Text {
             text: GLOB.TR("TempoPage", "Duration") + ": " + (tp && tp.infinite ? GLOB.TR("TempoPage", "infinite") : "<br>" + GLOB.chopS(qsTr("<b>%n</b> bars", "", tp ? tp.bars : 0), tp ? tp.bars : 0) + " = " + GLOB.chopS(qsTr("<b>%n</b> beats", "", tp ? tp.beats : 0), tp ? tp.beats : 0) + " = " + GLOB.chopS(qsTr("<b>%n</b> seconds", "", tp ? tp.seconds : 0), tp ? tp.seconds : 0))
-            color: activPal.text
+            color: ActivPalette.text
         }
 
     }

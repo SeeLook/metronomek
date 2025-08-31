@@ -13,7 +13,7 @@ Item {
     Text {
         id: innerFill
 
-        color: GLOB.valueColor(activPal.window, 70)
+        color: GLOB.valueColor(ActivPalette.window, 70)
         text: "\u00A1"
 
         font {
@@ -26,7 +26,7 @@ Item {
     Text {
         id: outerFill
 
-        color: Qt.tint(GLOB.valueColor(activPal.window, 10), GLOB.alpha(activPal.highlight, 25))
+        color: Qt.tint(GLOB.valueColor(ActivPalette.window, 10), GLOB.alpha(ActivPalette.highlight, 25))
         text: "\u00A2"
 
         font {

@@ -44,7 +44,7 @@ Tdialog {
 
             width: parent ? parent.width : 0
             height: fm.height * 5 + (numList.currentIndex === index ? buttonsRect.height + fm.height / 3 : 0)
-            color: Qt.tint(index % 2 ? activPal.base : activPal.alternateBase, GLOB.alpha(activPal.highlight, numList.currentIndex === index ? 20 : 0))
+            color: Qt.tint(index % 2 ? ActivPalette.base : ActivPalette.alternateBase, GLOB.alpha(ActivPalette.highlight, numList.currentIndex === index ? 20 : 0))
 
             NumeralSpectrum {
                 id: numSpec
@@ -58,10 +58,10 @@ Tdialog {
                 Text {
                     x: fm.height / 4
                     y: fm.height / 4
-                    color: numList.currentIndex === index ? activPal.highlight : activPal.text
+                    color: numList.currentIndex === index ? ActivPalette.highlight : ActivPalette.text
                     text: index + 1
                     style: Text.Outline
-                    styleColor: numList.currentIndex === index ? activPal.text : bgRect.color
+                    styleColor: numList.currentIndex === index ? ActivPalette.text : bgRect.color
 
                     font {
                         pixelSize: parent.height * 0.25
@@ -75,7 +75,7 @@ Tdialog {
 
                     width: fm.height / 4
                     height: parent.height
-                    color: activPal.highlight
+                    color: ActivPalette.highlight
                     visible: playAnim.running
                 }
 
@@ -125,7 +125,7 @@ Tdialog {
                     width: bgRect.width * 0.24
                     height: fm.height * 2
                     text: qsTranslate("QShortcut", "Play")
-                    bgColor: Qt.tint(activPal.button, GLOB.alpha("green", 40))
+                    bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("green", 40))
                     onClicked: {
                         playAnim.start();
                         cntMan.play(index);
@@ -137,7 +137,7 @@ Tdialog {
                     width: bgRect.width * 0.24
                     height: fm.height * 2
                     text: qsTr("Import")
-                    bgColor: Qt.tint(activPal.button, GLOB.alpha("blue", 40))
+                    bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("blue", 40))
                     onClicked: cntMan.getSingleWordFromFile(index)
                 }
 
@@ -150,7 +150,7 @@ Tdialog {
                     width: bgRect.width * 0.24
                     height: fm.height * 2
                     text: qsTr("Record")
-                    bgColor: Qt.tint(activPal.button, GLOB.alpha("red", 40))
+                    bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("red", 40))
                     onClicked: cntMan.rec(index)
                 }
 
