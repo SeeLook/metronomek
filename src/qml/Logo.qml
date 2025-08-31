@@ -5,11 +5,14 @@
 import QtQuick
 import QtQuick.Shapes
 
+pragma ComponentBehavior: Bound
+
 Rectangle {
     id: logo
 
     property alias anim: anim
     property int pauseDuration: 1000
+    property real spaceFactor: 1.0
     // private
     property real textW: 0
     property real initFontS: 0
@@ -18,30 +21,37 @@ Rectangle {
     height: width * 0.25
     color: ActivPalette.window
     clip: true
-    Component.onCompleted: initFontS = logo.height * 0.4
+
+    Component.onCompleted: {
+        initFontS = logo.height * 0.4;
+    }
 
     Row {
         x: logo.width * 0.03
         // (logo.height * 0.4) / initFontS is a font size factor when logo size changes
-        spacing: (logo.width * 0.9 - textW * ((logo.height * 0.4) / initFontS)) / 9
+        spacing: (logo.width * 0.9 - logo.textW * ((logo.height * 0.4) / logo.initFontS)) / 9 * logo.spaceFactor
 
         Repeater {
             model: ["M", "e", " ", "r", "o", "n", "o", "m", "e", "K"]
 
             Text {
+                id: letterTxt
+                required property int index
+                required property string modelData
                 y: GLOB.logoLetterY(index, logo.height * 1.5) - logo.height * 0.05
                 rotation: -35 + index * (70 / 9)
                 color: GLOB.randomColor()
                 style: Text.Raised
                 styleColor: ActivPalette.shadow
                 text: modelData
-                Component.onCompleted: textW += width
 
                 font {
                     pixelSize: logo.height * 0.4
                     bold: true
                 }
-
+                Component.onCompleted: {
+                    logo.textW += width;
+                }
             }
 
         }
@@ -152,7 +162,7 @@ Rectangle {
         alwaysRunToEnd: true
 
         PauseAnimation {
-            duration: pauseDuration
+            duration: logo.pauseDuration
         }
 
         NumberAnimation {
