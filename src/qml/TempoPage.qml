@@ -6,6 +6,8 @@ import Metronomek.Core
 import QtQuick
 import QtQuick.Controls
 
+pragma ComponentBehavior: Bound
+
 Tdialog {
     // Dialog
 
@@ -21,8 +23,8 @@ Tdialog {
     standardButtons: Dialog.Ok | Dialog.Help
     Component.onCompleted: {
         mainWindow.dialogItem = tempoPage;
-        footer.standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK");
-        footer.standardButton(Dialog.Help).text = qsTr("Actions");
+        (footer as DialogButtonBox).standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK");
+        (footer as DialogButtonBox).standardButton(Dialog.Help).text = qsTr("Actions");
         speedHandler = SOUND.speedHandler();
         speedHandler.emitAllTempos();
         combo.currentIndex = speedHandler.currCompId;
@@ -49,16 +51,16 @@ Tdialog {
             width: parent.width
             popup.contentItem.width: parent.width
             editable: true
-            model: speedHandler ? speedHandler.compositions : null
+            model: tempoPage.speedHandler ? tempoPage.speedHandler.compositions : null
             textRole: "title"
-            Component.onCompleted: combo = this
+            Component.onCompleted: tempoPage.combo = this
             onActivated: (index) => {
-                speedHandler.setComposition(index);
+                tempoPage.speedHandler.setComposition(index);
                 displayText = currentText;
             }
             onAccepted: {
                 displayText = editText;
-                speedHandler.setTitle(editText);
+                tempoPage.speedHandler.setTitle(editText);
             }
 
             contentItem: TextField {
@@ -73,13 +75,15 @@ Tdialog {
         }
 
         delegate: TempoPartDelegate {
+            id: tpDelegate
+            required property TempoPart modelData
             tp: modelData
             onClicked: {
                 pop.tp = tp;
                 if (pop.height < tempoPage.height / 2) {
-                    var p = parent.mapToItem(tempoPage.contentItem, 0, y + height + fm.height / 2);
-                    if (p.y > tempoPage.height - pop.height - fm.height / 2)
-                        pop.y = p.y - pop.height - height - fm.height;
+                    var p = tpDelegate.mapToItem(tempoPage.contentItem, 0, y + height + FM.height / 2);
+                    if (p.y > tempoPage.height - pop.height - FM.height / 2)
+                        pop.y = p.y - pop.height - height - FM.height;
                     else
                         pop.y = p.y;
                     pop.x = (tempoPage.width - pop.width) / 2;
@@ -90,12 +94,12 @@ Tdialog {
 
         footer: Column {
             width: parent.width
-            spacing: fm.height / 2
+            spacing: FM.height / 2
 
             Button {
                 width: parent.width
                 text: qsTr("Add tempo change")
-                onClicked: speedHandler.addTempo()
+                onClicked: tempoPage.speedHandler.addTempo()
             }
 
             Text {
@@ -125,27 +129,28 @@ Tdialog {
             tempoModel.clear();
         }
 
-        target: speedHandler
+        target: tempoPage.speedHandler
     }
 
     Menu {
         id: moreMenu
 
         y: tempoPage.height - height - tempoPage.implicitFooterHeight
+        x: tempoPage.width - width - FM.height
 
         MenuItem {
             text: qsTr("New composition")
             onClicked: {
-                speedHandler.newComposition();
-                combo.currentIndex = combo.count - 1;
+                tempoPage.speedHandler.newComposition();
+                tempoPage.combo.currentIndex = tempoPage.combo.count - 1;
             }
         }
 
         MenuItem {
             text: qsTr("Duplicate")
             onClicked: {
-                speedHandler.duplicateComposition();
-                combo.currentIndex = combo.count - 1;
+                tempoPage.speedHandler.duplicateComposition();
+                tempoPage.combo.currentIndex = tempoPage.combo.count - 1;
             }
         }
         //MenuItem {
@@ -160,26 +165,26 @@ Tdialog {
             onClicked: {
                 var c = changesList.count - 1;
                 for (var t = c; t > 0; --t) {
-                    var it = changesList.itemAtIndex(t);
-                    it.toDel = false;
-                    it.rmAnim.duration = 150 + (c - t) * 25;
-                    it.rmAnim.to = -it.width;
-                    it.rmAnim.start();
+                    let it = changesList.itemAtIndex(t);
+                    (it as TempoPartDelegate).toDel = false;
+                    (it as TempoPartDelegate).rmAnim.duration = 150 + (c - t) * 25;
+                    (it as TempoPartDelegate).rmAnim.to = -it.width;
+                    (it as TempoPartDelegate).rmAnim.start();
                 }
-                changesList.itemAtIndex(0).tp.reset();
-                var titl = speedHandler.getTitle(combo.currentIndex + 1);
-                speedHandler.setTitle(titl);
-                combo.displayText = titl;
+                (changesList.itemAtIndex(0) as TempoPartDelegate).tp.reset();
+                var titl = tempoPage.speedHandler.getTitle(tempoPage.combo.currentIndex + 1);
+                tempoPage.speedHandler.setTitle(titl);
+                tempoPage.combo.displayText = titl;
             }
         }
 
         MenuItem {
             text: qsTranslate("QFileDialog", "Remove")
-            enabled: combo.count > 1
+            enabled: tempoPage.combo.count > 1
             onClicked: {
-                speedHandler.removeComposition(false);
-                combo.currentIndex = 0;
-                combo.displayText = combo.currentText;
+                tempoPage.speedHandler.removeComposition(false);
+                tempoPage.combo.currentIndex = 0;
+                tempoPage.combo.displayText = tempoPage.combo.currentText;
             }
         }
 
@@ -195,10 +200,10 @@ Tdialog {
         width: tCol.width + leftPadding + rightPadding
         title: pop.tp ? pop.tp.tempoText : ""
         standardButtons: Dialog.Ok
-        Component.onCompleted: footer.standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK")
+        Component.onCompleted: (footer as DialogButtonBox).standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK")
 
         Flickable {
-            height: Math.min(tCol.height + fm.height, tempoPage.height - pop.extraH)
+            height: Math.min(tCol.height + FM.height, tempoPage.height - pop.extraH)
             width: tCol.width
             contentHeight: tCol.height
             contentWidth: tCol.width
