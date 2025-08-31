@@ -70,9 +70,9 @@ signals:
      * WARNING: This signal has to be connected using @p Qt::Qt::DirectConnection
      * to perform front-end callback routines in back-end thread.
      */
-    void feedAudio(char *, unsigned int, unsigned int &);
+    void feedAudio(char *, unsigned int, unsigned int *);
 
-    void takeAudio(char *, unsigned int, unsigned int &);
+    void takeAudio(char *, unsigned int, unsigned int *);
 
     void sampleRateChanged();
     void audioModeChanged();

@@ -186,8 +186,8 @@ protected:
     void squash(qint16 *in, quint32 inLen, qint16 *&out, quint32 &outLen);
 #endif
 
-    void playCallBack(char *data, unsigned int maxLen, unsigned int &wasRead);
-    void recCallBack(char *data, unsigned int maxLen, unsigned int &wasRead);
+    void playCallBack(char *data, unsigned int maxLen, unsigned int *wasRead);
+    void recCallBack(char *data, unsigned int maxLen, unsigned int *wasRead);
 
     /**
      * When playing (m_playing == true) starts timer every 20 ms

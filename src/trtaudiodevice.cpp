@@ -113,7 +113,9 @@ int TRtAudioDevice::outCallBack(void *outBuffer, void *, unsigned int nBufferFra
 {
     Q_UNUSED(status)
     unsigned int retVal = 0;
-    m_instance->emitFeedAudio(static_cast<char *>(outBuffer), nBufferFrames, retVal);
+    if (!m_instance)
+        return retVal;
+    m_instance->emitFeedAudio(static_cast<char *>(outBuffer), nBufferFrames, &retVal);
     return static_cast<int>(retVal);
 }
 
@@ -121,7 +123,7 @@ int TRtAudioDevice::inCallBack(void *, void *inBuffer, unsigned int nBufferFrame
 {
     Q_UNUSED(status)
     unsigned int retVal = 0;
-    m_instance->emitTakeAudio(static_cast<char *>(inBuffer), nBufferFrames, retVal);
+    m_instance->emitTakeAudio(static_cast<char *>(inBuffer), nBufferFrames, &retVal);
     return static_cast<int>(retVal);
 }
 

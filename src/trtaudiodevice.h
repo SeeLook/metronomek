@@ -76,14 +76,14 @@ protected:
 
     static int outCallBack(void *outBuffer, void *, unsigned int nBufferFrames, double, RtAudioStreamStatus status, void *);
 
-    static void emitFeedAudio(char *outBuffer, unsigned int nBufferFrames, unsigned int &retVal)
+    static void emitFeedAudio(char *outBuffer, unsigned int nBufferFrames, unsigned int *retVal)
     {
         emit m_instance->feedAudio(outBuffer, nBufferFrames, retVal);
     }
 
     static int inCallBack(void *, void *inBuffer, unsigned int nBufferFrames, double, RtAudioStreamStatus status, void *);
 
-    static void emitTakeAudio(char *inBuffer, unsigned int nBufferFrames, unsigned int &retVal) { emit m_instance->takeAudio(inBuffer, nBufferFrames, retVal); }
+    static void emitTakeAudio(char *inBuffer, unsigned int nBufferFrames, unsigned int *retVal) { emit m_instance->takeAudio(inBuffer, nBufferFrames, retVal); }
 
     quint32 determineSampleRate(RtAudio::DeviceInfo &devInfo);
 

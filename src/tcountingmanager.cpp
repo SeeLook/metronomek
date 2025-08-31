@@ -955,7 +955,7 @@ void TcountingManager::squash(qint16 *in, quint32 inLen, qint16 *&out, quint32 &
 #define CALLBACK_CONTINUE (0)
 #define CALLBACK_STOP (2)
 
-void TcountingManager::playCallBack(char *data, unsigned int maxLen, unsigned int &wasRead)
+void TcountingManager::playCallBack(char *data, unsigned int maxLen, unsigned int *wasRead)
 {
     qint16 sample = 0;
     auto out = reinterpret_cast<qint16 *>(data);
@@ -968,17 +968,17 @@ void TcountingManager::playCallBack(char *data, unsigned int maxLen, unsigned in
         m_currSample++;
     }
     if (m_currSample < 36000) {
-        wasRead = CALLBACK_CONTINUE;
+        *wasRead = CALLBACK_CONTINUE;
     } else {
-        wasRead = CALLBACK_STOP;
+        *wasRead = CALLBACK_STOP;
         m_playing = false;
         ;
     }
 }
 
-void TcountingManager::recCallBack(char *data, unsigned int maxLen, unsigned int &wasRead)
+void TcountingManager::recCallBack(char *data, unsigned int maxLen, unsigned int *wasRead)
 {
-    wasRead = m_recording ? CALLBACK_CONTINUE : CALLBACK_STOP;
+    *wasRead = m_recording ? CALLBACK_CONTINUE : CALLBACK_STOP;
     if (!m_recording)
         return;
 
@@ -1007,7 +1007,7 @@ void TcountingManager::recCallBack(char *data, unsigned int maxLen, unsigned int
                 m_inBuffer[m_inSize] = in[i];
                 m_inSize++;
             } else { // to long
-                wasRead = CALLBACK_STOP;
+                *wasRead = CALLBACK_STOP;
                 m_recording = false;
                 break;
             }
@@ -1017,7 +1017,7 @@ void TcountingManager::recCallBack(char *data, unsigned int maxLen, unsigned int
                     if (m_endPos) {
                         if (m_inPos - m_endPos > 2400) { // saying numeral finished
                             m_inSize = m_inSize - (m_inPos - m_endPos);
-                            wasRead = CALLBACK_STOP;
+                            *wasRead = CALLBACK_STOP;
                             m_recording = false;
                             break;
                         }
