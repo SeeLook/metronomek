@@ -64,12 +64,14 @@ Tdialog {
                         flag: "default"
                         lang: QT_TR_NOOP("default")
                     }
-
+                    ListElement {
+                        flag: "nl"
+                        lang: "Nederlands"
+                    }
                     ListElement {
                         flag: "pl"
                         lang: "polski"
                     }
-
                     ListElement {
                         flag: "us"
                         lang: "English"

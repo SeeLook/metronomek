@@ -1,15 +1,16 @@
 <RCC>
-  <qresource prefix="/">
+    <qresource prefix="/">
 
-    <file>metronomek.png</file>
+        <file>metronomek.png</file>
 
-    <file>flags/default.png</file>
-    <file>flags/pl.png</file>
-    <file>flags/us.png</file>
+        <file>flags/default.png</file>
+        <file>flags/nl.png</file>
+        <file>flags/pl.png</file>
+        <file>flags/us.png</file>
 
-    <file>metronomek.otf</file>
+        <file>metronomek.otf</file>
 
-    <file alias="COUNTING.md">../sounds/counting/README.md</file>
+        <file alias="COUNTING.md">../sounds/counting/README.md</file>
 
-  </qresource>
+    </qresource>
 </RCC>
