@@ -12,6 +12,7 @@
 #include <QtQml/qqmlregistration.h>
 
 class QSettings;
+class QTranslator;
 
 #define GLOB (Tglob::instance())
 
@@ -172,6 +173,7 @@ private:
     bool m_disableRotation = false;
     QList<Ttempo> m_tempoList;
     QVariant m_dialogItem;
+    QTranslator *m_translator = nullptr;
 };
 
 #endif // TGLOB_H

@@ -161,16 +161,6 @@ Tdialog {
 
             }
 
-            Text {
-                width: parent.width - GLOB.fontSize()
-                anchors.horizontalCenter: parent.horizontalCenter
-                horizontalAlignment: Text.AlignHCenter
-                textFormat: Text.StyledText
-                wrapMode: Text.WordWrap
-                text: qsTr("Language change requires restarting the application!")
-                color: "red"
-            }
-
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: GLOB.fontSize()

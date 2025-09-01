@@ -18,6 +18,7 @@
 #include <QtCore/qtranslator.h>
 #include <QtGui/qfont.h>
 #include <QtGui/qguiapplication.h>
+#include <QtQml/qqmlcontext.h>
 #include <QtQml/qqmlengine.h>
 
 #include "QtCore/qdebug.h"
@@ -73,9 +74,9 @@ Tglob::Tglob(QObject *parent)
 #endif
     QLocale::setDefault(loc);
 
-    auto mTranslator = new QTranslator(this);
-    if (mTranslator->load(loc, QStringLiteral("metronomek_"), QString(), p))
-        GLOB->setLangLoaded(qApp->installTranslator(mTranslator));
+    m_translator = new QTranslator(this);
+    if (m_translator->load(loc, QStringLiteral("metronomek_"), QString(), p))
+        GLOB->setLangLoaded(qApp->installTranslator(m_translator));
 }
 
 Tglob::~Tglob()
@@ -110,10 +111,19 @@ void Tglob::setStationary(bool stat)
 
 void Tglob::setLang(const QString &l)
 {
-    if (l != m_lang) {
-        m_lang = l;
-        emit langChanged();
-    }
+    if (l == m_lang)
+        return;
+
+    m_lang = l;
+    QLocale loc(QLocale(m_lang).language(), QLocale(m_lang).territory());
+    QString p = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/translations/");
+    qApp->removeTranslator(m_translator);
+    if (m_translator->load(loc, QStringLiteral("metronomek_"), QString(), p))
+        GLOB->setLangLoaded(qApp->installTranslator(m_translator));
+    auto topEngine = QQmlEngine::contextForObject(this)->engine();
+    if (topEngine)
+        topEngine->retranslate();
+    emit langChanged();
 }
 
 void Tglob::setDialogItem(QVariant dgIt)
