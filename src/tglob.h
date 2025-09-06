@@ -94,6 +94,7 @@ public:
     QString userLocalPath() const;
 
     QString soundsPath() const;
+    QString translationPath() const;
 
     /**
      * Removes last 's' letter from @p plural string

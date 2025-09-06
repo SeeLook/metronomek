@@ -3,11 +3,10 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tglob.h"
-#include "src/metronomek_conf.h"
-#include "tmetroshape.h"
+#include "metronomek_conf.h"
 
 #if defined(Q_OS_ANDROID)
-#include "android/tandroid.h"
+#include "tandroid.h"
 #endif
 
 #include <QtCore/qdir.h>
@@ -24,6 +23,8 @@
 #include "QtCore/qdebug.h"
 
 Tglob *Tglob::m_instance = nullptr;
+
+using namespace Qt::Literals::StringLiterals;
 
 Tglob::Tglob(QObject *parent)
     : QObject(parent)
@@ -59,18 +60,15 @@ Tglob::Tglob(QObject *parent)
     qRegisterMetaType<Ttempo>();
     createTempoList();
 
+    auto p = translationPath();
 #if defined(Q_OS_ANDROID)
     QLocale loc(m_lang.isEmpty() ? QLocale::system().language() : QLocale(m_lang).language());
-    QString p = QStringLiteral("assets:/translations/");
 #elif defined(Q_OS_WIN)
     QLocale loc(m_lang.isEmpty() ? QLocale::system().uiLanguages().first() : m_lang);
-    QString p = qApp->applicationDirPath() + QLatin1String("/translations/");
 #elif defined(Q_OS_MAC)
     QLocale loc(m_lang.isEmpty() ? QLocale::system().uiLanguages().first() : m_lang);
-    QString p = qApp->applicationDirPath() + QLatin1String("/../Resources/translations/");
 #else
     QLocale loc(QLocale(m_lang.isEmpty() ? qgetenv("LANG") : m_lang).language(), QLocale(m_lang.isEmpty() ? qgetenv("LANG") : m_lang).territory());
-    QString p = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/translations/");
 #endif
     QLocale::setDefault(loc);
 
@@ -116,7 +114,7 @@ void Tglob::setLang(const QString &l)
 
     m_lang = l;
     QLocale loc(QLocale(m_lang).language(), QLocale(m_lang).territory());
-    QString p = qApp->applicationDirPath() + QLatin1String("/../share/metronomek/translations/");
+    QString p = translationPath();
     qApp->removeTranslator(m_translator);
     if (m_translator->load(loc, QStringLiteral("metronomek_"), QString(), p))
         GLOB->setLangLoaded(qApp->installTranslator(m_translator));
@@ -160,6 +158,19 @@ QString Tglob::soundsPath() const
     return qApp->applicationDirPath() + QLatin1String("/../Resources/sounds/");
 #else
     return qApp->applicationDirPath() + QLatin1String("/../share/metronomek/sounds/");
+#endif
+}
+
+QString Tglob::translationPath() const
+{
+#if defined(Q_OS_ANDROID)
+    return u"assets:/translations/"_s;
+#elif defined(Q_OS_WIN)
+    return qApp->applicationDirPath() + "/translations"_L1;
+#elif defined(Q_OS_MAC)
+    return qApp->applicationDirPath() + "/../Resources/translations/"_L1;
+#else
+    return qApp->applicationDirPath() + "/../share/metronomek/translations/"_L1;
 #endif
 }
 
