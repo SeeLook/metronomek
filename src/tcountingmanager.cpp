@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2022 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2022-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tcountingmanager.h"
@@ -13,7 +13,7 @@
 #endif
 
 #if defined(Q_OS_ANDROID)
-#include "android/tandroid.h"
+#include "tandroid.h"
 #else
 #include <QtWidgets/qfiledialog.h>
 #endif
@@ -386,7 +386,7 @@ void TcountingManager::storeCounting(int lang, const QString &name, bool askForF
     for (int n = 0; n < m_numerals.size(); ++n)
         xml.addNumeralSize(m_numerals.at(n)->size());
     QLocale locale(static_cast<QLocale::Language>(lang));
-    auto fName = QString("%1/%2-counting.wav").arg(GLOB->userLocalPath()).arg(locale.name());
+    auto fName = QString("%1/%2-counting.wav").arg(GLOB->userLocalPath(), locale.name());
     if (writeWavFile(fName, xml)) {
         m_localCntModel << xml.modelEntry();
         m_localWavFiles << fName;
@@ -627,6 +627,7 @@ void TcountingManager::downloadOnlineList()
     emit downloadingChanged();
     static const QString mdAddr = QStringLiteral("https://sourceforge.net/projects/metronomek/files/counting/README.md");
     auto getFile = new TgetFile(mdAddr, 0, this);
+    connect(getFile, &TgetFile::progress, this, &TcountingManager::downProgress);
     connect(getFile, &TgetFile::downloadFinished, this, [=](bool success) {
         if (success) {
             auto fName = GLOB->userLocalPath() + QLatin1String("/COUNTING.md");

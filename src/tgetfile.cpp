@@ -1,10 +1,11 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2022 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2022-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tgetfile.h"
 
 #include <QtCore/qdebug.h>
+#include <QtCore/qtimer.h>
 #include <QtNetwork/qnetworkreply.h>
 #include <QtNetwork/qsslsocket.h>
 
@@ -13,10 +14,13 @@ TgetFile::TgetFile(const QString &fileAddr, qint64 expSize, QObject *parent)
     , m_expectedSize(expSize)
 {
     if (!QSslSocket::supportsSsl()) {
-        qDebug() << "[TgetFile] No SSL support";
-        if (m_expectedSize > 0)
+        qDebug() << "[TgetFile] No SSL support" << fileAddr;
+        QTimer::singleShot(200, this, [=] {
             emit progress(-1.0); // hide progress bar immediately
-        emit downloadFinished(false);
+        });
+        QTimer::singleShot(500, this, [=] {
+            emit downloadFinished(false);
+        });
         return;
     }
 
