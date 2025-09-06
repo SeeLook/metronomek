@@ -3,7 +3,8 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "toboedevice.h"
-#include <QtAndroidExtras/qandroidfunctions.h>
+#include <QtCore/qcoreapplication.h>
+#include <QtCore/qpermissions.h>
 
 #include <QtCore/qdebug.h>
 
@@ -21,9 +22,9 @@ public:
 
         unsigned int retVal = 0;
         if (m_device->audioMode() == TabstractAudioDevice::Audio_Output)
-            emit m_device->feedAudio(static_cast<char *>(audioData), static_cast<unsigned int>(numFrames), retVal);
+            emit m_device->feedAudio(static_cast<char *>(audioData), static_cast<unsigned int>(numFrames), &retVal);
         else
-            emit m_device->takeAudio(static_cast<char *>(audioData), static_cast<unsigned int>(numFrames), retVal);
+            emit m_device->takeAudio(static_cast<char *>(audioData), static_cast<unsigned int>(numFrames), &retVal);
 
         return retVal == 0 ? oboe::DataCallbackResult::Continue : oboe::DataCallbackResult::Stop;
     }
@@ -65,25 +66,34 @@ void TOboeDevice::startPlaying()
 
 void TOboeDevice::startRecording()
 {
-    if (m_oboe) {
-        if (audioMode() != Audio_Input) {
-            stop();
-            m_stream->close();
-            if (QtAndroid::androidSdkVersion() >= 23) {
-                const QString allowRec("android.permission.RECORD_AUDIO");
-                if (QtAndroid::checkPermission(allowRec) != QtAndroid::PermissionResult::Granted) {
-                    auto perms = QtAndroid::requestPermissionsSync(QStringList() << allowRec);
-                    qDebug() << allowRec << (perms[allowRec] == QtAndroid::PermissionResult::Granted);
-                }
-            }
-            setAudioType(Audio_Input);
-            m_oboe->setDirection(oboe::Direction::Input);
-            m_oboe->setChannelCount(oboe::ChannelCount::Mono);
-            m_oboe->setInputPreset(oboe::InputPreset::Unprocessed);
-            resultMessage(m_oboe->openStream(m_stream));
-        }
+    if (!m_oboe)
+        return;
+
+    if (audioMode() == Audio_Input) {
         m_stream->requestStart();
+        return;
     }
+
+    stop();
+    m_stream->close();
+    if (QNativeInterface::QAndroidApplication::sdkVersion() >= 23) {
+        QMicrophonePermission microphonePermission;
+        switch (qApp->checkPermission(microphonePermission)) {
+        case Qt::PermissionStatus::Undetermined:
+            qApp->requestPermission(microphonePermission, this, &TOboeDevice::startRecording);
+            return;
+        case Qt::PermissionStatus::Denied:
+            // TODO: some info dialog maybe
+            return;
+        case Qt::PermissionStatus::Granted:
+            break;
+        }
+    }
+    setAudioType(Audio_Input);
+    m_oboe->setDirection(oboe::Direction::Input);
+    m_oboe->setChannelCount(oboe::ChannelCount::Mono);
+    m_oboe->setInputPreset(oboe::InputPreset::Unprocessed);
+    resultMessage(m_oboe->openStream(m_stream));
 }
 
 void TOboeDevice::stop()
