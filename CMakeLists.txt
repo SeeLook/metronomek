@@ -4,7 +4,7 @@
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)            #
 ##############################################################################
 
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.16)
 
 set(METRONOMEK_VER "0.7.7-devel")
 #WARNING Keep above line exactly as 9th line of this file.
@@ -19,30 +19,13 @@ if (WIN32)
     file(WRITE ${CMAKE_BINARY_DIR}/VERSION.txt "${METRONOMEK_VER}")
 endif()
 
-project(metronomek LANGUAGES CXX)
+project(metronomek)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(QT_DEFAULT_MAJOR_VERSION 6)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(QT_QML_GENERATE_QMLLS_INI ON)
-
-if(ANDROID)
-    find_package(QT NAMES Qt6 COMPONENTS Core Gui Quick LinguistTools REQUIRED)
-    find_package(Qt6 COMPONENTS Core Gui Quick REQUIRED)
-else()
-    find_package(QT NAMES Qt6 COMPONENTS Core Widgets Quick LinguistTools REQUIRED)
-    find_package(Qt6 COMPONENTS Core Widgets Quick REQUIRED)
-endif()
-qt_standard_project_setup(REQUIRES 6.8)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/src)
 
 configure_file(${CMAKE_SOURCE_DIR}/src/metronomek_conf_cmake.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/metronomek_conf.h)
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 ##############################################################################
 #               Compilation                                                  #
@@ -50,10 +33,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 ##############################################################################
 add_subdirectory(src)
 
-##############################################################################
-#              Installation                                                  #
-#         (ignored under Android)                                            #
-##############################################################################
 if(WIN32)
     install(TARGETS metronomek DESTINATION .)
     set(INS_PREF ".")
@@ -62,20 +41,23 @@ else()
     if (APPLE)
         install(TARGETS metronomek DESTINATION "${CMAKE_INSTALL_PREFIX}/metronomek.app/Contents/MacOs")
         set(INS_PREF "metronomek.app/Contents/Resources")
-    else()
+    elseif(NOT ANDROID)
         install(TARGETS metronomek DESTINATION bin)
         set(INS_PREF "share/metronomek")
     endif()
 endif()
 
-# Sound samples
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/sounds" DESTINATION "${INS_PREF}")
-
-install(FILES LICENSE CHANGELOG.md DESTINATION "${INS_PREF}")
-
 # translations (*.qm)
 file(GLOB QM_STUFF "${CMAKE_CURRENT_SOURCE_DIR}/translations/*.qm")
-install(FILES ${QM_STUFF} DESTINATION "${INS_PREF}/translations")
+
+if (ANDROID)
+
+else ()
+    # Sound samples
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/sounds" DESTINATION "${INS_PREF}")
+    install(FILES LICENSE CHANGELOG.md DESTINATION "${INS_PREF}")
+    install(FILES ${QM_STUFF} DESTINATION "${INS_PREF}/translations")
+endif()
 
 # Icons & other stuff
 if (WIN32)
@@ -93,6 +75,8 @@ if (WIN32)
 else()
     if(APPLE)
         install(FILES "${CMAKE_SOURCE_DIR}/resources/metronomek.icns" DESTINATION "${INS_PREF}")
+    elseif(ANDROID)
+            #
     else() # Linux
         install(FILES installs/Linux/net.sf.metronomek.desktop DESTINATION share/applications)
         install(FILES installs/Linux/net.sf.metronomek.appdata.xml DESTINATION share/metainfo)
@@ -111,7 +95,7 @@ endif()
 #                 src target                                                 #
 #                  (Linux)                                                   #
 ##############################################################################
-if(UNIX AND NOT APPLE)
+if(LINUX)
     message(STATUS "
         To build source package, call:
         make src
@@ -146,7 +130,7 @@ endif()
 #            deploy target                                                   #
 #         (Mac Os & Windows)                                                 #
 ##############################################################################
-
+find_package(Qt6Core)
 get_target_property(QtCore_location_Release Qt6::Core LOCATION_Release)
 get_filename_component(QT_BINARY_DIR "${QtCore_location_Release}" DIRECTORY)
 
@@ -192,13 +176,15 @@ endif()
 ##############################################################################
 #                 uninstall target                                           #
 ##############################################################################
-configure_file(
-     "${CMAKE_CURRENT_SOURCE_DIR}/installs/cmake_uninstall.cmake.in"
-     "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-        IMMEDIATE @ONLY)
+if (NOT ANDROID)
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/installs/cmake_uninstall.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+            IMMEDIATE @ONLY)
 
-add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
-)
+    add_custom_target(uninstall
+        COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+    )
+endif()
 
 #add_subdirectory(spare_parts/helpers/wavdirparser)
