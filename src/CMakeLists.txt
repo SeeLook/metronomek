@@ -4,17 +4,9 @@
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)            #
 ##############################################################################
 
-if (ANDROID)
-    set(OPEN_SSL_CMAKE "${ANDROID_SDK_ROOT}/android_openssl/CMakeLists.txt")
-    include(${OPEN_SSL_CMAKE} RESULT_VARIABLE ANDROID_SSL_STATE)
-    message(STATUS "SSL: ${ANDROID_SSL_STATE} === ${OPEN_SSL_CMAKE}")
-endif()
-
-find_package(Qt6 REQUIRED COMPONENTS Widgets Qml Quick QuickControls2 Network)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Qml Quick QuickControls2)
 
 set(QT_DEFAULT_MAJOR_VERSION 6)
-
-# qt_policy(SET QTP0004 NEW)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
@@ -30,6 +22,12 @@ if (APPLE) # Mac RPath
     set(CMAKE_INSTALL_RPATH "@loader_path/../Frameworks")
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif (APPLE)
+
+if (ANDROID)
+    set(OPEN_SSL_CMAKE android_openssl/android_openssl.cmake)
+    include(${OPEN_SSL_CMAKE} RESULT_VARIABLE ANDROID_SSL_STATE)
+    message(STATUS "SSL: ${ANDROID_SSL_STATE} === ${OPEN_SSL_CMAKE}")
+endif()
 
 qt_add_executable(metronomek WIN32)
 
@@ -128,6 +126,7 @@ if (ANDROID)
         tandroid.cpp
         toboedevice.cpp
     )
+    add_android_openssl_libraries(metronomek)
 else()
     list(APPEND METRONOMEK_SRC
         trtaudiodevice.cpp
@@ -210,12 +209,10 @@ target_link_libraries(metronomek PUBLIC
     Qt6::Qml
     Qt6::Quick
     Qt6::QuickControls2
-    Qt6::Network
     ${SOUNDTOUCH_LIBRARY}
 )
 
 if(ANDROID)
-    # add_android_openssl_libraries(metronomek)
     target_link_libraries(metronomek PUBLIC
         OpenSLES
         oboe
@@ -232,14 +229,6 @@ if(ANDROID)
         QT_ANDROID_VERSION_NAME ${METRONOMEK_VER}
     )
 
-    qt_import_plugins(metronomek
-        # INCLUDE_BY_TYPE imageformats Qt::QSvgPlugin
-        EXCLUDE_BY_TYPE qmltooling
-        EXCLUDE_BY_TYPE iconengines
-        # EXCLUDE_BY_TYPE networkinformation
-        EXCLUDE_BY_TYPE tls
-        EXCLUDE_BY_TYPE platforminputcontexts
-    )
     message(STATUS "
         Metronomek ${METRONOMEK_VER} for Android
         ${QT_ANDROID_PACKAGE_SOURCE_DIR}

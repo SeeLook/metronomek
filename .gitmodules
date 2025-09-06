@@ -1,3 +1,6 @@
 [submodule "src/oboe"]
 	path = src/oboe
 	url = https://github.com/google/oboe.git
+[submodule "src/android_openssl"]
+	path = src/android_openssl
+	url = https://github.com/KDAB/android_openssl.git
