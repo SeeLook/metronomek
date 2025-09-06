@@ -55,7 +55,7 @@ Item {
         cacheBuffer: height
 
         delegate: Rectangle {
-            property TempoPart tp: currComp.getPart(index)
+            property TempoPart tp: currComp?.getPart(index)
             property real factor: {
                 if (tp && tp.beats * GLOB.fontSize() < FM.height * 4)
                     return (FM.height * 4) / tp.beats;

@@ -60,7 +60,7 @@ void TrtmComposition::saveToXMLFile(const QString &xmlName)
         xml.writeStartElement(QLatin1String("metronomek"));
         if (!m_title.isEmpty())
             xml.writeTextElement(QLatin1String("title"), m_title);
-        for (auto p : m_tempoList)
+        for (auto &p : m_tempoList)
             p->writeToXML(xml);
         xml.writeEndElement();
         xml.writeEndDocument();

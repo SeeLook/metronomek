@@ -85,7 +85,6 @@ Tsound::~Tsound()
 
 QString Tsound::outputName()
 {
-    return QString();
     return m_instance && m_instance->m_audioDevice ? m_instance->m_audioDevice->deviceName() : QString();
 }
 
