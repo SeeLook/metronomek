@@ -41,9 +41,9 @@ void TnumeralSpectrum::setNumeral(TsoundData *numData)
 
 void TnumeralSpectrum::startRecording()
 {
-    setRecMessage(tr("Silence..."));
+    setRecMessage(tr("Silence, please..."));
     QTimer::singleShot(1000, this, [=] {
-        setRecMessage(tr("Now say") + QString(": %1").arg(m_nr + 1));
+        setRecMessage(tr("Now say") + QString(": \"%1\"").arg(m_nr + 1));
     });
 }
 
