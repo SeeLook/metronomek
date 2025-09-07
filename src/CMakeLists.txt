@@ -85,6 +85,7 @@ qt_add_qml_module(metronomek
         qml/NextTempoPop.qml
         qml/CountingLangPop.qml
 
+        qml/Background.qml
         qml/TipRect.qml
         qml/CuteButton.qml
         qml/TspinBox.qml

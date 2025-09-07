@@ -13,6 +13,8 @@ Dialog {
     padding: 0
     margins: 0
 
+    background: Background {}
+
     onVisibleChanged: {
         if (!visible)
             destroy();

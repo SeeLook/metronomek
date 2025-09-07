@@ -22,6 +22,7 @@ AbstractButton {
         parent: mainWindow.contentItem
         width: Math.min(mainWindow.width * 0.7, FM.height * 20)
         height: mainWindow.height
+        background: Background {}
         onAboutToShow: {
             mainWindow.stopMetronome();
             if (!menuButt.drawerContent)
