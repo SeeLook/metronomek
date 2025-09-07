@@ -180,18 +180,47 @@ Tdialog {
         id: pop
 
         property TempoPart tp: null
-        property real extraH: topPadding + bottomPadding + implicitFooterHeight + implicitHeaderHeight
+        property real extraH: topPadding + bottomPadding + implicitFooterHeight + hdrRect.height
 
         height: Math.min(extraH + tCol.height, tempoPage.height)
         width: tCol.width + leftPadding + rightPadding
-        title: pop.tp ? pop.tp.tempoText : ""
         standardButtons: Dialog.Ok
         anchors.centerIn: parent
+        header: Rectangle {
+            id: hdrRect
+            width: pop.width
+            height: GLOB.isAndroid() ? radius * 2 : FM.height * 2
+            color: ActivPalette.text
+            radius: GLOB.isAndroid() ? 28 : FM.height / 2
+            Rectangle {
+                width: parent.width
+                height: hdrRect.radius
+                y: parent.height - height
+                color: ActivPalette.text
+            }
+            Text {
+                text: pop.tp ? pop.tp.tempoText : ""
+                anchors.fill: parent
+                padding: FM.height / 8
+                font.pixelSize: height
+                minimumPixelSize: FM.height / 2
+                fontSizeMode: Text.Fit
+                textFormat: Text.StyledText
+                elide: Text.ElideRight
+                color: ActivPalette.base
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+        }
+
 
         background: TipRect {
-            radius: FM.height / 2
+            radius: hdrRect.radius
         }
-        Component.onCompleted: (footer as DialogButtonBox).standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK")
+        Component.onCompleted: {
+            contentItem.clip = true;
+            (footer as DialogButtonBox).standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK");
+        }
 
         Flickable {
             height: Math.min(tCol.height + FM.height, tempoPage.height - pop.extraH)
@@ -203,10 +232,11 @@ Tdialog {
             Column {
                 id: tCol
 
-                spacing: GLOB.fontSize() / (GLOB.isAndroid() ? 6 : 2)
+                spacing: GLOB.fontSize() / 2
                 padding: GLOB.fontSize() / 4
 
                 Grid {
+                    id: tempoGrid
                     columns: tempoPage.width < initCtrl.width + targetCtrl.width ? 1 : 2
                     spacing: GLOB.fontSize()
                     anchors.horizontalCenter: parent.horizontalCenter
