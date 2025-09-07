@@ -217,7 +217,7 @@ TcountingManager::TcountingManager(QObject *parent)
 TcountingManager::~TcountingManager()
 {
     GLOB->settings()->setValue(QLatin1String("countingWav"),
-                               m_localModelId > 0 && m_localModelId < m_localWavFiles.size() ? m_localWavFiles[m_localModelId] : QString());
+                               m_localModelId > 0 && m_localModelId < m_localWavFiles.size() ? m_localWavFiles[m_localModelId] : m_prevLocalWav);
     if (m_inBuffer)
         delete[] m_inBuffer;
     if (!m_numerals.isEmpty())
