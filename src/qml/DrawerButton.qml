@@ -5,6 +5,8 @@
 import QtQuick
 import QtQuick.Controls
 
+pragma ComponentBehavior: Bound
+
 AbstractButton {
     id: dButt
 
@@ -13,20 +15,20 @@ AbstractButton {
 
     implicitWidth: parent.width
     implicitHeight: FM.height * 2.4
-    onPressed: pressAnim.start()
     focusPolicy: Qt.NoFocus
+
+    onPressed: pressAnim.start()
 
     PauseAnimation {
         id: pressAnim
-
         duration: 100
     }
 
     background: Rectangle {
-        color: innerPress ? ActivPalette.highlight : ActivPalette.window
+        color: dButt.innerPress ? ActivPalette.highlight : ActivPalette.window
 
         Text {
-            width: parent.width - (dButt.checkable ? (chLoader.item ? chLoader.item.width : 0) : 0)
+            width: parent.width - (dButt.checkable ? (chLoader.item ? (chLoader.item as AbstractButton).width : 0) : 0)
             anchors.verticalCenter: parent.verticalCenter
             leftPadding: FM.height
             text: dButt.text
@@ -35,7 +37,7 @@ AbstractButton {
             fontSizeMode: Text.Fit
             textFormat: Text.StyledText
             elide: Text.ElideRight
-            color: innerPress ? ActivPalette.highlightedText : ActivPalette.text
+            color: dButt.innerPress ? ActivPalette.highlightedText : ActivPalette.text
         }
 
         Loader {
@@ -48,26 +50,25 @@ AbstractButton {
                 verticalCenter: parent.verticalCenter
             }
 
-            sourceComponent: CheckBox {
+            sourceComponent: AbstractButton {
                 id: chB
 
                 checkable: true
                 checked: dButt.checked
-                scale: innerPress ? 0.8 : 1
+                scale: dButt.innerPress ? 0.8 : 1
                 onToggled: {
                     dButt.toggle();
                     dButt.toggled();
                 }
 
                 Behavior on scale {
-                    NumberAnimation {
-                    }
+                    NumberAnimation {}
 
                 }
 
                 indicator: TipRect {
-                    color: bgColor
-                    x: -width / 10
+                    color: dButt.bgColor
+                    x: -width - (GLOB.fontSize() / (GLOB.isAndroid() ? 2 : 1))
                     y: (parent.height - height) / 2
                     width: FM.height * 1.6
                     height: width
@@ -77,23 +78,19 @@ AbstractButton {
                         width: parent.width * 0.6
                         height: width
                         radius: width / 8
-                        color: chB.checked ? bgColor : ActivPalette.base
+                        color: chB.checked ? dButt.bgColor : ActivPalette.base
 
                         border {
                             width: chB.checked ? 0 : 1
-                            color: Qt.darker(bgColor, 1.3)
+                            color: Qt.darker(dButt.bgColor, 1.3)
                         }
 
                         Behavior on color {
                             ColorAnimation {
                             }
-
                         }
-
                     }
-
                 }
-
             }
 
         }

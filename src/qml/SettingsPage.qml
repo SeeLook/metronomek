@@ -8,7 +8,7 @@ import QtQuick.Controls
 Tdialog {
     id: settPage
 
-    padding: GLOB.fontSize() / 2
+    padding: FM.height
     visible: true
     standardButtons: Dialog.Cancel | Dialog.Apply
 
@@ -38,8 +38,6 @@ Tdialog {
     }
 
     Flickable {
-        // Column
-
         width: parent.width
         height: parent.height
         clip: true
@@ -49,13 +47,15 @@ Tdialog {
         Column {
             id: col
 
-            width: settPage.contentItem.width
-            spacing: GLOB.fontSize()
+            width: settPage.availableWidth
+            spacing: GLOB.fontSize() * 2
 
-            Frame {
-                width: GLOB.fontSize() * (GLOB.isAndroid() ? 25 : 34)
-                height: GLOB.fontSize() * (GLOB.isAndroid() ? 7 : 9)
+            Rectangle {
+                width: parent.width - FM.height
+                height: FM.height * 5 // (GLOB.isAndroid() ? 7 : 9)
                 anchors.horizontalCenter: parent.horizontalCenter
+                color: ActivPalette.alternateBase
+                radius: FM.height / 2
 
                 ListModel {
                     id: langModel
@@ -76,26 +76,24 @@ Tdialog {
                         flag: "us"
                         lang: "English"
                     }
+                }
 
+                Rectangle {
+                    width: parent.height * 1.1
+                    height: parent.height * 0.98
+                    anchors.centerIn: parent
+                    color: GLOB.alpha(ActivPalette.highlight, 100)
+                    radius: width / 12
                 }
 
                 Tumbler {
                     id: langTumb
 
                     width: parent.width
-                    height: GLOB.fontSize() * (GLOB.isAndroid() ? 6 : 8)
+                    height: FM.height * 6// (GLOB.isAndroid() ? 4 : 6)
+                    y: height * 0.05
                     visibleItemCount: Math.min(((width / (GLOB.fontSize() * (GLOB.isAndroid() ? 5.5 : 7))) / 2) * 2 - 1, 3)
                     model: langModel
-
-                    Rectangle {
-                        z: -1
-                        width: parent.height * 1.1
-                        height: parent.height * 0.98
-                        x: (parent.width - width) / 2
-                        y: -parent.height * 0.01
-                        color: GLOB.alpha(ActivPalette.highlight, 100)
-                        radius: width / 12
-                    }
 
                     delegate: Column {
                         id: tumbDlg
@@ -105,7 +103,7 @@ Tdialog {
 
                         spacing: GLOB.fontSize() / 4
                         opacity: 1 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
-                        scale: 1.7 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
+                        scale: 1.4 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
                         z: 1
 
                         Image {
@@ -152,9 +150,7 @@ Tdialog {
                                 x: pathView.width
                                 y: GLOB.fontSize() * (GLOB.isAndroid() ? 2 : 2.2)
                             }
-
                         }
-
                     }
 
                 }
@@ -222,22 +218,19 @@ Tdialog {
 
             CheckBox {
                 id: screenOnChB
-
-                text: qsTr("keep screen on")
+                text: "<font color=\"%1\">".arg(ActivPalette.text) + qsTr("keep screen on") + "</font>"
                 checked: GLOB.isKeepScreenOn()
             }
 
             CheckBox {
                 id: disRotatChB
-
-                text: qsTr("disable screen rotation")
+                text: "<font color=\"%1\">".arg(ActivPalette.text) + qsTr("disable screen rotation") + "</font>"
                 checked: GLOB.disableRotation()
             }
 
             CheckBox {
                 id: fullScrChB
-
-                text: qsTr("use full screen")
+                text: "<font color=\"%1\">".arg(ActivPalette.text) + qsTr("use full screen") + "</font>"
                 checked: GLOB.fullScreen()
             }
 

@@ -35,8 +35,8 @@ Item {
         shadowEnabled: true
         shadowColor: ActivPalette.shadow
         // blur: tip.shadowRadius / 64.0
-        shadowHorizontalOffset: raised ? GLOB.fontSize() / 2 : 0
-        shadowVerticalOffset: raised ? GLOB.fontSize() / 2 : 0
+        shadowHorizontalOffset: tip.raised ? GLOB.fontSize() / 2 : 0
+        shadowVerticalOffset: tip.raised ? GLOB.fontSize() / 2 : 0
     }
 
 }

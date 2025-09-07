@@ -9,8 +9,6 @@ import QtQuick.Controls
 pragma ComponentBehavior: Bound
 
 Tdialog {
-    // Dialog
-
     id: tempoPage
 
     // private
@@ -36,12 +34,10 @@ Tdialog {
     }
 
     ListView {
-        //         onTextEdited: speedHandler.setTitle(text)
-
         id: changesList
 
-        width: parent.width
-        height: parent.height
+        width: tempoPage.availableWidth
+        height: tempoPage.availableHeight
         spacing: 1
         model: tempoModel
 
@@ -62,16 +58,6 @@ Tdialog {
                 displayText = editText;
                 tempoPage.speedHandler.setTitle(editText);
             }
-
-            contentItem: TextField {
-                width: parent.width
-                placeholderText: qsTr("Rhythmic Composition")
-                text: comboEdit.displayText
-                selectedTextColor: ActivPalette.highlightedText
-                selectionColor: ActivPalette.highlight
-                selectByMouse: true
-            }
-
         }
 
         delegate: TempoPartDelegate {
@@ -200,6 +186,11 @@ Tdialog {
         width: tCol.width + leftPadding + rightPadding
         title: pop.tp ? pop.tp.tempoText : ""
         standardButtons: Dialog.Ok
+        anchors.centerIn: parent
+
+        background: TipRect {
+            radius: FM.height / 2
+        }
         Component.onCompleted: (footer as DialogButtonBox).standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK")
 
         Flickable {
@@ -273,9 +264,10 @@ Tdialog {
                     spacing: GLOB.fontSize() * 2
 
                     Text {
+                        enabled: infiChB.enabled
                         anchors.verticalCenter: parent.verticalCenter
                         text: qsTr("Duration")
-                        color: ActivPalette.text
+                        color: enabled ? ActivPalette.text : DisblPalette.text
                         font.bold: true
                     }
 
@@ -286,7 +278,7 @@ Tdialog {
                         anchors.verticalCenter: parent.verticalCenter
                         checked: pop.tp && pop.tp.infinite
                         onToggled: pop.tp.infinite = checked
-                        text: qsTr("infinite")
+                        text: "<font color=\"%1\">".arg(enabled ? ActivPalette.text : DisblPalette.text) + qsTr("infinite") + "</font>"
                     }
 
                 }

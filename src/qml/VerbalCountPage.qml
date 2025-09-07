@@ -6,7 +6,7 @@ import Metronomek.Core
 import QtQuick
 import QtQuick.Controls
 
-// pragma ComponentBehavior: Bound
+pragma ComponentBehavior: Bound
 
 Tdialog {
     id: vCntPage
@@ -17,7 +17,7 @@ Tdialog {
     property var actionsMenu: null
 
     function appendToLocalModel(modelEntry) {
-        var wav = modelEntry.split(";");
+        let wav = modelEntry.split(";");
         localCntsMod.append({
             "langID": wav[0],
             "langName": wav[1],
@@ -28,7 +28,7 @@ Tdialog {
     function updateOnlineModel() {
         var oMod = cntMan.onlineModel();
         for (var w = 0; w < oMod.length; ++w) {
-            var wav = oMod[w].split(";");
+            let wav = oMod[w].split(";");
             onlineMod.append({
                 "langID": wav[0],
                 "langName": wav[1] + " / " + wav[2],
@@ -38,40 +38,40 @@ Tdialog {
     }
 
     visible: true
-    padding: GLOB.fontSize() / 4
+    padding: GLOB.fontSize() / 2
     standardButtons: Dialog.Ok | Dialog.Help
     Component.onCompleted: {
-        footer.standardButton(Dialog.Help).text = GLOB.TR("TempoPage", "Actions");
+        (footer as DialogButtonBox).standardButton(Dialog.Help).text = GLOB.TR("TempoPage", "Actions");
     }
+
     onHelpRequested: {
         if (!actionsMenu)
-            actionsMenu = actMenuComp.createObject(mainWindow);
-
+            actionsMenu = actMenuComp.createObject(vCntPage.contentItem);
         actionsMenu.open();
     }
 
     Connections {
-        target: cntMan
+        target: vCntPage.cntMan
         function onAppendToLocalModel(modelEntry: string): void {
-            appendToLocalModel(modelEntry);
+            vCntPage.appendToLocalModel(modelEntry);
             localList.positionViewAtEnd();
         }
 
         function onDownProgress(prog: real): void {
-            progBar.indeterminate = false;
-            progBar.value = prog;
+            vCntPage.progBar.indeterminate = false;
+            vCntPage.progBar.value = prog;
             if (prog >= 1)
-                progBar.destroy(1000);
+                vCntPage.progBar.destroy(1000);
             else if (prog < 0)
-                progBar.destroy();
+                vCntPage.progBar.destroy();
         }
 
         function onOnlineModelUpdated() {
             onlineList.model = null;
             onlineMod.clear();
-            updateOnlineModel();
+            vCntPage.updateOnlineModel();
             onlineList.model = onlineMod;
-            progBar.destroy();
+            vCntPage.progBar.destroy();
         }
     }
 
@@ -83,24 +83,28 @@ Tdialog {
         ListView {
             id: localList
 
-            width: vCntPage.width - GLOB.fontSize()
-            height: Math.min(contentHeight, (vCntPage.height - vCntPage.implicitFooterHeight) / 2 - GLOB.fontSize() * 2)
+            width: vCntPage.availableWidth
+            height: Math.min(contentHeight, (vCntPage.availableHeight - vCntPage.implicitFooterHeight) / 2 - GLOB.fontSize() * 2)
             spacing: 1
             currentIndex: -1
             model: localCntsMod
             clip: true
             Component.onCompleted: {
                 if (localCntsMod.count == 0) {
-                    var wavMod = cntMan.countingModelLocal();
-                    for (var w = 0; w < wavMod.length; ++w) appendToLocalModel(wavMod[w])
-                    localList.positionViewAtIndex(cntMan.localModelId, ListView.Contain);
+                    let wavMod = vCntPage.cntMan.countingModelLocal();
+                    for (var w = 0; w < wavMod.length; ++w) {
+                        vCntPage.appendToLocalModel(wavMod[w]);
+                    }
+                    localList.positionViewAtIndex(vCntPage.cntMan.localModelId, ListView.Contain);
                 }
             }
 
+            headerPositioning: ListView.OverlayHeader
             header: Rectangle {
-                width: parent.width
+                width: parent.width - GLOB.fontSize()
                 height: FM.height * 1.5
                 color: ActivPalette.text
+                z: 2
 
                 Text {
                     anchors.centerIn: parent
@@ -116,15 +120,16 @@ Tdialog {
             delegate: DragDelegate {
                 id: bgRect
 
+                required property int index
                 property var modelData: localCntsMod.get(index)
 
                 dragEnabled: index > 0
-                width: parent ? parent.width : 0
+                width: parent ? parent.width - GLOB.fontSize(): 0
                 height: FM.height * 3
-                color: Qt.tint(index % 2 ? ActivPalette.base : ActivPalette.alternateBase, GLOB.alpha(toDel ? "red" : ActivPalette.highlight, pressed || containsMouse ? 50 : (cntMan?.localModelId === index ? 20 : 0)))
-                onClicked: cntMan.localModelId = index
+                color: Qt.tint(index % 2 ? ActivPalette.base : ActivPalette.alternateBase, GLOB.alpha(toDel ? "red" : ActivPalette.highlight, pressed || containsMouse ? 80 : (vCntPage.cntMan?.localModelId === index ? 40 : 0)))
+                onClicked: vCntPage.cntMan.localModelId = index
                 onRemoved: {
-                    cntMan.removeLocalWav(index);
+                    vCntPage.cntMan.removeLocalWav(index);
                     localCntsMod.remove(index);
                 }
 
@@ -135,12 +140,13 @@ Tdialog {
                     Rectangle {
                         width: FM.height * 4.5
                         height: bgRect.height
-                        color: cntMan?.localModelId == index ? ActivPalette.highlight : "transparent"
+                        color: vCntPage.cntMan?.localModelId == bgRect.index ? ActivPalette.highlight : "transparent"
+                        radius: height / 2
 
                         Text {
                             anchors.centerIn: parent
-                            color: cntMan?.localModelId == index ? ActivPalette.highlightedText : ActivPalette.text
-                            text: modelData ? modelData.langID : ""
+                            color: vCntPage.cntMan?.localModelId == bgRect.index ? ActivPalette.highlightedText : ActivPalette.text
+                            text: bgRect.modelData ? bgRect.modelData.langID : ""
 
                             font {
                                 bold: true
@@ -158,7 +164,7 @@ Tdialog {
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
                             color: ActivPalette.text
-                            text: modelData ? modelData.langName : ""
+                            text: bgRect.modelData ? bgRect.modelData.langName : ""
                             font.pixelSize: FM.height
                             minimumPixelSize: FM.height / 2
                             fontSizeMode: Text.HorizontalFit
@@ -169,7 +175,7 @@ Tdialog {
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
                             color: ActivPalette.text
-                            text: modelData ? modelData.cntName : ""
+                            text: bgRect.modelData ? bgRect.modelData.cntName : ""
                             font.pixelSize: FM.height * 1.1
                             minimumPixelSize: FM.height * 0.7
                             fontSizeMode: Text.HorizontalFit
@@ -184,10 +190,9 @@ Tdialog {
 
         }
 
-        Rectangle {
+        Item { // spacer
             width: vCntPage.width - GLOB.fontSize()
             height: FM.height / 2
-            color: ActivPalette.text
         }
 
         ListModel {
@@ -197,22 +202,24 @@ Tdialog {
         ListView {
             id: onlineList
 
-            width: vCntPage.width - GLOB.fontSize()
-            height: vCntPage.height - vCntPage.implicitFooterHeight - localList.height - FM.height
+            width: vCntPage.availableWidth
+            height: vCntPage.availableHeight - vCntPage.implicitFooterHeight - localList.height - FM.height / 2
             spacing: 1
             clip: true
             currentIndex: -1
             model: onlineMod
             Component.onCompleted: {
                 if (onlineMod.count == 0)
-                    updateOnlineModel();
+                    vCntPage.updateOnlineModel();
 
             }
 
+            headerPositioning: ListView.OverlayHeader
             header: Rectangle {
-                width: parent.width
+                width: parent.width - GLOB.fontSize()
                 height: FM.height * 1.5
                 color: ActivPalette.highlight
+                z: 2
 
                 Row {
                     anchors.centerIn: parent
@@ -227,11 +234,12 @@ Tdialog {
             }
 
             delegate: Rectangle {
-                id: bgRect
+                id: bgRect2
 
-                property var modelEntry: onlineMod.get(index)
+                required property int index
+                property var modelEntry: ListView.view.model.get(index)
 
-                width: parent.width
+                width: parent.width - GLOB.fontSize()
                 height: FM.height * 2.5
                 color: ma.pressed || ma.containsMouse ? Qt.tint(ActivPalette.base, GLOB.alpha(ActivPalette.highlight, 50)) : (index % 2 ? ActivPalette.base : ActivPalette.alternateBase)
 
@@ -239,7 +247,7 @@ Tdialog {
                     x: FM.height / 2
                     anchors.verticalCenter: parent.verticalCenter
                     color: ActivPalette.text
-                    text: modelEntry.langID
+                    text: bgRect2.modelEntry.langID
 
                     font {
                         bold: true
@@ -249,12 +257,12 @@ Tdialog {
 
                 Text {
                     x: FM.height * 3.5
-                    width: bgRect.width - FM.height * 9
+                    width: bgRect2.width - FM.height * 9
                     horizontalAlignment: Text.AlignHCenter
                     wrapMode: Text.WordWrap
                     anchors.verticalCenter: parent.verticalCenter
                     color: ActivPalette.text
-                    text: modelEntry.langName
+                    text: bgRect2.modelEntry.langName
                 }
 
                 Row {
@@ -267,7 +275,7 @@ Tdialog {
                     Text {
                         anchors.bottom: parent.bottom
                         color: ActivPalette.text
-                        text: qsTranslate("QFileSystemModel", "%1 KB").arg(modelEntry.size) + " "
+                        text: qsTranslate("QFileSystemModel", "%1 KB").arg(bgRect2.modelEntry.size) + " "
                     }
 
                     Text {
@@ -286,19 +294,18 @@ Tdialog {
                 MouseArea {
                     id: ma
 
-                    enabled: !cntMan?.downloading
+                    enabled: !vCntPage.cntMan?.downloading
                     anchors.fill: parent
                     hoverEnabled: !GLOB.isAndroid()
                     onClicked: {
-                        cntMan.downloadCounting(index);
-                        progBar = progBarComp.createObject(bgRect);
+                        vCntPage.cntMan.downloadCounting(bgRect2.index);
+                        vCntPage.progBar = progBarComp.createObject(bgRect2);
                     }
                 }
 
             }
 
-            ScrollBar.vertical: ScrollBar {
-            }
+            ScrollBar.vertical: ScrollBar {}
 
         }
 
@@ -308,8 +315,7 @@ Tdialog {
         id: progBarComp
 
         ProgressBar {
-            width: parent.width - FM.height
-            height: FM.height / 3
+            width: parent.width - FM.height * 2
             z: 50000
             indeterminate: true
 
@@ -319,14 +325,14 @@ Tdialog {
             }
 
             CuteButton {
-                visible: cntMan.downloading
+                visible: vCntPage.cntMan.downloading
                 width: FM.height * 5
                 height: FM.height * 2
                 x: parent.width - FM.height * 5
                 y: -FM.height * 2
                 text: qsTranslate("QPlatformTheme", "Abort")
                 bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("red", 40))
-                onClicked: cntMan.abortDownload()
+                onClicked: vCntPage.cntMan.abortDownload()
             }
 
         }
@@ -354,8 +360,8 @@ Tdialog {
             MenuItem {
                 text: qsTr("Update online counting list")
                 onTriggered: {
-                    cntMan.downloadOnlineList();
-                    progBar = progBarComp.createObject(vCntPage.contentItem);
+                    vCntPage.cntMan.downloadOnlineList();
+                    vCntPage.progBar = progBarComp.createObject(vCntPage.contentItem);
                 }
             }
 
@@ -365,7 +371,7 @@ Tdialog {
                     let hPop = Qt.createComponent("Metronomek.Core", "HelpPop").createObject(mainWindow, {
                         "helpText": qsTr("Matronomek is installed with verbal counting only in English language.") + "<br>" + qsTr("But counting for other languages can be easy obtained:") + "<ul><li>" + qsTr("by downloading files available online (for free)") + "</li><li>" + qsTr("or by recording own counting.") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
                     });
-                    hPop.open();
+                    (hPop as HelpPop).open();
                 }
             }
 

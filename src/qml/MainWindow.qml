@@ -84,7 +84,7 @@ Window {
         }
     }
 
-    visibility: GLOB.isAndroid() && GLOB.fullScreen() ? Window.FullScreen : Window.AutomaticVisibility
+    visibility: GLOB.isAndroid() ? (GLOB.fullScreen() ? Window.FullScreen : Window.Maximized) : Window.AutomaticVisibility
     visible: true
     width: GLOB.geometry.width
     height: GLOB.geometry.height
