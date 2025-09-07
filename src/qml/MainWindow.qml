@@ -9,11 +9,6 @@ import QtQuick.Window
 pragma ComponentBehavior: Bound
 
 Window {
-    // PauseAnimation {
-    //     duration: 500
-    //     running: true
-    //     onFinished: Qt.createComponent("Metronomek.Core", "TempoPage").createObject(mainWindow)
-    // }
 
     id: mainWindow
 
@@ -576,6 +571,10 @@ Window {
         }
 
         target: SOUND
+    }
+
+    Loader {
+        source: GLOB.isAndroid() ? "MaterialImport.qml" : ""
     }
 
 }

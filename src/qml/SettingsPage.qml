@@ -218,19 +218,19 @@ Tdialog {
 
             CheckBox {
                 id: screenOnChB
-                text: "<font color=\"%1\">".arg(ActivPalette.text) + qsTr("keep screen on") + "</font>"
+                text: qsTr("keep screen on")
                 checked: GLOB.isKeepScreenOn()
             }
 
             CheckBox {
                 id: disRotatChB
-                text: "<font color=\"%1\">".arg(ActivPalette.text) + qsTr("disable screen rotation") + "</font>"
+                text: qsTr("disable screen rotation")
                 checked: GLOB.disableRotation()
             }
 
             CheckBox {
                 id: fullScrChB
-                text: "<font color=\"%1\">".arg(ActivPalette.text) + qsTr("use full screen") + "</font>"
+                text: qsTr("use full screen")
                 checked: GLOB.fullScreen()
             }
 

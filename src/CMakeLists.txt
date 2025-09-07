@@ -50,14 +50,18 @@ set(METRONOMEK_SRC
     ${CMAKE_SOURCE_DIR}/resources/metronomek_res.qrc
 )
 
-set(MERTONOMEK_QML_SINGLETONS
+set(METRONOMEK_QML_SINGLETONS
     qml/ActivPalette.qml
     qml/DisblPalette.qml
     qml/FM.qml
 )
 
-set_source_files_properties(${MERTONOMEK_QML_SINGLETONS}
+set_source_files_properties(${METRONOMEK_QML_SINGLETONS}
     PROPERTIES QT_QML_SINGLETON_TYPE TRUE
+)
+
+set(METRONOMEK_QML_ANDROID
+    qml/MaterialImport.qml
 )
 
 # qt_add_resources(METRONOMEK_SRC ${CMAKE_SOURCE_DIR}/resources/metronomek_res.qrc)
@@ -94,7 +98,8 @@ qt_add_qml_module(metronomek
         qml/SidePop.qml
         qml/HelpPop.qml
 
-        ${MERTONOMEK_QML_SINGLETONS}
+        ${METRONOMEK_QML_ANDROID}
+        ${METRONOMEK_QML_SINGLETONS}
 
     SOURCES
         tglob.cpp

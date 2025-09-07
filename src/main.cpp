@@ -8,6 +8,7 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qelapsedtimer.h>
 #include <QtCore/qloggingcategory.h>
+#include <QtCore/qthread.h>
 #include <QtCore/qtimer.h>
 #include <QtGui/qfontdatabase.h>
 #include <QtGui/qicon.h>
@@ -35,19 +36,6 @@ int main(int argc, char *argv[])
 #else
     auto app = new QApplication(argc, argv);
     app->setWindowIcon(QIcon(QStringLiteral(":/metronomek.png")));
-#endif
-
-    // auto glob = new Tglob();
-
-#if defined(Q_OS_ANDROID)
-    auto pal = qApp->palette();
-    pal.setColor(QPalette::Active, QPalette::Highlight, QColor(0, 0x96, 0x88)); // Teal color for highlight #009688
-    pal.setColor(QPalette::Active, QPalette::HighlightedText, QColor(0xff, 0xf4, 0x05)); // #fff405
-    pal.setColor(QPalette::Active, QPalette::Shadow, QColor(90, 90, 90)); // Dark gray for shadow
-    pal.setColor(QPalette::Active, QPalette::Button, QColor(240, 240, 240)); // Very light gray for button
-    pal.setColor(QPalette::Active, QPalette::Mid, QColor(124, 124, 124));
-    pal.setColor(QPalette::Active, QPalette::Window, QColor(250, 250, 250)); // Almost white for windows
-    qApp->setPalette(pal);
 #endif
 
 #if defined(Q_OS_WIN)
@@ -113,7 +101,9 @@ int main(int argc, char *argv[])
     int execCode = app->exec();
 
     delete SOUND;
+    QThread::currentThread()->msleep(200);
     delete GLOB;
+    engine->deleteLater();
     delete app;
 
     return execCode;
