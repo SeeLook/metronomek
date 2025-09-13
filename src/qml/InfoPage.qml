@@ -22,7 +22,7 @@ Tdialog {
     Logo {
         id: logo
 
-        spaceFactor: 0.4
+        spaceFactor: GLOB.isAndroid() ? 0.55 : 0.4
         pauseDuration: 0
         anim.running: parent.visible
         anim.loops: 4
