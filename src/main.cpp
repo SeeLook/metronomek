@@ -64,6 +64,9 @@ int main(int argc, char *argv[])
     if (engine->rootObjects().isEmpty())
         return -1;
 
+    engine->setObjectOwnership(GLOB, QJSEngine::CppOwnership);
+    engine->setObjectOwnership(SOUND, QJSEngine::CppOwnership);
+
     qDebug() << "==== METRONOMEK LAUNCH TIME" << startElapsed.nsecsElapsed() / 1000000.0 << "[ms] ====";
 
     SOUND->init();
@@ -98,12 +101,16 @@ int main(int argc, char *argv[])
     }
 #endif
 
+    QObject::connect(app, &QCoreApplication::aboutToQuit, [&]() {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 50);
+        delete SOUND;
+        delete GLOB;
+    });
+
+    // app->setQuitOnLastWindowClosed(true);
     int execCode = app->exec();
 
-    delete SOUND;
-    QThread::currentThread()->msleep(200);
-    delete GLOB;
-    engine->deleteLater();
+    delete engine;
     delete app;
 
     return execCode;
