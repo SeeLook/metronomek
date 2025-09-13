@@ -8,7 +8,22 @@
 #include "tabstractaudiodevice.h"
 #include <oboe/Oboe.h>
 
-class ToboeCallBack;
+class TOboeDevice;
+
+class ToboeCallBack : public oboe::AudioStreamDataCallback
+{
+public:
+    ToboeCallBack(TOboeDevice *devParent = nullptr);
+    ~ToboeCallBack();
+
+    oboe::DataCallbackResult onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames);
+
+    void terminate();
+
+private:
+    TOboeDevice *m_device = nullptr;
+    std::atomic<bool> m_terminating{false};
+};
 
 /**
  * Android audio back-end
@@ -36,7 +51,7 @@ protected:
 private:
     oboe::AudioStreamBuilder *m_oboe = nullptr;
     std::shared_ptr<oboe::AudioStream> m_stream;
-    ToboeCallBack *m_callBackClass = nullptr;
+    ToboeCallBack m_callBackClass;
 };
 
 #endif // TOBOEDEVICE_H

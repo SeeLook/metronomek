@@ -8,45 +8,55 @@
 
 #include <QtCore/qdebug.h>
 
-class ToboeCallBack : public oboe::AudioStreamDataCallback
+ToboeCallBack::ToboeCallBack(TOboeDevice *devParent)
+    : oboe::AudioStreamDataCallback()
+    , m_device(devParent)
 {
-public:
-    ToboeCallBack(TOboeDevice *devParent = nullptr)
-        : oboe::AudioStreamDataCallback()
-        , m_device(devParent)
-    {
-    }
-    oboe::DataCallbackResult onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames)
-    {
-        Q_UNUSED(audioStream)
+}
 
-        unsigned int retVal = 0;
-        if (m_device->audioMode() == TabstractAudioDevice::Audio_Output)
-            emit m_device->feedAudio(static_cast<char *>(audioData), static_cast<unsigned int>(numFrames), &retVal);
-        else
-            emit m_device->takeAudio(static_cast<char *>(audioData), static_cast<unsigned int>(numFrames), &retVal);
+ToboeCallBack::~ToboeCallBack() { };
 
-        return retVal == 0 ? oboe::DataCallbackResult::Continue : oboe::DataCallbackResult::Stop;
+oboe::DataCallbackResult ToboeCallBack::onAudioReady(oboe::AudioStream *audioStream, void *audioData, int32_t numFrames)
+{
+    Q_UNUSED(audioStream)
+
+    if (m_terminating.load(std::memory_order_acquire)) {
+        qDebug() << "[ToboeCallBack] Terminating... Ignore data";
+        return oboe::DataCallbackResult::Stop;
     }
 
-private:
-    TOboeDevice *m_device;
-};
+    unsigned int retVal = 0;
+    if (m_device->audioMode() == TabstractAudioDevice::Audio_Output)
+        emit m_device->feedAudio(static_cast<char *>(audioData), static_cast<unsigned int>(numFrames), &retVal);
+    else
+        emit m_device->takeAudio(static_cast<char *>(audioData), static_cast<unsigned int>(numFrames), &retVal);
+
+    return retVal == 0 ? oboe::DataCallbackResult::Continue : oboe::DataCallbackResult::Stop;
+}
+
+void ToboeCallBack::terminate()
+{
+    m_terminating.store(true, std::memory_order_release);
+}
 
 TOboeDevice::TOboeDevice(QObject *parent)
     : TabstractAudioDevice(parent)
+    , m_callBackClass(this)
 {
-    m_callBackClass = new ToboeCallBack();
 }
 
 TOboeDevice::~TOboeDevice()
 {
-    if (m_oboe) {
+    m_callBackClass.terminate();
+    if (m_stream) {
+        m_stream->requestStop();
+        auto current = m_stream->getState();
+        oboe::StreamState next;
+        constexpr int64_t timeoutNanos = 500 * 1000 * 1000; // 500 ms
+        m_stream->waitForStateChange(current, &next, timeoutNanos);
         m_stream->close();
-        delete m_oboe;
+        m_stream = nullptr;
     }
-    if (m_callBackClass)
-        delete m_callBackClass;
 }
 
 void TOboeDevice::startPlaying()
@@ -92,7 +102,7 @@ void TOboeDevice::startRecording()
     setAudioType(Audio_Input);
     m_oboe->setDirection(oboe::Direction::Input);
     m_oboe->setChannelCount(oboe::ChannelCount::Mono);
-    m_oboe->setInputPreset(oboe::InputPreset::Unprocessed);
+    m_oboe->setInputPreset(oboe::InputPreset::Generic);
     resultMessage(m_oboe->openStream(m_stream));
 }
 
@@ -105,7 +115,7 @@ void TOboeDevice::stop()
 void TOboeDevice::setDeviceName(const QString &devName)
 {
     Q_UNUSED(devName)
-    setAudioOutParams();
+    // setAudioOutParams();
 }
 
 QString TOboeDevice::deviceName() const
@@ -116,8 +126,6 @@ QString TOboeDevice::deviceName() const
 void TOboeDevice::setAudioOutParams()
 {
     if (!m_oboe) {
-        m_callBackClass = new ToboeCallBack(this);
-
         m_oboe = new oboe::AudioStreamBuilder();
         m_oboe->setDirection(oboe::Direction::Output);
         m_oboe->setPerformanceMode(oboe::PerformanceMode::LowLatency);
@@ -125,7 +133,7 @@ void TOboeDevice::setAudioOutParams()
         m_oboe->setFormat(oboe::AudioFormat::I16);
         m_oboe->setChannelCount(oboe::ChannelCount::Stereo);
         m_oboe->setSampleRate(sampleRate());
-        m_oboe->setDataCallback(m_callBackClass);
+        m_oboe->setDataCallback(&m_callBackClass);
 
         resultMessage(m_oboe->openStream(m_stream));
     }
