@@ -25,6 +25,7 @@ Tdialog {
         }
         close();
     }
+
     Component.onCompleted: {
         GLOB.dialogItem = settPage;
         for (var i = 0; i < langModel.count; ++i) {
@@ -91,7 +92,7 @@ Tdialog {
 
                     width: parent.width
                     height: FM.height * 6// (GLOB.isAndroid() ? 4 : 6)
-                    y: height * 0.05
+                    y: height * 0.1
                     visibleItemCount: Math.min(((width / (GLOB.fontSize() * (GLOB.isAndroid() ? 5.5 : 7))) / 2) * 2 - 1, 3)
                     model: langModel
 
@@ -102,7 +103,7 @@ Tdialog {
                         required property int index
 
                         spacing: GLOB.fontSize() / 4
-                        opacity: 1 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
+                        opacity: 1.2 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
                         scale: 1.4 - Math.abs(Tumbler.displacement) / (Tumbler.tumbler.visibleItemCount / 2)
                         z: 1
 
@@ -210,35 +211,34 @@ Tdialog {
 
 
     component  AndroidOptions :  Column {
-            property alias scrOn: screenOnChB.checked
-            property alias noRotation: disRotatChB.checked
-            property alias fullScr: fullScrChB.checked
+        property alias scrOn: screenOnChB.checked
+        property alias noRotation: disRotatChB.checked
+        property alias fullScr: fullScrChB.checked
 
-            spacing: GLOB.fontSize() / 2
+        spacing: GLOB.fontSize() / 2
 
-            CheckBox {
-                id: screenOnChB
-                text: qsTr("keep screen on")
-                checked: GLOB.isKeepScreenOn()
-            }
-
-            CheckBox {
-                id: disRotatChB
-                text: qsTr("disable screen rotation")
-                checked: GLOB.disableRotation()
-            }
-
-            CheckBox {
-                id: fullScrChB
-                text: qsTr("use full screen")
-                checked: GLOB.fullScreen()
-            }
-
+        CheckBox {
+            id: screenOnChB
+            text: qsTr("keep screen on")
+            checked: GLOB.isKeepScreenOn()
         }
 
-        Component {
-            id: andSettComp
-            AndroidOptions {}
+        CheckBox {
+            id: disRotatChB
+            text: qsTr("disable screen rotation")
+            checked: GLOB.disableRotation()
         }
+
+        CheckBox {
+            id: fullScrChB
+            text: qsTr("use full screen")
+            checked: GLOB.fullScreen()
+        }
+    }
+
+    Component {
+        id: andSettComp
+        AndroidOptions {}
+    }
 
 }
