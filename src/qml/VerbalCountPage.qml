@@ -14,7 +14,6 @@ Tdialog {
     // private
     property CountManager cntMan: SOUND.countManager()
     property var progBar: null
-    property var actionsMenu: null
 
     function appendToLocalModel(modelEntry) {
         let wav = modelEntry.split(";");
@@ -45,9 +44,7 @@ Tdialog {
     }
 
     onHelpRequested: {
-        if (!actionsMenu)
-            actionsMenu = actMenuComp.createObject(vCntPage.contentItem);
-        actionsMenu.open();
+        actMenu.open();
     }
 
     Connections {
@@ -140,12 +137,16 @@ Tdialog {
                     Rectangle {
                         width: FM.height * 4.5
                         height: bgRect.height
-                        color: vCntPage.cntMan?.localModelId == bgRect.index ? ActivPalette.highlight : "transparent"
+                        color: vCntPage.cntMan?.localModelId == bgRect.index ? ActivPalette.text : "transparent"
                         radius: height / 2
+                        border {
+                            width: vCntPage.cntMan?.localModelId == bgRect.index ? GLOB.fontSize() / 5 : 0
+                            color: ActivPalette.highlight
+                        }
 
                         Text {
                             anchors.centerIn: parent
-                            color: vCntPage.cntMan?.localModelId == bgRect.index ? ActivPalette.highlightedText : ActivPalette.text
+                            color: vCntPage.cntMan?.localModelId == bgRect.index ? ActivPalette.base : ActivPalette.text
                             text: bgRect.modelData ? bgRect.modelData.langID : ""
 
                             font {
@@ -218,14 +219,14 @@ Tdialog {
             header: Rectangle {
                 width: parent.width - GLOB.fontSize()
                 height: FM.height * 1.5
-                color: ActivPalette.highlight
+                color: ActivPalette.text
                 z: 2
 
                 Row {
                     anchors.centerIn: parent
 
                     Text {
-                        color: ActivPalette.highlightedText
+                        color: ActivPalette.base
                         text: qsTr("sounds of counting to download")
                     }
 
@@ -339,43 +340,40 @@ Tdialog {
 
     }
 
-    Component {
-        id: actMenuComp
-
-        Menu {
-            id: actMenu
-            y: vCntPage.height - height - vCntPage.implicitFooterHeight
-            x: (vCntPage.width - width) / 2
-            Component.onCompleted: {
-                var maxW = 0;
-                for (var m = 0; m < count; ++m) maxW = Math.max(maxW, itemAt(m).width)
-                width = Math.min(vCntPage.width - FM.height, maxW + FM.height * 2);
-            }
-
-            MenuItem {
-                text: qsTr("Prepare own verbal counting")
-                onTriggered: Qt.createComponent("Metronomek.Core", "VerbalCountEdit").createObject(mainWindow)
-            }
-
-            MenuItem {
-                text: qsTr("Update online counting list")
-                onTriggered: {
-                    vCntPage.cntMan.downloadOnlineList();
-                    vCntPage.progBar = progBarComp.createObject(vCntPage.contentItem);
-                }
-            }
-
-            MenuItem {
-                text: qsTranslate("QShortcut", "Help")
-                onTriggered: {
-                    let hPop = Qt.createComponent("Metronomek.Core", "HelpPop").createObject(mainWindow, {
-                        "helpText": qsTr("Matronomek is installed with verbal counting only in English language.") + "<br>" + qsTr("But counting for other languages can be easy obtained:") + "<ul><li>" + qsTr("by downloading files available online (for free)") + "</li><li>" + qsTr("or by recording own counting.") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
-                    });
-                    (hPop as HelpPop).open();
-                }
-            }
-
+    Menu {
+        id: actMenu
+        y: vCntPage.height - height - vCntPage.implicitFooterHeight
+        x: (vCntPage.width - width) / 2
+        Component.onCompleted: {
+            var maxW = 0;
+            for (var m = 0; m < count; ++m) maxW = Math.max(maxW, itemAt(m).width)
+            width = Math.min(vCntPage.width - FM.height, maxW + FM.height * 2);
         }
 
+        MenuItem {
+            text: qsTr("Prepare own verbal counting")
+            onTriggered: Qt.createComponent("Metronomek.Core", "VerbalCountEdit").createObject(mainWindow)
+        }
+
+        MenuItem {
+            text: qsTr("Update online counting list")
+            onTriggered: {
+                vCntPage.cntMan.downloadOnlineList();
+                vCntPage.progBar = progBarComp.createObject(vCntPage.contentItem);
+            }
+        }
+
+        MenuItem {
+            text: qsTranslate("QShortcut", "Help")
+            onTriggered: {
+                let hPop = Qt.createComponent("Metronomek.Core", "HelpPop").createObject(mainWindow, {
+                    "helpText": qsTr("Matronomek is installed with verbal counting only in English language.") + "<br>" + qsTr("But counting for other languages can be easy obtained:") + "<ul><li>" + qsTr("by downloading files available online (for free)") + "</li><li>" + qsTr("or by recording own counting.") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
+                });
+                (hPop as HelpPop).open();
+            }
+        }
+        onOpened: forceActiveFocus();
+
     }
+
 }
