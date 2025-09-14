@@ -7,8 +7,6 @@ import QtQuick.Controls
 import Metronomek.Core
 
 Flickable {
-    // Column
-
     width: parent.width
     height: parent.height
     clip: true
@@ -42,11 +40,6 @@ Flickable {
         DrawerButton {
             text: qsTr("beat sound") + ":<br>&nbsp;<b> - " + (SOUND.verbalCount ? qsTr("Verbal count") : SOUND.getBeatName(SOUND.beatType)) + "</b>"
             onClicked: beatMenu.popup()
-            onPressAndHold: {
-                SOUND.createCountingManager();
-                Qt.createComponent("Metronomek.Core", "VerbalCountPage").createObject(mainWindow);
-                drawer.close();
-            }
 
             Menu {
                 id: beatMenu
@@ -58,21 +51,18 @@ Flickable {
                     model: SOUND.beatTypeCount() + 1
 
                     MenuItem {
+                        required property int index
                         text: index ? SOUND.getBeatName(index - 1) : qsTr("Verbal count")
                         onClicked: {
                             if (index)
                                 SOUND.beatType = index - 1;
-
                             SOUND.verbalCount = index === 0;
                         }
                         checkable: true
                         checked: SOUND.verbalCount ? index === 0 : SOUND.beatType === index - 1
                     }
-
                 }
-
             }
-
         }
 
         DrawerButton {
@@ -89,16 +79,14 @@ Flickable {
                     model: SOUND.ringTypeCount()
 
                     MenuItem {
+                        required property int index
                         text: SOUND.getRingName(index)
                         onClicked: SOUND.ringType = index
                         checkable: true
                         checked: SOUND.ringType === index
                     }
-
                 }
-
             }
-
         }
 
         DrawerButton {
@@ -136,6 +124,15 @@ Flickable {
                     Qt.createComponent("Metronomek.Core", "TempoPage").createObject(mainWindow);
                     drawer.close();
                 }
+            }
+        }
+
+        DrawerButton {
+            text: qsTr("Verbal count")
+            onClicked: {
+                SOUND.createCountingManager();
+                Qt.createComponent("Metronomek.Core", "VerbalCountPage").createObject(mainWindow);
+                drawer.close();
             }
         }
 
