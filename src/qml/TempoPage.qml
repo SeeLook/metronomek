@@ -389,7 +389,6 @@ Tdialog {
 
             }
             // Flickable
-
         }
 
         enter: Transition {

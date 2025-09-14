@@ -7,7 +7,6 @@ import QtQuick.Controls.Material
 
 Item {
     Component.onCompleted: {
-        console.log("MaterialImport", Material.ExtraLargeScale, Material.LargeScale);
         mainWindow.Material.accent = ActivPalette.highlight
     }
 }
