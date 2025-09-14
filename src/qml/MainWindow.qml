@@ -91,12 +91,15 @@ Window {
     Component.onCompleted: {
         varTempoSlot();
     }
-    onClosing: {
-        GLOB.geometry = Qt.rect(x, y, width, height);
+    onClosing: (close) => {
         if (GLOB.isAndroid() && GLOB.dialogItem) {
             close.accepted = false;
             GLOB.dialogItem.destroy();
+            return;
         }
+        stopMetronome()
+        GLOB.geometry = Qt.rect(x, y, width, height);
+        mainWindow.visible = false;
     }
 
     MetroImage {
