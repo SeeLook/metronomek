@@ -6,6 +6,7 @@
 #include "tabstractaudiodevice.h"
 #include "tgetfile.h"
 #include "tglob.h"
+#include "tsound.h"
 #include "tsounddata.h"
 
 #if defined(WITH_SOUNDTOUCH)
@@ -466,12 +467,15 @@ void TcountingManager::getSingleWordFromFile(int numId)
 
 void TcountingManager::setLocalModelId(int mId)
 {
-    if (mId != m_localModelId) {
-        m_localModelId = mId;
-        if (m_localModelId > -1 && m_localModelId < m_localWavFiles.size())
-            importFormFile(m_localWavFiles[m_localModelId]);
-        emit localModelIdChanged();
-    }
+    if (mId == m_localModelId)
+        return;
+    m_localModelId = mId;
+    if (m_localModelId > -1 && m_localModelId < m_localWavFiles.size())
+        importFormFile(m_localWavFiles[m_localModelId]);
+    GLOB->settings()->setValue(QLatin1String("countingWav"),
+                               m_localModelId > 0 && m_localModelId < m_localWavFiles.size() ? m_localWavFiles[m_localModelId] : m_prevLocalWav);
+    SOUND->setVerbalCount(true);
+    emit localModelIdChanged();
 }
 
 QStringList TcountingManager::countingModelLocal()
