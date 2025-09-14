@@ -4,17 +4,19 @@
 
 import QtQuick
 
+pragma ComponentBehavior: Bound
+
 DragDelegate {
     id: tpDelegate
 
     property TempoPart tp: null
     property int nr: tp ? tp.nr + 1 : -1
 
-    dragEnabled: tempoModel.count > 1
+    dragEnabled: ListView.view.model.count > 1
     width: parent ? parent.width : 0
     height: tCol ? tCol.height : 0
     color: pressed || containsMouse ? Qt.tint(ActivPalette.base, GLOB.alpha(toDel ? "red" : ActivPalette.highlight, 50)) : (nr % 2 ? ActivPalette.base : ActivPalette.alternateBase)
-    onRemoved: speedHandler.removeTempo(tp.nr - 1)
+    onRemoved: (tpDelegate.parent as TempoPage).speedHandler.removeTempo(tp.nr - 1)
 
     Column {
         id: tCol
@@ -25,17 +27,21 @@ DragDelegate {
 
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: tp ? tp.tempoText : ""
+            text: tpDelegate.tp ? tpDelegate.tp.tempoText : ""
             color: ActivPalette.text
         }
 
         Text {
-            text: GLOB.TR("TempoPage", "Meter") + " (" + GLOB.TR("MainWindow", "count to") + "): " + "<b>" + (tp ? tp.meter : 4) + "</b>"
+            text: GLOB.TR("TempoPage", "Meter") + " (" + GLOB.TR("MainWindow", "count to") + "): " + "<b>" + (tpDelegate.tp ? tpDelegate.tp.meter : 4) + "</b>"
             color: ActivPalette.text
         }
 
         Text {
-            text: GLOB.TR("TempoPage", "Duration") + ": " + (tp && tp.infinite ? GLOB.TR("TempoPage", "infinite") : "<br>" + GLOB.chopS(qsTr("<b>%n</b> bars", "", tp ? tp.bars : 0), tp ? tp.bars : 0) + " = " + GLOB.chopS(qsTr("<b>%n</b> beats", "", tp ? tp.beats : 0), tp ? tp.beats : 0) + " = " + GLOB.chopS(qsTr("<b>%n</b> seconds", "", tp ? tp.seconds : 0), tp ? tp.seconds : 0))
+            text: GLOB.TR("TempoPage", "Duration") + ": "
+                    + (tpDelegate.tp && tpDelegate.tp.infinite ? GLOB.TR("TempoPage", "infinite") : "<br>"
+                    + GLOB.chopS(qsTr("<b>%n</b> bars", "", tpDelegate.tp ? tpDelegate.tp.bars : 0), tpDelegate.tp ? tpDelegate.tp.bars : 0)
+                    + " = " + GLOB.chopS(qsTr("<b>%n</b> beats", "", tpDelegate.tp ? tpDelegate.tp.beats : 0), tpDelegate.tp ? tpDelegate.tp.beats : 0)
+                    + " = " + GLOB.chopS(qsTr("<b>%n</b> seconds", "", tpDelegate.tp ? tpDelegate.tp.seconds : 0), tpDelegate.tp ? tpDelegate.tp.seconds : 0))
             color: ActivPalette.text
         }
 
