@@ -19,9 +19,9 @@ AbstractButton {
     Drawer {
         id: drawer
 
-        parent: mainWindow.contentItem
-        width: Math.min(mainWindow.width * 0.7, FM.height * 20)
-        height: mainWindow.height
+        parent: menuButt.Window.contentItem
+        width: Math.min(Math.min(menuButt.Window.width, menuButt.Window.height) * 0.7, FM.height * 20)
+        height: menuButt.Window.height
         background: Background {}
         onAboutToShow: {
             mainWindow.stopMetronome();
@@ -31,7 +31,7 @@ AbstractButton {
     }
 
     background: Rectangle {
-        color: GLOB.alpha(ActivPalette.text, pressed ? 120 : 30)
+        color: GLOB.alpha(ActivPalette.text, menuButt.pressed ? 120 : 30)
         radius: width / 4
     }
 
