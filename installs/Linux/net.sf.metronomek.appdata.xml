@@ -22,7 +22,8 @@
       <li>natural (real audio) beat sounds</li>
       <li>selectable sounds of ticking and ringing (i.e.: mechanical metronome, clapping, snapping, etc.)</li>
       <li>programmable changes of tempo (aka accelerando and rallentando)</li>
-      <li>visible counting</li>
+      <li>visible and audible counting</li>
+      <li>creating/recording own counting sounds</li>
       <li>determining tempo BPM by tapping or clicking</li>
       <li>cross-platform: Android, Linux, Mac, Windows</li>
     </ul>
@@ -79,7 +80,7 @@
   <update_contact>seelook_AT_gmail.com</update_contact>
 
   <releases>
-    <release date="2022-01-05" version="0.6.0"/>
+    <release date="2025-09-20" version="0.7.7"/>
   </releases>
 
 </component>
