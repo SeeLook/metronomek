@@ -52,20 +52,6 @@ int main(int argc, char *argv[])
     app->setWindowIcon(QIcon(QStringLiteral(":/metronomek.png")));
 #endif
 
-#if defined(Q_OS_WIN)
-    QSettings accent(QStringLiteral("HKEY_USERS\\.DEFAULT\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Accent"), QSettings::NativeFormat);
-    if (accent.contains(QLatin1String("StartColorMenu"))) {
-        int color = accent.value(QLatin1String("StartColorMenu")).toInt();
-        int r = color & 0xff;
-        int g = (color >> 8) & 0xff;
-        int b = (color >> 16) & 0xff;
-        auto pal = qApp->palette();
-        QColor c(r, g, b);
-        pal.setColor(QPalette::Active, QPalette::Highlight, c.lighter(110));
-        qApp->setPalette(pal);
-    }
-#endif
-
     int fid = QFontDatabase::addApplicationFont(QStringLiteral(":/metronomek.otf"));
     if (fid == -1) {
         qDebug() << "Can not load MetronomeK fonts!\n";
