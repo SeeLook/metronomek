@@ -255,9 +255,6 @@ else()
     target_link_libraries(metronomek PUBLIC
         ${RtAudio_LIBRARIES}
     )
-    if(WIN32)
-        add_link_options("-mwindows")
-    endif()
 endif()
 
 if(WIN32)
