@@ -9,6 +9,7 @@ on:
         - master
 
 env:
+  QT_VERSION_LINUX: 6.8.3
   EXECUTABLE: "metronomek"
   APPLICATION: "Metronomek"
   UNIXNAME: "metronomek"
@@ -19,7 +20,7 @@ env:
 jobs:
   linux-appimage-x86_64:
     runs-on: ubuntu-22.04
-    name: '🐧 Linux (x86_64)'
+    name: '🐧 Linux AppImage (x86_64)'
     steps:
     - name: '🧰 Checkout'
       uses: actions/checkout@v4
@@ -36,7 +37,7 @@ jobs:
     - name: '⚙️ Install Qt'
       uses: jurplel/install-qt-action@v4
       with:
-        version: 6.8.3
+        version: ${{env.QT_VERSION_LINUX}}
         modules: 'qtimageformats'
         cache: true
         install-deps: 'true'
@@ -77,7 +78,7 @@ jobs:
 
         export QML_SOURCES_PATHS="${{env.QML_DIR}}"
         export QMAKE=/home/runner/work/${{env.EXECUTABLE}}/Qt/${{env.QT_VERSION_LINUX}}/gcc_64/bin/qmake
-        export PATH=/home/runner/work/${{env.EXECUTABLE}}/Qt/${{env.QT_VERSION_LINUX}}/gcc_64/libexec:$QMAKE:$PATH
+        export PATH=/home/runner/work/${{env.EXECUTABLE}}/Qt/${{env.QT_VERSION_LINUX}}/gcc_64/libexec:$PATH
 
         ./linuxdeploy-x86_64.AppImage --appdir AppDir -e AppDir/usr/bin/${{env.UNIXNAME}} -i ../picts/${{env.UNIXNAME}}.png -d ../mime/${{env.UNIXNAME}}.desktop --plugin qt --output appimage
 
