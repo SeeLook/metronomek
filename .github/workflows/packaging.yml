@@ -80,7 +80,7 @@ jobs:
         export QMAKE=/home/runner/work/${{env.EXECUTABLE}}/Qt/${{env.QT_VERSION_LINUX}}/gcc_64/bin/qmake
         export PATH=/home/runner/work/${{env.EXECUTABLE}}/Qt/${{env.QT_VERSION_LINUX}}/gcc_64/libexec:$PATH
 
-        ./linuxdeploy-x86_64.AppImage --appdir AppDir -e AppDir/usr/bin/${{env.UNIXNAME}} -i ../resources/${{env.UNIXNAME}}.png -d ../mime/${{env.UNIXNAME}}.desktop --plugin qt --output appimage
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir -e AppDir/usr/bin/${{env.UNIXNAME}} -i ../resources/${{env.UNIXNAME}}.png -d ../installs/Linux/net.sf.metronomek.desktop --plugin qt --output appimage
 
         rm linuxdeploy-x86_64.AppImage
         rm linuxdeploy-plugin-qt-x86_64.AppImage
@@ -105,18 +105,18 @@ jobs:
 
 
   win_installer:
-    name: 🪟 Windows NSIS installer
-    runs-on:  windows-latest
+    name: '🪟 Windows NSIS installer'
+    runs-on: windows-latest
     if: "contains(github.event.head_commit.message, 'prepare_build')"
 
     steps:
 
-      - name: Checkout code
+      - name: '🧰 Checkout code'
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Install Qt
+      - name: '⚙️ Install Qt'
         uses: jurplel/install-qt-action@v4
         with:
           version: '6.8.3'
@@ -128,7 +128,7 @@ jobs:
           cache: true
           setup-python: false
 
-      - name: Variables and Qt 6 environment configuration
+      - name: '⚙️ Variables and Qt 6 environment configuration'
         shell: pwsh
         run: |
           Write-Output "${{ env.Qt6_DIR }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
@@ -136,19 +136,19 @@ jobs:
           echo ("METRO_COM_CNT=" + $(git rev-list HEAD --count)) >> $env:GITHUB_ENV
 
 
-      - name: Compile and prepare Metronomek installer
+      - name: '📦 Compile and prepare Metronomek installer'
         shell: pwsh
         run: |
           ./installs/Windows/build_installer.ps1
           echo ("METRO_VERSION=" + $((Get-Content .\build\VERSION.txt))) >> $env:GITHUB_ENV
 
-      - name: move installer, prepare to upload
+      - name: '📦 move installer, prepare to upload'
         shell: pwsh
         run: |
           echo "Metronomek-${{ env.METRO_VERSION }}-b${{ env.METRO_COM_CNT }}-Windows-Installer.exe"
           Move-Item -Path .\build\installs\bin\Metronomek-*-Windows-Installer.exe -Destination "Metronomek-${{ env.METRO_VERSION }}-b${{ env.METRO_COM_CNT }}-Windows-Installer.exe"
 
-      - name: Upload installer to GitHub
+      - name: '📤 Upload installer to GitHub'
         uses: actions/upload-artifact@v4
         with:
           name: "Metronomek-${{ env.METRO_VERSION }}-b${{ env.METRO_COM_CNT }}-Windows-Installer.exe"
