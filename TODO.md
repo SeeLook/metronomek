@@ -1,10 +1,8 @@
 # TODO list for MetronomeK
 
- - sounds and option for verbal counting
- - save/load rhythmic composition to/from file system
  - divisions of a beat
+ - save/load rhythmic composition to/from file system
  - option for playing beat/ring in separate speaker/earphone of stereo output
- - dark mode (Android for sure, maybe desktop)
  - option for blinking of background during tick
  - icons for menu
  - skins: classic, digital, contemporary and that trivial of course remains
