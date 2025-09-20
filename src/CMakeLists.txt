@@ -29,7 +29,7 @@ if (ANDROID)
     message(STATUS "SSL: ${ANDROID_SSL_STATE} === ${OPEN_SSL_CMAKE}")
 endif()
 
-qt_add_executable(metronomek WIN32)
+qt_add_executable(metronomek)
 
 option(USE_SOUNDTOUCH "Use SoundTouch library to squash verbal counting audio data" OFF)
 if (${USE_SOUNDTOUCH})
@@ -248,6 +248,10 @@ if(ANDROID)
     # )
 
 else()
+    set_target_properties(metronomek PROPERTIES
+        WIN32_EXECUTABLE ON
+        MACOSX_BUNDLE ON
+    )
     target_link_libraries(metronomek PUBLIC
         ${RtAudio_LIBRARIES}
     )
