@@ -1,6 +1,6 @@
 # MetronomeK
 
-<img src="images/metronomek.png" width="20%" height="20%" />
+<img src="resources/metronomek.png" width="20%" height="20%" />
 
 Metronome that works and sounds similar to mechanical devices
 but with all goods of computer program.
@@ -12,7 +12,7 @@ but with all goods of computer program.
   - selectable beat and ring sounds (i.e.: real metronome, clapping, snapping, etc.)
   - programmable tempo changes (aka accelerando and rallentando)
   - possibility to change meter
-  - visible counting
+  - visible and audible counting
   - determining tempo BPM by tapping
   - cross-platform: Android, Linux, Mac, Windows
   - ... see [TODO](TODO.md) for more planed features

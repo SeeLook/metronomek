@@ -6,10 +6,13 @@
     - also verbal counting files in a few languages are available online
     - and can be downloaded from the application
 
+  #### Added Netherland translation
+
   #### Use system dark theme colors
     - also respect Android accent color
 
   #### Ported to Qt 6
+    - use newest version for Android builds
 
   #### Android
     - use Oboe low latency library for audio
