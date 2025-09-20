@@ -21,7 +21,9 @@ endif()
 
 project(metronomek)
 
+find_package(Qt6 REQUIRED COMPONENTS Widgets Qml Quick QuickControls2)
 set(QT_DEFAULT_MAJOR_VERSION 6)
+qt_standard_project_setup(REQUIRES 6.8)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/src)
 
@@ -34,9 +36,7 @@ configure_file(${CMAKE_SOURCE_DIR}/src/metronomek_conf_cmake.h.in ${CMAKE_CURREN
 add_subdirectory(src)
 
 if(WIN32)
-    install(TARGETS metronomek DESTINATION .)
-    set(INS_PREF ".")
-    option(COPY_GCC_LIBS "Copy compiler specific libraries during install target" ON)
+    set(INS_PREF "${CMAKE_INSTALL_BINDIR}")
 else()
     if (APPLE)
         install(TARGETS metronomek DESTINATION "${CMAKE_INSTALL_PREFIX}/metronomek.app/Contents/MacOs")
@@ -62,16 +62,24 @@ endif()
 # Icons & other stuff
 if (WIN32)
     install(FILES resources/metronomek.ico resources/pack.ico resources/logo.bmp DESTINATION "${INS_PREF}/images")
-    # MINGW libraries and SSL
-    if (COPY_GCC_LIBS)
-        get_filename_component(MAKE_DIR "${CMAKE_RC_COMPILER}" DIRECTORY)
-        install(FILES "${MAKE_DIR}/libgcc_s_dw2-1.dll" "${MAKE_DIR}/libstdc++-6.dll" "${MAKE_DIR}/libwinpthread-1.dll" DESTINATION "${INS_PREF}")
-    endif()
-        configure_file(
+    qt_generate_deploy_qml_app_script(
+        TARGET metronomek
+        OUTPUT_SCRIPT DEPLOY_SCRIPT
+        NO_TRANSLATIONS
+        NO_UNSUPPORTED_PLATFORM_ERROR
+    )
+    install(SCRIPT ${DEPLOY_SCRIPT})
+    configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/installs/Windows/definitions.nsh.in
         ${CMAKE_BINARY_DIR}/NSIS.definitions.nsh
-        )
-        install(FILES installs/Windows/metronomek.nsi ${CMAKE_BINARY_DIR}/NSIS.definitions.nsh DESTINATION ${INS_PREF})
+    )
+    install(FILES installs/Windows/metronomek.nsi ${CMAKE_BINARY_DIR}/NSIS.definitions.nsh DESTINATION ${INS_PREF})
+    install(CODE "
+            execute_process(COMMAND ${CMAKE_COMMAND} -E rename \"${CMAKE_INSTALL_PREFIX}/plugins\" \"${CMAKE_INSTALL_PREFIX}/bin/plugins\")
+            execute_process(COMMAND ${CMAKE_COMMAND} -E rename \"${CMAKE_INSTALL_PREFIX}/qml\" \"${CMAKE_INSTALL_PREFIX}/bin/qml\")
+            execute_process(COMMAND ${CMAKE_COMMAND} -E remove \"${CMAKE_INSTALL_PREFIX}/bin/qt.conf\")
+        "
+    )
 else()
     if(APPLE)
         install(FILES "${CMAKE_SOURCE_DIR}/resources/metronomek.icns" DESTINATION "${INS_PREF}")
@@ -128,7 +136,7 @@ endif()
 
 ##############################################################################
 #            deploy target                                                   #
-#         (Mac Os & Windows)                                                 #
+#         (Mac Os)                                                           #
 ##############################################################################
 find_package(Qt6Core)
 get_target_property(QtCore_location_Release Qt6::Core LOCATION_Release)
@@ -138,13 +146,6 @@ if (APPLE)
     add_custom_target(deploy
         COMMAND echo "deploying..."
         COMMAND ${QT_BINARY_DIR}/../../bin/macdeployqt ${CMAKE_INSTALL_PREFIX}/metronomek.app -qmldir=${CMAKE_SOURCE_DIR}/src/qml
-    )
-endif()
-
-if (WIN32)
-    add_custom_target(deploy
-        COMMAND echo "deploying..."
-        COMMAND ${QT_BINARY_DIR}/windeployqt.exe ${CMAKE_INSTALL_PREFIX}/metronomek.exe --no-translations --no-svg --qmldir "${CMAKE_SOURCE_DIR}/src/qml"
     )
 endif()
 
