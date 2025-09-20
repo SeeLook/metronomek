@@ -10,12 +10,12 @@ echo $mainDir
 
 mkdir build
 cd build
+mkdir installs
 
 cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=installs ../
 
-mingw32-make -j2
+mingw32-make -j4
 
-mkdir installs
 mingw32-make install
 # mingw32-make deploy
 

@@ -199,11 +199,6 @@ if (USE_SOUNDTOUCH)
     endif ()
 endif ()
 
-
-target_compile_definitions(metronomek
-    PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
-)
-
 target_sources(metronomek PUBLIC
     ${METRONOMEK_SRC}
     ${APP_ICON_RESOURCE_WINDOWS}
@@ -248,6 +243,11 @@ if(ANDROID)
     # )
 
 else()
+    if (LINUX)
+        target_compile_definitions(metronomek
+            PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>
+        )
+    endif()
     set_target_properties(metronomek PROPERTIES
         WIN32_EXECUTABLE ON
         MACOSX_BUNDLE ON
@@ -255,6 +255,9 @@ else()
     target_link_libraries(metronomek PUBLIC
         ${RtAudio_LIBRARIES}
     )
+    if(WIN32)
+        add_link_options("-mwindows")
+    endif()
 endif()
 
 if(WIN32)

@@ -27,7 +27,7 @@ jobs:
           version: '6.8.3'
           host: 'windows'
           target: 'desktop'
-          arch: 'win64_llvm_mingw'
+          arch: 'win64_mingw'
           cache: true
           setup-python: false
 
