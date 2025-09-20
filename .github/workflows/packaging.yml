@@ -112,7 +112,7 @@ jobs:
   upload_package:
     name:           Uploading to SF
     runs-on:        ubuntu-latest
-    needs:          win-win_installer #macos_dmg
+    needs:          win_installer #macos_dmg
 
     steps:
       - name: Checkout code
