@@ -45,6 +45,7 @@ set(METRONOMEK_SRC
     tabstractaudiodevice.cpp
     tsounddata.cpp
     tgetfile.cpp
+    fromqt5lang.cpp
 
     qml/metronomek_qml.qrc
     ${CMAKE_SOURCE_DIR}/resources/metronomek_res.qrc

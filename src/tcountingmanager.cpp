@@ -3,6 +3,7 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 #include "tcountingmanager.h"
+#include "fromqt5lang.h"
 #include "tabstractaudiodevice.h"
 #include "tgetfile.h"
 #include "tglob.h"
@@ -109,7 +110,7 @@ public:
         // xml.setCodec("UTF-16");
         xml.writeStartDocument();
         xml.writeStartElement(QLatin1String("verbalcount"));
-        xml.writeAttribute(QLatin1String("qtlang"), QString::number(m_lang));
+        xml.writeAttribute(QLatin1String("qt6lang"), QString::number(m_lang));
         xml.writeAttribute(QLatin1String("name"), m_name);
         for (int n = 0; n < m_numSizes.size(); ++n)
             xml.writeTextElement(QLatin1String("n"), QString::number(m_numSizes[n]));
@@ -125,7 +126,16 @@ public:
         int qt5Lang = -1;
         while (xml.readNextStartElement()) {
             if (xml.name() == QLatin1String("verbalcount")) {
-                qt5Lang = xml.attributes().value(QLatin1String("qtlang")).toInt();
+                bool ok = false;
+                qt5Lang = xml.attributes().value(QLatin1String("qtlang")).toInt(&ok);
+                if (ok) {
+                    m_lang = fromQt5Lang(qt5Lang);
+                } else {
+                    qt5Lang = -1;
+                    m_lang = static_cast<QLocale::Language>(xml.attributes().value(QLatin1String("qt6lang")).toInt(&ok));
+                    if (!ok)
+                        m_lang = QLocale::AnyLanguage;
+                }
                 m_name = xml.attributes().value(QLatin1String("name")).toString();
                 m_numSizes.clear();
                 while (xml.readNextStartElement()) {
@@ -138,44 +148,6 @@ public:
             } else {
                 xml.skipCurrentElement();
                 ok = false;
-            }
-            // Convert Qt5 Lang to Qt6 one
-            if (qt5Lang > -1) {
-                switch (qt5Lang) {
-                case 30:
-                    m_lang = QLocale::Dutch;
-                    break;
-                case 31:
-                    m_lang = QLocale::English;
-                    break;
-                case 37:
-                    m_lang = QLocale::French;
-                    break;
-                case 42:
-                    m_lang = QLocale::German;
-                    break;
-                case 49:
-                    m_lang = QLocale::Hindi;
-                    break;
-                case 58:
-                    m_lang = QLocale::Italian;
-                    break;
-                case 90:
-                    m_lang = QLocale::Polish;
-                    break;
-                case 95:
-                    m_lang = QLocale::Romanian;
-                    break;
-                case 96:
-                    m_lang = QLocale::Russian;
-                    break;
-                case 129:
-                    m_lang = QLocale::Ukrainian;
-                    break;
-                default:
-                    m_lang = qt5Lang;
-                    break;
-                }
             }
         }
         return ok;
