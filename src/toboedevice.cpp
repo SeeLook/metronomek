@@ -115,7 +115,7 @@ void TOboeDevice::stop()
 void TOboeDevice::setDeviceName(const QString &devName)
 {
     Q_UNUSED(devName)
-    // setAudioOutParams();
+    setAudioOutParams();
 }
 
 QString TOboeDevice::deviceName() const
