@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>qtquickcontrols2.conf</file>
         <file>+android/qtquickcontrols2.conf</file>
+        <file>+windows/qtquickcontrols2.conf</file>
     </qresource>
 </RCC>
