@@ -135,7 +135,7 @@ public:
 
     /**
      * Initializes sound back-end state
-     * for verbal counting setting routines.
+     * for verbal (out loud) counting setting routines.
      * It will be:
      * - disconnect metronome audio callback for another one
      */
