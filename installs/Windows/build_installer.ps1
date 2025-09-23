@@ -17,9 +17,11 @@ mingw32-make -j4
 
 mingw32-make install
 
+# This is workaround for CMake install command which doesn't work with GitHub actions'
 echo "--- Move plugins and qml"
 mv installs/plugins installs/bin/plugins
 mv installs/qml installs/bin/qml
+rm installs/bin/qt.conf
 
 echo "--- Building installer"
 makensis installs/bin/metronomek.nsi
