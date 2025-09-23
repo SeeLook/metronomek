@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2022 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2022-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 import QtQuick
@@ -8,6 +8,7 @@ import QtQuick.Controls
 SidePop {
     id: countPop
 
+    property CountManager cntMan: SOUND.countManager()
     property var langModel: cntMan.languagesModel()
 
     visible: true
@@ -76,7 +77,7 @@ SidePop {
             width: countPop.width - 6 * FM.height
             color: ActivPalette.text
             wrapMode: Text.WordWrap
-            text: qsTr("Consider to share this counting audio data.")
+            text: qsTr("Please consider sharing this with others.")
         }
 
         Row {
@@ -86,9 +87,8 @@ SidePop {
             Button {
                 text: GLOB.TR("QPlatformTheme", "Save")
                 onClicked: {
-                    cntMan.storeCounting(langList.get(langCombo.currentIndex).langID, cntName.text);
-                    vCntEdit.close();
-                    close();
+                    countPop.cntMan.storeCounting(langList.get(langCombo.currentIndex).langID, cntName.text);
+                    countPop.close();
                 }
             }
 

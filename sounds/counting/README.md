@@ -1,4 +1,4 @@
-## Metronomek verbal counting audio files
+## Metronomek audio files with counting out loud
 
 
 | Code  | Language        | native name          |        file                                                                                         | size    |

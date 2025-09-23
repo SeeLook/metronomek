@@ -1,9 +1,9 @@
 ## 0.7.7 devel
-  #### Verbal counting
+  #### Counting out loud
     - Metronomek can tick with real words (numerals usually)
     - user may prepare its own audio file (wav) with counting and import it to the app
     - or record the words directly in the program
-    - also verbal counting files in a few languages are available online
+    - also files with aloud counting in a few languages are available online
     - and can be downloaded from the application
 
   #### Added Netherland translation
@@ -12,7 +12,7 @@
     - also respect Android accent color
 
   #### Ported to Qt 6
-    - use newest version for Android builds
+    - use newest version for Android/Windows/Linux builds
 
   #### Android
     - use Oboe low latency library for audio

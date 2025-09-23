@@ -38,7 +38,7 @@ Flickable {
         }
 
         DrawerButton {
-            text: qsTr("beat sound") + ":<br>&nbsp;<b> - " + (SOUND.verbalCount ? qsTr("Verbal count") : SOUND.getBeatName(SOUND.beatType)) + "</b>"
+            text: qsTr("beat sound") + ":<br>&nbsp;<b> - " + (SOUND.verbalCount ? qsTr("Counting out loud") : SOUND.getBeatName(SOUND.beatType)) + "</b>"
             onClicked: beatMenu.popup()
 
             Menu {
@@ -52,7 +52,7 @@ Flickable {
 
                     MenuItem {
                         required property int index
-                        text: index ? SOUND.getBeatName(index - 1) : qsTr("Verbal count")
+                        text: index ? SOUND.getBeatName(index - 1) : qsTr("Counting out loud")
                         onClicked: {
                             if (index)
                                 SOUND.beatType = index - 1;
@@ -128,7 +128,7 @@ Flickable {
         }
 
         DrawerButton {
-            text: qsTr("Verbal count")
+            text: qsTr("Counting out loud")
             onClicked: {
                 SOUND.createCountingManager();
                 Qt.createComponent("Metronomek.Core", "VerbalCountPage").createObject(mainWindow);

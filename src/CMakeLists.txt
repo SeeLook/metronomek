@@ -32,7 +32,7 @@ endif()
 
 qt_add_executable(metronomek)
 
-option(USE_SOUNDTOUCH "Use SoundTouch library to squash verbal counting audio data" OFF)
+option(USE_SOUNDTOUCH "Use SoundTouch library to squash counting out loud audio data" OFF)
 if (${USE_SOUNDTOUCH})
     add_compile_definitions(WITH_SOUNDTOUCH)
 endif()

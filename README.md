@@ -12,7 +12,7 @@ but with all goods of computer program.
   - selectable beat and ring sounds (i.e.: real metronome, clapping, snapping, etc.)
   - programmable tempo changes (aka accelerando and rallentando)
   - possibility to change meter
-  - visible and audible (verbal) counting
+  - counting out loud in different languages
   - option to record own counting or download some already prepared
   - determining tempo BPM by tapping
   - cross-platform: Android, Linux, Mac, Windows

@@ -190,17 +190,6 @@ Tdialog {
                 sourceComponent: GLOB.isAndroid() ? andSettComp : undefined
                 anchors.horizontalCenter: parent.horizontalCenter
             }
-
-            CuteButton {
-                width: settPage.width * 0.6
-                height: FM.height * 2.5
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTranslate("MainDrawerContent", "Verbal count")
-                onClicked: {
-                    SOUND.createCountingManager(); // create it, if it doesn't exist
-                    Qt.createComponent("Metronomek.Core", "VerbalCountPage").createObject(mainWindow);
-                }
-            }
         }
 
         ScrollBar.vertical: ScrollBar {

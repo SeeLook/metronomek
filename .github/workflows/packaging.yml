@@ -15,7 +15,7 @@ env:
   UNIXNAME: "metronomek"
   QML_DIR: "../src/qml"
   PUBLISHER: "Seelook"
-  DESCRIPTION: "Simple metronome with natural sounds and verbal counting"
+  DESCRIPTION: "Simple metronome with natural sounds and counting out laud"
 
 jobs:
   linux-appimage-x86_64:

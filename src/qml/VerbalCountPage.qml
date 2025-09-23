@@ -351,7 +351,7 @@ Tdialog {
         }
 
         MenuItem {
-            text: qsTr("Prepare own verbal counting")
+            text: qsTr("Prepare own counting out loud")
             onTriggered: Qt.createComponent("Metronomek.Core", "VerbalCountEdit").createObject(mainWindow)
         }
 
@@ -367,7 +367,7 @@ Tdialog {
             text: qsTranslate("QShortcut", "Help")
             onTriggered: {
                 let hPop = Qt.createComponent("Metronomek.Core", "HelpPop").createObject(mainWindow, {
-                    "helpText": qsTr("Matronomek is installed with verbal counting only in English language.") + "<br>" + qsTr("But counting for other languages can be easy obtained:") + "<ul><li>" + qsTr("by downloading files available online (for free)") + "</li><li>" + qsTr("or by recording own counting.") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
+                    "helpText": qsTr("Matronomek is installed with counting out loud only in English language.") + "<br>" + qsTr("But counting for other languages can be easy obtained:") + "<ul><li>" + qsTr("by downloading files available online (for free)") + "</li><li>" + qsTr("or by recording own counting.") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
                 });
                 (hPop as HelpPop).open();
             }
