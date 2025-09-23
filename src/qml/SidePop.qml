@@ -16,10 +16,10 @@ Popup {
     signal done()
 
     padding: FM.height / 2
-    width: Math.min(mainWindow.width, FM.height * 60)
-    height: mainWindow.height * 0.2
-    x: (parent.width - width) / 2
-    y: parent.height + height
+    width: Math.min(contentItem.Window.width, FM.height * 60)
+    height: contentItem.Window.height * 0.2
+    x: (parent?.width - width) / 2
+    y: parent?.height + height
     z: 50000
 
     onClosed: {
@@ -31,7 +31,7 @@ Popup {
         NumberAnimation {
             duration: 300
             property: "y"
-            to: mainWindow.height - height + FM.height
+            to: sidePop.contentItem.Window.height - sidePop.height + FM.height
         }
 
     }
@@ -40,7 +40,7 @@ Popup {
         NumberAnimation {
             duration: 300
             property: "y"
-            to: mainWindow.height + height
+            to: sidePop.contentItem.Window.height + sidePop.height
         }
 
     }
