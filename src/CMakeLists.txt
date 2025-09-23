@@ -24,6 +24,7 @@ if (APPLE) # Mac RPath
 endif (APPLE)
 
 if (ANDROID)
+    add_link_options(-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384)
     set(OPEN_SSL_CMAKE android_openssl/android_openssl.cmake)
     include(${OPEN_SSL_CMAKE} RESULT_VARIABLE ANDROID_SSL_STATE)
     message(STATUS "SSL: ${ANDROID_SSL_STATE} === ${OPEN_SSL_CMAKE}")
