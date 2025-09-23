@@ -6,6 +6,8 @@ import Metronomek.Core
 import QtQuick
 import QtQuick.Controls
 
+pragma ComponentBehavior: Bound
+
 Tdialog {
     id: vCntEdit
 
@@ -16,16 +18,20 @@ Tdialog {
     padding: GLOB.fontSize() / 2
     standardButtons: Dialog.RestoreDefaults | Dialog.Cancel | Dialog.Help
     Component.onCompleted: {
-        footer.standardButton(Dialog.RestoreDefaults).text = qsTranslate("QPlatformTheme", "Save");
-        footer.standardButton(Dialog.Help).text = GLOB.TR("TempoPage", "Actions");
+        (footer as DialogButtonBox).standardButton(Dialog.RestoreDefaults).text = qsTranslate("QPlatformTheme", "Save");
+        (footer as DialogButtonBox).standardButton(Dialog.Help).text = GLOB.TR("TempoPage", "Actions");
         SOUND.initCountingSettings();
     }
     Component.onDestruction: {
-        SOUND.restoreAfterCountSettings();
+        if (SOUND)
+            SOUND.restoreAfterCountSettings();
     }
     onHelpRequested: moreMenu.open()
     onReset: {
-        Qt.createComponent("Metronomek.Core", "CountingLangPop").createObject(mainWindow);
+        let cntPop = Qt.createComponent("Metronomek.Core", "CountingLangPop").createObject(mainWindow);
+        (cntPop as Popup).closed.connect(function() {
+            vCntEdit.close();
+        });
     }
 
     ListView {
@@ -40,28 +46,29 @@ Tdialog {
         delegate: Rectangle {
             id: bgRect
 
+            required property int index
             property alias spectrum: numSpec
 
             width: parent ? parent.width : 0
-            height: FM.height * 5 + (numList.currentIndex === index ? buttonsRect.height + FM.height / 3 : 0)
-            color: Qt.tint(index % 2 ? ActivPalette.base : ActivPalette.alternateBase, GLOB.alpha(ActivPalette.highlight, numList.currentIndex === index ? 20 : 0))
+            height: FM.height * 5 + (ListView.isCurrentItem ? buttonsRect.height + FM.height / 3 : 0)
+            color: Qt.tint(index % 2 ? ActivPalette.base : ActivPalette.alternateBase, GLOB.alpha(ActivPalette.highlight, ListView.isCurrentItem ? 20 : 0))
 
             NumeralSpectrum {
                 id: numSpec
 
-                nr: index
+                nr: bgRect.index
                 clip: true
                 width: parent.width
                 height: FM.height * 5
-                Component.onCompleted: cntMan.addSpectrum(numSpec)
+                Component.onCompleted: vCntEdit.cntMan.addSpectrum(numSpec)
 
                 Text {
                     x: FM.height / 4
                     y: FM.height / 4
-                    color: numList.currentIndex === index ? ActivPalette.highlight : ActivPalette.text
-                    text: index + 1
+                    color: ListView.isCurrentItem ? ActivPalette.highlight : ActivPalette.text
+                    text: bgRect.index + 1
                     style: Text.Outline
-                    styleColor: numList.currentIndex === index ? ActivPalette.text : bgRect.color
+                    styleColor: ListView.isCurrentItem ? ActivPalette.text : bgRect.color
 
                     font {
                         pixelSize: parent.height * 0.25
@@ -105,20 +112,19 @@ Tdialog {
 
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: numList.currentIndex = index
+                    onClicked: numList.currentIndex = bgRect.index
                 }
-
             }
 
             Flow {
                 id: buttonsRect
 
-                scale: numList.currentIndex === index ? 1 : 0
+                scale: numList.currentIndex === bgRect.index ? 1 : 0
                 transformOrigin: Item.Top
                 spacing: bgRect.width * 0.01
 
                 anchors {
-                    top: spectrum.bottom
+                    top: bgRect.spectrum.bottom
                 }
 
                 CuteButton {
@@ -128,7 +134,7 @@ Tdialog {
                     bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("green", 40))
                     onClicked: {
                         playAnim.start();
-                        cntMan.play(index);
+                        vCntEdit.cntMan.play(bgRect.index);
                     }
                 }
 
@@ -138,7 +144,7 @@ Tdialog {
                     height: FM.height * 2
                     text: qsTr("Import")
                     bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("blue", 40))
-                    onClicked: cntMan.getSingleWordFromFile(index)
+                    onClicked: vCntEdit.cntMan.getSingleWordFromFile(bgRect.index)
                 }
 
                 Item {
@@ -151,32 +157,25 @@ Tdialog {
                     height: FM.height * 2
                     text: qsTr("Record")
                     bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("red", 40))
-                    onClicked: cntMan.rec(index)
+                    onClicked: vCntEdit.cntMan.rec(bgRect.index)
                 }
 
                 Behavior on scale {
-                    NumberAnimation {
-                    }
-
+                    NumberAnimation {}
                 }
-
             }
 
             Behavior on height {
-                NumberAnimation {
-                }
-
+                NumberAnimation {}
             }
-
-        }
-
+        } // delegate
     }
 
     Menu {
         id: moreMenu
 
         y: vCntEdit.height - height - vCntEdit.implicitFooterHeight - vCntEdit.implicitHeaderHeight
-        x: (vCntPage.width - width) / 2
+        x: (vCntEdit.width - width) / 2
         Component.onCompleted: {
             if (!GLOB.isAndroid())
                 moreMenu.insertItem(0, fromFileComp.createObject());
@@ -195,7 +194,7 @@ Tdialog {
             onTriggered: {
                 Qt.createComponent("Metronomek.Core", "HelpPop").createObject(mainWindow, {
                     "visible": true,
-                    "helpText": "<b>" + GLOB.TR("VerbalCountPage", "Prepare own verbal counting") + ":</b>" + "<ul><li>" + qsTr("record every single numeral") + "</li><li>" + qsTr("or import wav file with it prepared in other software") + "</li><li>" + qsTr("or import wav file with all 12 numerals (Actions -> Load from file)") + "</li></ul><br><b>" + qsTr("CLUES") + ":</b>" + "<ul><li>" + qsTr("pronounce words quickly, not longer than 300 ms") + "</li><li>" + qsTr("accent one of the word syllables") + "</li><li>" + qsTr("imported wav files has to be 48000 Hz / 16 bit") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
+                    "helpText": "<b>" + GLOB.TR("VerbalCountPage", "Prepare own counting out loud") + ":</b>" + "<ul><li>" + qsTr("record every single numeral") + "</li><li>" + qsTr("or import wav file with it prepared in other software") + "</li><li>" + qsTr("or import wav file with all 12 numerals (Actions -> Load from file)") + "</li></ul><br><b>" + qsTr("CLUES") + ":</b>" + "<ul><li>" + qsTr("pronounce words quickly, not longer than 300 ms") + "</li><li>" + qsTr("accent one of the word syllables") + "</li><li>" + qsTr("imported wav files has to be 48000 Hz / 16 bit") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
                 });
             }
         }
@@ -208,7 +207,7 @@ Tdialog {
         MenuItem {
             text: qsTr("Load from file")
             onTriggered: {
-                cntMan.getSoundFile();
+                vCntEdit.cntMan.getSoundFile();
             }
         }
 
