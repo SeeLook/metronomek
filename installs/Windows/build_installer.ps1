@@ -17,6 +17,10 @@ mingw32-make -j4
 
 mingw32-make install
 
+echo "--- Move plugins and qml"
+mv installs/plugins installs/bin/plugins
+mv installs/qml installs/bin/qml
+
 echo "--- Building installer"
 makensis installs/bin/metronomek.nsi
 
