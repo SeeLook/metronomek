@@ -30,10 +30,14 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/src)
 configure_file(${CMAKE_SOURCE_DIR}/src/metronomek_conf_cmake.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/metronomek_conf.h)
 
 ##############################################################################
-#               Compilation                                                  #
-#          (inside src directory)                                            #
+#                   Project sources                                          #
 ##############################################################################
 add_subdirectory(src)
+
+##############################################################################
+#                   Translations                                             #
+##############################################################################
+add_subdirectory(translations)
 
 if(WIN32)
     set(INS_PREF "${CMAKE_INSTALL_BINDIR}")
@@ -47,16 +51,12 @@ else()
     endif()
 endif()
 
-# translations (*.qm)
-file(GLOB QM_STUFF "${CMAKE_CURRENT_SOURCE_DIR}/translations/*.qm")
-
 if (ANDROID)
 
 else ()
     # Sound samples
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/sounds" DESTINATION "${INS_PREF}")
     install(FILES LICENSE CHANGELOG.md DESTINATION "${INS_PREF}")
-    install(FILES ${QM_STUFF} DESTINATION "${INS_PREF}/translations")
 endif()
 
 # Icons & other stuff

@@ -238,12 +238,6 @@ if(ANDROID)
         "
     )
 
-    # install(TARGETS metronomek
-    #     BUNDLE DESTINATION .
-    #     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    #     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    # )
-
 else()
     if (LINUX)
         target_compile_definitions(metronomek
