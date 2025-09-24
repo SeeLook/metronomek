@@ -77,6 +77,10 @@ Tdialog {
                         flag: "us"
                         lang: "English"
                     }
+                    ListElement {
+                        flag: "uk"
+                        lang: "Українська"
+                    }
                 }
 
                 Rectangle {
