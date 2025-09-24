@@ -9,7 +9,6 @@ import QtQuick.Window
 pragma ComponentBehavior: Bound
 
 Window {
-
     id: mainWindow
 
     // controlling tempo
@@ -435,7 +434,6 @@ Window {
         onClicked: {
             if (!meterDrewer)
                 meterDrewer = Qt.createComponent("Metronomek.Core", "MeterDrawer").createObject(mainWindow.contentItem);
-
             meterDrewer.open();
         }
 

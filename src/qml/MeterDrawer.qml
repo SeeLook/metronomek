@@ -9,21 +9,19 @@ Drawer {
     id: mDrawer
 
     edge: Qt.RightEdge
-    width: FM.height * (GLOB.isAndroid() ? 4 : 5)
-    height: mainWindow.height
+    width: Math.max(FM.height * 4, countText.width + GLOB.fontSize())
+    height: parent.Window.height
     padding: 0
-    topMargin: GLOB.fontSize()
-    bottomMargin: GLOB.fontSize()
 
     Column {
         width: parent.width
 
         Label {
             id: countText
-
             text: qsTranslate("MainWindow", "count to") + ":"
             anchors.horizontalCenter: parent.horizontalCenter
         }
+
         Item {
             width: mDrawer.width
             height: GLOB.fontSize()
@@ -36,9 +34,9 @@ Drawer {
                 id: cntButt
                 required property int index
                 width: mDrawer.width
-                height: (mDrawer.height - countText.height - GLOB.fontSize() * 3) / 12
+                height: (mDrawer.height - countText.height - GLOB.fontSize() * (GLOB.isAndroid() ? 3 : 1)) / 12
                 background: Rectangle {
-                    color: cntButt.checked ? ActivPalette.highlight : (index % 2 ? ActivPalette.base : ActivPalette.alternateBase)
+                    color: cntButt.checked ? ActivPalette.highlight : (cntButt.index % 2 ? ActivPalette.base : ActivPalette.alternateBase)
                 }
                 Text {
                     x: GLOB.fontSize() / 2

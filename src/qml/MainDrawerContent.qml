@@ -23,7 +23,6 @@ Flickable {
                 running: drawer.visible
                 loops: 1
             }
-
         }
 
         Rectangle {
