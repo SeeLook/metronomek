@@ -34,11 +34,6 @@ configure_file(${CMAKE_SOURCE_DIR}/src/metronomek_conf_cmake.h.in ${CMAKE_CURREN
 ##############################################################################
 add_subdirectory(src)
 
-##############################################################################
-#                   Translations                                             #
-##############################################################################
-add_subdirectory(translations)
-
 if(WIN32)
     set(INS_PREF "${CMAKE_INSTALL_BINDIR}")
 else()
@@ -51,9 +46,12 @@ else()
     endif()
 endif()
 
-if (ANDROID)
+##############################################################################
+#                   Translations                                             #
+##############################################################################
+add_subdirectory(translations)
 
-else ()
+if (NOT ANDROID)
     # Sound samples
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/sounds" DESTINATION "${INS_PREF}")
     install(FILES LICENSE CHANGELOG.md DESTINATION "${INS_PREF}")
