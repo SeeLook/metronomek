@@ -82,3 +82,5 @@ Thumbs.db
 
 # QML
 *.qmlls.ini
+
+*installs/android/assets/translations
