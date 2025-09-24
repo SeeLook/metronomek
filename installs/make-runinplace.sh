@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# Copyright (C) 2020 by Tomasz Bojczuk (seelook@gmail.com)
+# Copyright (C) 2020-2025 by Tomasz Bojczuk (seelook@gmail.com)
 # on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
 
 # This script creates links necessary to run MetronomeK without installation (in directory where it is built)
@@ -20,11 +20,11 @@ DST_DIR=$2/share/metronomek/
 
 echo $DST_DIR
 if [ -d $DST_DIR ]; then
-  echo "Already done... Exiting!"
-  exit
+    echo "Already done... Exiting!"
+    exit
 else
-  mkdir -p $DST_DIR
-  ln -s $SRC_DIR/translations $DST_DIR
-  ln -s $SRC_DIR/sounds $DST_DIR
+    mkdir -p $DST_DIR
+    ln -s $PWD/translations $DST_DIR
+    ln -s $SRC_DIR/sounds $DST_DIR
 fi
 
