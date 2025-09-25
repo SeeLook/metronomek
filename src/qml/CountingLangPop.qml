@@ -9,29 +9,11 @@ SidePop {
     id: countPop
 
     property CountManager cntMan: SOUND.countManager()
-    property var langModel: cntMan.languagesModel()
 
     visible: true
     modal: true
     bgColor: Qt.tint(ActivPalette.window, GLOB.alpha(ActivPalette.highlight, 30))
-    height: col.height + FM.height * 2
-    Component.onCompleted: {
-        var currL = cntMan.currentLanguage();
-        for (var l = 0; l < langModel.length; ++l) {
-            var lang = langModel[l].split(";");
-            langList.append({
-                "langName": lang[0],
-                "langID": lang[1]
-            });
-            if (currL == lang[1])
-                langCombo.currentIndex = l;
-
-        }
-    }
-
-    ListModel {
-        id: langList
-    }
+    height: col.height + FM.height * 2 + padding * 2
 
     Column {
         id: col
@@ -50,11 +32,10 @@ SidePop {
 
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: FM.height
+            spacing: FM.height / (GLOB.isAndroid() ? 2 : 1)
 
             Text {
                 id: lt
-
                 anchors.verticalCenter: parent.verticalCenter
                 text: qsTr("language") + ":"
                 color: ActivPalette.text
@@ -62,13 +43,13 @@ SidePop {
 
             ComboBox {
                 id: langCombo
-
-                width: countPop.width - FM.height * 4 - lt.width
-                model: langList
+                width: countPop.width - FM.height * (GLOB.isAndroid() ? 2 : 4) - lt.width
+                model: countPop. cntMan.languagesModel()
+                currentIndex: (model as CountLangModel).currentLangId
                 textRole: "langName"
                 valueRole: "langID"
-                popup.width: GLOB.isAndroid() ? countPop.width - FM.height * 4 : langCombo.width
-                popup.x: -FM.height * 4
+                popup.width: langCombo.width
+                popup.height: langCombo.Window.height * 0.8
             }
 
         }
@@ -87,7 +68,7 @@ SidePop {
             Button {
                 text: GLOB.TR("QPlatformTheme", "Save")
                 onClicked: {
-                    countPop.cntMan.storeCounting(langList.get(langCombo.currentIndex).langID, cntName.text);
+                    countPop.cntMan.storeCounting(langCombo.currentValue, cntName.text);
                     countPop.close();
                 }
             }
@@ -96,9 +77,7 @@ SidePop {
                 text: GLOB.TR("QPlatformTheme", "Cancel")
                 onClicked: countPop.close()
             }
-
         }
-
     }
 
 }

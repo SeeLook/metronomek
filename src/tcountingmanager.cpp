@@ -5,6 +5,7 @@
 #include "tcountingmanager.h"
 #include "fromqt5lang.h"
 #include "tabstractaudiodevice.h"
+#include "tcountlangmodel.h"
 #include "tgetfile.h"
 #include "tglob.h"
 #include "tsound.h"
@@ -371,36 +372,11 @@ void TcountingManager::storeCounting(int lang, const QString &name, bool askForF
 // ###############     Methods to handle locally stored *.wav files with counting      #############
 // #################################################################################################
 
-QStringList TcountingManager::languagesModel()
+QVariant TcountingManager::languagesModel()
 {
-    if (m_languagesModel.isEmpty()) {
-        QList<QLocale> all = QLocale::matchingLocales(QLocale::AnyLanguage, QLocale::AnyScript, QLocale::AnyCountry);
-        int cnt = 0;
-        while (cnt < all.size()) {
-            QLocale &locale = all[cnt];
-            if (locale.language() < 2) { // skip 'default' and 'C' types
-                all.removeAt(cnt);
-                continue;
-            }
-            auto name = locale.nativeLanguageName();
-            int i = cnt + 1;
-            while (i < all.size()) {
-                if (name == all[i].nativeLanguageName())
-                    all.removeAt(i);
-                else
-                    i++;
-            }
-            cnt++;
-        }
-
-        for (int l = 2; l < all.size(); ++l) {
-            QLocale &locale = all[l];
-            if (!locale.nativeLanguageName().isEmpty())
-                m_languagesModel << locale.languageToString(locale.language()) + " / " + locale.nativeLanguageName() + ";" + QString::number(locale.language());
-        }
-        m_languagesModel.sort();
-    }
-    return m_languagesModel;
+    if (!m_languagesModel)
+        m_languagesModel = new TcountLangModel(currentLanguage(), this);
+    return QVariant::fromValue(m_languagesModel);
 }
 
 int TcountingManager::currentLanguage()

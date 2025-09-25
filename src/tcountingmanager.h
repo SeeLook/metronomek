@@ -13,6 +13,7 @@ class TsoundData;
 class TabstractAudioDevice;
 class TnumeralSpectrum;
 class TcntXML;
+class TcountLangModel;
 class QDataStream;
 class QFile;
 
@@ -77,7 +78,7 @@ public:
 
     Q_INVOKABLE void storeCounting(int lang, const QString &name, bool askForFile = false);
 
-    Q_INVOKABLE QStringList languagesModel();
+    Q_INVOKABLE QVariant languagesModel();
     Q_INVOKABLE int currentLanguage();
 
     Q_INVOKABLE void getSingleWordFromFile(int numId);
@@ -219,7 +220,7 @@ private:
     quint32 m_inSize = 0, m_inPos = 0, m_endPos = 0;
     qint16 m_inNoise = 0, m_inMax = 0;
     bool m_inOnSet = false;
-    QStringList m_languagesModel;
+    TcountLangModel *m_languagesModel = nullptr;
     // local counting wav files
     int m_localModelId = 0;
     QStringList m_localCntModel;

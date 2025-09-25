@@ -119,6 +119,8 @@ qt_add_qml_module(metronomek
         tcountingmanager.h
         tnumeralspectrum.cpp
         tnumeralspectrum.h
+        tcountlangmodel.cpp
+        tcountlangmodel.h
 
     DEPENDENCIES
         QtQuick
