@@ -146,6 +146,15 @@ public:
 #endif
     }
 
+    Q_INVOKABLE bool isWindows()
+    {
+#if defined(Q_OS_WINDOWS)
+        return true;
+#else
+        return false;
+#endif
+    }
+
     Q_INVOKABLE void keepScreenOn(bool on);
     Q_INVOKABLE bool isKeepScreenOn() { return m_keepScreenOn; }
     Q_INVOKABLE void setDisableRotation(bool disRot);

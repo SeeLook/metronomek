@@ -21,6 +21,8 @@ Window {
     property alias counterPressed: countArea.containsPress
     property real lastTime: new Date().getTime()
     property var compView: null
+    readonly property alias metroWidth: metro.width
+    property alias pendulum: pendulum
 
     function startMetronome() {
         partId = 0;
@@ -575,7 +577,7 @@ Window {
     }
 
     Loader {
-        source: GLOB.isAndroid() ? "MaterialImport.qml" : ""
+        source: GLOB.isAndroid() || GLOB.isWindows() ? "MaterialImport.qml" : ""
     }
 
 }
