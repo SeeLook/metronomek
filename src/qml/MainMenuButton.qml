@@ -24,7 +24,7 @@ AbstractButton {
         height: menuButt.Window.height
         background: Background {}
         onAboutToShow: {
-            mainWindow.stopMetronome();
+            (menuButt.Window.window as MainWindow).stopMetronome();
             if (!menuButt.drawerContent)
                 menuButt.drawerContent = Qt.createComponent("Metronomek.Core", "MainDrawerContent").createObject(drawer.contentItem);
         }

@@ -28,7 +28,7 @@ Tdialog {
     }
     onHelpRequested: moreMenu.open()
     onReset: {
-        let cntPop = Qt.createComponent("Metronomek.Core", "CountingLangPop").createObject(mainWindow);
+        let cntPop = Qt.createComponent("Metronomek.Core", "CountingLangPop").createObject(contentItem.Window.window);
         (cntPop as Popup).closed.connect(function() {
             vCntEdit.close();
         });
@@ -39,9 +39,10 @@ Tdialog {
 
         currentIndex: -1
         model: 12
-        width: parent ? parent.width : 0
-        height: parent ? parent.height : 0
+        width: parent?.width
+        height: vCntEdit.availableHeight - vCntEdit.implicitFooterHeight
         spacing: 1
+        clip: true
 
         delegate: Rectangle {
             id: bgRect
@@ -186,15 +187,24 @@ Tdialog {
         }
 
         MenuItem {
+            visible: false
             text: qsTr("Align")
         }
 
         MenuItem {
             text: qsTranslate("QShortcut", "Help")
             onTriggered: {
-                Qt.createComponent("Metronomek.Core", "HelpPop").createObject(mainWindow, {
+                Qt.createComponent("Metronomek.Core", "HelpPop").createObject(Window.window, {
                     "visible": true,
-                    "helpText": "<b>" + GLOB.TR("VerbalCountPage", "Prepare own counting out loud") + ":</b>" + "<ul><li>" + qsTr("record every single numeral") + "</li><li>" + qsTr("or import wav file with it prepared in other software") + "</li><li>" + qsTr("or import wav file with all 12 numerals (Actions -> Load from file)") + "</li></ul><br><b>" + qsTr("CLUES") + ":</b>" + "<ul><li>" + qsTr("pronounce words quickly, not longer than 300 ms") + "</li><li>" + qsTr("accent one of the word syllables") + "</li><li>" + qsTr("imported wav files has to be 48000 Hz / 16 bit") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
+                    "helpText": "<b>" + GLOB.TR("VerbalCountPage", "Prepare own counting out loud") + ":</b>"
+                                + "<ul><li>" + qsTr("record every single numeral")
+                                + "</li><li>" + qsTr("or import wav file with it prepared in other software") + "</li><li>"
+                                + qsTr("or import wav file with all 12 numerals (Actions -> Load from file)") + "</li></ul><br><b>"
+                                + qsTr("CLUES") + ":</b>"
+                                + "<ul><li>" + qsTr("pronounce words quickly, not longer than 300 ms")
+                                + "</li><li>" + qsTr("accent one of the word syllables")
+                                + "</li><li>" + qsTr("imported wav files has to be 48000 Hz / 16 bit")
+                                + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
                 });
             }
         }

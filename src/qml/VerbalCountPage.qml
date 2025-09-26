@@ -287,7 +287,6 @@ Tdialog {
                             family: "Metronomek"
                             pixelSize: FM.height * 1.7
                         }
-
                     }
 
                 }
@@ -303,7 +302,6 @@ Tdialog {
                         vCntPage.progBar = progBarComp.createObject(bgRect2);
                     }
                 }
-
             }
 
             ScrollBar.vertical: ScrollBar {}
@@ -335,9 +333,7 @@ Tdialog {
                 bgColor: Qt.tint(ActivPalette.button, GLOB.alpha("red", 40))
                 onClicked: vCntPage.cntMan.abortDownload()
             }
-
         }
-
     }
 
     Menu {
@@ -352,7 +348,7 @@ Tdialog {
 
         MenuItem {
             text: qsTr("Prepare own counting out loud")
-            onTriggered: Qt.createComponent("Metronomek.Core", "VerbalCountEdit").createObject(mainWindow)
+            onTriggered: Qt.createComponent("Metronomek.Core", "VerbalCountEdit").createObject(Window.window)
         }
 
         MenuItem {
@@ -366,8 +362,12 @@ Tdialog {
         MenuItem {
             text: qsTranslate("QShortcut", "Help")
             onTriggered: {
-                let hPop = Qt.createComponent("Metronomek.Core", "HelpPop").createObject(mainWindow, {
-                    "helpText": qsTr("Matronomek is installed with counting out loud only in English language.") + "<br>" + qsTr("But counting for other languages can be easy obtained:") + "<ul><li>" + qsTr("by downloading files available online (for free)") + "</li><li>" + qsTr("or by recording own counting.") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
+                let hPop = Qt.createComponent("Metronomek.Core", "HelpPop").createObject(Window.window, {
+                    "helpText": qsTr("Matronomek is installed with counting out loud only in English language.") + "<br>"
+                                + qsTr("But counting for other languages can be easy obtained:")
+                                + "<ul><li>" + qsTr("by downloading files available online (for free)") + "</li><li>"
+                                + qsTr("or by recording own counting.")
+                                + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
                 });
                 (hPop as HelpPop).open();
             }

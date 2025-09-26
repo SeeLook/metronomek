@@ -13,7 +13,7 @@ SidePop {
     visible: true
     modal: true
     bgColor: Qt.tint(ActivPalette.window, GLOB.alpha(ActivPalette.highlight, 30))
-    height: col.height + FM.height * 2 + padding * 2
+    height: col.height + FM.height + padding * 2
 
     Column {
         id: col

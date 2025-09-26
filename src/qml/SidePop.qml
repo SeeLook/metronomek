@@ -1,5 +1,5 @@
 /** This file is part of Metronomek                                  *
- * Copyright (C) 2022 by Tomasz Bojczuk (seelook@gmail.com)          *
+ * Copyright (C) 2022-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 import QtQuick
@@ -33,7 +33,6 @@ Popup {
             property: "y"
             to: sidePop.contentItem.Window.height - sidePop.height + FM.height
         }
-
     }
 
     exit: Transition {
@@ -42,7 +41,6 @@ Popup {
             property: "y"
             to: sidePop.contentItem.Window.height + sidePop.height
         }
-
     }
 
     background: TipRect {
@@ -51,5 +49,4 @@ Popup {
         color: ActivPalette.varTempo
         radius: FM.height
     }
-
 }
