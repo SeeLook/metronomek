@@ -19,7 +19,7 @@ SidePop {
 
         clip: true
         width: hPop.width - 2 * hPop.padding
-        height: Math.min(contentHeight, mainWindow.height * 0.75)
+        height: Math.min(contentHeight, Window.height * 0.75)
         x: (hPop.width - width) / 2
         contentWidth: width
         contentHeight: hText.height + FM.height

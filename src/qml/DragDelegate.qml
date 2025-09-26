@@ -24,7 +24,7 @@ Rectangle {
     Text {
         id: delText
 
-        visible: toDel
+        visible: dragDel.toDel
         parent: dragDel.parent
         text: qsTranslate("QLineEdit", "Delete")
         y: dragDel.y + (dragDel.height - height) / 2
@@ -41,11 +41,11 @@ Rectangle {
         drag.axis: Drag.XAxis
         drag.minimumX: -width / 3
         drag.maximumX: width / 3
-        drag.target: dragEnabled ? parent : null
-        onPressed: wasDragged = false
+        drag.target: dragDel.dragEnabled ? parent : null
+        onPressed: dragDel.wasDragged = false
         onPositionChanged: {
             if (Math.abs(dragDel.x) > FM.height)
-                wasDragged = true;
+                dragDel.wasDragged = true;
 
         }
         onReleased: {
@@ -54,11 +54,11 @@ Rectangle {
                 rmAnim.start();
             } else {
                 backAnim.start();
-                if (!wasDragged && Math.abs(dragDel.x) < FM.height)
+                if (!dragDel.wasDragged && Math.abs(dragDel.x) < FM.height)
                     dragDel.clicked();
 
             }
-            wasDragged = false;
+            dragDel.wasDragged = false;
         }
     }
 

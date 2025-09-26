@@ -38,15 +38,15 @@ Column {
             tDial.lastTime = currTime;
         }
 
-        width: Math.min(mainWindow.width, FM.height * 40) * 0.35
+        width: Math.min(Window.width, FM.height * 40) * 0.35
         height: width
         anchors.horizontalCenter: parent.horizontalCenter
         from: 40
         to: 240
         stepSize: 1
         wheelEnabled: true
-        value: tempo
-        onValueChanged: tempoModified(value)
+        value: tc.tempo
+        onValueChanged: tc.tempoModified(value)
 
         TipRect {
             id: tapRect
@@ -63,7 +63,7 @@ Column {
             Text {
                 anchors.centerIn: parent
                 color: ActivPalette.buttonText
-                text: tempo
+                text: tc.tempo
 
                 font {
                     pixelSize: parent.height * 0.3
@@ -183,9 +183,9 @@ Column {
     SequentialAnimation {
         id: hintAnim
 
-        running: visible && runAnimOnce
+        running: tc.visible && tc.runAnimOnce
         alwaysRunToEnd: true
-        onStopped: runAnimOnce = false
+        onStopped: tc.runAnimOnce = false
 
         PauseAnimation {
             duration: 500
