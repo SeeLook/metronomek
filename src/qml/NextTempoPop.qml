@@ -3,19 +3,22 @@
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
 import QtQuick
-import QtQuick.Controls
 
 SidePop {
+    id: nextPop
+
     bgColor: ActivPalette.varTempo
-    focus: true // HACK for onPressed
+    focus: true
 
     Text {
         id: nextText
 
         x: (parent.width - width) / 2
-        scale: (metro.width - FM.height * 4) / width
+        scale: (nextPop.width - FM.height * 4) / width
         transformOrigin: Item.Top
-        color: ActivPalette.text
+        color: ActivPalette.tempoText
+        style: Text.Outline
+        styleColor: ActivPalette.base
         text: qsTr("Next tempo")
     }
 
@@ -25,16 +28,18 @@ SidePop {
         width: nextText.width * nextText.scale
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
-        color: ActivPalette.text
+        color: ActivPalette.tempoText
+        style: Text.Outline
+        styleColor: ActivPalette.base
         text: qsTr("Tap, click or press any key.")
     }
 
     MouseArea {
         width: parent.width
         height: parent.height
-        onClicked: close()
-        focus: true // HACK for onPressed
-        Keys.onPressed: close()
+        onClicked: nextPop.close()
+        focus: true
+        Keys.onPressed: nextPop.close()
     }
 
 }

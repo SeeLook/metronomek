@@ -8,6 +8,7 @@ pragma Singleton
 
 SystemPalette {
     property color varTempo: "skyblue"
+    property color tempoText: "navy"
 
     colorGroup: SystemPalette.Active
 }
