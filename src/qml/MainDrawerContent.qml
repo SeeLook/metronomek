@@ -113,7 +113,7 @@ Flickable {
         }
 
         DrawerButton {
-            text: GLOB.TR("MainWindow", "Tempo changes").toLowerCase()
+            text: qsTranslate("MainWindow", "Tempo changes").toLowerCase()
             bgColor: ActivPalette.varTempo
             checkable: true
             checked: SOUND.variableTempo
