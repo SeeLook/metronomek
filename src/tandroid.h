@@ -2,8 +2,7 @@
  * Copyright (C) 2020-2022 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TANDROID_H
-#define TANDROID_H
+#pragma once
 
 #include <QtCore/qstring.h>
 
@@ -24,5 +23,3 @@ int getAPIlevelNr();
 
 bool askForReadPermission();
 }
-
-#endif // TANDROID_H

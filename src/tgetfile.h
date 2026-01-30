@@ -2,8 +2,7 @@
  * Copyright (C) 2022 by Tomasz Bojczuk (seelook@gmail.com)          *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TGETFILE_H
-#define TGETFILE_H
+#pragma once
 
 #include <QtCore/qobject.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
@@ -49,5 +48,3 @@ private:
     QNetworkReply *m_reply = nullptr;
     bool m_aborted = false;
 };
-
-#endif // TGETFILE_H

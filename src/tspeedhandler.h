@@ -2,8 +2,7 @@
  * Copyright (C) 2021-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TSPEEDHANDLER_H
-#define TSPEEDHANDLER_H
+#pragma once
 
 #include "ttempopart.h"
 #include <QtCore/qobject.h>
@@ -148,5 +147,3 @@ private:
     QList<TrtmComposition *> m_compositions;
     int m_current = 0;
 };
-
-#endif // TSPEEDHANDLER_H

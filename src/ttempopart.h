@@ -2,8 +2,7 @@
  * Copyright (C) 2021-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TTEMPOPART_H
-#define TTEMPOPART_H
+#pragma once
 
 #include <QtCore/qeasingcurve.h>
 #include <QtCore/qobject.h>
@@ -111,5 +110,3 @@ private:
     QEasingCurve m_speedProfile; /**< By default it is linear */
     bool m_infinite = false;
 };
-
-#endif // TTEMPOPART_H

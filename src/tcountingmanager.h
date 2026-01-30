@@ -2,8 +2,7 @@
  * Copyright (C) 2022 by Tomasz Bojczuk (seelook@gmail.com)          *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TCOUNTINGMANAGER_H
-#define TCOUNTINGMANAGER_H
+#pragma once
 
 #include "tnumeralspectrum.h"
 #include <QtCore/qobject.h>
@@ -231,5 +230,3 @@ private:
     QStringList m_onlineURLs;
     bool m_downloading = false;
 };
-
-#endif // TCOUNTINGMANAGER_H

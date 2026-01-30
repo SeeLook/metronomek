@@ -294,7 +294,7 @@ void Tsound::playingFinishedSlot()
         if (!m_goingToStop) {
             m_goingToStop = true;
             int delay = ((m_samplPerBeat - m_currSample) * 1000) / m_sampleRate + 50;
-            QTimer::singleShot(qMax(100, delay), this, [=] {
+            QTimer::singleShot(qMax(100, delay), this, [this] {
                 m_audioDevice->stop();
                 m_goingToStop = false;
             });

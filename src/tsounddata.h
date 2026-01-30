@@ -2,8 +2,7 @@
  * Copyright (C) 2022 by Tomasz Bojczuk (seelook@gmail.com)          *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TSOUNDDATA_H
-#define TSOUNDDATA_H
+#pragma once
 
 #include <QtCore/qstring.h>
 
@@ -102,5 +101,3 @@ private:
     int m_peakAt = 0; /**< Unset by default */
     bool m_started = false;
 };
-
-#endif // TSOUNDDATA_H

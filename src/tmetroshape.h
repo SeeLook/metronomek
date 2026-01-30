@@ -2,8 +2,7 @@
  * Copyright (C) 2020-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TMETROSHAPE_H
-#define TMETROSHAPE_H
+#pragma once
 
 #include <QtQml/qqmlregistration.h>
 #include <QtQuick/qquickpainteditem.h>
@@ -33,5 +32,3 @@ public:
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
 };
-
-#endif // TMETROSHAPE_H

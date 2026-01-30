@@ -2,8 +2,7 @@
  * Copyright (C) 2021 by Tomasz Bojczuk (seelook@gmail.com)          *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TQTAUDIOOUT_H
-#define TQTAUDIOOUT_H
+#pragma once
 
 #include "tabstractaudiodevice.h"
 #include <QtMultimedia/qaudio.h>
@@ -48,5 +47,3 @@ private:
     QAudioDeviceInfo m_deviceInfo;
     int m_bufferFrames, m_sampleRate;
 };
-
-#endif // TQTAUDIOOUT_H

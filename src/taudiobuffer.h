@@ -2,8 +2,7 @@
  * Copyright (C) 2019 by Tomasz Bojczuk (seelook@gmail.com)          *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TAUDIOBUFFER_H
-#define TAUDIOBUFFER_H
+#pragma once
 
 #include <QtCore/qiodevice.h>
 
@@ -64,5 +63,3 @@ protected:
 private:
     qint64 m_bufferSize;
 };
-
-#endif // TAUDIOBUFFER_H

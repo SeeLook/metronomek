@@ -2,8 +2,7 @@
  * Copyright (C) 2021-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TRTAUDIOOUT_H
-#define TRTAUDIOOUT_H
+#pragma once
 
 #include "rtaudio/RtAudio.h"
 #include "tabstractaudiodevice.h"
@@ -98,5 +97,3 @@ private:
     QString m_outDevName = QLatin1String("anything");
     QString m_inDevName = QLatin1String("anything");
 };
-
-#endif // TRTAUDIOOUT_H

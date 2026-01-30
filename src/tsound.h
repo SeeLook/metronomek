@@ -2,8 +2,7 @@
  * Copyright (C) 2019-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TSOUND_H
-#define TSOUND_H
+#pragma once
 
 #include "tcountingmanager.h"
 #include "tsounddata.h"
@@ -250,5 +249,3 @@ private:
     int m_nameTempoId = 4;
     bool m_variableTempo = false;
 };
-
-#endif // TSOUND_H

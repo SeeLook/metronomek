@@ -117,7 +117,7 @@ void TrtmComposition::add()
 void TrtmComposition::remove(int tpId)
 {
     if (tpId > -1 && tpId < m_tempoList.count()) {
-        QTimer::singleShot(100, this, [=] {
+        QTimer::singleShot(100, this, [this, tpId] {
             delete m_tempoList.takeAt(tpId);
             for (int i = tpId; i < m_tempoList.size(); ++i)
                 m_tempoList[i]->setNr(i + 1);

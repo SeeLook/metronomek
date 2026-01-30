@@ -15,10 +15,10 @@ TgetFile::TgetFile(const QString &fileAddr, qint64 expSize, QObject *parent)
 {
     if (!QSslSocket::supportsSsl()) {
         qDebug() << "[TgetFile] No SSL support" << fileAddr;
-        QTimer::singleShot(200, this, [=] {
+        QTimer::singleShot(200, this, [this] {
             emit progress(-1.0); // hide progress bar immediately
         });
-        QTimer::singleShot(500, this, [=] {
+        QTimer::singleShot(500, this, [this] {
             emit downloadFinished(false);
         });
         return;
@@ -38,7 +38,7 @@ TgetFile::TgetFile(const QString &fileAddr, qint64 expSize, QObject *parent)
 #endif
 
     m_reply = m_netMan.get(request);
-    connect(m_reply, &QNetworkReply::errorOccurred, this, [=](QNetworkReply::NetworkError e) {
+    connect(m_reply, &QNetworkReply::errorOccurred, this, [this](QNetworkReply::NetworkError e) {
         qDebug() << "[TgetFile]" << e << m_reply->errorString();
         if (m_expectedSize > 0)
             emit progress(-1.0); // hide progress bar immediately

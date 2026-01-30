@@ -515,7 +515,7 @@ void TcountingManager::downloadCounting(int urlId)
         auto getFile = new TgetFile(m_onlineURLs[urlId], expSize, this);
         connect(getFile, &TgetFile::progress, this, &TcountingManager::downProgress);
         connect(this, &TcountingManager::abortDownload, getFile, &TgetFile::abort);
-        connect(getFile, &TgetFile::downloadFinished, this, [=](bool success) {
+        connect(getFile, &TgetFile::downloadFinished, this, [this, urlId, getFile](bool success) {
             if (success) {
                 auto fName = getWavFileName(m_onlineURLs[urlId].right(18).left(5));
                 QFile wavFile(fName);
@@ -580,7 +580,7 @@ void TcountingManager::downloadOnlineList()
     static const QString mdAddr = QStringLiteral("https://sourceforge.net/projects/metronomek/files/counting/README.md");
     auto getFile = new TgetFile(mdAddr, 0, this);
     connect(getFile, &TgetFile::progress, this, &TcountingManager::downProgress);
-    connect(getFile, &TgetFile::downloadFinished, this, [=](bool success) {
+    connect(getFile, &TgetFile::downloadFinished, this, [this, getFile](bool success) {
         if (success) {
             auto fName = GLOB->userLocalPath() + QLatin1String("/COUNTING.md");
             QFile mdFile(fName);
@@ -992,7 +992,7 @@ void TcountingManager::recCallBack(char *data, unsigned int maxLen, unsigned int
 void TcountingManager::watchPlayingStopped()
 {
     if (m_playing)
-        QTimer::singleShot(20, this, [=] {
+        QTimer::singleShot(20, this, [this] {
             watchPlayingStopped();
         });
     else
@@ -1002,7 +1002,7 @@ void TcountingManager::watchPlayingStopped()
 void TcountingManager::watchRecordingStopped()
 {
     if (m_recording)
-        QTimer::singleShot(20, this, [=] {
+        QTimer::singleShot(20, this, [this] {
             watchRecordingStopped();
         });
     else {

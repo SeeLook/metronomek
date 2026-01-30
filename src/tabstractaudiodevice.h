@@ -2,8 +2,7 @@
  * Copyright (C) 2021-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TABSTRACTAUDIODEVICE_H
-#define TABSTRACTAUDIODEVICE_H
+#pragma once
 
 #include <QtCore/qobject.h>
 
@@ -88,5 +87,3 @@ private:
     quint32 m_sampleRate = 48000;
     EaudioMode m_audioMode = Audio_Output;
 };
-
-#endif // TABSTRACTAUDIODEVICE_H

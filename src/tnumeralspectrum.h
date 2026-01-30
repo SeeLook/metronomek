@@ -2,8 +2,7 @@
  * Copyright (C) 2022 by Tomasz Bojczuk (seelook@gmail.com)          *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TNUMERALSPECTRUM_H
-#define TNUMERALSPECTRUM_H
+#pragma once
 
 #include <QtQml/qqmlregistration.h>
 #include <QtQuick/qquickpainteditem.h>
@@ -52,5 +51,3 @@ private:
     TsoundData *m_numData = nullptr;
     QString m_recMessage;
 };
-
-#endif // TNUMERALSPECTRUM_H

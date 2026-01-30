@@ -43,7 +43,8 @@ void TsoundData::setFile(const QString &rawFileName)
 
     QFile rawFile(rawFileName);
     if (rawFile.exists()) {
-        rawFile.open(QIODevice::ReadOnly);
+        if (!rawFile.open(QIODevice::ReadOnly))
+            return;
         m_size = static_cast<int>(rawFile.size() / 2);
         m_data = new qint16[m_size];
         QDataStream beatStream(&rawFile);

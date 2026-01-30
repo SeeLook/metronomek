@@ -42,7 +42,7 @@ void TnumeralSpectrum::setNumeral(TsoundData *numData)
 void TnumeralSpectrum::startRecording()
 {
     setRecMessage(tr("Silence, please..."));
-    QTimer::singleShot(1000, this, [=] {
+    QTimer::singleShot(1000, this, [this] {
         setRecMessage(tr("Now say") + QString(": \"%1\"").arg(m_nr + 1));
     });
 }
@@ -54,7 +54,7 @@ void TnumeralSpectrum::copyData(qint16 *numData, int len)
     m_numData->copyData(numData, len);
     if (len >= 48000) {
         setRecMessage(tr("Too long!"));
-        QTimer::singleShot(3000, this, [=] {
+        QTimer::singleShot(3000, this, [this] {
             setRecMessage(QString());
         });
     } else {

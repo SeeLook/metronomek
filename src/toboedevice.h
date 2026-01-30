@@ -2,8 +2,7 @@
  * Copyright (C) 2021-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
  * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
 
-#ifndef TOBOEDEVICE_H
-#define TOBOEDEVICE_H
+#pragma once
 
 #include "tabstractaudiodevice.h"
 #include <oboe/Oboe.h>
@@ -53,5 +52,3 @@ private:
     std::shared_ptr<oboe::AudioStream> m_stream;
     ToboeCallBack m_callBackClass;
 };
-
-#endif // TOBOEDEVICE_H
