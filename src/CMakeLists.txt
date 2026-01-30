@@ -16,6 +16,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(QT_QML_GENERATE_QMLLS_INI ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if (APPLE) # Mac RPath
     set(CMAKE_MACOSX_RPATH 1)
@@ -278,5 +279,3 @@ if (APPLE) # info.plist
     configure_file(${CMAKE_SOURCE_DIR}/installs/Mac/info.plist.in ${CMAKE_BINARY_DIR}/info.plist)
     install(FILES "${CMAKE_BINARY_DIR}/info.plist" DESTINATION "${CMAKE_INSTALL_PREFIX}/metronomek.app/Contents")
 endif()
-
-
