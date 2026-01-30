@@ -418,8 +418,7 @@ Window {
     }
 
     MainMenuButton {
-        x: parent.width * 0.01
-        y: parent.height * 0.01
+        mWindow: mainWindow
     }
 
     AbstractButton {
@@ -427,10 +426,8 @@ Window {
 
         property var meterDrewer: null
 
-        x: parent.width - width
-        scale: (parent.height * 0.05) / height
-        transformOrigin: Item.Right
-        width: height * 3
+        x: parent.width - width * 0.9
+        width: contentRow.width + FM.height * 2
         height: FM.height * 2
         visible: !meterDrewer || !meterDrewer.visible
         onClicked: {
@@ -440,36 +437,36 @@ Window {
         }
 
         background: Rectangle {
-            color: cntButt.pressed ? ActivPalette.button : "transparent"
-            radius: height / 6
+            color: GLOB.alpha(ActivPalette.text, cntButt.pressed ? 120 : 30)
+            width: cntButt.width * 1.1
+            height: width
+            radius: width / 2
+            y: -height * 0.6
+            x: -width * 0.05
+        }
+        Row {
+            id: contentRow
+            anchors.centerIn: parent
+            spacing: FM.height / 2
 
-            Row {
-                anchors.centerIn: parent
-                spacing: FM.height / 2
-
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: qsTr("count to") + ":"
-                    color: ActivPalette.text
-                }
-
-                Text {
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: SOUND.meter > 1 ? SOUND.meter : "--"
-                    textFormat: Text.StyledText
-                    color: ActivPalette.text
-
-                    font {
-                        pixelSize: FM.height * 1.4
-                        bold: true
-                    }
-
-                }
-
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: qsTr("count to") + ":"
+                color: ActivPalette.text
             }
 
-        }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: SOUND.meter > 1 ? SOUND.meter : "--"
+                textFormat: Text.StyledText
+                color: ActivPalette.text
 
+                font {
+                    pixelSize: FM.height * 1.4
+                    bold: true
+                }
+            }
+        }
     }
 
     NumberAnimation {
