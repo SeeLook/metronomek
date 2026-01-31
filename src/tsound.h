@@ -67,6 +67,8 @@ public:
         Beat_Drum3,
         Beat_BaseDrum,
         Beat_SnareDrum,
+        Beat_Digital,
+        Beat_Midi,
         Beat_TypesCount
     };
     Q_ENUM(EbeatType)

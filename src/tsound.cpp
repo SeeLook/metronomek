@@ -322,7 +322,7 @@ void Tsound::setBeatType(int bt)
 QString Tsound::getBeatFileName(Tsound::EbeatType bt)
 {
     static const char *const beatFileArray[static_cast<int>(Beat_TypesCount)] =
-        {"classic", "classic2", "snap", "parapet", "sticks", "sticks2", "clap", "guitar", "drum1", "drum2", "drum3", "basedrum", "snaredrum"};
+        {"classic", "classic2", "snap", "parapet", "sticks", "sticks2", "clap", "guitar", "drum1", "drum2", "drum3", "basedrum", "snaredrum", "icu", "midi"};
     return QString(beatFileArray[static_cast<int>(bt)]);
 }
 
@@ -330,19 +330,25 @@ QString Tsound::getBeatName(int bt)
 {
     if (bt < 0 || bt > beatTypeCount() - 1)
         return QString();
-    static const char *const beatNameArr[static_cast<int>(Beat_TypesCount)] = {QT_TRANSLATE_NOOP("BeatType", "Metronome beat"),
-                                                                               QT_TRANSLATE_NOOP("BeatType", "Metronome beat 2"),
-                                                                               QT_TRANSLATE_NOOP("BeatType", "Snapping fingers"),
-                                                                               QT_TRANSLATE_NOOP("BeatType", "Beating at parapet"),
-                                                                               QT_TRANSLATE_NOOP("BeatType", "Drum sticks"),
-                                                                               QT_TRANSLATE_NOOP("BeatType", "Drum sticks 2"),
-                                                                               QT_TRANSLATE_NOOP("BeatType", "Clapping"),
-                                                                               QT_TRANSLATE_NOOP("BeatType", "Guitar body"),
-                                                                               QT_TRANSLATE_NOOP("BeatType", "Drum 1"),
-                                                                               QT_TRANSLATE_NOOP("BeatType", "Drum 2"),
-                                                                               QT_TRANSLATE_NOOP("BeatType", "Drum 3"),
-                                                                               QT_TRANSLATE_NOOP("BeatType", "Base Drum"),
-                                                                               QT_TRANSLATE_NOOP("BeatType", "Snare drum")};
+    // clang-format off
+    static const char *const beatNameArr[static_cast<int>(Beat_TypesCount)] = {
+        QT_TRANSLATE_NOOP("BeatType", "Metronome beat"),
+        QT_TRANSLATE_NOOP("BeatType", "Metronome beat 2"),
+        QT_TRANSLATE_NOOP("BeatType", "Snapping fingers"),
+        QT_TRANSLATE_NOOP("BeatType", "Beating at parapet"),
+        QT_TRANSLATE_NOOP("BeatType", "Drum sticks"),
+        QT_TRANSLATE_NOOP("BeatType", "Drum sticks 2"),
+        QT_TRANSLATE_NOOP("BeatType", "Clapping"),
+        QT_TRANSLATE_NOOP("BeatType", "Guitar body"),
+        QT_TRANSLATE_NOOP("BeatType", "Drum 1"),
+        QT_TRANSLATE_NOOP("BeatType", "Drum 2"),
+        QT_TRANSLATE_NOOP("BeatType", "Drum 3"),
+        QT_TRANSLATE_NOOP("BeatType", "Base Drum"),
+        QT_TRANSLATE_NOOP("BeatType", "Snare drum"),
+        QT_TRANSLATE_NOOP("BeatType", "ICU"),
+        QT_TRANSLATE_NOOP("BeatType", "Midi")
+    };
+    // clang-format on
     return QGuiApplication::translate("BeatType", beatNameArr[bt]);
 }
 
