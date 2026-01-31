@@ -1,4 +1,6 @@
 # Powershell
+# SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
+# SPDX-License-Identifier: BSD-3-Clause
 
 Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
 scoop bucket add extras

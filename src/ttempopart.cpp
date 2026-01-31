@@ -1,6 +1,5 @@
-/** This file is part of Metronomek                                  *
- * Copyright (C) 2021-2025 by Tomasz Bojczuk (seelook@gmail.com)     *
- * on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)   */
+// SPDX-FileCopyrightText: 2021-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "ttempopart.h"
 #include "tsound.h"

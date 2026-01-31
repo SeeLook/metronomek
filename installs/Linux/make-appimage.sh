@@ -1,5 +1,6 @@
 #! /bin/sh
-
+# SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
+# SPDX-License-Identifier: BSD-3-Clause
 ###################################################################################
 # creates directory structure with all stuff (libraries, icons, etc.),            #
 # then creates AppImage                                                           #

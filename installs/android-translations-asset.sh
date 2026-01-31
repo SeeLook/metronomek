@@ -1,4 +1,6 @@
 #! /bin/bash
+# SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
 
 # SRC_DIR - metronomek source dir
 # BIN_DIR - destination dir

@@ -1,7 +1,7 @@
 #! /bin/bash
 
-# Copyright (C) 2020-2021 by Tomasz Bojczuk (seelook@gmail.com)
-# on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
+# SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
 
 # Script for building MetronomeK source tar-ball package
 # It usually it is invoked by make src

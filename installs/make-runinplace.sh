@@ -1,7 +1,7 @@
 #! /bin/bash
 
-# Copyright (C) 2020-2025 by Tomasz Bojczuk (seelook@gmail.com)
-# on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
+# SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
+# SPDX-License-Identifier: CC0-1.0
 
 # This script creates links necessary to run MetronomeK without installation (in directory where it is built)
 # Params are:

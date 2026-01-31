@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: none
+# SPDX-License-Identifier: CC0-1.0
+version = 1
+SPDX-PackageName = "MetronomeK"
+SPDX-PackageSupplier = "Tomasz Bojczuk <seelook@gmail.com>"
+
+[[annotations]]
+path = ["README.md", "CONTRIBUTING.md", "TODO.md", "CHANGELOG.md"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2019-2026 Tomasz Bojczuk <seelook@gmail.com>"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["resources/**", "sounds/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2019-2026 Tomasz Bojczuk <seelook@gmail.com>"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+[[annotations]]
+path = ["installs/android/assets/**", "installs/android/gradle/**", "installs/android/res/**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2019-2026 Tomasz Bojczuk <seelook@gmail.com>"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+[[annotations]]
+path = ["installs/Windows/definitions.nsh.in", "installs/Windows/metronomek.nsi"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2019-2026 Tomasz Bojczuk <seelook@gmail.com>"
+SPDX-License-Identifier = "BSD-3-Clause"
+
+[[annotations]]
+path = ["installs/android/gradlew.bat", "installs/android/gradlew"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "None"
+SPDX-License-Identifier = "Apache-2.0"

@@ -1,4 +1,8 @@
 <?xml version="1.0"?>
+<!--
+- SPDX-FileCopyrightText: 2019-2026 by Tomasz Bojczuk <seelook@gmail.com>
+- SPDX-License-Identifier: BSD-3-Clause
+-->
 <manifest package="net.sf.metronomek"
           xmlns:android="http://schemas.android.com/apk/res/android"
           android:versionName="-- %%INSERT_VERSION_NAME%% --"

@@ -1,6 +1,5 @@
-# This file is part of Metronomek
-# Copyright (C) 2019-2022 by Tomasz Bojczuk (seelook@gmail.com)
-# on the terms of GNU GPLv3 license (http://www.gnu.org/licenses)
+# SPDX-FileCopyrightText: 2019-2022 Tomasz Bojczuk <seelook@gmail.com>
+# SPDX-License-Identifier: BSD-3-Clause
 
 android: TARGET = MetronomeK
 else: {
