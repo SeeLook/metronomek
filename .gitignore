@@ -84,3 +84,7 @@ Thumbs.db
 *.qmlls.ini
 
 *installs/android/assets/translations
+
+# Zed
+.zed
+*codebook.*
