@@ -21,7 +21,7 @@
 #include <QtCore/qdebug.h>
 
 // #################################################################################################
-// ###################                Tsound         ############################################
+// ###################                Tsound            ############################################
 // #################################################################################################
 
 /*static*/
@@ -379,16 +379,20 @@ QString Tsound::getRingName(int rt)
 {
     if (rt < 0 || rt > ringTypeCount() - 1)
         return QString();
-    static const char *const ringNameArr[static_cast<int>(Ring_TypesCount)] = {QT_TRANSLATE_NOOP("RingType", "None"),
-                                                                               QT_TRANSLATE_NOOP("RingType", "Bell"),
-                                                                               QT_TRANSLATE_NOOP("RingType", "Other bell"),
-                                                                               QT_TRANSLATE_NOOP("RingType", "Yet another bell"),
-                                                                               QT_TRANSLATE_NOOP("RingType", "Glass"),
-                                                                               QT_TRANSLATE_NOOP("RingType", "Metal sheet"),
-                                                                               QT_TRANSLATE_NOOP("RingType", "Spoon at mug"),
-                                                                               QT_TRANSLATE_NOOP("RingType", "Guitar harmonic"),
-                                                                               QT_TRANSLATE_NOOP("RingType", "Hi hat"),
-                                                                               QT_TRANSLATE_NOOP("RingType", "Woodblock")};
+    // clang-format off
+    static const char *const ringNameArr[static_cast<int>(Ring_TypesCount)] = {
+        QT_TRANSLATE_NOOP("RingType", "None"),
+        QT_TRANSLATE_NOOP("RingType", "Bell"),
+        QT_TRANSLATE_NOOP("RingType", "Other bell"),
+        QT_TRANSLATE_NOOP("RingType", "Yet another bell"),
+        QT_TRANSLATE_NOOP("RingType", "Glass"),
+        QT_TRANSLATE_NOOP("RingType", "Metal sheet"),
+        QT_TRANSLATE_NOOP("RingType", "Spoon at mug"),
+        QT_TRANSLATE_NOOP("RingType", "Guitar harmonic"),
+        QT_TRANSLATE_NOOP("RingType", "Hi hat"),
+        QT_TRANSLATE_NOOP("RingType", "Woodblock")
+    };
+    // clang-format on
     return QGuiApplication::translate("RingType", ringNameArr[rt]);
 }
 

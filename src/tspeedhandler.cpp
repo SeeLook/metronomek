@@ -39,7 +39,7 @@ void TrtmComposition::setTitle(const QString &t)
 void TrtmComposition::saveToXMLFile(const QString &xmlName)
 {
     if (!m_notSaved) {
-        qDebug() << "[TrtmComposition] Nothing changed, nothing to save" << m_title;
+        qDebug() << "[TrtmComposition]" << " Nothing changed, nothing to save" << m_title;
         return;
     }
 
@@ -66,7 +66,7 @@ void TrtmComposition::saveToXMLFile(const QString &xmlName)
         file.close();
         m_notSaved = false;
     } else {
-        qDebug() << "[TrtmComposition] Cannot write to" << m_xmlFileName;
+        qDebug() << "[TrtmComposition]" << " Cannot write to" << m_xmlFileName;
     }
 }
 
@@ -81,7 +81,7 @@ void TrtmComposition::readFromXMLFile(const QString &xmlName)
         QXmlStreamReader xml(&file);
         if (xml.readNextStartElement()) {
             if (xml.name() != QLatin1String("metronomek")) {
-                qDebug() << "[TspeedHandler] There is no 'metronomek' key in that XML" << xmlName;
+                qDebug() << "[TspeedHandler]" << "There is no 'metronomek' key in that XML" << xmlName;
                 return;
             }
             m_tempoList.clear();
@@ -101,7 +101,7 @@ void TrtmComposition::readFromXMLFile(const QString &xmlName)
         m_notSaved = false;
         emit partsChanged();
     } else {
-        qDebug() << "[TspeedHandler] Cannot read XML file:" << xmlName;
+        qDebug() << "[TspeedHandler]" << " Cannot read XML file:" << xmlName;
     }
 }
 
@@ -268,7 +268,7 @@ void TspeedHandler::removeComposition(bool alsoDeleteFile)
             alsoDeleteFile = true; // delete file anyway when hidden from user
         if (alsoDeleteFile) {
             QFile(fileName).remove();
-            qDebug() << "[TspeedHandler] Removed composition file" << fileName;
+            qDebug() << "[TspeedHandler]" << " Removed composition file" << fileName;
         }
         m_current = 0;
         emit clearAllChanges();
@@ -276,7 +276,7 @@ void TspeedHandler::removeComposition(bool alsoDeleteFile)
         emitAllTempos();
         emit currCompChanged();
     } else
-        qDebug() << "[TspeedHandler] Trying to remove only one rhythmic composition from the list!";
+        qDebug() << "[TspeedHandler]" << " Trying to remove only one rhythmic composition from the list!";
 }
 
 void TspeedHandler::setComposition(int id)
