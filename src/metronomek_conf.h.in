@@ -1,6 +1,3 @@
-#ifndef METRONOMEK_CONFIG_H
-#define METRONOMEK_CONFIG_H
+#pragma once
 
 #define METRONOMEK_VERSION '"$$VERSION"'
-
-#endif // METRONOMEK_CONFIG_H 
