@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "toboedevice.h"
+
 #include <QtCore/qcoreapplication.h>
+#include <QtCore/qdebug.h>
 #include <QtCore/qpermissions.h>
 
-#include <QtCore/qdebug.h>
+using namespace Qt::Literals::StringLiterals;
 
 ToboeCallBack::ToboeCallBack(TOboeDevice *devParent)
     : oboe::AudioStreamDataCallback()
@@ -119,7 +121,7 @@ void TOboeDevice::setDeviceName(const QString &devName)
 
 QString TOboeDevice::deviceName() const
 {
-    return QStringLiteral("anything");
+    return u"anything"_s;
 }
 
 void TOboeDevice::setAudioOutParams()

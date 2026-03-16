@@ -4,13 +4,14 @@
 #include "tnumeralspectrum.h"
 #include "tsounddata.h"
 
+#include <QtCore/qdebug.h>
 #include <QtCore/qmath.h>
 #include <QtCore/qtimer.h>
 #include <QtGui/qguiapplication.h>
 #include <QtGui/qpainter.h>
 #include <QtGui/qpalette.h>
 
-#include <QtCore/qdebug.h>
+using namespace Qt::Literals::StringLiterals;
 
 TnumeralSpectrum::TnumeralSpectrum(QQuickItem *parent)
     : QQuickPaintedItem(parent)
@@ -82,7 +83,7 @@ void TnumeralSpectrum::paint(QPainter *painter)
         painter->setFont(f);
         qreal w2by3 = width() * 0.666666666;
         if (m_nr == 0)
-            painter->drawText(w2by3 + 5, height() / 7, QStringLiteral("300 ms"));
+            painter->drawText(w2by3 + 5, height() / 7, u"300 ms"_s);
         painter->setPen(qApp->palette().highlight().color());
         painter->drawLine(w2by3, 0, w2by3, height());
     }

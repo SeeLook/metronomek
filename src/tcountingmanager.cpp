@@ -40,6 +40,8 @@
 #define WAV_IXML (0x4c4d5869) // 'iXML'
 #define WAV_BEXT (1954047330) // 'bext'
 
+using namespace Qt::Literals::StringLiterals;
+
 /**
  * @p Simple class to keep start and stop positions in a data array.
  * Usually it is single numeral word audio data.
@@ -109,11 +111,11 @@ public:
         QXmlStreamWriter xml(&out);
         // xml.setCodec("UTF-16");
         xml.writeStartDocument();
-        xml.writeStartElement(QLatin1String("verbalcount"));
-        xml.writeAttribute(QLatin1String("qt6lang"), QString::number(m_lang));
-        xml.writeAttribute(QLatin1String("name"), m_name);
+        xml.writeStartElement("verbalcount"_L1);
+        xml.writeAttribute("qt6lang"_L1, QString::number(m_lang));
+        xml.writeAttribute("name"_L1, m_name);
         for (int n = 0; n < m_numSizes.size(); ++n)
-            xml.writeTextElement(QLatin1String("n"), QString::number(m_numSizes[n]));
+            xml.writeTextElement("n"_L1, QString::number(m_numSizes[n]));
         xml.writeEndElement();
         xml.writeEndDocument();
         return out;
@@ -125,21 +127,21 @@ public:
         bool ok = true;
         int qt5Lang = -1;
         while (xml.readNextStartElement()) {
-            if (xml.name() == QLatin1String("verbalcount")) {
+            if (xml.name() == "verbalcount"_L1) {
                 bool ok = false;
-                qt5Lang = xml.attributes().value(QLatin1String("qtlang")).toInt(&ok);
+                qt5Lang = xml.attributes().value("qtlang"_L1).toInt(&ok);
                 if (ok) {
                     m_lang = fromQt5Lang(qt5Lang);
                 } else {
                     qt5Lang = -1;
-                    m_lang = static_cast<QLocale::Language>(xml.attributes().value(QLatin1String("qt6lang")).toInt(&ok));
+                    m_lang = static_cast<QLocale::Language>(xml.attributes().value("qt6lang"_L1).toInt(&ok));
                     if (!ok)
                         m_lang = QLocale::AnyLanguage;
                 }
-                m_name = xml.attributes().value(QLatin1String("name")).toString();
+                m_name = xml.attributes().value("name"_L1).toString();
                 m_numSizes.clear();
                 while (xml.readNextStartElement()) {
-                    if (xml.name() == QLatin1String("n"))
+                    if (xml.name() == "n"_L1)
                         m_numSizes << xml.readElementText().toInt();
                     else
                         xml.skipCurrentElement();
@@ -160,8 +162,8 @@ public:
      */
     QString modelEntry() const
     {
-        static const QString semicolon = QStringLiteral(";");
-        return langCode() + semicolon + langName() + QLatin1String(" / ") + nativeLang() + semicolon + countName();
+        static const QString semicolon = u";"_s;
+        return langCode() + semicolon + langName() + " / "_L1 + nativeLang() + semicolon + countName();
     }
 
 private:
@@ -180,8 +182,8 @@ TcountingManager::TcountingManager(QObject *parent)
 {
     for (int n = 0; n < 12; ++n)
         m_numerals << new TsoundData();
-    m_defaultWav = GLOB->soundsPath() + QLatin1String("counting/en_US-counting.wav");
-    m_prevLocalWav = GLOB->settings()->value(QLatin1String("countingWav"), QString()).toString();
+    m_defaultWav = GLOB->soundsPath() + "counting/en_US-counting.wav"_L1;
+    m_prevLocalWav = GLOB->settings()->value("countingWav"_L1, QString()).toString();
     if (m_prevLocalWav.isEmpty() || !QFileInfo::exists(m_prevLocalWav))
         m_prevLocalWav = m_defaultWav;
     importFormFile(m_prevLocalWav);
@@ -189,7 +191,7 @@ TcountingManager::TcountingManager(QObject *parent)
 
 TcountingManager::~TcountingManager()
 {
-    GLOB->settings()->setValue(QLatin1String("countingWav"),
+    GLOB->settings()->setValue("countingWav"_L1,
                                m_localModelId > 0 && m_localModelId < m_localWavFiles.size() ? m_localWavFiles[m_localModelId] : m_prevLocalWav);
     if (m_inBuffer)
         delete[] m_inBuffer;
@@ -201,14 +203,14 @@ void TcountingManager::importFromCommandline()
 {
     int noiseThreshold = 400;
     QCommandLineParser cmd;
-    QCommandLineOption noiseThresholdOpt(QStringList() << QStringLiteral("noise-threshold") << QStringLiteral("t"), QStringLiteral("\n"), QStringLiteral("%"));
+    QCommandLineOption noiseThresholdOpt(QStringList() << u"noise-threshold"_s << u"t"_s, u"\n"_s, u"%"_s);
     cmd.addOption(noiseThresholdOpt);
 
-    QCommandLineOption alignCntOpt(QStringList() << QStringLiteral("no-align") << QStringLiteral("a"), QStringLiteral("\n"), QString());
+    QCommandLineOption alignCntOpt(QStringList() << u"no-align"_s << u"a"_s, u"\n"_s, QString());
     cmd.addOption(alignCntOpt);
 
 #if defined(WITH_SOUNDTOUCH)
-    QCommandLineOption shrinkOpt(QStringList() << QStringLiteral("shrink-counting") << QStringLiteral("s"), QStringLiteral("\n"), QStringLiteral("false"));
+    QCommandLineOption shrinkOpt(QStringList() << u"shrink-counting"_s << u"s"_s, u"\n"_s, u"false"_s);
     cmd.addOption(shrinkOpt);
 #endif
 
@@ -419,7 +421,7 @@ void TcountingManager::setLocalModelId(int mId)
     m_localModelId = mId;
     if (m_localModelId > -1 && m_localModelId < m_localWavFiles.size())
         importFormFile(m_localWavFiles[m_localModelId]);
-    GLOB->settings()->setValue(QLatin1String("countingWav"),
+    GLOB->settings()->setValue("countingWav"_L1,
                                m_localModelId > 0 && m_localModelId < m_localWavFiles.size() ? m_localWavFiles[m_localModelId] : m_prevLocalWav);
     SOUND->setVerbalCount(true);
     emit localModelIdChanged();
@@ -429,13 +431,13 @@ QStringList TcountingManager::countingModelLocal()
 {
     if (m_localCntModel.isEmpty()) {
         m_localWavFiles.clear();
-        m_localCntModel << lookupForWavs(GLOB->soundsPath() + QLatin1String("counting"));
+        m_localCntModel << lookupForWavs(GLOB->soundsPath() + "counting"_L1);
         m_localWavFiles << m_defaultWav;
         QDir d(GLOB->userLocalPath());
-        auto wavFiles = d.entryList(QStringList() << QStringLiteral("*.wav"), QDir::Files);
+        auto wavFiles = d.entryList(QStringList() << u"*.wav"_s, QDir::Files);
         int cntF = 1;
         for (QString &wavFile : wavFiles) {
-            auto fileName = GLOB->userLocalPath() + QLatin1String("/") + wavFile;
+            auto fileName = GLOB->userLocalPath() + "/"_L1 + wavFile;
             auto xml = dumpXmlFromWav(fileName);
             if (!xml.isEmpty()) {
                 auto modelEntry = getModelEntryFromXml(xml);
@@ -457,11 +459,11 @@ QStringList TcountingManager::lookupForWavs(const QString &wavDir, QStringList *
     QStringList wavs;
     QDir d(wavDir);
     if (d.exists()) {
-        auto wavFiles = d.entryList(QStringList() << QStringLiteral("*.wav"), QDir::Files);
+        auto wavFiles = d.entryList(QStringList() << u"*.wav"_s, QDir::Files);
         if (wavFilesList)
             *wavFilesList << wavFiles;
         for (QString &wavFile : wavFiles) {
-            auto xml = dumpXmlFromWav(wavDir + QLatin1String("/") + wavFile);
+            auto xml = dumpXmlFromWav(wavDir + "/"_L1 + wavFile);
             if (!xml.isEmpty()) {
                 auto modelEntry = getModelEntryFromXml(xml);
                 if (!modelEntry.isEmpty())
@@ -499,8 +501,8 @@ void TcountingManager::removeLocalWav(int cntId)
 QStringList TcountingManager::onlineModel()
 {
     if (m_onlineModel.isEmpty()) {
-        QFile localMd(GLOB->userLocalPath() + QLatin1String("/COUNTING.md"));
-        m_onlineModel = convertMDtoModel(localMd.exists() ? localMd.fileName() : QStringLiteral(":/COUNTING.md"));
+        QFile localMd(GLOB->userLocalPath() + "/COUNTING.md"_L1);
+        m_onlineModel = convertMDtoModel(localMd.exists() ? localMd.fileName() : u":/COUNTING.md"_s);
     }
     return m_onlineModel;
 }
@@ -510,7 +512,7 @@ void TcountingManager::downloadCounting(int urlId)
     if (urlId > -1 && urlId < m_onlineURLs.size()) {
         m_downloading = true;
         emit downloadingChanged();
-        qint64 expSize = m_onlineModel[urlId].split(QLatin1String(";")).last().toLongLong() * 1024L;
+        qint64 expSize = m_onlineModel[urlId].split(";"_L1).last().toLongLong() * 1024L;
         auto getFile = new TgetFile(m_onlineURLs[urlId], expSize, this);
         connect(getFile, &TgetFile::progress, this, &TcountingManager::downProgress);
         connect(this, &TcountingManager::abortDownload, getFile, &TgetFile::abort);
@@ -546,22 +548,22 @@ QStringList TcountingManager::convertMDtoModel(const QString &mdFileName)
         m_onlineURLs.clear();
         QTextStream in(&mdFile);
         // in.setCodec("UTF-8");
-        auto mdText = in.readAll().split(QStringLiteral("\n"));
+        auto mdText = in.readAll().split(u"\n"_s);
         bool tableDetected = false;
-        static const QString bar = QStringLiteral("|");
+        static const QString bar = u"|"_s;
         for (QString &line : mdText) {
             if (tableDetected) {
                 if (line.startsWith(bar)) {
-                    line.replace(QLatin1String(" "), QString());
+                    line.replace(" "_L1, QString());
                     auto splitLine = line.mid(1, line.length() - 5).split(bar); // drop first '|' and the last 'KiB|'
                     auto addr = splitLine.takeAt(3);
-                    int startsAt = addr.indexOf(QLatin1String("](")) + 2;
-                    int endsAt = addr.indexOf(QLatin1String(")"));
-                    mdWavModel << splitLine.join(QLatin1String(";"));
+                    int startsAt = addr.indexOf("]("_L1) + 2;
+                    int endsAt = addr.indexOf(")"_L1);
+                    mdWavModel << splitLine.join(";"_L1);
                     m_onlineURLs << addr.mid(startsAt, endsAt - startsAt);
                 }
             } else {
-                if (line.startsWith(QLatin1String("|---")))
+                if (line.startsWith("|---"_L1))
                     tableDetected = true;
             }
         }
@@ -576,12 +578,12 @@ void TcountingManager::downloadOnlineList()
 
     m_downloading = true;
     emit downloadingChanged();
-    static const QString mdAddr = QStringLiteral("https://sourceforge.net/projects/metronomek/files/counting/README.md");
+    static const QString mdAddr = u"https://sourceforge.net/projects/metronomek/files/counting/README.md"_s;
     auto getFile = new TgetFile(mdAddr, 0, this);
     connect(getFile, &TgetFile::progress, this, &TcountingManager::downProgress);
     connect(getFile, &TgetFile::downloadFinished, this, [this, getFile](bool success) {
         if (success) {
-            auto fName = GLOB->userLocalPath() + QLatin1String("/COUNTING.md");
+            auto fName = GLOB->userLocalPath() + "/COUNTING.md"_L1;
             QFile mdFile(fName);
             if (mdFile.open(QIODevice::WriteOnly)) {
                 mdFile.write(getFile->fileData());
@@ -698,7 +700,7 @@ void TcountingManager::getDataFromAudioFile(QFile *audioFile, qint16 *&data, int
         quint16 channelsNr = 1;
 
         auto ext = audioFile->fileName().right(4).toLower();
-        if (ext == QLatin1String(".wav")) {
+        if (ext == ".wav"_L1) {
             in.skipRawData(8); // Ignore RIFF and all file size
             qint32 headChunk;
             quint32 chunkSize;
@@ -761,7 +763,7 @@ void TcountingManager::getDataFromAudioFile(QFile *audioFile, qint16 *&data, int
                 qDebug() << "[TcountingManager] " << audioFile->fileName() << "is not valid *.wav file";
                 ok = false;
             }
-        } else if (ext == QLatin1String(".raw") || ext == QLatin1String("8-16")) { // *.raw48-16
+        } else if (ext == ".raw"_L1 || ext == "8-16"_L1) { // *.raw48-16
             frames = static_cast<int>(audioFile->size() / 2);
             data = new qint16[frames];
             in.readRawData(reinterpret_cast<char *>(data), frames * 2);
@@ -1029,8 +1031,8 @@ QString TcountingManager::soundFileDialog()
     return QFileDialog::getOpenFileName(nullptr,
                                         QString(),
                                         QStandardPaths::standardLocations(QStandardPaths::MusicLocation).first(),
-                                        tr("Audio file (uncompressed)") + QLatin1String(": *.wav *.raw *.raw48-16 (*.wav *.raw *.raw48-16);;") + tr("Wav file")
-                                            + QLatin1String(" (*.wav);;") + tr("Raw audio") + QLatin1String(" (*.raw *.raw48-16)"));
+                                        tr("Audio file (uncompressed)") + ": *.wav *.raw *.raw48-16 (*.wav *.raw *.raw48-16);;"_L1 + tr("Wav file")
+                                            + " (*.wav);;"_L1 + tr("Raw audio") + " (*.raw *.raw48-16)"_L1);
 #else
     return QString();
 #endif

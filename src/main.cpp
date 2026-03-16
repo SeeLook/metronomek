@@ -48,10 +48,10 @@ int main(int argc, char *argv[])
     qApp->setPalette(pal);
 #else
     auto app = new QApplication(argc, argv);
-    app->setWindowIcon(QIcon(QStringLiteral(":/metronomek.png")));
+    app->setWindowIcon(QIcon(u":/metronomek.png"_s));
 #endif
 
-    int fid = QFontDatabase::addApplicationFont(QStringLiteral(":/metronomek.otf"));
+    int fid = QFontDatabase::addApplicationFont(u":/metronomek.otf"_s);
     if (fid == -1) {
         qDebug() << "Can not load MetronomeK fonts!\n";
         delete app;
@@ -60,14 +60,14 @@ int main(int argc, char *argv[])
 
     auto engine = new QQmlApplicationEngine();
 
-    engine->loadFromModule("Metronomek.Core", u"MainWindow"_s);
+    engine->loadFromModule(u"Metronomek.Core"_s, u"MainWindow"_s);
     if (engine->rootObjects().isEmpty()) {
         delete app;
         return -1;
     }
 
-    engine->setObjectOwnership(GLOB, QJSEngine::CppOwnership);
-    engine->setObjectOwnership(SOUND, QJSEngine::CppOwnership);
+    // engine->setObjectOwnership(GLOB, QJSEngine::CppOwnership);
+    // engine->setObjectOwnership(SOUND, QJSEngine::CppOwnership);
 
     qDebug() << "==== METRONOMEK LAUNCH TIME" << startElapsed.nsecsElapsed() / 1000000.0 << "[ms] ====";
 
@@ -76,24 +76,20 @@ int main(int argc, char *argv[])
 #if !defined(Q_OS_ANDROID)
     if (argc > 1) {
         auto ext = app->arguments().last().right(4).toLower();
-        if (ext == QLatin1String(".wav") || ext == QLatin1String(".raw")) {
+        if (ext == u".wav"_s || ext == u".raw"_s) {
             SOUND->importFromCommandline();
         } else {
             QCommandLineParser cmd;
             auto helpOpt = cmd.addHelpOption();
 
-            cmd.addOptions({{QStringLiteral("no-version"), QStringLiteral("Do not display app version.\n")}});
+            cmd.addOptions({{u"no-version"_s, u"Do not display app version.\n"_s}});
 
-            cmd.addOptions({{QStringList() << QStringLiteral("noise-threshold") << QStringLiteral("t"),
-                             QStringLiteral("Percentage value above which a word is detected in audio file.\n"),
-                             QStringLiteral("1.2%")}});
-            cmd.addOptions({{QStringList() << QStringLiteral("no-align") << QStringLiteral("a"),
-                             QStringLiteral("Do not align beginning audio data of counting."
-                                            " By default it is done to keep their strongest part at the same position for all numerals.\n")}});
+            cmd.addOptions({{{u"noise-threshold"_s, u"t"_s}, u"Percentage value above which a word is detected in audio file.\n"_s, u"1.2%"_s}});
+            cmd.addOptions({{{u"no-align"_s, u"a"_s},
+                             u"Do not align beginning audio data of counting."
+                             " By default it is done to keep their strongest part at the same position for all numerals.\n"_s}});
 #if defined(WITH_SOUNDTOUCH)
-            cmd.addOptions({{QStringList() << QStringLiteral("shrink-counting") << QStringLiteral("s"),
-                             QStringLiteral("Squash numeral audio data duration when it is too long (> 300ms).\n"),
-                             QStringLiteral("false")}});
+            cmd.addOptions({{{u"shrink-counting"_s, u"s"_s}, u"Squash numeral audio data duration when it is too long (> 300ms).\n"_s, u"false"_s}});
 #endif
 
             cmd.parse(app->arguments());

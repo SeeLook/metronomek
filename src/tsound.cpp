@@ -11,6 +11,7 @@
 #include "ttempopart.h"
 
 #include <QtCore/qdatastream.h>
+#include <QtCore/qdebug.h>
 #include <QtCore/qfile.h>
 #include <QtCore/qmath.h>
 #include <QtCore/qsettings.h>
@@ -18,7 +19,7 @@
 #include <QtGui/qguiapplication.h>
 #include <QtQml/qqml.h>
 
-#include <QtCore/qdebug.h>
+using namespace Qt::Literals::StringLiterals;
 
 // #################################################################################################
 // ###################                Tsound            ############################################
@@ -71,15 +72,16 @@ Tsound::~Tsound()
     stopTicking();
     m_instance = nullptr;
 
-    if (m_audioDevice && m_audioDevice->deviceName() != QLatin1String("anything"))
-        GLOB->settings()->setValue(QStringLiteral("outDevice"), m_audioDevice->deviceName());
-    GLOB->settings()->setValue(QStringLiteral("beatType"), m_beatType);
-    GLOB->settings()->setValue(QStringLiteral("meter"), m_meter);
-    GLOB->settings()->setValue(QStringLiteral("doRing"), m_doRing);
-    GLOB->settings()->setValue(QStringLiteral("tempo"), m_variableTempo ? m_staticTempo : m_tempo);
-    GLOB->settings()->setValue(QStringLiteral("ringType"), m_ringType);
-    GLOB->settings()->setValue(QStringLiteral("variableTempo"), m_variableTempo);
-    GLOB->settings()->setValue(QStringLiteral("verbalCount"), m_verbalCount);
+    if (m_audioDevice && m_audioDevice->deviceName() != "anything"_L1)
+        GLOB->settings()->setValue(u"outDevice"_s, m_audioDevice->deviceName());
+    GLOB->settings()->setValue(u"beatType"_s, m_beatType);
+    GLOB->settings()->setValue(u"meter"_s, m_meter);
+    GLOB->settings()->setValue(u"doRing"_s, m_doRing);
+    GLOB->settings()->setValue(u"tempo"_s, m_variableTempo ? m_staticTempo : m_tempo);
+    GLOB->settings()->setValue(u"ringType"_s, m_ringType);
+    GLOB->settings()->setValue(u"variableTempo"_s, m_variableTempo);
+    GLOB->settings()->setValue(u"verbalCount"_s, m_verbalCount);
+    qDebug() << "[Tsound]" << "destroyed";
 }
 
 QString Tsound::outputName()
@@ -94,23 +96,23 @@ void Tsound::init()
         return;
     }
 
-    setTempo(qBound(40, GLOB->settings()->value(QStringLiteral("tempo"), 60).toInt(), 240));
+    setTempo(qBound(40, GLOB->settings()->value(u"tempo"_s, 60).toInt(), 240));
     m_staticTempo = m_tempo;
-    setBeatType(qBound(0, GLOB->settings()->value(QStringLiteral("beatType"), 0).toInt(), beatTypeCount() - 1));
-    setMeter(qBound(0, GLOB->settings()->value(QStringLiteral("meter"), 4).toInt(), 12));
-    setRingType(qBound(0, GLOB->settings()->value(QStringLiteral("ringType"), 0).toInt(), ringTypeCount() - 1));
-    setRing(GLOB->settings()->value(QStringLiteral("doRing"), false).toBool());
-    setVariableTempo(GLOB->settings()->value(QStringLiteral("variableTempo"), false).toBool());
-    setVerbalCount(GLOB->settings()->value(QStringLiteral("verbalCount"), false).toBool());
+    setBeatType(qBound(0, GLOB->settings()->value(u"beatType"_s, 0).toInt(), beatTypeCount() - 1));
+    setMeter(qBound(0, GLOB->settings()->value(u"meter"_s, 4).toInt(), 12));
+    setRingType(qBound(0, GLOB->settings()->value(u"ringType"_s, 0).toInt(), ringTypeCount() - 1));
+    setRing(GLOB->settings()->value(u"doRing"_s, false).toBool());
+    setVariableTempo(GLOB->settings()->value(u"variableTempo"_s, false).toBool());
+    setVerbalCount(GLOB->settings()->value(u"verbalCount"_s, false).toBool());
 #if defined(Q_OS_ANDROID)
     m_audioDevice = new TOboeDevice(this);
 #else
     m_audioDevice = new TRtAudioDevice(this);
 #endif
     connect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack, Qt::DirectConnection);
-    auto dn = GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString();
-    if (dn != QLatin1String("anything")) { // This is workaround for old device name handling
-        setDeviceName(GLOB->settings()->value(QStringLiteral("outDevice"), QStringLiteral("default")).toString());
+    auto dn = GLOB->settings()->value(u"outDevice"_s, u"default"_s).toString();
+    if (dn != "anything"_L1) { // This is workaround for old device name handling
+        setDeviceName(GLOB->settings()->value(u"outDevice"_s, u"default"_s).toString());
         changeSampleRate(m_audioDevice->sampleRate());
     } else {
         setAudioOutParams();
@@ -314,7 +316,7 @@ void Tsound::setBeatType(int bt)
     }
     if (bt != m_beatType) {
         m_beatType = bt;
-        m_beat.setFile(getRawFilePath(QLatin1String("beat-") + getBeatFileName(static_cast<EbeatType>(bt))));
+        m_beat.setFile(getRawFilePath("beat-"_L1 + getBeatFileName(static_cast<EbeatType>(bt))));
         emit beatTypeChanged();
     }
 }
@@ -363,7 +365,7 @@ void Tsound::setRingType(int rt)
         if (m_ringType == 0)
             m_ring.setFile(QString());
         else
-            m_ring.setFile(getRawFilePath(QLatin1String("ring-") + getRingFileName(static_cast<EringType>(rt))));
+            m_ring.setFile(getRawFilePath("ring-"_L1 + getRingFileName(static_cast<EringType>(rt))));
         emit ringTypeChanged();
     }
 }
@@ -535,7 +537,7 @@ int Tsound::meterOfPart(int partId)
 // #################################################################################################
 QString Tsound::getRawFilePath(const QString &fName)
 {
-    return GLOB->soundsPath() + fName + QLatin1String(".raw48-16");
+    return GLOB->soundsPath() + fName + ".raw48-16"_L1;
 }
 
 void Tsound::setNameTempoId(int ntId)

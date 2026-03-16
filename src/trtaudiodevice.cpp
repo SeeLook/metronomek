@@ -6,6 +6,8 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qfileinfo.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 /*static*/
 
 #define PREF_BUFF_FR (512) /**< Preferred frame size of audio buffer */
@@ -24,9 +26,9 @@ void TRtAudioDevice::createRtAudio()
         rtAPI = RtAudio::LINUX_ALSA;
 #endif
 #if defined(__LINUX_PULSE__)
-        QFileInfo pulseBin(QStringLiteral("/usr/bin/pactl"));
+        QFileInfo pulseBin(u"/usr/bin/pactl"_s);
         if (!pulseBin.exists())
-            pulseBin.setFile(QStringLiteral("/usr/bin/pipewire-pulse"));
+            pulseBin.setFile(u"/usr/bin/pipewire-pulse"_s);
         if (pulseBin.exists()) // we check is PA possible to run - without check, it can hang.
             rtAPI = RtAudio::LINUX_PULSE;
 #endif
@@ -165,7 +167,7 @@ QStringList TRtAudioDevice::getAudioOutDevicesList()
             outDevList << convDevName(devInfo);
     }
     if (getCurrentApi() == RtAudio::LINUX_ALSA && !outDevList.isEmpty())
-        outDevList.prepend(QStringLiteral("ALSA default"));
+        outDevList.prepend(u"ALSA default"_s);
 
     return outDevList;
 }
@@ -349,9 +351,9 @@ bool TRtAudioDevice::openStream()
             if (rtDevice()->isStreamOpen()) {
                 if (m_isAlsaDefault) {
                     if (audioMode() == Audio_Output && m_outParams)
-                        m_outDevName = QLatin1String("ALSA default");
+                        m_outDevName = "ALSA default"_L1;
                     else if (audioMode() == Audio_Input && m_inParams)
-                        m_inDevName = QLatin1String("ALSA default");
+                        m_inDevName = "ALSA default"_L1;
                 } else {
                     RtAudio::DeviceInfo di;
                     if (audioMode() == Audio_Output && m_outParams && getDeviceInfo(di, m_outParams->deviceId))

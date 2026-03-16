@@ -7,6 +7,8 @@
 #include <QtGui/qpainter.h>
 #include <QtGui/qpalette.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 TmetroShape::TmetroShape(QQuickItem *parent)
     : QQuickPaintedItem(parent)
 {
@@ -17,11 +19,11 @@ TmetroShape::TmetroShape(QQuickItem *parent)
 void TmetroShape::paint(QPainter *painter)
 {
     auto f = painter->font();
-    f.setFamily(QStringLiteral("metronomek"));
+    f.setFamily("metronomek"_L1);
     f.setPixelSize(height());
     painter->setFont(f);
     painter->setPen(qApp->palette().text().color());
-    painter->drawText(QRect(0, 0, static_cast<int>(width()), static_cast<int>(height())), Qt::AlignLeft, QStringLiteral("\u00A3"));
+    painter->drawText(QRect(0, 0, static_cast<int>(width()), static_cast<int>(height())), Qt::AlignLeft, u"\u00A3"_s);
 }
 
 bool TmetroShape::eventFilter(QObject *watched, QEvent *event)

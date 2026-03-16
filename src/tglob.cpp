@@ -32,29 +32,29 @@ Tglob::Tglob(QObject *parent)
 
     qDebug() << "Metronomek version:" << METRONOMEK_VERSION;
 
-    QCoreApplication::setOrganizationName(QStringLiteral("Metronomek"));
-    QCoreApplication::setOrganizationDomain(QStringLiteral("metronomek.seelook.org"));
-    QCoreApplication::setApplicationName(QStringLiteral("Metronomek"));
+    QCoreApplication::setOrganizationName(u"Metronomek"_s);
+    QCoreApplication::setOrganizationDomain(u"metronomek.seelook.org"_s);
+    QCoreApplication::setApplicationName(u"Metronomek"_s);
 #if defined(Q_OS_WIN) || defined(Q_OS_MAC)
-    m_settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, QStringLiteral("Metronomek"), qApp->applicationName(), this);
+    m_settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, u"Metronomek"_s, qApp->applicationName(), this);
 #else
     m_settings = new QSettings(this);
 #endif
 
 #if defined(Q_OS_ANDROID)
-    m_keepScreenOn = m_settings->value(QStringLiteral("keepScreenOn"), false).toBool();
-    m_disableRotation = m_settings->value(QStringLiteral("disableRotation"), true).toBool();
-    m_fullScreen = m_settings->value(QStringLiteral("fullScreen"), false).toBool();
+    m_keepScreenOn = m_settings->value(u"keepScreenOn"_s, false).toBool();
+    m_disableRotation = m_settings->value(u"disableRotation"_s, true).toBool();
+    m_fullScreen = m_settings->value(u"fullScreen"_s, false).toBool();
     Tandroid::keepScreenOn(m_keepScreenOn);
     Tandroid::disableRotation(m_disableRotation);
 #else
-    m_geometry = m_settings->value(QStringLiteral("geometry"), QRect()).toRect();
+    m_geometry = m_settings->value(u"geometry"_s, QRect()).toRect();
     if (m_geometry.isNull())
         m_geometry.setSize(QSize(314, 480));
 #endif
-    m_countVisible = m_settings->value(QStringLiteral("countVisible"), false).toBool();
-    m_stationary = m_settings->value(QStringLiteral("pendulumStationary"), false).toBool();
-    m_lang = m_settings->value(QStringLiteral("language"), QString()).toString();
+    m_countVisible = m_settings->value(u"countVisible"_s, false).toBool();
+    m_stationary = m_settings->value(u"pendulumStationary"_s, false).toBool();
+    m_lang = m_settings->value(u"language"_s, QString()).toString();
 
     qRegisterMetaType<Ttempo>();
     createTempoList();
@@ -67,27 +67,28 @@ Tglob::Tglob(QObject *parent)
 #elif defined(Q_OS_MAC)
     QLocale loc(m_lang.isEmpty() ? QLocale::system().uiLanguages().first() : m_lang);
 #else
-    QLocale loc(QLocale(m_lang.isEmpty() ? qgetenv("LANG") : m_lang).language(), QLocale(m_lang.isEmpty() ? qgetenv("LANG") : m_lang).territory());
+    QLocale loc(QLocale(m_lang.isEmpty() ? qgetenv("LANG"_ba) : m_lang).language(), QLocale(m_lang.isEmpty() ? qgetenv("LANG"_ba) : m_lang).territory());
 #endif
     QLocale::setDefault(loc);
 
     m_translator = new QTranslator(this);
-    if (m_translator->load(loc, QStringLiteral("metronomek_"), QString(), p))
+    if (m_translator->load(loc, u"metronomek_"_s, QString(), p))
         GLOB->setLangLoaded(qApp->installTranslator(m_translator));
 }
 
 Tglob::~Tglob()
 {
 #if defined(Q_OS_ANDROID)
-    m_settings->setValue(QStringLiteral("keepScreenOn"), m_keepScreenOn);
-    m_settings->setValue(QStringLiteral("disableRotation"), m_disableRotation);
-    m_settings->setValue(QStringLiteral("fullScreen"), m_fullScreen);
+    m_settings->setValue(u"keepScreenOn"_s, m_keepScreenOn);
+    m_settings->setValue(u"disableRotation"_s, m_disableRotation);
+    m_settings->setValue(u"fullScreen"_s, m_fullScreen);
 #else
-    m_settings->setValue(QStringLiteral("geometry"), m_geometry);
+    m_settings->setValue(u"geometry"_s, m_geometry);
 #endif
-    m_settings->setValue(QStringLiteral("countVisible"), m_countVisible);
-    m_settings->setValue(QStringLiteral("pendulumStationary"), m_stationary);
-    m_settings->setValue(QStringLiteral("language"), m_lang);
+    m_settings->setValue(u"countVisible"_s, m_countVisible);
+    m_settings->setValue(u"pendulumStationary"_s, m_stationary);
+    m_settings->setValue(u"language"_s, m_lang);
+    qDebug() << "[Tglob]" << "destroyed";
 }
 
 void Tglob::setCountVisible(bool cv)
@@ -115,7 +116,7 @@ void Tglob::setLang(const QString &l)
     QLocale loc(QLocale(m_lang).language(), QLocale(m_lang).territory());
     QString p = translationPath();
     qApp->removeTranslator(m_translator);
-    if (m_translator->load(loc, QStringLiteral("metronomek_"), QString(), p))
+    if (m_translator->load(loc, u"metronomek_"_s, QString(), p))
         GLOB->setLangLoaded(qApp->installTranslator(m_translator));
     auto topEngine = QQmlEngine::contextForObject(this)->engine();
     if (topEngine)
@@ -139,10 +140,10 @@ QString Tglob::userLocalPath() const
     if (userPath.isEmpty()) {
         // TODO: Find another path or give some debug
     } else {
-        userPath.append(QStringLiteral("/Metronomek"));
+        userPath.append(u"/Metronomek"_s);
         QDir d(userPath);
         if (!d.exists())
-            d.mkpath(QStringLiteral("."));
+            d.mkpath(u"."_s);
     }
     return userPath;
 }
@@ -150,13 +151,13 @@ QString Tglob::userLocalPath() const
 QString Tglob::soundsPath() const
 {
 #if defined(Q_OS_ANDROID)
-    return QStringLiteral("assets:/sounds/");
+    return u"assets:/sounds/"_s;
 #elif defined(Q_OS_WIN)
-    return qApp->applicationDirPath() + QLatin1String("/sounds/");
+    return qApp->applicationDirPath() + "/sounds/"_L1;
 #elif defined(Q_OS_MAC)
-    return qApp->applicationDirPath() + QLatin1String("/../Resources/sounds/");
+    return qApp->applicationDirPath() + "/../Resources/sounds/"_L1;
 #else
-    return qApp->applicationDirPath() + QLatin1String("/../share/metronomek/sounds/");
+    return qApp->applicationDirPath() + "/../share/metronomek/sounds/"_L1;
 #endif
 }
 
@@ -228,13 +229,13 @@ QString Tglob::aboutQt() const
 {
     return QGuiApplication::translate("QMessageBox", "<h3>About Qt</h3><p>This program uses Qt version %1.</p>")
         .arg(qVersion())
-        .replace(QLatin1String("<p>"), QString())
-        .replace(QLatin1String("</p>"), QString());
+        .replace("<p>"_L1, QString())
+        .replace("</p>"_L1, QString());
 }
 
 QString Tglob::version() const
 {
-    if (qApp->arguments().last().contains(QLatin1String("--no-version")))
+    if (qApp->arguments().last().contains("--no-version"_L1))
         return QString();
     else
         return QString(METRONOMEK_VERSION);
@@ -262,11 +263,9 @@ void Tglob::keepScreenOn(bool on)
 
 void Tglob::createTempoList()
 {
-    m_tempoList << Ttempo(QStringLiteral("Grave"), 35, 43) << Ttempo(QStringLiteral("Largo"), 44, 49) << Ttempo(QStringLiteral("Lento"), 50, 54)
-                << Ttempo(QStringLiteral("Larghetto"), 55, 59) << Ttempo(QStringLiteral("Adagio"), 60, 64) << Ttempo(QStringLiteral("Adagietto"), 65, 69)
-                << Ttempo(QStringLiteral("Andante"), 70, 79) << Ttempo(QStringLiteral("Andantino"), 80, 87) << Ttempo(QStringLiteral("Maestoso"), 88, 94)
-                << Ttempo(QStringLiteral("Moderato"), 95, 104) << Ttempo(QStringLiteral("Allegretto"), 105, 115) << Ttempo(QStringLiteral("Animato"), 116, 125)
-                << Ttempo(QStringLiteral("Allegro"), 126, 137) << Ttempo(QStringLiteral("Allegro assai"), 138, 143)
-                << Ttempo(QStringLiteral("Vivace"), 144, 164) << Ttempo(QStringLiteral("Allegro vivace"), 165, 180)
-                << Ttempo(QStringLiteral("Presto"), 181, 200) << Ttempo(QStringLiteral("Prestissimo"), 201, 240);
+    m_tempoList << Ttempo(u"Grave"_s, 35, 43) << Ttempo(u"Largo"_s, 44, 49) << Ttempo(u"Lento"_s, 50, 54) << Ttempo(u"Larghetto"_s, 55, 59)
+                << Ttempo(u"Adagio"_s, 60, 64) << Ttempo(u"Adagietto"_s, 65, 69) << Ttempo(u"Andante"_s, 70, 79) << Ttempo(u"Andantino"_s, 80, 87)
+                << Ttempo(u"Maestoso"_s, 88, 94) << Ttempo(u"Moderato"_s, 95, 104) << Ttempo(u"Allegretto"_s, 105, 115) << Ttempo(u"Animato"_s, 116, 125)
+                << Ttempo(u"Allegro"_s, 126, 137) << Ttempo(u"Allegro assai"_s, 138, 143) << Ttempo(u"Vivace"_s, 144, 164)
+                << Ttempo(u"Allegro vivace"_s, 165, 180) << Ttempo(u"Presto"_s, 181, 200) << Ttempo(u"Prestissimo"_s, 201, 240);
 }

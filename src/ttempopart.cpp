@@ -7,6 +7,8 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qxmlstream.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 TtempoPart::TtempoPart(int partNr, QObject *parent)
     : QObject(parent)
     , m_nr(partNr)
@@ -138,8 +140,8 @@ QString TtempoPart::tempoText() const
             speedUpOrDown = tr("accelerando", "This is official, glob wide music term, so it shouldn't be translated.");
         else
             speedUpOrDown = tr("rallentando", "This is official, glob wide music term, so it shouldn't be translated.");
-        speedUpOrDown.prepend(QLatin1String("  ("));
-        speedUpOrDown.append(QLatin1String(")"));
+        speedUpOrDown.prepend("  ("_L1);
+        speedUpOrDown.append(")"_L1);
     }
     return QString("%1. ").arg(m_nr) + tr("Tempo") + QString(": %1%2").arg(m_initTempo).arg(ch ? QString(" -> %1").arg(m_targetTempo) : QString())
         + speedUpOrDown;
@@ -147,28 +149,28 @@ QString TtempoPart::tempoText() const
 
 void TtempoPart::writeToXML(QXmlStreamWriter &xml)
 {
-    xml.writeStartElement(QLatin1String("tempoChange"));
-    xml.writeTextElement(QLatin1String("init"), QString::number(m_initTempo));
-    xml.writeTextElement(QLatin1String("target"), QString::number(m_targetTempo));
-    xml.writeTextElement(QLatin1String("meter"), QString::number(m_meter));
-    xml.writeTextElement(QLatin1String("beats"), QString::number(m_beats));
+    xml.writeStartElement("tempoChange"_L1);
+    xml.writeTextElement("init"_L1, QString::number(m_initTempo));
+    xml.writeTextElement("target"_L1, QString::number(m_targetTempo));
+    xml.writeTextElement("meter"_L1, QString::number(m_meter));
+    xml.writeTextElement("beats"_L1, QString::number(m_beats));
     if (m_infinite)
-        xml.writeEmptyElement(QLatin1String("infinite"));
+        xml.writeEmptyElement("infinite"_L1);
     xml.writeEndElement(); // tempo
 }
 
 void TtempoPart::readFromXML(QXmlStreamReader &xml)
 {
     while (xml.readNextStartElement()) {
-        if (xml.name() == QLatin1String("init"))
+        if (xml.name() == "init"_L1)
             m_initTempo = qBound(40, xml.readElementText().toInt(), 240);
-        else if (xml.name() == QLatin1String("target"))
+        else if (xml.name() == "target"_L1)
             m_targetTempo = qBound(40, xml.readElementText().toInt(), 240);
-        else if (xml.name() == QLatin1String("meter"))
+        else if (xml.name() == "meter"_L1)
             m_meter = qBound(1, xml.readElementText().toInt(), 12);
-        else if (xml.name() == QLatin1String("beats"))
+        else if (xml.name() == "beats"_L1)
             setBeats(qMax(1, xml.readElementText().toInt()));
-        else if (xml.name() == QLatin1String("infinite")) {
+        else if (xml.name() == "infinite"_L1) {
             if (m_initTempo == m_targetTempo)
                 m_infinite = true;
             else

@@ -7,9 +7,11 @@
 #include <QtCore/qdebug.h>
 #include <QtMultimedia/qaudiooutput.h>
 
+using namespace Qt::Literals::StringLiterals;
+
 /*static*/
 TqtAudioOut *TqtAudioOut::m_instance = nullptr;
-QString TqtAudioOut::m_devName = QStringLiteral("anything");
+QString TqtAudioOut::m_devName = u"anything"_s;
 
 QStringList TqtAudioOut::getAudioDevicesList()
 {
@@ -83,7 +85,7 @@ void TqtAudioOut::createOutputDevice()
     format.setSampleRate(m_sampleRate);
     format.setSampleType(QAudioFormat::SignedInt);
     format.setSampleSize(16);
-    format.setCodec(QStringLiteral("audio/pcm"));
+    format.setCodec(u"audio/pcm"_s);
     format.setByteOrder(QAudioFormat::LittleEndian);
     if (!m_deviceInfo.isFormatSupported(format)) {
         qDebug() << "Output Format 48000/16 stereo is not supported";
