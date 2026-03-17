@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2022-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "tsounddata.h"
@@ -50,7 +50,7 @@ void TsoundData::setFile(const QString &rawFileName)
         beatStream.readRawData(reinterpret_cast<char *>(m_data), m_size * 2);
     } else {
         m_size = 0;
-        qDebug() << "[TsoundData] sound file" << rawFileName << "doesn't exist";
+        qDebug() << "[TsoundData]" << "Sound file" << rawFileName << "doesn't exist";
     }
 }
 
@@ -69,7 +69,7 @@ void TsoundData::readData(QDataStream &in, quint32 len)
     m_data = new qint16[m_size];
     auto read = in.readRawData(reinterpret_cast<char *>(m_data), len);
     if (read != len)
-        qDebug() << "[TsoundData] Read error!";
+        qDebug() << "[TsoundData]" << "Read error!";
 }
 
 int TsoundData::findPeakPos()
