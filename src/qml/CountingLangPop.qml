@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2022-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
@@ -43,14 +43,13 @@ SidePop {
             ComboBox {
                 id: langCombo
                 width: countPop.width - FM.height * (GLOB.isAndroid() ? 2 : 4) - lt.width
-                model: countPop. cntMan.languagesModel()
+                model: countPop.cntMan.languagesModel()
                 currentIndex: (model as CountLangModel).currentLangId
                 textRole: "langName"
                 valueRole: "langID"
                 popup.width: langCombo.width
                 popup.height: langCombo.Window.height * 0.8
             }
-
         }
 
         Text {
@@ -78,5 +77,4 @@ SidePop {
             }
         }
     }
-
 }

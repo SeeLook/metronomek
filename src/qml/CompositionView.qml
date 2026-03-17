@@ -1,10 +1,10 @@
-// SPDX-FileCopyrightText: 2021-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2021-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
+
+pragma ComponentBehavior: Bound
 
 import Metronomek.Core
 import QtQuick
-
-pragma ComponentBehavior: Bound
 
 Item {
     id: compView
@@ -54,14 +54,13 @@ Item {
         height: compView.mainWindow.height * 0.7
         model: compView.currComp?.partsCount
         currentIndex: compView.mainWindow.partId
-        contentY: currentItem ? currentItem.y + ((currentItem as PartDelegate).tp.infinite ? currentItem.height / 2 
-                                                                        : (compView.mainWindow.beatNr - 1) * (currentItem as PartDelegate).factor) - height / 4 : 0
+        contentY: currentItem ? currentItem.y + ((currentItem as PartDelegate).tp.infinite ? currentItem.height / 2 : (compView.mainWindow.beatNr - 1) * (currentItem as PartDelegate).factor) - height / 4 : 0
         cacheBuffer: height
 
         delegate: PartDelegate {}
     }
 
-    component PartDelegate : Rectangle {
+    component PartDelegate: Rectangle {
         id: partDlg
         required property int index
         property TempoPart tp: compView.currComp ? compView.currComp.getPart(index) : null
@@ -101,8 +100,7 @@ Item {
             }
 
             Behavior on scale {
-                NumberAnimation {
-                }
+                NumberAnimation {}
             }
         }
     }
@@ -135,7 +133,5 @@ Item {
         Behavior on y {
             NumberAnimation {}
         }
-
     }
-
 }

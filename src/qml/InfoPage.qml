@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
@@ -34,7 +34,6 @@ Tdialog {
             interval: 4000
             onTriggered: logo.anim.start()
         }
-
     }
 
     Flickable {
@@ -99,7 +98,6 @@ Tdialog {
           Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA` + "<br><br><a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">https://www.gnu.org/licenses/gpl-3.0.html</a><br><br>")
                 horizontalAlignment: Text.AlignJustify
             }
-
         }
         // Flickable
 
@@ -107,7 +105,5 @@ Tdialog {
             active: true
             visible: true
         }
-
     }
-
 }

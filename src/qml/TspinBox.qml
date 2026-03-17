@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2020 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2020-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
@@ -11,8 +11,7 @@ SpinBox {
     height: sb.font.pixelSize * 3
     width: height * 3.5
 
-    contentItem: Item {
-    }
+    contentItem: Item {}
 
     background: TipRect {
         color: ActivPalette.base
@@ -29,7 +28,6 @@ SpinBox {
                 pixelSize: sb.height * 0.6
                 bold: true
             }
-
         }
 
         MouseArea {
@@ -41,7 +39,6 @@ SpinBox {
                     sb.value--;
             }
         }
-
     }
 
     up.indicator: Item {
@@ -71,9 +68,7 @@ SpinBox {
             NumberAnimation {
                 duration: 150
             }
-
         }
-
     }
 
     down.indicator: Item {
@@ -94,9 +89,6 @@ SpinBox {
             NumberAnimation {
                 duration: 150
             }
-
         }
-
     }
-
 }

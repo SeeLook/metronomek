@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2022-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
@@ -12,7 +12,7 @@ Popup {
 
     property alias bgColor: bg.color
 
-    signal done()
+    signal done
 
     padding: FM.height / 2
     width: Math.min(contentItem.Window.width, FM.height * 60)

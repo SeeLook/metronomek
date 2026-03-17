@@ -1,9 +1,9 @@
-// SPDX-FileCopyrightText: 2021-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2021-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-import QtQuick
-
 pragma ComponentBehavior: Bound
+
+import QtQuick
 
 DragDelegate {
     id: tpDelegate
@@ -36,14 +36,8 @@ DragDelegate {
         }
 
         Text {
-            text: GLOB.TR("TempoPage", "Duration") + ": "
-                    + (tpDelegate.tp && tpDelegate.tp.infinite ? GLOB.TR("TempoPage", "infinite") : "<br>"
-                    + GLOB.chopS(qsTr("<b>%n</b> bars", "", tpDelegate.tp ? tpDelegate.tp.bars : 0), tpDelegate.tp ? tpDelegate.tp.bars : 0)
-                    + " = " + GLOB.chopS(qsTr("<b>%n</b> beats", "", tpDelegate.tp ? tpDelegate.tp.beats : 0), tpDelegate.tp ? tpDelegate.tp.beats : 0)
-                    + " = " + GLOB.chopS(qsTr("<b>%n</b> seconds", "", tpDelegate.tp ? tpDelegate.tp.seconds : 0), tpDelegate.tp ? tpDelegate.tp.seconds : 0))
+            text: GLOB.TR("TempoPage", "Duration") + ": " + (tpDelegate.tp && tpDelegate.tp.infinite ? GLOB.TR("TempoPage", "infinite") : "<br>" + GLOB.chopS(qsTr("<b>%n</b> bars", "", tpDelegate.tp ? tpDelegate.tp.bars : 0), tpDelegate.tp ? tpDelegate.tp.bars : 0) + " = " + GLOB.chopS(qsTr("<b>%n</b> beats", "", tpDelegate.tp ? tpDelegate.tp.beats : 0), tpDelegate.tp ? tpDelegate.tp.beats : 0) + " = " + GLOB.chopS(qsTr("<b>%n</b> seconds", "", tpDelegate.tp ? tpDelegate.tp.seconds : 0), tpDelegate.tp ? tpDelegate.tp.seconds : 0))
             color: ActivPalette.text
         }
-
     }
-
 }

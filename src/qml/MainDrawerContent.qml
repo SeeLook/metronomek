@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
@@ -32,7 +32,6 @@ Flickable {
             anchors {
                 horizontalCenter: parent.horizontalCenter
             }
-
         }
 
         DrawerButton {
@@ -165,12 +164,10 @@ Flickable {
             text: qsTr("close app")
             onClicked: Qt.quit()
         }
-
     }
 
     ScrollBar.vertical: ScrollBar {
         active: true
         visible: true
     }
-
 }

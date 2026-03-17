@@ -1,10 +1,10 @@
-// SPDX-FileCopyrightText: 2019-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
+
+pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Shapes
-
-pragma ComponentBehavior: Bound
 
 Rectangle {
     id: logo
@@ -52,9 +52,7 @@ Rectangle {
                     logo.textW += width;
                 }
             }
-
         }
-
     }
 
     Text {
@@ -72,7 +70,6 @@ Rectangle {
             pixelSize: logo.height * 0.2
             bold: true
         }
-
     }
 
     Text {
@@ -88,7 +85,6 @@ Rectangle {
         font {
             pixelSize: logo.height * 0.14
         }
-
     }
 
     Rectangle {
@@ -146,11 +142,8 @@ Rectangle {
                     x: 0
                     y: 0
                 }
-
             }
-
         }
-
     }
 
     SequentialAnimation {
@@ -198,7 +191,5 @@ Rectangle {
             to: -20.5
             duration: 500 * (20.5 / 45)
         }
-
     }
-
 }

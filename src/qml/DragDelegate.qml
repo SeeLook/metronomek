@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2022-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import QtQuick
@@ -15,8 +15,8 @@ Rectangle {
     property bool wasDragged: false
     property bool toDel: Math.abs(x) > delText.width
 
-    signal clicked()
-    signal removed()
+    signal clicked
+    signal removed
 
     color: ma.pressed || ma.containsMouse ? Qt.tint(ActivPalette.base, GLOB.alpha(toDel ? "red" : ActivPalette.highlight, 50)) : (nr % 2 ? ActivPalette.base : ActivPalette.alternateBase)
 
@@ -45,7 +45,6 @@ Rectangle {
         onPositionChanged: {
             if (Math.abs(dragDel.x) > FM.height)
                 dragDel.wasDragged = true;
-
         }
         onReleased: {
             if (Math.abs(dragDel.x) > delText.width + FM.height) {
@@ -55,7 +54,6 @@ Rectangle {
                 backAnim.start();
                 if (!dragDel.wasDragged && Math.abs(dragDel.x) < FM.height)
                     dragDel.clicked();
-
             }
             dragDel.wasDragged = false;
         }
@@ -76,5 +74,4 @@ Rectangle {
         property: "x"
         onFinished: dragDel.removed()
     }
-
 }

@@ -1,11 +1,11 @@
-// SPDX-FileCopyrightText: 2022 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2022-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
+
+pragma ComponentBehavior: Bound
 
 import Metronomek.Core
 import QtQuick
 import QtQuick.Controls
-
-pragma ComponentBehavior: Bound
 
 Tdialog {
     id: vCntEdit
@@ -28,7 +28,7 @@ Tdialog {
     onHelpRequested: moreMenu.open()
     onReset: {
         let cntPop = Qt.createComponent("Metronomek.Core", "CountingLangPop").createObject(contentItem.Window.window);
-        (cntPop as Popup).closed.connect(function() {
+        (cntPop as Popup).closed.connect(function () {
             vCntEdit.close();
         });
     }
@@ -74,7 +74,6 @@ Tdialog {
                         pixelSize: parent.height * 0.25
                         bold: true
                     }
-
                 }
 
                 Rectangle {
@@ -97,7 +96,6 @@ Tdialog {
                         pixelSize: parent.height / 3
                         bold: true
                     }
-
                 }
 
                 NumberAnimation {
@@ -181,7 +179,8 @@ Tdialog {
                 moreMenu.insertItem(0, fromFileComp.createObject());
 
             var maxW = 0;
-            for (var m = 0; m < count; ++m) maxW = Math.max(maxW, itemAt(m).width)
+            for (var m = 0; m < count; ++m)
+                maxW = Math.max(maxW, itemAt(m).width);
             width = Math.min(vCntEdit.width - FM.height * 3, maxW + 2 * FM.height);
         }
 
@@ -195,19 +194,10 @@ Tdialog {
             onTriggered: {
                 Qt.createComponent("Metronomek.Core", "HelpPop").createObject(Window.window, {
                     "visible": true,
-                    "helpText": "<b>" + GLOB.TR("VerbalCountPage", "Prepare own counting out loud") + ":</b>"
-                                + "<ul><li>" + qsTr("record every single numeral")
-                                + "</li><li>" + qsTr("or import wav file with it prepared in other software") + "</li><li>"
-                                + qsTr("or import wav file with all 12 numerals (Actions -> Load from file)") + "</li></ul><br><b>"
-                                + qsTr("CLUES") + ":</b>"
-                                + "<ul><li>" + qsTr("pronounce words quickly, not longer than 300 ms")
-                                + "</li><li>" + qsTr("accent one of the word syllables")
-                                + "</li><li>" + qsTr("imported wav files has to be 48000 Hz / 16 bit")
-                                + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
+                    "helpText": "<b>" + GLOB.TR("VerbalCountPage", "Prepare own counting out loud") + ":</b>" + "<ul><li>" + qsTr("record every single numeral") + "</li><li>" + qsTr("or import wav file with it prepared in other software") + "</li><li>" + qsTr("or import wav file with all 12 numerals (Actions -> Load from file)") + "</li></ul><br><b>" + qsTr("CLUES") + ":</b>" + "<ul><li>" + qsTr("pronounce words quickly, not longer than 300 ms") + "</li><li>" + qsTr("accent one of the word syllables") + "</li><li>" + qsTr("imported wav files has to be 48000 Hz / 16 bit") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
                 });
             }
         }
-
     }
 
     Component {
@@ -219,7 +209,5 @@ Tdialog {
                 vCntEdit.cntMan.getSoundFile();
             }
         }
-
     }
-
 }

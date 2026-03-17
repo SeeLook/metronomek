@@ -1,11 +1,11 @@
-// SPDX-FileCopyrightText: 2019-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
+
+pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Window
-
-pragma ComponentBehavior: Bound
 
 Window {
     id: mainWindow
@@ -35,7 +35,6 @@ Window {
         initAnim.start();
         if (SOUND.isPartInfinite(partId))
             nextTempoPop();
-
     }
 
     function stopMetronome() {
@@ -45,16 +44,15 @@ Window {
         pendAnim.stop();
         finishAnim.start();
         if (SOUND.variableTempo)
-            countW.tempo = Qt.binding(function() {
-            return SOUND.tempo;
-        });
-
+            countW.tempo = Qt.binding(function () {
+                return SOUND.tempo;
+            });
     }
 
     function nextTempoPop() {
         let ntp = Qt.createComponent("Metronomek.Core", "NextTempoPop").createObject(mainWindow);
         (ntp as NextTempoPop).open();
-        (ntp as NextTempoPop).done.connect(function() {
+        (ntp as NextTempoPop).done.connect(function () {
             SOUND.switchInfinitePart();
         });
     }
@@ -71,11 +69,9 @@ Window {
         if (SOUND.variableTempo) {
             if (!compView)
                 compView = Qt.createComponent("Metronomek.Core", "CompositionView").createObject(mainWindow.contentItem);
-
         } else {
             if (compView)
                 compView.destroy();
-
         }
     }
 
@@ -91,13 +87,13 @@ Window {
     Component.onCompleted: {
         varTempoSlot();
     }
-    onClosing: (close) => {
+    onClosing: close => {
         if (GLOB.isAndroid() && GLOB.dialogItem) {
             close.accepted = false;
             GLOB.dialogItem.destroy();
             return;
         }
-        stopMetronome()
+        stopMetronome();
         GLOB.geometry = Qt.rect(x, y, width, height);
         mainWindow.visible = false;
     }
@@ -138,7 +134,6 @@ Window {
                 transformOrigin: Item.Bottom
                 rotation: pendulum.rotation
             }
-
         }
 
         // Italian tempo names
@@ -166,25 +161,17 @@ Window {
                 }
 
                 Behavior on x {
-                    NumberAnimation {
-                    }
-
+                    NumberAnimation {}
                 }
 
                 Behavior on scale {
-                    NumberAnimation {
-                    }
-
+                    NumberAnimation {}
                 }
 
                 Behavior on color {
-                    ColorAnimation {
-                    }
-
+                    ColorAnimation {}
                 }
-
             }
-
         }
 
         MouseArea {
@@ -219,13 +206,13 @@ Window {
                 height: parent.height
                 x: -parent.width
                 cursorShape: dragged ? Qt.DragMoveCursor : Qt.ArrowCursor
-                onPositionChanged: (mouse) => {
+                onPositionChanged: mouse => {
                     dragged = true;
                     var dev = mouse.x - width / 2;
                     pendulum.rotation = (Math.atan(dev / height) * 180) / Math.PI;
                     mainWindow.leanEnough = Math.abs(dev) > height * 0.2;
                 }
-                onReleased: (mouse) => {
+                onReleased: mouse => {
                     mainWindow.leanEnough = false;
                     dragged = false;
                     if (Math.abs(mouse.x - width / 2) > height * 0.2)
@@ -260,7 +247,6 @@ Window {
                         family: "metronomek"
                         pixelSize: pendulum.height * 0.18
                     }
-
                 }
 
                 Text {
@@ -274,7 +260,6 @@ Window {
                         pixelSize: parent.height * 0.5
                         bold: true
                     }
-
                 }
 
                 MouseArea {
@@ -296,12 +281,10 @@ Window {
                     NumberAnimation {
                         id: countAnim
                     }
-
                 }
                 // inner counterweight
 
             }
-
         }
 
         // cover for lover pendulum end
@@ -329,7 +312,6 @@ Window {
             font {
                 bold: true
             }
-
         }
 
         AbstractButton {
@@ -371,7 +353,6 @@ Window {
                 radius: width / 2
                 raised: !playButt.innerPress
             }
-
         }
 
         Text {
@@ -386,7 +367,6 @@ Window {
                 pixelSize: metro.height / 40
                 bold: true
             }
-
         }
 
         CuteButton {
@@ -411,9 +391,7 @@ Window {
                 color: ActivPalette.varTempo
                 width: SOUND.variableTempo ? FM.height / 6 : 0
             }
-
         }
-
     }
 
     MainMenuButton {
@@ -541,11 +519,10 @@ Window {
                 if (mainWindow.nextTempo == 0) {
                     timer.stop();
                     mainWindow.stopMetronome();
-                    return ;
+                    return;
                 } else {
                     if (SOUND.isPartInfinite(mainWindow.partId))
                         mainWindow.nextTempoPop();
-
                 }
             }
             if (SOUND.variableTempo) {
@@ -575,5 +552,4 @@ Window {
     Loader {
         source: GLOB.isAndroid() || GLOB.isWindows() ? "MaterialImport.qml" : ""
     }
-
 }

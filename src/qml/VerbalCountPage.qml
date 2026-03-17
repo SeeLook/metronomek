@@ -1,11 +1,11 @@
-// SPDX-FileCopyrightText: 2022 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2022-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
+
+pragma ComponentBehavior: Bound
 
 import Metronomek.Core
 import QtQuick
 import QtQuick.Controls
-
-pragma ComponentBehavior: Bound
 
 Tdialog {
     id: vCntPage
@@ -107,11 +107,9 @@ Tdialog {
                     color: ActivPalette.base
                     text: qsTr("available sounds of counting")
                 }
-
             }
 
-            ScrollBar.vertical: ScrollBar {
-            }
+            ScrollBar.vertical: ScrollBar {}
 
             delegate: DragDelegate {
                 id: bgRect
@@ -120,7 +118,7 @@ Tdialog {
                 property var modelData: localCntsMod.get(index)
 
                 dragEnabled: index > 0
-                width: parent ? parent.width - GLOB.fontSize(): 0
+                width: parent ? parent.width - GLOB.fontSize() : 0
                 height: FM.height * 3
                 color: Qt.tint(index % 2 ? ActivPalette.base : ActivPalette.alternateBase, GLOB.alpha(toDel ? "red" : ActivPalette.highlight, pressed || containsMouse ? 80 : (vCntPage.cntMan?.localModelId === index ? 40 : 0)))
                 onClicked: vCntPage.cntMan.localModelId = index
@@ -151,9 +149,7 @@ Tdialog {
                             font {
                                 bold: true
                             }
-
                         }
-
                     }
 
                     Column {
@@ -181,16 +177,13 @@ Tdialog {
                             fontSizeMode: Text.HorizontalFit
                             elide: Text.ElideRight
                         }
-
                     }
-
                 }
-
             }
-
         }
 
-        Item { // spacer
+        Item {
+            // spacer
             width: vCntPage.width - GLOB.fontSize()
             height: FM.height / 2
         }
@@ -211,7 +204,6 @@ Tdialog {
             Component.onCompleted: {
                 if (onlineMod.count == 0)
                     vCntPage.updateOnlineModel();
-
             }
 
             headerPositioning: ListView.OverlayHeader
@@ -228,9 +220,7 @@ Tdialog {
                         color: ActivPalette.base
                         text: qsTr("sounds of counting to download")
                     }
-
                 }
-
             }
 
             delegate: Rectangle {
@@ -252,7 +242,6 @@ Tdialog {
                     font {
                         bold: true
                     }
-
                 }
 
                 Text {
@@ -287,7 +276,6 @@ Tdialog {
                             pixelSize: FM.height * 1.7
                         }
                     }
-
                 }
 
                 MouseArea {
@@ -304,9 +292,7 @@ Tdialog {
             }
 
             ScrollBar.vertical: ScrollBar {}
-
         }
-
     }
 
     Component {
@@ -341,7 +327,8 @@ Tdialog {
         x: (vCntPage.width - width) / 2
         Component.onCompleted: {
             var maxW = 0;
-            for (var m = 0; m < count; ++m) maxW = Math.max(maxW, itemAt(m).width)
+            for (var m = 0; m < count; ++m)
+                maxW = Math.max(maxW, itemAt(m).width);
             width = Math.min(vCntPage.width - FM.height, maxW + FM.height * 2);
         }
 
@@ -362,17 +349,11 @@ Tdialog {
             text: qsTranslate("QShortcut", "Help")
             onTriggered: {
                 let hPop = Qt.createComponent("Metronomek.Core", "HelpPop").createObject(Window.window, {
-                    "helpText": qsTr("Matronomek is installed with counting out loud only in English language.") + "<br>"
-                                + qsTr("But counting for other languages can be easy obtained:")
-                                + "<ul><li>" + qsTr("by downloading files available online (for free)") + "</li><li>"
-                                + qsTr("or by recording own counting.")
-                                + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
+                    "helpText": qsTr("Matronomek is installed with counting out loud only in English language.") + "<br>" + qsTr("But counting for other languages can be easy obtained:") + "<ul><li>" + qsTr("by downloading files available online (for free)") + "</li><li>" + qsTr("or by recording own counting.") + "</li></ul><br><a href=\"https://metronomek.sourceforge.io\">" + qsTr("Read more online.") + "</a>"
                 });
                 (hPop as HelpPop).open();
             }
         }
-        onOpened: forceActiveFocus();
-
+        onOpened: forceActiveFocus()
     }
-
 }
