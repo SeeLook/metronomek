@@ -11,6 +11,9 @@
   #### Use system dark theme colors
     - also respect Android accent color
 
+  #### Fixes:
+    - proper counting number when switching tempo parts
+
   #### Ported to Qt 6
     - use newest version for Android/Windows/Linux builds
 

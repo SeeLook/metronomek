@@ -104,10 +104,28 @@ void TtempoPart::setSeconds(int sec)
 
 void TtempoPart::setInfinite(bool inf)
 {
-    if (inf != m_infinite) {
-        m_infinite = inf;
-        emit infiniteChanged();
+    if (inf == infinite())
+        return;
+
+    if (inf)
+        m_infinite |= P_Infinite;
+    else
+        m_infinite &= ~P_Infinite;
+    emit infiniteChanged();
+}
+
+void TtempoPart::stopInfinite()
+{
+    if (m_infinite & P_InfinitEnds) {
+        qDebug() << "[TtempoPart]" << "Infinite part already set to end!";
+        return;
     }
+    m_infinite |= P_InfinitEnds;
+}
+
+void TtempoPart::resetStopInfinite()
+{
+    m_infinite &= ~P_InfinitEnds;
 }
 
 void TtempoPart::setSpeedProfile(QEasingCurve::Type type)
@@ -119,8 +137,15 @@ void TtempoPart::setSpeedProfile(QEasingCurve::Type type)
 
 int TtempoPart::getTempoForBeat(int beatNr)
 {
-    if (m_initTempo == m_targetTempo && m_infinite)
+    if (m_initTempo == m_targetTempo && infinite()) {
+        if (m_infinite & P_InfinitEnds) {
+            if (beatNr > m_beats && beatNr % m_meter == 1) {
+                // For infinite part, reset tempo only after entire bar (rest of division by meter value is 1)
+                return 0;
+            }
+        }
         return m_initTempo;
+    }
 
     if (beatNr > m_beats)
         return 0;

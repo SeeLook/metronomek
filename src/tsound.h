@@ -223,7 +223,6 @@ private:
     int m_playingPart = 0;
     int m_playingBeat = 1;
     int m_infiBeats = 0; /**< Beats number when current par is infinite */
-    bool m_toNextPart = false; /**< TRUE when @p outCallBack will switch to next tempo part */
 
     int m_staticTempo;
     bool m_verbalCount = false;

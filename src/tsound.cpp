@@ -243,13 +243,6 @@ void Tsound::outCallBack(char *data, unsigned int maxLen, unsigned int *wasRead)
                 m_doBell = true;
             }
 
-            if (m_toNextPart) {
-                m_infiBeats = m_playingBeat;
-                m_toNextPart = false;
-                m_playingPart++;
-                m_playingBeat = 0;
-            }
-
             if (m_verbalCount) {
                 verbCount = qBound(0, (m_playingBeat - 1) % meterOfPart(m_playingPart), 11);
                 m_numerals->at(verbCount)->resetPos();
@@ -298,6 +291,8 @@ void Tsound::playingFinishedSlot()
             QTimer::singleShot(qMax(100, delay), this, [this] {
                 m_audioDevice->stop();
                 m_goingToStop = false;
+                if (m_speedHandler)
+                    m_speedHandler->resetInfiniteEnds();
             });
         }
     }
@@ -518,9 +513,10 @@ bool Tsound::isPartInfinite(int partId)
 
 void Tsound::switchInfinitePart()
 {
-    if (isPartInfinite(m_playingPart))
-        m_toNextPart = true;
-    else
+    if (isPartInfinite(m_playingPart)) {
+        auto p = m_speedHandler->currComp()->getPart(m_playingPart);
+        p->stopInfinite();
+    } else
         qDebug() << "[Tsound] FIXME! Trying to switch non infinite tempo part!";
 }
 

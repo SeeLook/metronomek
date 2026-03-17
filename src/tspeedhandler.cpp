@@ -199,12 +199,13 @@ TspeedHandler::~TspeedHandler()
 
 void TspeedHandler::saveCurrentComposition()
 {
+    static const auto rtmCompString = "%1/Rhythmic_Composition_%2.metronomek.xml"_L1;
     auto dataPath = GLOB->userLocalPath();
     if (currComp()->xmlFileName().isEmpty()) {
-        auto fName = QString("%1/Rhythmic_Composition_%2.metronomek.xml").arg(dataPath).arg(static_cast<qreal>(m_current + 1), 2, 'g', -1, '0');
+        auto fName = QString(rtmCompString).arg(dataPath).arg(static_cast<qreal>(m_current + 1), 2, 'g', -1, '0');
         int it = 1;
         while (QFileInfo::exists(fName)) {
-            fName = QString("%1/Rhythmic_Composition_%2.metronomek.xml").arg(dataPath).arg(static_cast<qreal>(it), 2, 'g', -1, '0');
+            fName = QString(rtmCompString).arg(dataPath).arg(static_cast<qreal>(it), 2, 'g', -1, '0');
             it++;
         }
         currComp()->setXmlFileName(fName);
@@ -318,6 +319,15 @@ int TspeedHandler::getTempoForBeat(int partId, int beatNr)
         return currComp()->getPart(partId)->getTempoForBeat(beatNr);
     else
         return 0;
+}
+
+void TspeedHandler::resetInfiniteEnds()
+{
+    auto comp = currComp();
+    for (auto *p : comp->parts()) {
+        if (p->infinite())
+            p->resetStopInfinite();
+    }
 }
 
 void TspeedHandler::readFromXMLFile(const QString &xmlFile)

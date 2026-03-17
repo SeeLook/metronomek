@@ -36,6 +36,13 @@ public:
     TtempoPart(int partNr = 0, QObject *parent = nullptr);
     ~TtempoPart() override;
 
+    enum PartType : quint8 {
+        P_Finite = 0,
+        P_Infinite = 1,
+        P_InfinitEnds = 128, /**< When infinite part is going to stop at the end of measure. */
+    };
+    Q_ENUM(PartType)
+
     int nr() const { return m_nr; }
     void setNr(int nr);
 
@@ -60,8 +67,10 @@ public:
     int seconds() const { return m_seconds; }
     void setSeconds(int sec);
 
-    bool infinite() const { return m_infinite; }
+    bool infinite() const { return m_infinite & P_Infinite; }
     void setInfinite(bool inf);
+    void stopInfinite();
+    void resetStopInfinite();
 
     enum EspeedType { SpeedStatic = 0, SpeedAccel = 1, SpeedRall = 2 };
     Q_ENUM(EspeedType)
@@ -107,5 +116,5 @@ private:
     int m_meter = 4;
     int m_bars = 1, m_beats = 4, m_seconds = 4;
     QEasingCurve m_speedProfile; /**< By default it is linear */
-    bool m_infinite = false;
+    quint8 m_infinite = P_Finite;
 };

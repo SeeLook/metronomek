@@ -129,6 +129,11 @@ public:
 
     int getTempoForBeat(int partId, int beatNr);
 
+    /**
+     * Restores state of all infinite parts to not going to end
+     */
+    void resetInfiniteEnds();
+
     void saveToXMLFile(const QString &xmlFile);
     void readFromXMLFile(const QString &xmlFile);
 
