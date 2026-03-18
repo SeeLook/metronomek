@@ -89,13 +89,17 @@ Window {
     }
     onClosing: close => {
         if (GLOB.isAndroid() && GLOB.dialogItem) {
+            // It suppose to handle back button, but seems to be unnecessary...
+            // Current Qt version handles it by itself.
+            // Lets hope it also works for older Androids
             close.accepted = false;
             GLOB.dialogItem.destroy();
             return;
         }
         stopMetronome();
         GLOB.geometry = Qt.rect(x, y, width, height);
-        mainWindow.visible = false;
+        mainWindow.hide();
+        SOUND.terminate();
     }
 
     MetroImage {
@@ -144,7 +148,9 @@ Window {
                 required property int index
                 z: mainWindow.counterPressed && index === SOUND.nameTempoId ? 10 : 1
                 scale: mainWindow.counterPressed && index === SOUND.nameTempoId ? 3.5 : 1
-                x: Math.max(0, tLabel.x + (index % 2 ? (mainWindow.counterPressed && index === SOUND.nameTempoId ? -width : tLabel.width / 30) : (mainWindow.counterPressed && index === SOUND.nameTempoId ? tLabel.width : tLabel.width * 0.967 - width)))
+                x: Math.max(0, tLabel.x + (index % 2 ? (mainWindow.counterPressed && index === SOUND.nameTempoId ? -width : tLabel.width / 30) : (
+                                                           mainWindow.counterPressed && index === SOUND.nameTempoId ? tLabel.width : tLabel.width * 0.967
+                                                                                                                      - width)))
                 y: tLabel.y + (GLOB.tempoName(index).mid / 200) * tLabel.height * 0.85 - tLabel.height * 0.11 - height / 2
                 text: GLOB.tempoName(index).name
                 style: Text.Raised
@@ -187,7 +193,9 @@ Window {
             id: pendulum
 
             z: 5
-            color: mainWindow.leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? ActivPalette.base : GLOB.valueColor(ActivPalette.text, GLOB.stationary ? 40 : 0)))
+            color: mainWindow.leanEnough ? "green" : (stopArea.containsPress && SOUND.playing ? "red" : (pendArea.dragged ? ActivPalette.base : GLOB.valueColor(
+                                                                                                                                ActivPalette.text,
+                                                                                                                                GLOB.stationary ? 40 : 0)))
             width: parent.width / 20
             height: parent.height * 0.6
             x: parent.width * 0.3969
@@ -282,8 +290,6 @@ Window {
                         id: countAnim
                     }
                 }
-                // inner counterweight
-
             }
         }
 
@@ -401,16 +407,16 @@ Window {
     AbstractButton {
         id: cntButt
 
-        property var meterDrewer: null
+        property MeterDrawer meterDrawer
 
         x: parent.width - width * 0.9
         width: contentRow.width + FM.height * 2
         height: FM.height * 2
-        visible: !meterDrewer || !meterDrewer.visible
+        visible: !meterDrawer || !meterDrawer.visible
         onClicked: {
-            if (!meterDrewer)
-                meterDrewer = Qt.createComponent("Metronomek.Core", "MeterDrawer").createObject(mainWindow.contentItem);
-            meterDrewer.open();
+            if (!meterDrawer)
+            meterDrawer = Qt.createComponent("Metronomek.Core", "MeterDrawer").createObject(mainWindow.contentItem);
+            meterDrawer.open();
         }
 
         background: Rectangle {
@@ -504,7 +510,7 @@ Window {
             }
             elap = currTime;
             if (GLOB.countVisible)
-                mainWindow.meterCount = ((mainWindow.beatNr - 1) % SOUND.meterOfPart(mainWindow.partId)) + 1;
+            mainWindow.meterCount = ((mainWindow.beatNr - 1) % SOUND.meterOfPart(mainWindow.partId)) + 1;
 
             interval = Math.max((60000 / mainWindow.nextTempo) - lag, 1);
             SOUND.tempo = mainWindow.nextTempo;
@@ -522,7 +528,7 @@ Window {
                     return;
                 } else {
                     if (SOUND.isPartInfinite(mainWindow.partId))
-                        mainWindow.nextTempoPop();
+                    mainWindow.nextTempoPop();
                 }
             }
             if (SOUND.variableTempo) {

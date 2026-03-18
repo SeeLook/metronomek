@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #pragma once
@@ -82,7 +82,7 @@ public:
     bool langLoaded() const { return m_langLoaded; }
     void setLangLoaded(bool ll) { m_langLoaded = ll; }
 
-    QVariant dialogItem() const { return m_dialogItem; }
+    QVariant dialogItem() const { return QVariant::fromValue(m_dialogItem); }
     void setDialogItem(QVariant dgIt);
 
     /**
@@ -180,6 +180,6 @@ private:
     bool m_keepScreenOn;
     bool m_disableRotation = false;
     QList<Ttempo> m_tempoList;
-    QVariant m_dialogItem;
+    QObject *m_dialogItem = nullptr;
     QTranslator *m_translator = nullptr;
 };

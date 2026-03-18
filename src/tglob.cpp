@@ -1,8 +1,9 @@
-// SPDX-FileCopyrightText: 2019-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "tglob.h"
 #include "metronomek_conf.h"
+#include "qvariant.h"
 
 #if defined(Q_OS_ANDROID)
 #include "tandroid.h"
@@ -126,7 +127,18 @@ void Tglob::setLang(const QString &l)
 
 void Tglob::setDialogItem(QVariant dgIt)
 {
-    m_dialogItem = dgIt;
+    auto obj = qvariant_cast<QObject *>(dgIt);
+    if (obj) {
+        if (m_dialogItem) {
+            qDebug() << "[Tglob]" << "Dialog item already exists!";
+        }
+        m_dialogItem = obj;
+        connect(obj, &QObject::destroyed, this, [this] {
+            m_dialogItem = nullptr;
+        });
+    } else {
+        return;
+    }
     emit dialogItemChanged();
 }
 

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #pragma once
@@ -39,7 +39,7 @@ public:
     static Tsound *instance() { return m_instance; }
 
     void init();
-    void terminate();
+    Q_INVOKABLE void terminate();
 
     Q_INVOKABLE static QStringList getAudioDevicesList();
     Q_INVOKABLE static QString outputName();
