@@ -6,6 +6,8 @@ import QtQuick.Controls
 import Metronomek.Core
 
 Flickable {
+    id: drawCont
+    required property Drawer drawer
     width: parent.width
     height: parent.height
     clip: true
@@ -19,7 +21,7 @@ Flickable {
 
         Logo {
             anim {
-                running: drawer.visible
+                running: drawCont.drawer.visible
                 loops: 1
             }
         }
@@ -119,7 +121,7 @@ Flickable {
                 SOUND.variableTempo = checked;
                 if (checked) {
                     Qt.createComponent("Metronomek.Core", "TempoPage").createObject(mainWindow);
-                    drawer.close();
+                    drawCont.drawer.close();
                 }
             }
         }
@@ -129,7 +131,7 @@ Flickable {
             onClicked: {
                 SOUND.createCountingManager();
                 Qt.createComponent("Metronomek.Core", "VerbalCountPage").createObject(mainWindow);
-                drawer.close();
+                drawCont.drawer.close();
             }
         }
 
@@ -137,7 +139,7 @@ Flickable {
             text: qsTr("settings")
             onClicked: {
                 Qt.createComponent("Metronomek.Core", "SettingsPage").createObject(mainWindow);
-                drawer.close();
+                drawCont.drawer.close();
             }
         }
 
@@ -150,7 +152,7 @@ Flickable {
                     infoPage = Qt.createComponent("Metronomek.Core", "InfoPage").createObject(mainWindow);
 
                 infoPage.open();
-                drawer.close();
+                drawCont.drawer.close();
             }
         }
 

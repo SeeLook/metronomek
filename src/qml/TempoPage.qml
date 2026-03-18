@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2021-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 import Metronomek.Core
@@ -18,6 +18,7 @@ Tdialog {
     topPadding: GLOB.fontSize() / 2
     bottomPadding: GLOB.fontSize() / 2
     standardButtons: Dialog.Ok | Dialog.Help
+
     Component.onCompleted: {
         GLOB.dialogItem = tempoPage;
         (footer as DialogButtonBox).standardButton(Dialog.Ok).text = qsTranslate("QPlatformTheme", "OK");
@@ -26,6 +27,7 @@ Tdialog {
         speedHandler.emitAllTempos();
         combo.currentIndex = speedHandler.currCompId;
     }
+
     onHelpRequested: moreMenu.open()
 
     ListModel {
@@ -46,7 +48,7 @@ Tdialog {
             width: parent.width
             popup.contentItem.width: parent.width
             editable: true
-            model: tempoPage.speedHandler ? tempoPage.speedHandler.compositions : null
+            model: tempoPage.speedHandler?.compositions
             textRole: "title"
             Component.onCompleted: tempoPage.combo = this
             onActivated: (index) => {

@@ -26,7 +26,7 @@ AbstractButton {
         onAboutToShow: {
             (menuButt.mWindow as MainWindow).stopMetronome();
             if (!menuButt.drawerContent)
-                menuButt.drawerContent = Qt.createComponent("Metronomek.Core", "MainDrawerContent").createObject(drawer.contentItem);
+                menuButt.drawerContent = Qt.createComponent("Metronomek.Core", "MainDrawerContent").createObject(drawer.contentItem, { drawer: drawer});
         }
     }
 
