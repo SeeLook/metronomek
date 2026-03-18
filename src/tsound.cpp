@@ -94,7 +94,7 @@ void Tsound::terminate()
     qobject_cast<TOboeDevice *>(m_audioDevice)->terminate();
 #endif
     disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack);
-    qDebug() << "Tsound" << "Terminated";
+    qDebug() << "[Tsound]" << "Terminated";
 }
 
 QString Tsound::outputName()
@@ -105,7 +105,7 @@ QString Tsound::outputName()
 void Tsound::init()
 {
     if (m_initialized) {
-        qDebug() << "[Tsound] has been initialized already! Skipping.";
+        qDebug() << "[Tsound]" << "has been initialized already! Skipping.";
         return;
     }
 
@@ -319,7 +319,7 @@ void Tsound::stopTicking()
 void Tsound::setBeatType(int bt)
 {
     if (bt < 0 || bt > static_cast<int>(Beat_TypesCount) - 1) {
-        qDebug() << "[Tsound] Wrong beat type!" << bt << "Restore to classic default.";
+        qDebug() << "[Tsound]" << "Wrong beat type!" << bt << "Restore to classic default.";
         bt = 0;
     }
     if (bt != m_beatType) {
@@ -365,7 +365,7 @@ QString Tsound::getBeatName(int bt)
 void Tsound::setRingType(int rt)
 {
     if (rt < 0 || rt > ringTypeCount() - 1) {
-        qDebug() << "[Tsound] Wrong ring type!" << rt << "Set to none.";
+        qDebug() << "[Tsound]" << "Wrong ring type!" << rt << "Set to none.";
         rt = 0;
     }
     if (rt != m_ringType) {
@@ -530,7 +530,7 @@ void Tsound::switchInfinitePart()
         auto p = m_speedHandler->currComp()->getPart(m_playingPart);
         p->stopInfinite();
     } else
-        qDebug() << "[Tsound] FIXME! Trying to switch non infinite tempo part!";
+        qDebug() << "[Tsound]" << "FIXME! Trying to switch non infinite tempo part!";
 }
 
 int Tsound::meterOfPart(int partId)
