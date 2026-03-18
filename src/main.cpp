@@ -19,6 +19,7 @@
 #if defined(Q_OS_ANDROID)
 #include <QtGui/qguiapplication.h>
 #include <QtGui/qstylehints.h>
+#include <cstdlib>
 #else
 #include <QtCore/qcommandlineparser.h>
 #include <QtWidgets/qapplication.h>
@@ -60,13 +61,6 @@ int main(int argc, char *argv[])
     int execCode = 0;
     {
         QQmlApplicationEngine engine;
-        QObject::connect(&engine, &QQmlApplicationEngine::quit, [&]() {
-            qDebug() << "QQmlEngine destroyed";
-            if (SOUND)
-                SOUND->terminate();
-            QCoreApplication::removePostedEvents(SOUND);
-            QCoreApplication::processEvents(QEventLoop::AllEvents, 200);
-        });
 
         engine.loadFromModule(u"Metronomek.Core"_s, u"MainWindow"_s);
         if (engine.rootObjects().isEmpty()) {
@@ -105,6 +99,10 @@ int main(int argc, char *argv[])
 
         execCode = app.exec();
     }
-    qDebug() << "Metronomek clean exit. Forcing process termination to prevent RenderThread race.";
+
+#if defined(Q_OS_ANDROID)
+    std::_Exit(execCode);
+#else
     return execCode;
+#endif
 }
