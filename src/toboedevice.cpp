@@ -48,16 +48,19 @@ TOboeDevice::TOboeDevice(QObject *parent)
 
 TOboeDevice::~TOboeDevice()
 {
+    qDebug() << "ToboeDevice" << "destroyed";
+}
+
+void TOboeDevice::terminate()
+{
     m_callBackClass.terminate();
     if (m_stream) {
         m_stream->requestStop();
-        auto current = m_stream->getState();
-        oboe::StreamState next;
-        constexpr int64_t timeoutNanos = 500 * 1000 * 1000; // 500 ms
-        m_stream->waitForStateChange(current, &next, timeoutNanos);
         m_stream->close();
+        m_stream.reset();
         m_stream = nullptr;
     }
+    qDebug() << "[ToboeDevice]" << "terminated";
 }
 
 void TOboeDevice::startPlaying()

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "tglob.h"
@@ -14,6 +14,7 @@
 #include <QtGui/qpalette.h>
 #include <QtQml/qqmlapplicationengine.h>
 #include <QtQml/qqmlcontext.h>
+#include <QtQuick/qquickwindow.h>
 
 #if defined(Q_OS_ANDROID)
 #include <QtGui/qguiapplication.h>
@@ -27,12 +28,11 @@ using namespace Qt::Literals::StringLiterals;
 
 int main(int argc, char *argv[])
 {
-    // qputenv("QT_QUICK_CONTROLS_STYLE", "Basic"); // reset style environment var - other styles can cause crashes
     QElapsedTimer startElapsed;
     startElapsed.start();
 
 #if defined(Q_OS_ANDROID)
-    auto app = new QGuiApplication(argc, argv);
+    QGuiApplication app(argc, argv);
 
     auto pal = qApp->palette();
     if (QNativeInterface::QAndroidApplication::sdkVersion() < 31) {
@@ -47,69 +47,64 @@ int main(int argc, char *argv[])
     pal.setColor(QPalette::Active, QPalette::AlternateBase, isDark ? pal.base().color().lighter(110) : pal.base().color().darker(110));
     qApp->setPalette(pal);
 #else
-    auto app = new QApplication(argc, argv);
-    app->setWindowIcon(QIcon(u":/metronomek.png"_s));
+    QApplication app(argc, argv);
+    app.setWindowIcon(QIcon(u":/metronomek.png"_s));
 #endif
 
     int fid = QFontDatabase::addApplicationFont(u":/metronomek.otf"_s);
     if (fid == -1) {
         qDebug() << "Can not load MetronomeK fonts!\n";
-        delete app;
         return 111;
     }
 
-    auto engine = new QQmlApplicationEngine();
+    int execCode = 0;
+    {
+        QQmlApplicationEngine engine;
+        QObject::connect(&engine, &QQmlApplicationEngine::quit, [&]() {
+            qDebug() << "QQmlEngine destroyed";
+            if (SOUND)
+                SOUND->terminate();
+            QCoreApplication::removePostedEvents(SOUND);
+            QCoreApplication::processEvents(QEventLoop::AllEvents, 200);
+        });
 
-    engine->loadFromModule(u"Metronomek.Core"_s, u"MainWindow"_s);
-    if (engine->rootObjects().isEmpty()) {
-        delete app;
-        return -1;
-    }
+        engine.loadFromModule(u"Metronomek.Core"_s, u"MainWindow"_s);
+        if (engine.rootObjects().isEmpty()) {
+            return -1;
+        }
 
-    // engine->setObjectOwnership(GLOB, QJSEngine::CppOwnership);
-    // engine->setObjectOwnership(SOUND, QJSEngine::CppOwnership);
+        qDebug() << "==== METRONOMEK LAUNCH TIME" << startElapsed.nsecsElapsed() / 1000000.0 << "[ms] ====";
 
-    qDebug() << "==== METRONOMEK LAUNCH TIME" << startElapsed.nsecsElapsed() / 1000000.0 << "[ms] ====";
-
-    SOUND->init();
+        SOUND->init();
 
 #if !defined(Q_OS_ANDROID)
-    if (argc > 1) {
-        auto ext = app->arguments().last().right(4).toLower();
-        if (ext == u".wav"_s || ext == u".raw"_s) {
-            SOUND->importFromCommandline();
-        } else {
-            QCommandLineParser cmd;
-            auto helpOpt = cmd.addHelpOption();
+        if (argc > 1) {
+            auto ext = app.arguments().last().right(4).toLower();
+            if (ext == u".wav"_s || ext == u".raw"_s) {
+                SOUND->importFromCommandline();
+            } else {
+                QCommandLineParser cmd;
+                auto helpOpt = cmd.addHelpOption();
 
-            cmd.addOptions({{u"no-version"_s, u"Do not display app version.\n"_s}});
+                cmd.addOptions({{u"no-version"_s, u"Do not display app version.\n"_s}});
 
-            cmd.addOptions({{{u"noise-threshold"_s, u"t"_s}, u"Percentage value above which a word is detected in audio file.\n"_s, u"1.2%"_s}});
-            cmd.addOptions({{{u"no-align"_s, u"a"_s},
-                             u"Do not align beginning audio data of counting."
-                             " By default it is done to keep their strongest part at the same position for all numerals.\n"_s}});
+                cmd.addOptions({{{u"noise-threshold"_s, u"t"_s}, u"Percentage value above which a word is detected in audio file.\n"_s, u"1.2%"_s}});
+                cmd.addOptions({{{u"no-align"_s, u"a"_s},
+                                 u"Do not align beginning audio data of counting."
+                                 " By default it is done to keep their strongest part at the same position for all numerals.\n"_s}});
 #if defined(WITH_SOUNDTOUCH)
-            cmd.addOptions({{{u"shrink-counting"_s, u"s"_s}, u"Squash numeral audio data duration when it is too long (> 300ms).\n"_s, u"false"_s}});
+                cmd.addOptions({{{u"shrink-counting"_s, u"s"_s}, u"Squash numeral audio data duration when it is too long (> 300ms).\n"_s, u"false"_s}});
 #endif
 
-            cmd.parse(app->arguments());
-            if (cmd.isSet(helpOpt))
-                cmd.showHelp();
+                cmd.parse(app.arguments());
+                if (cmd.isSet(helpOpt))
+                    cmd.showHelp();
+            }
         }
-    }
 #endif
 
-    QObject::connect(app, &QCoreApplication::aboutToQuit, [&]() {
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 50);
-        delete SOUND;
-        delete GLOB;
-    });
-
-    // app->setQuitOnLastWindowClosed(true);
-    int execCode = app->exec();
-
-    delete engine;
-    delete app;
-
+        execCode = app.exec();
+    }
+    qDebug() << "Metronomek clean exit. Forcing process termination to prevent RenderThread race.";
     return execCode;
 }

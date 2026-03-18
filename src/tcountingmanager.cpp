@@ -191,12 +191,18 @@ TcountingManager::TcountingManager(QObject *parent)
 
 TcountingManager::~TcountingManager()
 {
-    GLOB->settings()->setValue("countingWav"_L1,
-                               m_localModelId > 0 && m_localModelId < m_localWavFiles.size() ? m_localWavFiles[m_localModelId] : m_prevLocalWav);
+    if (m_audioDevice)
+        disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, nullptr);
     if (m_inBuffer)
         delete[] m_inBuffer;
     if (!m_numerals.isEmpty())
         qDeleteAll(m_numerals);
+}
+
+void TcountingManager::saveSettings()
+{
+    GLOB->settings()->setValue("countingWav"_L1,
+                               m_localModelId > 0 && m_localModelId < m_localWavFiles.size() ? m_localWavFiles[m_localModelId] : m_prevLocalWav);
 }
 
 void TcountingManager::importFromCommandline()

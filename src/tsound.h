@@ -39,6 +39,7 @@ public:
     static Tsound *instance() { return m_instance; }
 
     void init();
+    void terminate();
 
     Q_INVOKABLE static QStringList getAudioDevicesList();
     Q_INVOKABLE static QString outputName();

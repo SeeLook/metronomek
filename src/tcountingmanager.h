@@ -31,6 +31,8 @@ public:
     explicit TcountingManager(QObject *parent = nullptr);
     ~TcountingManager() override;
 
+    void saveSettings();
+
     QVector<TsoundData *> *numerals() { return &m_numerals; }
 
     //===================================================

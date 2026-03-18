@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019-2025 Tomasz Bojczuk <seelook@gmail.com>
+// SPDX-FileCopyrightText: 2019-2026 Tomasz Bojczuk <seelook@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "tsound.h"
@@ -69,9 +69,18 @@ Tsound::Tsound(QObject *parent)
 
 Tsound::~Tsound()
 {
-    stopTicking();
+    m_speedHandler = nullptr;
     m_instance = nullptr;
+    qDebug() << "[Tsound]" << "destroyed";
+}
 
+void Tsound::terminate()
+{
+    stopTicking();
+    if (m_speedHandler)
+        m_speedHandler->saveCurrentComposition();
+    if (m_countManager)
+        m_countManager->saveSettings();
     if (m_audioDevice && m_audioDevice->deviceName() != "anything"_L1)
         GLOB->settings()->setValue(u"outDevice"_s, m_audioDevice->deviceName());
     GLOB->settings()->setValue(u"beatType"_s, m_beatType);
@@ -81,7 +90,11 @@ Tsound::~Tsound()
     GLOB->settings()->setValue(u"ringType"_s, m_ringType);
     GLOB->settings()->setValue(u"variableTempo"_s, m_variableTempo);
     GLOB->settings()->setValue(u"verbalCount"_s, m_verbalCount);
-    qDebug() << "[Tsound]" << "destroyed";
+#if defined(Q_OS_ANDROID)
+    qobject_cast<TOboeDevice *>(m_audioDevice)->terminate();
+#endif
+    disconnect(m_audioDevice, &TabstractAudioDevice::feedAudio, this, &Tsound::outCallBack);
+    qDebug() << "Tsound" << "Terminated";
 }
 
 QString Tsound::outputName()

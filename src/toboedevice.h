@@ -37,6 +37,7 @@ public:
     void startPlaying() override;
     void startRecording() override;
     void stop() override;
+    void terminate();
 
     void setDeviceName(const QString &devName) override;
     QString deviceName() const override;

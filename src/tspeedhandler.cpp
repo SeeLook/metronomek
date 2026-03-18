@@ -194,7 +194,6 @@ TspeedHandler::TspeedHandler(QObject *parent)
 
 TspeedHandler::~TspeedHandler()
 {
-    saveCurrentComposition();
 }
 
 void TspeedHandler::saveCurrentComposition()
