@@ -3,9 +3,10 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-set(METRONOMEK_VER "0.8.0")
-#WARNING Keep above line exactly as 9th line of this file.
+#
+# WARNING Keep below line exactly as 9th line of this file.
 #        Needed for CD/CI to obtain version
+set(METRONOMEK_VER "0.8.0")
 
 if (POLICY CMP0071)
   cmake_policy(SET CMP0071 NEW)
