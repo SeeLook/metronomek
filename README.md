@@ -21,9 +21,9 @@ but with all goods of computer program.
 --------------------------
 
 ## Download and installation
-**Binary packages**  (Linux AppImage, Mac Os dmg, Windows installer and Android apk)  
+**Binary packages**  (Linux AppImage, <del>Mac Os dmg</del>, Windows installer and Android apk)  
 and **sources** are hosted  
- [at SourceForge](https://sourceforge.net/projects/metronomek/files/)
+  - [at SourceForge](https://sourceforge.net/projects/metronomek/files/)
  [<img src="https://a.fsdn.com/con/app/sf-download-button" alt="SF" width="17%">](https://sourceforge.net/projects/metronomek/files/)
 
 **Metronomek is also available at:**
@@ -50,7 +50,7 @@ and **sources** are hosted
 --------------------------
 ## Building from sources
 
-**MetronomeK** can be compiled with Qt framework [https://www.qt.io/](https://www.qt.io/).
+**MetronomeK** can be compiled with Qt 6 framework [https://www.qt.io/](https://www.qt.io/).
 
 Under Linux, dev packages (with headers) of ALSA and/or PulseAudio are also required.
 

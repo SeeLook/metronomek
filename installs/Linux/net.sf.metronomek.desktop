@@ -1,9 +1,12 @@
 # SPDX-License-Identifier: CC0-1.0
 # SPDX-FileCopyrightText: 2019-2026 by Tomasz Bojczuk <seelook@gmail.com>
+
 [Desktop Entry]
 Name=MetronomeK
 GenericName=The Rhythmic Perfection
 GenericName[pl]=Rytmiczna doskonałość
+GenericName[ua]=Ритмічна досконалість
+GenericName[nl]=Ritmische perfectie
 
 Type=Application
 Comment=Simple metronome with natural sounds
